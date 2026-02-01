@@ -5,7 +5,7 @@ Gebruikt smart search: eerst checken of product in 'boodschappen' lijst staat,
 anders vallen we terug op API search.
 """
 
-from ah_client import AHClient, Product
+from boodschappenagent import AHClient, Product
 
 # TestAI lijst ID (doel)
 TEST_LIST_ID = "65eedcca-01e6-4bce-800f-1ec811970cc1"
@@ -141,7 +141,8 @@ def main():
             source_icon = "📋" if source == "reference" else "🔍"
             print(f"        ✅ {source_icon} [{source}] {product.title}")
             print(
-                f"           Merk: {product.brand}, Grootte: {product.size}, Prijs: €{product.price:.2f}"
+                f"           Merk: {product.brand}, Grootte: {product.size}, "
+                f"Prijs: €{product.price:.2f}"
             )
 
             if source == "reference":
@@ -209,8 +210,10 @@ def main():
             source = r.get("source", "?")
             source_icon = "📋" if source == "reference" else "🔍"
             total_price += p.price
+            title = p.title[:32]
             print(
-                f"{status_icon} {source_icon} {r['ingredient']:22} → {p.title[:32]:32} €{p.price:.2f}"
+                f"{status_icon} {source_icon} {r['ingredient']:22} → "
+                f"{title:32} €{p.price:.2f}"
             )
         else:
             print(f"{status_icon}    {r['ingredient']:22} → NIET GEVONDEN")

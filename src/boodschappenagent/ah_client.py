@@ -5,8 +5,9 @@ POC implementatie voor het automatisch toevoegen van producten aan een AH lijstj
 """
 
 import json
-import requests
 from dataclasses import dataclass
+
+import requests
 
 
 @dataclass
@@ -22,7 +23,7 @@ class Product:
     is_orderable: bool
 
     @classmethod
-    def from_api(cls, data: dict) -> "Product":
+    def from_api(cls, data: dict) -> Product:
         return cls(
             id=data["id"],
             title=data["title"],
@@ -42,10 +43,10 @@ class FavoriteList:
     name: str
     total_items: int
     items: list[dict]
-    products: list["Product"] | None = None  # Optional: full product details
+    products: list[Product] | None = None  # Optional: full product details
 
     @classmethod
-    def from_api(cls, data: dict) -> "FavoriteList":
+    def from_api(cls, data: dict) -> FavoriteList:
         products = None
         if "products" in data and data["products"]:
             products = [Product.from_api(p) for p in data["products"]]
@@ -71,7 +72,9 @@ class AHClient:
         "x-client-version": "1.5.75",
         "Origin": "https://www.ah.nl",
         "Referer": "https://www.ah.nl/favorieten",
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:147.0) Gecko/20100101 Firefox/147.0",
+        "User-Agent": (
+            "Mozilla/5.0 (X11; Linux x86_64; rv:147.0) Gecko/20100101 Firefox/147.0"
+        ),
     }
 
     def __init__(self, cookies: dict):
@@ -86,14 +89,14 @@ class AHClient:
         self.session.cookies.update(cookies)
 
     @classmethod
-    def from_cookie_file(cls, path: str) -> "AHClient":
+    def from_cookie_file(cls, path: str) -> AHClient:
         """Load client from exported cookies JSON file."""
         with open(path) as f:
             cookies = json.load(f)
         return cls(cookies)
 
     @classmethod
-    def from_har_file(cls, path: str) -> "AHClient":
+    def from_har_file(cls, path: str) -> AHClient:
         """Extract cookies from HAR file and create client."""
         with open(path) as f:
             har = json.load(f)
@@ -187,7 +190,8 @@ class AHClient:
             raise Exception(f"List not found: {list_id}")
         return FavoriteList.from_api(data["favoriteListV2"][0])
 
-    # Base ingredients to extract from compound words (e.g., "scharreleieren" -> "eieren")
+    # Base ingredients to extract from compound words
+    # e.g., "scharreleieren" -> "eieren"
     BASE_INGREDIENTS = [
         "eieren",
         "melk",
@@ -215,7 +219,7 @@ class AHClient:
         1. Exact title match (case-insensitive)
         2. All search words appear in title
         3. Main keyword appears in title
-        4. Base ingredient extracted from compound word (e.g., "scharreleieren" -> "eieren")
+        4. Base ingredient from compound word (e.g., "scharreleieren" -> "eieren")
         5. Category match (e.g., both are in "Zuivel, eieren")
 
         Args:
@@ -487,7 +491,8 @@ if __name__ == "__main__":
             print(f"\nSmart search for '{query}':")
             print(f"  Source: {source}")
             print(
-                f"  [{product.id}] {product.title} - {product.size} - €{product.price:.2f}"
+                f"  [{product.id}] {product.title} - {product.size} - "
+                f"€{product.price:.2f}"
             )
         else:
             print(f"\nNo results for '{query}'")

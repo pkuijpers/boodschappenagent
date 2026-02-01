@@ -32,13 +32,47 @@ Two approaches are being evaluated for AH integration:
 
 ## Key Technical Decisions (Pending POC Results)
 
-- **Language**: Python 3.9+
+- **Language**: Python 3.14+
 - **Package management**: uv (use `uv` for all Python dependency and environment management)
 - **Database**: SQLite or JSON files (TBD)
 - **Frontend**: Simple web UI or CLI, with PWA for mobile access
 - **Browser automation**: Playwright (if needed for AH integration)
 - **Authentication**: Cookie-based session management (both AH approaches)
 - **Product mapping**: Ingredient-to-search-term translation with fallback strategies
+
+## Development Workflow
+
+### TDD (Test-Driven Development)
+
+All code must follow TDD principles:
+
+1. **Red**: Write a failing unit test first
+2. **Green**: Write the minimum code to make the test pass
+3. **Refactor**: Improve the code while keeping tests green
+
+Never write production code without a failing test first.
+
+### Code Quality
+
+All Python code must pass ruff linting and formatting:
+
+```bash
+uv run ruff check .           # Run linter
+uv run ruff check --fix .     # Auto-fix linting issues
+uv run ruff format .          # Format code
+uv run ruff format --check .  # Check formatting without changing
+```
+
+### Testing
+
+All code must have unit tests with good coverage:
+
+```bash
+uv run pytest                 # Run all tests
+uv run pytest -v              # Verbose output
+uv run pytest --cov           # Run with coverage report
+uv run pytest tests/test_x.py # Run specific test file
+```
 
 ## Commands
 
@@ -47,20 +81,31 @@ uv sync              # Install dependencies
 uv add <package>     # Add a dependency
 uv run python ...    # Run Python scripts
 uv run pytest        # Run tests
+uv run ruff check .  # Lint code
+uv run ruff format . # Format code
 ```
 
-## Project Structure (Planned)
+## Project Structure
 
 ```
-poc-ah-lijstje/          # API approach
-├── ah_client.py         # API wrapper
-├── product_mapper.py    # Ingredient → AH product mapping
-└── test_poc.py
+src/
+└── boodschappenagent/       # Main package (src-layout)
+    ├── __init__.py          # Exports: AHClient, FavoriteList, Product
+    └── ah_client.py         # AH API client
 
-poc-ah-playwright/       # Browser automation approach
-├── ah_automation.py     # Main automation script
-├── auth/                # Saved browser sessions
-└── test_poc.py
+tests/                       # Unit tests
+├── conftest.py
+├── test_ah_client.py
+└── test_10_products.py
+
+poc-ah-lijstje/              # POC documentation
+└── API_DOCUMENTATION.md
+```
+
+### Usage
+
+```python
+from boodschappenagent import AHClient, Product, FavoriteList
 ```
 
 ## Test Products

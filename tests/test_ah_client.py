@@ -1,14 +1,14 @@
 """
 Unit tests for AH Client.
 
-Run with: uv run pytest poc-ah-lijstje/test_ah_client.py -v
+Run with: uv run pytest tests/test_ah_client.py -v
 """
 
-import pytest
 from unittest.mock import Mock, patch
 
-from ah_client import AHClient, Product, FavoriteList
+import pytest
 
+from boodschappenagent import AHClient, FavoriteList, Product
 
 # =============================================================================
 # Fixtures
@@ -99,7 +99,7 @@ def sample_products():
 @pytest.fixture
 def mock_client():
     """Create a mock AH client without actual HTTP session."""
-    with patch.object(AHClient, "__init__", lambda self, cookies: None):
+    with patch.object(AHClient, "__init__", lambda _self, _cookies: None):
         client = AHClient.__new__(AHClient)
         client.session = Mock()
         return client
@@ -539,6 +539,6 @@ class TestBaseIngredients:
 
         result = mock_client.find_product_in_list(search_term, products)
 
-        assert (
-            result is not None
-        ), f"'{search_term}' should match product with '{expected_base}'"
+        assert result is not None, (
+            f"'{search_term}' should match product with '{expected_base}'"
+        )
