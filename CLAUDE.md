@@ -4,7 +4,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Boodschappenagent ("grocery agent") is a tool for automatically adding groceries to an Albert Heijn (AH) online shopping cart. The project is currently in POC/planning phase.
+Boodschappenagent ("grocery agent") is an end-to-end grocery automation system. The project is currently in POC/planning phase.
+
+### System Components
+
+1. **Receptendatabase** — Recipe storage with ingredients, portions, seasons, and tags
+2. **Menuplanner** — Automated weekly menu suggestions based on season and variety
+3. **Voorraadbeheer** — Inventory tracking with smart restock suggestions
+4. **Boodschappenlijst-generator** — Aggregates and optimizes shopping lists
+5. **AH-integratie** — Albert Heijn integration for placing orders
+
+### Development Phases
+
+1. Digitize recipes and set up database
+2. Build menu planner with portion calculation
+3. Shopping list generator
+4. Add inventory management
+5. AH integration (after POC decision)
 
 ## Integration Approaches Under Evaluation
 
@@ -18,8 +34,10 @@ Two approaches are being evaluated for AH integration:
 
 - **Language**: Python 3.9+
 - **Package management**: uv (use `uv` for all Python dependency and environment management)
-- **Browser automation**: Playwright (if needed)
-- **Authentication**: Cookie-based session management (both approaches)
+- **Database**: SQLite or JSON files (TBD)
+- **Frontend**: Simple web UI or CLI, with PWA for mobile access
+- **Browser automation**: Playwright (if needed for AH integration)
+- **Authentication**: Cookie-based session management (both AH approaches)
 - **Product mapping**: Ingredient-to-search-term translation with fallback strategies
 
 ## Commands
