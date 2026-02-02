@@ -20,11 +20,12 @@ class Ingredient:
 class Recipe:
     id: str                      # UUID of slug
     naam: str                    # "Spaghetti Bolognese"
-    categorie: str               # "pasta", "ovenschotel", "soep", "stamppot"
-    seizoenen: list[str]         # ["herfst", "winter"] of ["alle"]
+    categorie: Categorie         # Proteïnebron: vlees, gevogelte, vis, vegetarisch, veganistisch
+    basis: Basis                 # Koolhydraatbasis: pasta, rijst, aardappel, brood, geen
+    seizoenen: list[Seizoen]     # ["herfst", "winter"] of ["alle"]
     basis_porties: int           # Standaard 2
     ingredienten: list[Ingredient]
-    tags: list[str]              # ["vlees", "italiaans", "budget"]
+    tags: list[str]              # ["italiaans", "budget"]
     bereidingstijd_min: int      # 30 (minuten)
     bereidingswijze: str | None  # Optionele instructies
     bron: str | None             # "oma's kookboek", "AH Allerhande"
@@ -66,11 +67,13 @@ src/boodschappenagent/
 
 data/
 └── recipes/
-    ├── pasta/
+    ├── vlees/
     │   ├── spaghetti-bolognese.json
-    │   └── carbonara.json
-    └── ovenschotel/
-        └── lasagne.json
+    │   └── steak-de-boeuf.json
+    ├── gevogelte/
+    │   └── zoetzure-kip.json
+    └── vegetarisch/
+        └── frittata-paprika.json
 ```
 
 ---
@@ -111,13 +114,20 @@ class Seizoen(Enum):
     ALLE = "alle"
 
 class Categorie(Enum):
-    PASTA = "pasta"
-    OVENSCHOTEL = "ovenschotel"
-    SOEP = "soep"
-    STAMPPOT = "stamppot"
-    ROERBAK = "roerbak"
-    SALADE = "salade"
-    OVERIG = "overig"
+    """Categorieën op basis van proteïnebron."""
+    VLEES = "vlees"           # rund, varken, lam
+    GEVOGELTE = "gevogelte"   # kip, kalkoen, eend
+    VIS = "vis"               # vis & zeevruchten
+    VEGETARISCH = "vegetarisch"  # eieren, kaas, tofu
+    VEGANISTISCH = "veganistisch"
+
+class Basis(Enum):
+    """Koolhydraatbasis voor recepten."""
+    PASTA = "pasta"           # spaghetti, penne, noedels
+    RIJST = "rijst"           # basmati, risotto
+    AARDAPPEL = "aardappel"   # gekookt, puree, friet
+    BROOD = "brood"           # brood, deeg, wraps
+    GEEN = "geen"             # salades, soepen zonder koolhydraat
 ```
 
 ### 4.4 RecipeRepository
@@ -211,7 +221,8 @@ Analyseer deze foto van een recept en extraheer de informatie naar JSON.
 Gebruik dit formaat:
 - eenheden: gram, ml, stuks, eetlepel, theelepel, teen, snuf, naar smaak
 - seizoenen: lente, zomer, herfst, winter, alle
-- categorie: pasta, ovenschotel, soep, stamppot, roerbak, salade, overig
+- categorie (proteïnebron): vlees, gevogelte, vis, vegetarisch, veganistisch
+- basis (koolhydraat): pasta, rijst, aardappel, brood, geen
 
 Genereer een slug-id gebaseerd op de receptnaam.
 ```
@@ -222,7 +233,8 @@ Genereer een slug-id gebaseerd op de receptnaam.
 {
   "id": "spaghetti-bolognese",
   "naam": "Spaghetti Bolognese",
-  "categorie": "pasta",
+  "categorie": "vlees",
+  "basis": "pasta",
   "seizoenen": ["alle"],
   "basis_porties": 2,
   "ingredienten": [
@@ -234,7 +246,7 @@ Genereer een slug-id gebaseerd op de receptnaam.
     {"naam": "tomatenpuree", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null},
     {"naam": "Parmezaanse kaas", "hoeveelheid": 50, "eenheid": "gram", "opmerking": "geraspt"}
   ],
-  "tags": ["vlees", "italiaans", "budget", "kindvriendelijk"],
+  "tags": ["italiaans", "budget", "kindvriendelijk"],
   "bereidingstijd_min": 35,
   "bereidingswijze": "1. Kook de spaghetti...",
   "bron": "receptenbibliotheek"
@@ -252,7 +264,8 @@ Genereer een slug-id gebaseerd op de receptnaam.
 | `hoeveelheid` | > 0 |
 | `basis_porties` | >= 1 |
 | `seizoenen` | Uit: lente, zomer, herfst, winter, alle |
-| `categorie` | Uit voorgedefinieerde enum |
+| `categorie` | Uit: vlees, gevogelte, vis, vegetarisch, veganistisch |
+| `basis` | Uit: pasta, rijst, aardappel, brood, geen |
 | `bereidingstijd_min` | > 0 |
 
 ---

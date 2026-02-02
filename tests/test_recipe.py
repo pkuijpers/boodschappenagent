@@ -2,7 +2,7 @@
 
 import pytest
 
-from boodschappenagent.models.enums import Categorie, Seizoen
+from boodschappenagent.models.enums import Basis, Categorie, Seizoen
 from boodschappenagent.models.ingredient import Ingredient
 from boodschappenagent.models.recipe import Recipe
 
@@ -17,21 +17,23 @@ class TestRecipeCreation:
         recipe = Recipe(
             id="pasta-carbonara",
             naam="Pasta Carbonara",
-            categorie=Categorie.PASTA,
+            categorie=Categorie.VLEES,
+            basis=Basis.PASTA,
             seizoenen=[Seizoen.ALLE],
             basis_porties=2,
             ingredienten=sample_ingredients,
-            tags=["vlees", "italiaans"],
+            tags=["italiaans"],
             bereidingstijd_min=25,
         )
 
         assert recipe.id == "pasta-carbonara"
         assert recipe.naam == "Pasta Carbonara"
-        assert recipe.categorie == Categorie.PASTA
+        assert recipe.categorie == Categorie.VLEES
+        assert recipe.basis == Basis.PASTA
         assert recipe.seizoenen == [Seizoen.ALLE]
         assert recipe.basis_porties == 2
         assert len(recipe.ingredienten) == 4
-        assert recipe.tags == ["vlees", "italiaans"]
+        assert recipe.tags == ["italiaans"]
         assert recipe.bereidingstijd_min == 25
         assert recipe.bereidingswijze is None
         assert recipe.bron is None
@@ -43,11 +45,12 @@ class TestRecipeCreation:
         recipe = Recipe(
             id="lasagne",
             naam="Lasagne",
-            categorie=Categorie.OVENSCHOTEL,
+            categorie=Categorie.VLEES,
+            basis=Basis.PASTA,
             seizoenen=[Seizoen.HERFST, Seizoen.WINTER],
             basis_porties=4,
             ingredienten=sample_ingredients,
-            tags=["vlees", "italiaans"],
+            tags=["italiaans"],
             bereidingstijd_min=90,
             bereidingswijze="1. Maak de ragusaus...",
             bron="oma's kookboek",
@@ -63,11 +66,12 @@ class TestRecipeCreation:
         recipe = Recipe(
             id="erwtensoep",
             naam="Erwtensoep",
-            categorie=Categorie.SOEP,
+            categorie=Categorie.VEGETARISCH,
+            basis=Basis.GEEN,
             seizoenen=[Seizoen.HERFST, Seizoen.WINTER],
             basis_porties=4,
             ingredienten=sample_ingredients,
-            tags=["vegetarisch"],
+            tags=["soep"],
             bereidingstijd_min=120,
         )
 
@@ -83,7 +87,8 @@ class TestRecipeIdValidation:
             Recipe(
                 id="Spaghetti-Bolognese",
                 naam="Spaghetti Bolognese",
-                categorie=Categorie.PASTA,
+                categorie=Categorie.VLEES,
+                basis=Basis.PASTA,
                 seizoenen=[Seizoen.ALLE],
                 basis_porties=2,
                 ingredienten=sample_ingredients,
@@ -97,7 +102,8 @@ class TestRecipeIdValidation:
             Recipe(
                 id="spaghetti bolognese",
                 naam="Spaghetti Bolognese",
-                categorie=Categorie.PASTA,
+                categorie=Categorie.VLEES,
+                basis=Basis.PASTA,
                 seizoenen=[Seizoen.ALLE],
                 basis_porties=2,
                 ingredienten=sample_ingredients,
@@ -111,7 +117,8 @@ class TestRecipeIdValidation:
             Recipe(
                 id="",
                 naam="Spaghetti Bolognese",
-                categorie=Categorie.PASTA,
+                categorie=Categorie.VLEES,
+                basis=Basis.PASTA,
                 seizoenen=[Seizoen.ALLE],
                 basis_porties=2,
                 ingredienten=sample_ingredients,
@@ -126,7 +133,8 @@ class TestRecipeIdValidation:
         recipe = Recipe(
             id="pasta-pesto-2",
             naam="Pasta Pesto",
-            categorie=Categorie.PASTA,
+            categorie=Categorie.VEGETARISCH,
+            basis=Basis.PASTA,
             seizoenen=[Seizoen.ALLE],
             basis_porties=2,
             ingredienten=sample_ingredients,
@@ -146,7 +154,8 @@ class TestRecipeNaamValidation:
             Recipe(
                 id="test",
                 naam="",
-                categorie=Categorie.PASTA,
+                categorie=Categorie.VLEES,
+                basis=Basis.PASTA,
                 seizoenen=[Seizoen.ALLE],
                 basis_porties=2,
                 ingredienten=sample_ingredients,
@@ -162,7 +171,8 @@ class TestRecipeNaamValidation:
             Recipe(
                 id="test",
                 naam="A" * 101,
-                categorie=Categorie.PASTA,
+                categorie=Categorie.VLEES,
+                basis=Basis.PASTA,
                 seizoenen=[Seizoen.ALLE],
                 basis_porties=2,
                 ingredienten=sample_ingredients,
@@ -177,7 +187,8 @@ class TestRecipeNaamValidation:
         recipe = Recipe(
             id="test",
             naam="A" * 100,
-            categorie=Categorie.PASTA,
+            categorie=Categorie.VLEES,
+            basis=Basis.PASTA,
             seizoenen=[Seizoen.ALLE],
             basis_porties=2,
             ingredienten=sample_ingredients,
@@ -199,7 +210,8 @@ class TestRecipeBasisPortiesValidation:
             Recipe(
                 id="test",
                 naam="Test",
-                categorie=Categorie.PASTA,
+                categorie=Categorie.VLEES,
+                basis=Basis.PASTA,
                 seizoenen=[Seizoen.ALLE],
                 basis_porties=0,
                 ingredienten=sample_ingredients,
@@ -215,7 +227,8 @@ class TestRecipeBasisPortiesValidation:
             Recipe(
                 id="test",
                 naam="Test",
-                categorie=Categorie.PASTA,
+                categorie=Categorie.VLEES,
+                basis=Basis.PASTA,
                 seizoenen=[Seizoen.ALLE],
                 basis_porties=-1,
                 ingredienten=sample_ingredients,
@@ -235,7 +248,8 @@ class TestRecipeBereidingstijdValidation:
             Recipe(
                 id="test",
                 naam="Test",
-                categorie=Categorie.PASTA,
+                categorie=Categorie.VLEES,
+                basis=Basis.PASTA,
                 seizoenen=[Seizoen.ALLE],
                 basis_porties=2,
                 ingredienten=sample_ingredients,
@@ -251,7 +265,8 @@ class TestRecipeBereidingstijdValidation:
             Recipe(
                 id="test",
                 naam="Test",
-                categorie=Categorie.PASTA,
+                categorie=Categorie.VLEES,
+                basis=Basis.PASTA,
                 seizoenen=[Seizoen.ALLE],
                 basis_porties=2,
                 ingredienten=sample_ingredients,
@@ -269,7 +284,8 @@ class TestRecipeSeizoenValidation:
             Recipe(
                 id="test",
                 naam="Test",
-                categorie=Categorie.PASTA,
+                categorie=Categorie.VLEES,
+                basis=Basis.PASTA,
                 seizoenen=[],
                 basis_porties=2,
                 ingredienten=sample_ingredients,
@@ -283,7 +299,8 @@ class TestRecipeSeizoenValidation:
             recipe = Recipe(
                 id="test",
                 naam="Test",
-                categorie=Categorie.PASTA,
+                categorie=Categorie.VLEES,
+                basis=Basis.PASTA,
                 seizoenen=[seizoen],
                 basis_porties=2,
                 ingredienten=sample_ingredients,
@@ -303,6 +320,7 @@ class TestRecipeCategorieValidation:
                 id="test",
                 naam="Test",
                 categorie=categorie,
+                basis=Basis.PASTA,
                 seizoenen=[Seizoen.ALLE],
                 basis_porties=2,
                 ingredienten=sample_ingredients,
@@ -310,6 +328,26 @@ class TestRecipeCategorieValidation:
                 bereidingstijd_min=30,
             )
             assert recipe.categorie == categorie
+
+
+class TestRecipeBasisValidation:
+    """Tests voor validatie van basis."""
+
+    def test_all_valid_basis_values(self, sample_ingredients: list[Ingredient]):
+        """Alle geldige basis waarden worden geaccepteerd."""
+        for basis in Basis:
+            recipe = Recipe(
+                id="test",
+                naam="Test",
+                categorie=Categorie.VLEES,
+                basis=basis,
+                seizoenen=[Seizoen.ALLE],
+                basis_porties=2,
+                ingredienten=sample_ingredients,
+                tags=[],
+                bereidingstijd_min=30,
+            )
+            assert recipe.basis == basis
 
 
 class TestRecipeScaleToPortions:

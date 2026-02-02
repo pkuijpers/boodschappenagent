@@ -2,7 +2,7 @@
 
 import pytest
 
-from boodschappenagent.models import Categorie, Ingredient, Recipe, Seizoen
+from boodschappenagent.models import Basis, Categorie, Ingredient, Recipe, Seizoen
 from boodschappenagent.utils import PortionCalculator
 
 
@@ -18,7 +18,8 @@ def sample_recipe() -> Recipe:
     return Recipe(
         id="test-recept",
         naam="Test Recept",
-        categorie=Categorie.PASTA,
+        categorie=Categorie.VLEES,
+        basis=Basis.PASTA,
         seizoenen=[Seizoen.ALLE],
         basis_porties=2,
         ingredienten=[
@@ -246,7 +247,8 @@ class TestEdgeCases:
         recipe = Recipe(
             id="test",
             naam="Test",
-            categorie=Categorie.OVERIG,
+            categorie=Categorie.VEGETARISCH,
+            basis=Basis.GEEN,
             seizoenen=[Seizoen.ALLE],
             basis_porties=4,
             ingredienten=[

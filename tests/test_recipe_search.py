@@ -2,7 +2,7 @@
 
 import pytest
 
-from boodschappenagent.models import Categorie, Ingredient, Recipe, Seizoen
+from boodschappenagent.models import Basis, Categorie, Ingredient, Recipe, Seizoen
 from boodschappenagent.repository.recipe_search import RecipeSearch
 
 
@@ -13,62 +13,67 @@ def sample_recipes() -> list[Recipe]:
         Recipe(
             id="spaghetti-bolognese",
             naam="Spaghetti Bolognese",
-            categorie=Categorie.PASTA,
+            categorie=Categorie.VLEES,
+            basis=Basis.PASTA,
             seizoenen=[Seizoen.ALLE],
             basis_porties=2,
             ingredienten=[
                 Ingredient(naam="spaghetti", hoeveelheid=200, eenheid="gram"),
                 Ingredient(naam="gehakt", hoeveelheid=250, eenheid="gram"),
             ],
-            tags=["vlees", "italiaans", "budget"],
+            tags=["italiaans", "budget"],
             bereidingstijd_min=35,
         ),
         Recipe(
             id="pasta-pesto",
             naam="Pasta met Pesto",
-            categorie=Categorie.PASTA,
+            categorie=Categorie.VEGETARISCH,
+            basis=Basis.PASTA,
             seizoenen=[Seizoen.LENTE, Seizoen.ZOMER],
             basis_porties=2,
             ingredienten=[
                 Ingredient(naam="pasta", hoeveelheid=200, eenheid="gram"),
             ],
-            tags=["vegetarisch", "italiaans", "snel"],
+            tags=["italiaans", "snel"],
             bereidingstijd_min=15,
         ),
         Recipe(
             id="erwtensoep",
             naam="Erwtensoep",
-            categorie=Categorie.SOEP,
+            categorie=Categorie.VLEES,
+            basis=Basis.GEEN,
             seizoenen=[Seizoen.HERFST, Seizoen.WINTER],
             basis_porties=4,
             ingredienten=[
                 Ingredient(naam="erwten", hoeveelheid=500, eenheid="gram"),
             ],
-            tags=["vlees", "hollands", "budget"],
+            tags=["hollands", "budget"],
             bereidingstijd_min=120,
         ),
         Recipe(
             id="tomatensoep",
             naam="Tomatensoep",
-            categorie=Categorie.SOEP,
+            categorie=Categorie.VEGETARISCH,
+            basis=Basis.GEEN,
             seizoenen=[Seizoen.ALLE],
             basis_porties=4,
             ingredienten=[
                 Ingredient(naam="tomaten", hoeveelheid=500, eenheid="gram"),
             ],
-            tags=["vegetarisch", "budget"],
+            tags=["budget"],
             bereidingstijd_min=45,
         ),
         Recipe(
             id="stamppot-boerenkool",
             naam="Stamppot Boerenkool",
-            categorie=Categorie.STAMPPOT,
+            categorie=Categorie.VLEES,
+            basis=Basis.AARDAPPEL,
             seizoenen=[Seizoen.WINTER],
             basis_porties=4,
             ingredienten=[
                 Ingredient(naam="boerenkool", hoeveelheid=500, eenheid="gram"),
             ],
-            tags=["vlees", "hollands"],
+            tags=["hollands"],
             bereidingstijd_min=45,
         ),
     ]
@@ -123,30 +128,30 @@ class TestFilterBySeizoen:
 
 
 class TestFilterByCategorie:
-    """Tests voor filteren op categorie."""
+    """Tests voor filteren op categorie (proteïnebron)."""
 
     def test_filter_by_single_categorie(self, search: RecipeSearch):
         """Filter recepten voor één categorie."""
-        pasta_recipes = search.filter_by_categorie(Categorie.PASTA).results
+        vlees_recipes = search.filter_by_categorie(Categorie.VLEES).results
 
-        assert len(pasta_recipes) == 2
-        ids = {r.id for r in pasta_recipes}
-        assert ids == {"spaghetti-bolognese", "pasta-pesto"}
+        assert len(vlees_recipes) == 3
+        ids = {r.id for r in vlees_recipes}
+        assert ids == {"spaghetti-bolognese", "erwtensoep", "stamppot-boerenkool"}
 
-    def test_filter_by_categorie_soep(self, search: RecipeSearch):
-        """Filter recepten voor soep categorie."""
-        soep_recipes = search.filter_by_categorie(Categorie.SOEP).results
+    def test_filter_by_categorie_vegetarisch(self, search: RecipeSearch):
+        """Filter recepten voor vegetarische categorie."""
+        veg_recipes = search.filter_by_categorie(Categorie.VEGETARISCH).results
 
-        assert len(soep_recipes) == 2
-        ids = {r.id for r in soep_recipes}
-        assert ids == {"erwtensoep", "tomatensoep"}
+        assert len(veg_recipes) == 2
+        ids = {r.id for r in veg_recipes}
+        assert ids == {"pasta-pesto", "tomatensoep"}
 
     def test_filter_by_categorie_returns_empty_for_no_matches(
         self, search: RecipeSearch
     ):
         """Leeg resultaat als geen recepten matchen."""
-        salade_recipes = search.filter_by_categorie(Categorie.SALADE).results
-        assert salade_recipes == []
+        vis_recipes = search.filter_by_categorie(Categorie.VIS).results
+        assert vis_recipes == []
 
 
 class TestFilterByTags:
@@ -154,18 +159,18 @@ class TestFilterByTags:
 
     def test_filter_by_single_tag(self, search: RecipeSearch):
         """Filter recepten met één tag."""
-        vegetarisch = search.filter_by_tags(["vegetarisch"]).results
+        italiaans = search.filter_by_tags(["italiaans"]).results
 
-        ids = {r.id for r in vegetarisch}
-        assert ids == {"pasta-pesto", "tomatensoep"}
+        ids = {r.id for r in italiaans}
+        assert ids == {"spaghetti-bolognese", "pasta-pesto"}
 
     def test_filter_by_multiple_tags_and(self, search: RecipeSearch):
         """Filter recepten die ALLE opgegeven tags hebben (AND)."""
-        # Recepten met zowel "vlees" als "budget"
-        results = search.filter_by_tags(["vlees", "budget"], match_all=True).results
+        # Recepten met zowel "italiaans" als "budget"
+        results = search.filter_by_tags(["italiaans", "budget"], match_all=True).results
 
         ids = {r.id for r in results}
-        assert ids == {"spaghetti-bolognese", "erwtensoep"}
+        assert ids == {"spaghetti-bolognese"}
 
     def test_filter_by_multiple_tags_or(self, search: RecipeSearch):
         """Filter recepten die MINSTENS ÉÉN tag hebben (OR)."""
@@ -237,23 +242,23 @@ class TestCombinedFilters:
 
     def test_filter_seizoen_and_categorie(self, search: RecipeSearch):
         """Combineer seizoen en categorie filter met fluent interface."""
-        # Winter soepen - nu met fluent chaining
+        # Winter vlees recepten - nu met fluent chaining
         results = (
             search.filter_by_seizoen(Seizoen.WINTER)
-            .filter_by_categorie(Categorie.SOEP)
+            .filter_by_categorie(Categorie.VLEES)
             .results
         )
 
         ids = {r.id for r in results}
-        # Erwtensoep (herfst/winter, soep) en tomatensoep (alle, soep)
-        assert ids == {"erwtensoep", "tomatensoep"}
+        # Bolognese (alle), erwtensoep (herfst/winter), stamppot (winter)
+        assert ids == {"spaghetti-bolognese", "erwtensoep", "stamppot-boerenkool"}
 
     def test_filter_categorie_and_tags(self, search: RecipeSearch):
         """Combineer categorie en tags filter met fluent interface."""
-        # Vegetarische soepen
+        # Vegetarische recepten met budget tag
         results = (
-            search.filter_by_categorie(Categorie.SOEP)
-            .filter_by_tags(["vegetarisch"])
+            search.filter_by_categorie(Categorie.VEGETARISCH)
+            .filter_by_tags(["budget"])
             .results
         )
 
@@ -282,6 +287,6 @@ class TestEmptyRecipes:
         search = RecipeSearch([])
 
         assert search.filter_by_seizoen(Seizoen.WINTER).results == []
-        assert search.filter_by_categorie(Categorie.PASTA).results == []
-        assert search.filter_by_tags(["vlees"]).results == []
+        assert search.filter_by_categorie(Categorie.VLEES).results == []
+        assert search.filter_by_tags(["italiaans"]).results == []
         assert search.search_by_naam("test").results == []

@@ -1,4 +1,4 @@
-"""Enums voor recepten: Seizoen en Categorie."""
+"""Enums voor recepten: Seizoen, Categorie en Basis."""
 
 from enum import Enum
 
@@ -14,12 +14,20 @@ class Seizoen(Enum):
 
 
 class Categorie(Enum):
-    """Categorieën voor recepten."""
+    """Categorieën voor recepten op basis van proteïnebron."""
 
-    PASTA = "pasta"
-    OVENSCHOTEL = "ovenschotel"
-    SOEP = "soep"
-    STAMPPOT = "stamppot"
-    ROERBAK = "roerbak"
-    SALADE = "salade"
-    OVERIG = "overig"
+    VLEES = "vlees"  # rund, varken, lam
+    GEVOGELTE = "gevogelte"  # kip, kalkoen, eend
+    VIS = "vis"  # vis & zeevruchten
+    VEGETARISCH = "vegetarisch"  # eieren, kaas, tofu
+    VEGANISTISCH = "veganistisch"  # plantaardig
+
+
+class Basis(Enum):
+    """Koolhydraatbasis voor recepten."""
+
+    PASTA = "pasta"  # spaghetti, penne, noedels
+    RIJST = "rijst"  # basmati, risotto
+    AARDAPPEL = "aardappel"  # gekookt, puree, friet
+    BROOD = "brood"  # brood, deeg, wraps
+    GEEN = "geen"  # salades, soepen zonder koolhydraat

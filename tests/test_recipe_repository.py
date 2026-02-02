@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from boodschappenagent.models import Categorie, Recipe, Seizoen
+from boodschappenagent.models import Basis, Categorie, Recipe, Seizoen
 from boodschappenagent.repository import RecipeRepository
 
 
@@ -29,7 +29,8 @@ class TestRecipeRepositoryLoad:
 
         assert recipe.id == "pasta-carbonara"
         assert recipe.naam == "Pasta Carbonara"
-        assert recipe.categorie == Categorie.PASTA
+        assert recipe.categorie == Categorie.VLEES
+        assert recipe.basis == Basis.PASTA
         assert recipe.seizoenen == [Seizoen.ALLE]
         assert recipe.basis_porties == 2
         assert len(recipe.ingredienten) == 2
@@ -43,7 +44,8 @@ class TestRecipeRepositoryLoad:
         data = {
             "id": "erwtensoep",
             "naam": "Erwtensoep",
-            "categorie": "soep",
+            "categorie": "vlees",
+            "basis": "geen",
             "seizoenen": ["herfst", "winter"],
             "basis_porties": 4,
             "ingredienten": [
@@ -84,7 +86,8 @@ class TestRecipeRepositoryLoad:
         data = {
             "id": "simpel",
             "naam": "Simpel Recept",
-            "categorie": "overig",
+            "categorie": "vegetarisch",
+            "basis": "geen",
             "seizoenen": ["alle"],
             "basis_porties": 2,
             "ingredienten": [{"naam": "water", "hoeveelheid": 1, "eenheid": "liter"}],
@@ -111,7 +114,8 @@ class TestRecipeRepositoryLoadAll:
         recipe1 = {
             "id": "recept-1",
             "naam": "Recept 1",
-            "categorie": "pasta",
+            "categorie": "vlees",
+            "basis": "pasta",
             "seizoenen": ["alle"],
             "basis_porties": 2,
             "ingredienten": [],
@@ -120,7 +124,8 @@ class TestRecipeRepositoryLoadAll:
         recipe2 = {
             "id": "recept-2",
             "naam": "Recept 2",
-            "categorie": "soep",
+            "categorie": "vegetarisch",
+            "basis": "geen",
             "seizoenen": ["winter"],
             "basis_porties": 4,
             "ingredienten": [],
@@ -149,7 +154,8 @@ class TestRecipeRepositoryLoadAll:
         recipe = {
             "id": "test",
             "naam": "Test",
-            "categorie": "pasta",
+            "categorie": "vlees",
+            "basis": "pasta",
             "seizoenen": ["alle"],
             "basis_porties": 2,
             "ingredienten": [],
@@ -169,15 +175,16 @@ class TestRecipeRepositoryLoadAll:
     ):
         """Laad recepten recursief uit subdirectories."""
         # Maak subdirectories volgens de structuur in het plan
-        pasta_dir = tmp_path / "pasta"
-        soep_dir = tmp_path / "soep"
-        pasta_dir.mkdir()
-        soep_dir.mkdir()
+        vlees_dir = tmp_path / "vlees"
+        vegetarisch_dir = tmp_path / "vegetarisch"
+        vlees_dir.mkdir()
+        vegetarisch_dir.mkdir()
 
         recipe1 = {
             "id": "spaghetti",
             "naam": "Spaghetti",
-            "categorie": "pasta",
+            "categorie": "vlees",
+            "basis": "pasta",
             "seizoenen": ["alle"],
             "basis_porties": 2,
             "ingredienten": [],
@@ -186,14 +193,15 @@ class TestRecipeRepositoryLoadAll:
         recipe2 = {
             "id": "tomatensoep",
             "naam": "Tomatensoep",
-            "categorie": "soep",
+            "categorie": "vegetarisch",
+            "basis": "geen",
             "seizoenen": ["herfst"],
             "basis_porties": 4,
             "ingredienten": [],
             "bereidingstijd_min": 45,
         }
-        (pasta_dir / "spaghetti.json").write_text(json.dumps(recipe1), encoding="utf-8")
-        (soep_dir / "tomatensoep.json").write_text(
+        (vlees_dir / "spaghetti.json").write_text(json.dumps(recipe1), encoding="utf-8")
+        (vegetarisch_dir / "tomatensoep.json").write_text(
             json.dumps(recipe2), encoding="utf-8"
         )
 
@@ -219,7 +227,8 @@ class TestRecipeRepositorySave:
         data = json.loads(json_file.read_text(encoding="utf-8"))
         assert data["id"] == "spaghetti-bolognese"
         assert data["naam"] == "Spaghetti Bolognese"
-        assert data["categorie"] == "pasta"
+        assert data["categorie"] == "vlees"
+        assert data["basis"] == "pasta"
         assert data["seizoenen"] == ["alle"]
         assert data["basis_porties"] == 2
         assert len(data["ingredienten"]) == 4
@@ -258,6 +267,7 @@ class TestRecipeRepositorySave:
         assert loaded.id == sample_recipe.id
         assert loaded.naam == sample_recipe.naam
         assert loaded.categorie == sample_recipe.categorie
+        assert loaded.basis == sample_recipe.basis
         assert loaded.seizoenen == sample_recipe.seizoenen
         assert loaded.basis_porties == sample_recipe.basis_porties
         assert len(loaded.ingredienten) == len(sample_recipe.ingredienten)

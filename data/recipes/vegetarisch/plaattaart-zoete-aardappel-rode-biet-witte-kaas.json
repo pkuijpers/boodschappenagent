@@ -1,0 +1,25 @@
+{
+  "id": "plaattaart-zoete-aardappel-rode-biet-witte-kaas",
+  "naam": "Plaattaart met zoete aardappel, rode biet & witte kaas",
+  "categorie": "vegetarisch",
+  "basis": "brood",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "flammkuchendeeg", "hoeveelheid": 260, "eenheid": "gram", "opmerking": "1 rol"},
+    {"naam": "mascarpone", "hoeveelheid": 125, "eenheid": "gram", "opmerking": "halve bak"},
+    {"naam": "muhammara", "hoeveelheid": 80, "eenheid": "gram", "opmerking": null},
+    {"naam": "zoete aardappel", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "biologische rode biet", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "feta", "hoeveelheid": 150, "eenheid": "gram", "opmerking": null},
+    {"naam": "platte peterselie", "hoeveelheid": 15, "eenheid": "gram", "opmerking": null},
+    {"naam": "pijnboompitten", "hoeveelheid": 30, "eenheid": "gram", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["oven"],
+  "bereidingstijd_min": 40,
+  "bereidingswijze": "1. Verwarm de oven voor op 200 °C. Rol het deeg met het bakpapier uit over een bakplaat. Meng de mascarpone met de muhammara en bestrijk het deeg ermee.\n2. Schil de zoete aardappelen en rode bieten, halveer in de lengte en snijd in zo dun mogelijke halve plakjes. Verdeel de plakjes zoete aardappel en rode biet om en om over het bladerdeeg. Besprenkel met 2 el olie, peper en eventueel zout.\n3. Bak de plaattaart ca. 20 min. onder in de oven gaar. Dek eventueel af met aluminiumfolie als het bladerdeeg te donker wordt.\n4. Verkruimel ondertussen de feta. Snijd de peterselie fijn. Verhit een koekenpan zonder olie of boter en rooster de pijnboompitten in 3 min. goudbruin. Bestrooi de plaattaart met de kaas, peterselie en pijnboompitten.\n\nTIP: Gebruik eventueel de rest van de mascarpone voor tosti's. Bestrijk sneetjes brood ermee voordat je ze met kaas belegt.\n\nFOODIE FACT: Gebruik eventueel een mandoline voor het snijden van de zoete aardappelen en rode biet.\n\n* De aangegeven oventijden zijn bedoeld voor een elektrische oven. Het zijn indicaties, de exacte bereidingstijd varieert per oven.",
+  "bron": "AH Allerhande Box"
+}

@@ -1,0 +1,24 @@
+{
+  "id": "varkenshaas-gevulde-ravioli-paddenstoelen-peultjes",
+  "naam": "Varkenshaas met gevulde ravioli, paddenstoelen & peultjes",
+  "categorie": "vlees",
+  "basis": "pasta",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "varkenshaas", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": "schaal"},
+    {"naam": "salie", "hoeveelheid": 15, "eenheid": "gram", "opmerking": "bakje"},
+    {"naam": "crème fraîche", "hoeveelheid": 200, "eenheid": "gram", "opmerking": null},
+    {"naam": "bospaddenstoelen-bouillontablet", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "ravioli funghi porcini", "hoeveelheid": 500, "eenheid": "gram", "opmerking": "2 schalen à 250g"},
+    {"naam": "knoflook", "hoeveelheid": 2, "eenheid": "teen", "opmerking": null},
+    {"naam": "Italiaanse roerbakgroente", "hoeveelheid": 800, "eenheid": "gram", "opmerking": "tuinerwten, peultjes, peterselie - 2 zakken"},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 4, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["italiaans", "varkensvlees"],
+  "bereidingstijd_min": 25,
+  "bereidingswijze": "1. Snijd de varkenshaas in 4 stukken. Bestrooi aan beide kanten met peper en eventueel zout. Verhit 2 el olie in een koekenpan en bak de varkenshaas in 12 min. goudbruin en gaar. Keer halverwege.\n2. Snijd de salie fijn. Neem het vlees uit de pan en laat op een bord rusten onder een deksel of aluminiumfolie. Voeg de crème fraîche, de helft van de salie, de bouillontablet en 150 ml water toe aan het achtergebleven bakvet en verwarm 5 min. op middelhoog vuur. Breng op smaak met peper.\n3. Kook ondertussen de pasta in 6 min. beetgaar. Snijd de knoflook fijn. Verhit de rest van de olie in de hapjespan en bak de roerbakgroente, knoflook en de rest van de salie 5 min. op middelhoog vuur.\n4. Verdeel de pasta over 4 borden en verdeel de groente en varkenshaas erover. Verdeel de saus erover.\n\nFOODIE FACT: Salie is een plant waarvan de bladeren veel gebruikt worden als kruid in de Italiaanse keuken. Ook met varkensvlees is het een goede combinatie, vanwege zijn volle en licht bittere smaak. Je kunt salie gedroogd én vers gebruiken.",
+  "bron": "AH Allerhande Box"
+}

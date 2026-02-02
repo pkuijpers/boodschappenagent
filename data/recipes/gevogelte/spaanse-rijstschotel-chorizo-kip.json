@@ -1,0 +1,23 @@
+{
+  "id": "spaanse-rijstschotel-chorizo-kip",
+  "naam": "Spaanse rijstschotel met chorizo en kip",
+  "categorie": "gevogelte",
+  "basis": "rijst",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "notenrijst", "hoeveelheid": 275, "eenheid": "gram", "opmerking": null},
+    {"naam": "paprikamix", "hoeveelheid": 3, "eenheid": "stuks", "opmerking": null},
+    {"naam": "cherrytomaten", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "chorizo", "hoeveelheid": 100, "eenheid": "gram", "opmerking": null},
+    {"naam": "kipfiletblokjes", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": "duopak"},
+    {"naam": "komijn", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": "sachets"},
+    {"naam": "peterselie", "hoeveelheid": 15, "eenheid": "gram", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null}
+  ],
+  "tags": ["spaans", "kip"],
+  "bereidingstijd_min": 25,
+  "bereidingswijze": "1. Breng een ruime pan water met eventueel zout aan de kook. Voeg als het water kookt de rijst toe, breng opnieuw aan de kook en kook in 8 min. gaar. Giet af en laat afgedekt staan tot gebruik.\n2. Was ondertussen de paprika's, verwijder de zaadlijsten en snijd het vruchtvlees in blokjes van 1 cm. Was de tomaten en halveer ze.\n3. Verhit een koekenpan zonder olie of boter en bak de chorizo op middelhoog vuur in 1 min. krokant. Neem uit de pan (laat het bakvet achter) en laat uitlekken op keukenpapier. Halveer de chorizo.\n4. Bak de kipblokjes met de komijn, peper en eventueel zout 4 min. in het achtergebleven bakvet op middelhoog vuur. Voeg de paprika toe en bak 3 min. mee. Voeg de laatste minuut de tomaten toe. Meng de rijst en 3 min. mee. Snijd ondertussen de peterselie fijn. Meng de chorizo door de kip en breng op smaak met peper. Verdeel de rijstschotel over diepe borden en garneer met de peterselie.",
+  "bron": "AH Allerhande Box"
+}

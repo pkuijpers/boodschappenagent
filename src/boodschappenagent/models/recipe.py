@@ -6,7 +6,7 @@ import re
 from dataclasses import dataclass, field, replace
 from typing import Any
 
-from boodschappenagent.models.enums import Categorie, Seizoen
+from boodschappenagent.models.enums import Basis, Categorie, Seizoen
 from boodschappenagent.models.ingredient import Ingredient
 
 # Regex voor slug validatie: lowercase letters, cijfers en koppeltekens
@@ -20,7 +20,8 @@ class Recipe:
     Attributes:
         id: Unieke slug identifier (lowercase, geen spaties).
         naam: De naam van het recept (max 100 karakters).
-        categorie: De categorie van het recept.
+        categorie: De categorie van het recept (proteïnebron).
+        basis: De koolhydraatbasis van het recept.
         seizoenen: Lijst van seizoenen waarin het recept past.
         basis_porties: Standaard aantal porties (>= 1).
         ingredienten: Lijst van ingrediënten.
@@ -33,6 +34,7 @@ class Recipe:
     id: str
     naam: str
     categorie: Categorie
+    basis: Basis
     seizoenen: list[Seizoen]
     basis_porties: int
     ingredienten: list[Ingredient]
@@ -141,6 +143,7 @@ class Recipe:
             "id": self.id,
             "naam": self.naam,
             "categorie": self.categorie.value,
+            "basis": self.basis.value,
             "seizoenen": [s.value for s in self.seizoenen],
             "basis_porties": self.basis_porties,
             "ingredienten": [ing.to_dict() for ing in self.ingredienten],
@@ -168,6 +171,7 @@ class Recipe:
             id=data["id"],
             naam=data["naam"],
             categorie=Categorie(data["categorie"]),
+            basis=Basis(data["basis"]),
             seizoenen=[Seizoen(s) for s in data["seizoenen"]],
             basis_porties=data["basis_porties"],
             ingredienten=ingredienten,
