@@ -1,0 +1,23 @@
+{
+  "id": "varkenshaas-met-gevulde-ravioli-paddenstoelen-en-peultjes",
+  "naam": "Varkenshaas met gevulde ravioli, paddenstoelen & peultjes",
+  "categorie": "vlees",
+  "basis": "pasta",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "varkenshaas", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "crème fraîche", "hoeveelheid": 200, "eenheid": "gram", "opmerking": null},
+    {"naam": "bospaddentoelen-bouillon", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "ravioli funghi porcini", "hoeveelheid": 500, "eenheid": "gram", "opmerking": null},
+    {"naam": "peultjes", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": "naar smaak"},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": "naar smaak"},
+    {"naam": "olijfolie", "hoeveelheid": 4, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "knoflook", "hoeveelheid": 1, "eenheid": "teen", "opmerking": null}
+  ],
+  "tags": ["pasta", "vlees", "varkenshaas", "ravioli", "paddenstoelen", "peultjes"],
+  "bereidingstijd_min": 25,
+  "bereidingswijze": "1. Snijd de varkenshaas in 4 stukken. Bestrooi aan beide kanten met peper en eventueel zout. Verhit 2 el olie in een koekenpan en bak de varkenshaas in 12 min goudbruin en gaar. Keer halverwege. 2. Snijd de peultjes fijn. Neem het vlees uit de pan en leg op een bord onder deksel of aluminiumfolie. Voeg de crème fraîche de helft van de salie, de bouillontablet en 150 ml water toe aan het achtergoleven bakvet en verhit dit toe on middelhoog vuur. Breng op smaak met peper. 3. Kook ondertussen de pasta in 6 min beetgaar. Snijd de knoflook fijn. Verhit de rest van de olie in de hapjespan en bak de gesneden knoflook en de rest van de salie 5 min op middelhoog vuur. 4. Verdeel de pasta over 4 borden en verdeel de groente en varkenshaas erover. Verdeel de saus erover.",
+  "bron": null
+}

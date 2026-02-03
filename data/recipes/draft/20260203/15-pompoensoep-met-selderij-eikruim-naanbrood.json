@@ -1,0 +1,26 @@
+{
+  "id": "pompoensoep-met-selderij-eikruim-naanbrood",
+  "naam": "Pompoensoep met selderijdolie, eikruim & naanbrood",
+  "categorie": "vegetarisch",
+  "basis": "geen",
+  "seizoenen": ["herfst", "winter"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "tenen knoflook", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "jalapeño", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": "groen pepertje"},
+    {"naam": "olijfolie", "hoeveelheid": 400, "eenheid": "ml", "opmerking": null},
+    {"naam": "zakken pompoenstukjes", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": "à 400 g"},
+    {"naam": "groentebouillontabletten", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "eieren", "hoeveelheid": 4, "eenheid": "stuks", "opmerking": null},
+    {"naam": "selderij", "hoeveelheid": 20, "eenheid": "gram", "opmerking": null},
+    {"naam": "mirinoan knoflook koriander", "hoeveelheid": 200, "eenheid": "gram", "opmerking": null},
+    {"naam": "biologische tuinkkers", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": "bakje"},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 4, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["soep", "pompoenen", "selderij", "naanbrood", "vegetarisch", "comfort food"],
+  "bereidingstijd_min": 25,
+  "bereidingswijze": "1. Verwarm de oven voor op 200°C. Snijd de tenen knoflook fijn. Verwijder de steelanzet en zaadlijsten van de jalapeño en snijd deze fijn. Snijd de vruchtgeesten in snippers en plakjes van een ½ cm. Verhit 2 el olie in de hapjespan en roerbak de knoflook en jalapeño 1 min. op middelhoog vuur. Voeg de pompoenpartjes toe en bak 2 min. mee. Voeg 1 liter water toe en verkruimel de bouillontabletten erboven. Breng aan de kook en laat op laag vuur 15 min. koken. 2. Kook ondertussen de eieren in 8 min. hard. Giet af en laat schrikken onder koud stromend water. Pel de eieren en prak fijn met een vork. Snijd de selderij fijn en meng met de rest van de olie. Breng op smaak met peper en eventueel zout. Leg de mirinaans op een rooster in het midden van de oven en bak ca. 3. Pureer de pompoensoep met de staafmixer. Breng op smaak met peper en eventueel zout. Verdeel de soep over 4 kommen, besprenkei met de selderijdolie en bestrooi met de eikruim en tuinkkers.",
+  "bron": "allerhande box"
+}

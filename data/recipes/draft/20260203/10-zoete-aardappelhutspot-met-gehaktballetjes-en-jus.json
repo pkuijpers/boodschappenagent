@@ -1,0 +1,25 @@
+{
+  "id": "zoete-aardappelhutspot-met-gehaktballetjes-en-jus",
+  "naam": "Zoete-aardappelhutspot met gehaktballetjes & jus",
+  "categorie": "vlees",
+  "basis": "aardappel",
+  "seizoenen": ["herfst", "winter"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "zoete aardappelen", "hoeveelheid": 1000, "eenheid": "gram", "opmerking": "geschild en in stukken"},
+    {"naam": "hutspotgroente", "hoeveelheid": 500, "eenheid": "gram", "opmerking": null},
+    {"naam": "biologische runderballetjes", "hoeveelheid": 12, "eenheid": "stuks", "opmerking": null},
+    {"naam": "selderij", "hoeveelheid": 20, "eenheid": "gram", "opmerking": null},
+    {"naam": "runderbouillontablet", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "gezeefde tomaten", "hoeveelheid": 125, "eenheid": "ml", "opmerking": null},
+    {"naam": "appelcompote", "hoeveelheid": 360, "eenheid": "gram", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "boter", "hoeveelheid": 50, "eenheid": "gram", "opmerking": null},
+    {"naam": "bloem", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["hutspot", "gehaktballetjes", "zoete-aardappel", "comfort-food", "traditioneel"],
+  "bereidingstijd_min": 30,
+  "bereidingswijze": "1. Schil de aardappelen en snijd in gelijke stukken. Kook de aardappelen samen met de hutspotgroente met eventueel zout in 20 min. gaar. 2. Verhit de helft van de boter in een koekenpan en bak de funderballetjes in 10 min. rondom bruin en gaar. 3. Snijd ondertussen de selderij fijn. Laat de bouillontablet oplossen in 500 ml kokend water. 4. Neem de balletjes uit de pan en houd warm onder aluminiumfolie. Roer de bloem met een garde door het dichtgebleven vet en bak 2-3 min. op hoog vuur. Voeg de bouillon toe, meng goed en laat ca. 5 min. inkoken tot een jus. Doe de balletjes terug in de pan en warm nog even mee. 5. Giet de aardappelen en hutspotgroente af en stamp met de rest van de boter met de puree-stamper tot stamppot. Schep de selderij erdoor, stamper tot stamppot. Breng op smaak met peper en eventueel zout. 6. Serveer de zoete hutspot in 4 kommen of op borden en maak er een kuiltje in. Verdeel de gehaktballen en jus erover. Laat nog de zilveruitjes uitlekken en serveer met de appelcompote apart erbij.",
+  "bron": "allerhande"
+}

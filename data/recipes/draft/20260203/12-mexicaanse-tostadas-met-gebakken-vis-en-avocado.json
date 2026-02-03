@@ -1,0 +1,26 @@
+{
+  "id": "mexicaanse-tostadas-met-gebakken-vis-en-avocado",
+  "naam": "Mexicaanse tostada's met gebakken vis & avocado",
+  "categorie": "vis",
+  "basis": "geen",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "maïs tortillawraps", "hoeveelheid": 8, "eenheid": "stuks", "opmerking": null},
+    {"naam": "tomaten", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "komkommer", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "rode Mexican salsa", "hoeveelheid": 230, "eenheid": "gram", "opmerking": "potje"},
+    {"naam": "avocado's", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": "eetrijp"},
+    {"naam": "varkenshaas", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": "sachets piccadillo"},
+    {"naam": "pangasiusfilet", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": "schalen"},
+    {"naam": "biologische rodekool", "hoeveelheid": 300, "eenheid": "gram", "opmerking": "gesneden"},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 3, "eenheid": "eetlepel", "opmerking": "arachideolie"},
+    {"naam": "bloem", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["mexicaans", "vis", "avocado", "tostada", "gezond"],
+  "bereidingstijd_min": 28,
+  "bereidingswijze": "1. Verwarm de oven voor op 180°C. Leg de wraps op met bakpapier beklede bakplaten en bestrijk met olie. Bak in ca. 8 min. krokant. 2. Was ondertussen de tomaten en komkommer en snijd in blokjes van 1 cm. Meng de blokjes met de salsa. Snijd de avocado's overlangs doormidden. Verwijder de pit en schep het vruchtvlees met een lepel uit de schil. Plet het vruchtvlees met een vork en breng royaal op smaak met peper en eventueel zout. 3. Meng de piccadillo en bloem in een diep bord. Snijd de vis in stukken van 4 cm en wentel door het piccadillo-bloemmengsel. Verhit de rest van de olie in een koekenpan en bak de vis in 3-4 min. goudbruin en gaar. 4. Verdeel de wraps over de borden. Besmeer met de avocado en verdeel achtereenvolgens de rodekool, tomaten-komkommersalsa en vis erover.",
+  "bron": "Allerhande"
+}

@@ -1,0 +1,24 @@
+{
+  "id": "steak-de-boeuf-met-franse-roerbakgroente",
+  "naam": "Steak de boeuf met Franse roerbakgroente",
+  "categorie": "vlees",
+  "basis": "geen",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "basmatirijst", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
+    {"naam": "Franse roerbak groente", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "kippenbouillontablet", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "crème fraîche light", "hoeveelheid": 125, "eenheid": "ml", "opmerking": null},
+    {"naam": "Italiaanse kruiden", "hoeveelheid": 2, "eenheid": "theelepel", "opmerking": null},
+    {"naam": "steaks de boeuf", "hoeveelheid": 4, "eenheid": "stuks", "opmerking": null},
+    {"naam": "knoflook", "hoeveelheid": 1, "eenheid": "teen", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "olie", "hoeveelheid": 4, "eenheid": "eetlepel", "opmerking": "arachide"}
+  ],
+  "tags": ["hoofdgerecht", "roerbakken", "steak", "frans"],
+  "bereidingstijd_min": 20,
+  "bereidingswijze": "1. Breng een ruime pan water aan de kook. Voeg als het water kookt de rijst en eventueel zout toe. Kook met de deksel op de pan op laag vuur in 8 min. gaar. Giet af. 2. Verhit ondertussen 2 el olie in de hapjespan en bak de roerbakgroente 8 min. op middelhoog vuur. Verkruimel de bouillontablet erboven en voeg 2 el crème fraîche en 50 ml water toe. Kook op laag vuur 5 min. stooven. 3. Meng ondertussen de olie met de Italiaanse kruiden en smeer een snufje zout en bestrijk hiermee de steaks. Verhit de grillpan zonder olie of boter en gril de steaks in 8-10 min gaar. Keer halverwege. 4. Maak ondertussen de knoflook schoon en pers. Meng erdoor boven de rest van de crème fraîche. Breng op smaak met peper. 5. Verdeel de rijst over 4 diepe borden. Schep de groente erop. Snijd het vlees in reepjes en leg op de groente. Serveer de crème fraîche apart erbij.",
+  "bron": "allerhande box"
+}

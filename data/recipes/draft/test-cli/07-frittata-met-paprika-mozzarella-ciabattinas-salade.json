@@ -1,0 +1,26 @@
+{
+  "id": "frittata-met-paprika-mozzarella-ciabattinas-salade",
+  "naam": "Frittata met paprika, mozzarella, ciabattina's & salade",
+  "categorie": "vegetarisch",
+  "basis": "geen",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "rode puntpaprika's", "hoeveelheid": 4, "eenheid": "stuks", "opmerking": null},
+    {"naam": "semi-zongedroogde tomaten", "hoeveelheid": 1, "eenheid": "pakje", "opmerking": "295 g"},
+    {"naam": "biologische buffelmozzarella", "hoeveelheid": 1, "eenheid": "bol", "opmerking": "125 g"},
+    {"naam": "oregano", "hoeveelheid": 1, "eenheid": "bakje", "opmerking": "5 g"},
+    {"naam": "eieren", "hoeveelheid": 6, "eenheid": "stuks", "opmerking": null},
+    {"naam": "kookzuivel", "hoeveelheid": 1, "eenheid": "pakje", "opmerking": "250 ml"},
+    {"naam": "ciabattina's", "hoeveelheid": 4, "eenheid": "stuks", "opmerking": null},
+    {"naam": "rucolamelange", "hoeveelheid": 1, "eenheid": "zak", "opmerking": "75 g"},
+    {"naam": "saladepittenmix", "hoeveelheid": 1, "eenheid": "zakje", "opmerking": "40 g"},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["frittata", "vegetarisch", "mozzarella", "paprika", "italiaans"],
+  "bereidingstijd_min": 20,
+  "bereidingswijze": "1. Verwarm de oven voor op 200°C. Verwijder de steel en zaadlijsten van de paprika's en snijd het vruchtvlees in dunne repen. Verhit de helft van de olie in een koekenpan en bak de paprika 5 min. 2. Snijd ondertussen de zongedroogde tomaten in kleine stukjes, de mozzarella in plakjes en de oregano fijn. Klop de eieren los met de kookzuivel, peper en eventueel zout. 3. Vet de ovenschaal in. Meng de zongedroogde tomaten en oregano met de paprika en doe in de ovenschaal. Schenk het eiermengsel erover en verdeel de mozzarella erover. Bak ca. 20 min. in de oven tot het ei gestold is. Leg ondertussen de ciabattina's op een rooster en bak de laatste 10 min. mee in de oven. 4. Meng ondertussen de sla met de pittenmix, de rest van de olie, peper en eventueel zout. Serveer de frittata met de salade en ciabattina.",
+  "bron": "aller hande box"
+}

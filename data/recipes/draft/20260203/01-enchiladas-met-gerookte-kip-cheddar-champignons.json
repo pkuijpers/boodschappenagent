@@ -1,0 +1,23 @@
+{
+  "id": "enchiladas-met-gerookte-kip-cheddar-champignons",
+  "naam": "Enchilada's met gerookte kip, cheddar & champignons",
+  "categorie": "gevogelte",
+  "basis": "brood",
+  "seizoenen": ["alle"],
+  "basis_porties": 2,
+  "ingredienten": [
+    {"naam": "Italiaanse roerbakmix groente champignons", "hoeveelheid": 800, "eenheid": "gram", "opmerking": "400 gram"},
+    {"naam": "gemalen komijn", "hoeveelheid": 5, "eenheid": "gram", "opmerking": null},
+    {"naam": "cheddar", "hoeveelheid": 60, "eenheid": "gram", "opmerking": null},
+    {"naam": "gerookte kipfiletreepjes", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": "150 gram"},
+    {"naam": "maistortilla's", "hoeveelheid": 8, "eenheid": "stuks", "opmerking": null},
+    {"naam": "hummus", "hoeveelheid": 200, "eenheid": "gram", "opmerking": null},
+    {"naam": "biologische tuinkers", "hoeveelheid": 0.5, "eenheid": "stuks", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["mexicaans", "enchiladas", "gerookte kip", "cheddar", "champignons"],
+  "bereidingstijd_min": 35,
+  "bereidingswijze": "1. Verwarm de oven voor op 200°C. Verhit de olie in een koekenpan en bak de roerbakmix groente champignons 5 min op hoog vuur. Schep regelmatig om. 2. Rasp ondertussen de cheddar. Meng de gerookte kipfiletreepjes met de groente en breng op smaak met peper. 3. Besmeer de tortilla's met de hummus en verdeel het groente-kipmengsel erover. Rol op en leg in de ovenschaal. Strooi de kaas erover en bak ca. 15 min in de oven. 4. Bestrooi de enchilada's met de tuinkers en serveer.",
+  "bron": "allerhande"
+}

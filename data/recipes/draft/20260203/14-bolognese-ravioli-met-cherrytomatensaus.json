@@ -1,0 +1,24 @@
+{
+  "id": "bolognese-ravioli-met-cherrytomatensaus",
+  "naam": "Bolognese Ravioli met Cherrytomatensaus",
+  "categorie": "vlees",
+  "basis": "pasta",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "biologische ui", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "knoflook", "hoeveelheid": 1, "eenheid": "teen", "opmerking": null},
+    {"naam": "biologische courgettes", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "pomodorini di Collina", "hoeveelheid": 425, "eenheid": "ml", "opmerking": null},
+    {"naam": "verse bolognese ravioli", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "Parmigiano Reggiano vlokken", "hoeveelheid": 90, "eenheid": "gram", "opmerking": null},
+    {"naam": "sloverijker gerooide pijnboompitten", "hoeveelheid": 50, "eenheid": "gram", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["italiaans", "ravioli", "bolognese", "pasta", "snel"],
+  "bereidingstijd_min": 15,
+  "bereidingswijze": "1. Breng een ruime pan water aan de kook. Maak de ui en de knoflook schoon en snipper fijn. Was de courgette, snijd in blokjes van 1 cm. 2. Verhit de olie in de hapjespan en fruit de ui 1 min. op middelhoog vuur. Voeg de knoflook en courgette toe en bak mee 3 min. Voeg de pomodorini toe, breng aan de kook en laat op laag vuur 7 min. stoven met de deksel op de pan. Breng op smaak met peper en eventueel zout. 3. Voeg als het water kookt de ravioli en eventueel zout toe en kook in 4 min. beetgaar. Giet de pasta af en verdeel over diepe borden, schep de saus erover en bestrooi met de kaas en pijnboompitten.",
+  "bron": "allerhande"
+}

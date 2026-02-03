@@ -1,0 +1,27 @@
+{
+  "id": "pilav-met-zilvervliesrijst-tonijn-cherrytomaatjes-aubergine",
+  "naam": "Pilav met zilvervliesrijst, tonijn, cherrytomaatjes & aubergine",
+  "categorie": "vis",
+  "basis": "rijst",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "Italiaanse roerbakmix courgette", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "ras el hanout", "hoeveelheid": 1, "eenheid": "theelepel", "opmerking": null},
+    {"naam": "biologische zilvervliesrijst", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
+    {"naam": "rozijnen", "hoeveelheid": 4, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "kippenbouillontablet", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "sjalotten", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "knoflookteen", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "cherrytomaatjes", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "aubergine", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "amandelschaafsel", "hoeveelheid": 1, "eenheid": "sachet", "opmerking": null},
+    {"naam": "tonijn in zonnebloemolie", "hoeveelheid": 320, "eenheid": "gram", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 5, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["midden-oosters", "rijstgerecht", "pilav", "tonijn", "aubergine", "cherrytomaatjes"],
+  "bereidingstijd_min": 30,
+  "bereidingswijze": "Verhit 2 el olie in de hapjespan en bak de roerbakmix, de helft van de ras el hanout, peper en eventueel zout 4 min. op middelhoog vuur. Voeg de rest rozijnen, bouillontabletten en 750 ml water toe. Breng aan de kook en laat de pilav op middelhoog vuur met de deksel op de pan in 15 min. gaarstoken koken. Roer regelmatig. Snijd ondertussen de sjalotten in halve ringen en de tenen knoflook fijn. Halveer de tomaatjes en snijd de aubergines in stukjes van ca. 1 cm. Verhit 1 el van de olie in een koekenpan en fruit het groentje en rest van de ras el hanout 2 min. op laag vuur. Voeg de knoflook, aubergine en eventueel zout toe en bak in 12 min. goudbruin en gaar. Schep regelmatig om. Bak de laatste 2 min. de tomaten mee. Verhit ondertussen een koekenpan zonder olie of boter en rooster het amandelbchaafsel in 3 min. goudbruin. Laat de tonijn uitlekken en schep door de pilav. Verdeel de pilav over 4 diepe borden en schep het auberginegesel erop. Bestrooi met het amandelbchaafsel.",
+  "bron": null
+}

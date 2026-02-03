@@ -1,0 +1,88 @@
+{
+  "batch_id": "test-cli",
+  "pdf_source": "scans/scan.pdf",
+  "processed_at": "2026-02-03T21:33:55.067193",
+  "total_pages": 10,
+  "recipes": [
+    {
+      "page": 0,
+      "file": "01-garstoof-met-gele-paprika-broccoli-basmattirijst.json",
+      "status": "accepted",
+      "recipe_id": "garstoof-met-gele-paprika-broccoli-basmattirijst",
+      "recipe_naam": "Garstoof met gele paprika, broccoli & basmatirijst",
+      "validation_errors": []
+    },
+    {
+      "page": 1,
+      "file": "02-varkenshaas-met-gevulde-ravioli-paddenstoelen-en-peultjes.json",
+      "status": "draft",
+      "recipe_id": "varkenshaas-met-gevulde-ravioli-paddenstoelen-en-peultjes",
+      "recipe_naam": "Varkenshaas met gevulde ravioli, paddenstoelen & peultjes",
+      "validation_errors": []
+    },
+    {
+      "page": 2,
+      "file": "03-italiaanse-bladerdeegstaartjes-met-worst-en-tomatensalsa.json",
+      "status": "draft",
+      "recipe_id": "italiaanse-bladerdeegstaartjes-met-worst-en-tomatensalsa",
+      "recipe_naam": "Italiaanse bladerdeegstaartjes met worst & tomatensalsa",
+      "validation_errors": []
+    },
+    {
+      "page": 3,
+      "file": "04-pappardelle-met-homemade-pestogehaktballetjes-in-tomatensaus.json",
+      "status": "draft",
+      "recipe_id": "pappardelle-met-homemade-pestogehaktballetjes-in-tomatensaus",
+      "recipe_naam": "Pappardelle met homemade pestogehaktballetjes in tomatensaus",
+      "validation_errors": []
+    },
+    {
+      "page": 4,
+      "file": "05-steak-de-boeuf-met-franse-roerbakgroente.json",
+      "status": "draft",
+      "recipe_id": "steak-de-boeuf-met-franse-roerbakgroente",
+      "recipe_naam": "Steak de boeuf met Franse roerbakgroente",
+      "validation_errors": []
+    },
+    {
+      "page": 5,
+      "file": "06-spaanse-rijstschotel-met-chorizo-en-kip.json",
+      "status": "draft",
+      "recipe_id": "spaanse-rijstschotel-met-chorizo-en-kip",
+      "recipe_naam": "Spaanse rijstschotel met chorizo en kip",
+      "validation_errors": []
+    },
+    {
+      "page": 6,
+      "file": "07-frittata-met-paprika-mozzarella-ciabattinas-salade.json",
+      "status": "draft",
+      "recipe_id": "frittata-met-paprika-mozzarella-ciabattinas-salade",
+      "recipe_naam": "Frittata met paprika, mozzarella, ciabattina's & salade",
+      "validation_errors": []
+    },
+    {
+      "page": 7,
+      "file": "08-penne-met-gehaktballetjes-en-venkel-tomatensaus.json",
+      "status": "draft",
+      "recipe_id": "penne-met-gehaktballetjes-en-venkel-tomatensaus",
+      "recipe_naam": "Penne met gehaktballetjes en venkel-tomatensaus",
+      "validation_errors": []
+    },
+    {
+      "page": 8,
+      "file": "09-zoetzure-kip-met-chinese-roerbakgroente-en-noedels.json",
+      "status": "draft",
+      "recipe_id": "zoetzure-kip-met-chinese-roerbakgroente-en-noedels",
+      "recipe_naam": "Zoetzure kip met Chinese roerbakgroente & noedels",
+      "validation_errors": []
+    },
+    {
+      "page": 9,
+      "file": "10-plaattaart-met-zoete-aardappel-rode-biet-witte-kaas.json",
+      "status": "draft",
+      "recipe_id": "plaattaart-met-zoete-aardappel-rode-biet-witte-kaas",
+      "recipe_naam": "Plaattaart met zoete aardappel, rode biet & witte kaas",
+      "validation_errors": []
+    }
+  ]
+}

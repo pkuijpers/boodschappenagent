@@ -1,0 +1,25 @@
+{
+  "id": "eigetaart-met-rauwe-ham-parmezaanse-kaas-en-rucola",
+  "naam": "Eigetaart met rauwe ham, Parmezaanse kaas & rucola",
+  "categorie": "vlees",
+  "basis": "geen",
+  "seizoenen": ["alle"],
+  "basis_porties": 2,
+  "ingredienten": [
+    {"naam": "gesneden preiringen", "hoeveelheid": 400, "eenheid": "gram", "opmerking": "2 zakken"},
+    {"naam": "bladerdeeg", "hoeveelheid": 270, "eenheid": "gram", "opmerking": "1 rol"},
+    {"naam": "coburgham", "hoeveelheid": 150, "eenheid": "gram", "opmerking": "1 pakje"},
+    {"naam": "gedroogde tijm", "hoeveelheid": 2, "eenheid": "zakjes", "opmerking": null},
+    {"naam": "eieren", "hoeveelheid": 6, "eenheid": "stuks", "opmerking": null},
+    {"naam": "Parmigiano Reggiano", "hoeveelheid": 40, "eenheid": "gram", "opmerking": "2 zakjes"},
+    {"naam": "biologische ricotta", "hoeveelheid": 250, "eenheid": "gram", "opmerking": "1 bakje"},
+    {"naam": "rucola", "hoeveelheid": 85, "eenheid": "gram", "opmerking": "1 zak"},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 0.5, "eenheid": "eetlepel", "opmerking": "arachideolie"}
+  ],
+  "tags": ["quichevorm", "hartig", "ham", "kaas"],
+  "bereidingstijd_min": 50,
+  "bereidingswijze": "Verwarm de oven voor op 200°C. Kook de prei 4 min. Giet af en laat goed uitlekken. Vet ondertussen de quichevorm in met de olie en bekleed met het bladerdeeg. Beleg de deegbodem met 2/3 van de ham en bestrooi met de tijm. Klop in een kom de eieren los. Meng de prei, kaas en ricotta erdoor. Breng op smaak met peper en eventueel zout. Verdeel het prei-mengsel over de bodem van de quichevorm. Bak de taart in het midden van de oven in ca. 35 min. goudbruin en gaar. Laat 15 min. afkoelen op een rooster. Garneer met de rest van de ham en de rucola. Serveer de rest eventueel bij de borrel of als lunch.",
+  "bron": "allerhande"
+}

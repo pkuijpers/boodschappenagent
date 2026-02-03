@@ -1,0 +1,168 @@
+{
+  "batch_id": "20260203-2",
+  "pdf_source": "scans/scan0001.pdf",
+  "processed_at": "2026-02-03T21:55:12.528504",
+  "total_pages": 20,
+  "recipes": [
+    {
+      "page": 0,
+      "file": "01-enchiladas-met-gerookte-kip-cheddar-champignons.json",
+      "status": "accepted",
+      "recipe_id": "enchiladas-met-gerookte-kip-cheddar-champignons",
+      "recipe_naam": "Enchilada's met gerookte kip, cheddar & champignons",
+      "validation_errors": []
+    },
+    {
+      "page": 1,
+      "file": "02-italiaanse-runderstoof-met-pompoen.json",
+      "status": "accepted",
+      "recipe_id": "italiaanse-runderstoof-met-pompoen",
+      "recipe_naam": "Italiaanse runderstoof met pompoen",
+      "validation_errors": []
+    },
+    {
+      "page": 2,
+      "file": "03-hollandse-rijstschotel-met-warmgerookte-zalm.json",
+      "status": "accepted",
+      "recipe_id": "hollandse-rijstschotel-met-warmgerookte-zalm",
+      "recipe_naam": "Hollandse rijstschotel met warmgerookte zalm",
+      "validation_errors": []
+    },
+    {
+      "page": 3,
+      "file": "04-noedels-met-kastanjechampignons-cashew-stukjes-als-van-kip.json",
+      "status": "accepted",
+      "recipe_id": "noedels-met-kastanjechampignons-cashew-stukjes-als-van-kip",
+      "recipe_naam": "Noedels met kastanjechampignons, cashew & stukjes als van kip",
+      "validation_errors": []
+    },
+    {
+      "page": 4,
+      "file": "05-winterse-pompoenquiche.json",
+      "status": "accepted",
+      "recipe_id": "winterse-pompoenquiche",
+      "recipe_naam": "Winterse Pompoenquiche",
+      "validation_errors": []
+    },
+    {
+      "page": 5,
+      "file": "06-bloemkool-pizzas-met-tomaat-en-paddenstoelen.json",
+      "status": "accepted",
+      "recipe_id": "bloemkool-pizzas-met-tomaat-en-paddenstoelen",
+      "recipe_naam": "Bloemkool pizza's met tomaat en paddenstoelen",
+      "validation_errors": []
+    },
+    {
+      "page": 6,
+      "file": "07-pilav-met-zilvervliesrijst-tonijn-cherrytomaatjes-aubergine.json",
+      "status": "accepted",
+      "recipe_id": "pilav-met-zilvervliesrijst-tonijn-cherrytomaatjes-aubergine",
+      "recipe_naam": "Pilav met zilvervliesrijst, tonijn, cherrytomaatjes & aubergine",
+      "validation_errors": []
+    },
+    {
+      "page": 7,
+      "file": "08-homemade-kip-kerrie-met-ananas-en-sperziebonen.json",
+      "status": "accepted",
+      "recipe_id": "homemade-kip-kerrie-met-ananas-en-sperziebonen",
+      "recipe_naam": "Homemade Kip Kerrie met Ananas & Sperziebonen",
+      "validation_errors": []
+    },
+    {
+      "page": 8,
+      "file": "09-kabeljauwburger-vlaamse-friet-en-coleslaw.json",
+      "status": "accepted",
+      "recipe_id": "kabeljauwburger-vlaamse-friet-en-coleslaw",
+      "recipe_naam": "Kabeljauwburger vlaamse friet en coleslaw",
+      "validation_errors": []
+    },
+    {
+      "page": 9,
+      "file": "10-zoete-aardappelhutspot-met-gehaktballetjes-en-jus.json",
+      "status": "accepted",
+      "recipe_id": "zoete-aardappelhutspot-met-gehaktballetjes-en-jus",
+      "recipe_naam": "Zoete-aardappelhutspot met gehaktballetjes & jus",
+      "validation_errors": []
+    },
+    {
+      "page": 10,
+      "file": "11-kip-teriyaki-met-noedels-en-groenten.json",
+      "status": "accepted",
+      "recipe_id": "kip-teriyaki-met-noedels-en-groenten",
+      "recipe_naam": "Kip Teriyaki met Noedels en Groenten",
+      "validation_errors": []
+    },
+    {
+      "page": 11,
+      "file": "12-mexicaanse-tostadas-met-gebakken-vis-en-avocado.json",
+      "status": "accepted",
+      "recipe_id": "mexicaanse-tostadas-met-gebakken-vis-en-avocado",
+      "recipe_naam": "Mexicaanse tostada's met gebakken vis & avocado",
+      "validation_errors": []
+    },
+    {
+      "page": 12,
+      "file": "13-eitaart-met-rauwe-ham-parmezaanse-kaas-rucola.json",
+      "status": "accepted",
+      "recipe_id": "eitaart-met-rauwe-ham-parmezaanse-kaas-rucola",
+      "recipe_naam": "Eitaart met rauwe ham, Parmezaanse kaas & rucola",
+      "validation_errors": []
+    },
+    {
+      "page": 13,
+      "file": "14-bolognese-ravioli-met-cherrytomatensaus.json",
+      "status": "accepted",
+      "recipe_id": "bolognese-ravioli-met-cherrytomatensaus",
+      "recipe_naam": "Bolognese Ravioli met Cherrytomatensaus",
+      "validation_errors": []
+    },
+    {
+      "page": 14,
+      "file": "15-pompoensoep-met-selderijrolie-eikruim-en-naanbrood.json",
+      "status": "accepted",
+      "recipe_id": "pompoensoep-met-selderijrolie-eikruim-en-naanbrood",
+      "recipe_naam": "Pompoensoep met selderijrolie, eikruim & naanbrood",
+      "validation_errors": []
+    },
+    {
+      "page": 15,
+      "file": "16-mexicaanse-schotel-met-kip-groente-salsa.json",
+      "status": "accepted",
+      "recipe_id": "mexicaanse-schotel-met-kip-groente-salsa",
+      "recipe_naam": "Mexicaanse schotel met kip, groente & salsa",
+      "validation_errors": []
+    },
+    {
+      "page": 16,
+      "file": "17-vis-teriyaki-met-noedels-en-cashewhoten.json",
+      "status": "accepted",
+      "recipe_id": "vis-teriyaki-met-noedels-en-cashewhoten",
+      "recipe_naam": "Vis teriyaki met noedels en cashewhoten",
+      "validation_errors": []
+    },
+    {
+      "page": 17,
+      "file": "18-thaise-roerbak-met-kip-en-homemade-satesaus.json",
+      "status": "accepted",
+      "recipe_id": "thaise-roerbak-met-kip-en-homemade-satesaus",
+      "recipe_naam": "Thaise roerbak met kip en homemade satésaus",
+      "validation_errors": []
+    },
+    {
+      "page": 18,
+      "file": "19-zuurkoolschotel-met-ham-en-crunchy-spek.json",
+      "status": "accepted",
+      "recipe_id": "zuurkoolschotel-met-ham-en-crunchy-spek",
+      "recipe_naam": "Zuurkoolschotel met ham & crunchy spek uit de oven",
+      "validation_errors": []
+    },
+    {
+      "page": 19,
+      "file": "20-rijkgevulde-italiaanse-omelet-met-groenten-en-cannellinibonen.json",
+      "status": "accepted",
+      "recipe_id": "rijkgevulde-italiaanse-omelet-met-groenten-en-cannellinibonen",
+      "recipe_naam": "Rijkgevulde Italiaanse omelet met groenten & cannellinibonen",
+      "validation_errors": []
+    }
+  ]
+}

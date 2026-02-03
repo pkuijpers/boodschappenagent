@@ -1,0 +1,26 @@
+{
+  "id": "vegastoof-met-gele-paprika-broccoli-basmattirijst",
+  "naam": "Vegastoof met gele paprika, broccoli & basmatirijst",
+  "categorie": "vegetarisch",
+  "basis": "rijst",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "biologische uien", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "karwijzaad", "hoeveelheid": 4, "eenheid": "gram", "opmerking": null},
+    {"naam": "vegetarische kipstukjes", "hoeveelheid": 320, "eenheid": "gram", "opmerking": "2x160g"},
+    {"naam": "gele paprika", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "gerookte paprikapoeder", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "passata di pomodoro", "hoeveelheid": 500, "eenheid": "gram", "opmerking": "tomatensaus"},
+    {"naam": "zak basmatirijst", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
+    {"naam": "broccoli", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "Griekse yoghurt", "hoeveelheid": 150, "eenheid": "ml", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["vegetarisch", "vooraf te maken", "stoven", "hongaars"],
+  "bereidingstijd_min": 25,
+  "bereidingswijze": "1. Snipper de uien. Verhit de olie in de hapjespan of braadpan en bak de ui het knoflook zout en de kipstukjes 5 min. op middelhoog vuur. 2. Verwijder ondertussen de steel en zaadlijsten van de paprika's en snijd het vlees in dunne repen. Voeg de paprika samen met de gerookte paprikapoeder, passata en 200 ml water toe aan de kipstukjes en breng aan de kook. Draai het vuur laag en laat op laag vuur 10 min. stoven met de deksel op de pan. Roer af en toe. Breng op smaak met peper en eventueel zout. 3. Kook ondertussen de rijst met eventueel zout in 8 min. gaar. Giet af en laat bedekt staan. Snijd de broccoli in roosjes, schil de stronk en snijd in stukjes. Kook de broccoli 4 min. Giet af en laat goed uitlekken. 4. Verdeel de rijst, broccoli en stoof over 4 borden en garneer elk bord tel yoghurt over de stoof.",
+  "bron": "allerhande box"
+}

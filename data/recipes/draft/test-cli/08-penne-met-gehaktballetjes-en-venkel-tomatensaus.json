@@ -1,0 +1,24 @@
+{
+  "id": "penne-met-gehaktballetjes-en-venkel-tomatensaus",
+  "naam": "Penne met gehaktballetjes en venkel-tomatensaus",
+  "categorie": "vlees",
+  "basis": "pasta",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "biologische uien", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "tenen knoflook", "hoeveelheid": 2, "eenheid": "teen", "opmerking": null},
+    {"naam": "groene paprika", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "venkelknollen", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "fles passata", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "tomatenpuree", "hoeveelheid": 540, "eenheid": "gram", "opmerking": null},
+    {"naam": "kippenbouillontabletten", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "schaal Hollandse gehaktballetjes", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "pak penne pasta", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
+    {"naam": "zakje biologische veldsla", "hoeveelheid": 85, "eenheid": "gram", "opmerking": null}
+  ],
+  "tags": ["pasta", "gehakt", "tomaten", "venkel", "makkelijk"],
+  "bereidingstijd_min": 30,
+  "bereidingswijze": "1. Maak de uien schoon en snijd in halve ringen. Maak de knoflook schoon en snijd fijn. Verhit 2 el olie in de hapjespan, bak de ui 5 min. op middelhoog vuur. Was ondertussen de paprika, halveer in de lengte, verwijder de zaadlijsten en snijd het vruchtvlees in reepjes. 2. Snijd de stelen en een stukje van de onderkant van de venkelknollen. Halveer de knollen in de lengte, verwijder de harde kern en snijd in reepjes. Voeg de knoflook en venkel toe aan de ui en bak 5 min. op hoog vuur. Voeg de tomatenpuree en kippenbouillontabletten toe en breng al roerend aan de kook. Laat met de deksel op de pan 10 min. op middelhoog vuur stoven. 3. Breng ondertussen een pan water aan de kook. Verhit de rest van de olie in een ruime koekenpan en bak de gehaktballetjes in 3 min. rondom bruin. Zet de paprika toe en bak op middelhoog vuur 10 min. Schep regelmatig om. 4. Voeg ondertussen als het water kookt de penne en eventueel zout toe en kook in 11 min. beetgaar. Giet af. Meng de penne door de venkel-tomatensaus en verdeel eerst de sla en dan de gehaktballetjes met paprika erover. Serveer direct.",
+  "bron": "allerhande box"
+}

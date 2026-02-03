@@ -1,0 +1,22 @@
+{
+  "id": "vis-teriyaki-met-noedels-en-cashewhoten",
+  "naam": "Vis teriyaki met noedels en cashewhoten",
+  "categorie": "vis",
+  "basis": "pasta",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "eiernoedels", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "Chinese wokgroente", "hoeveelheid": 800, "eenheid": "gram", "opmerking": "koksnaps"},
+    {"naam": "woksaus teriyaki honing", "hoeveelheid": 150, "eenheid": "gram", "opmerking": null},
+    {"naam": "pangasiusreepjes", "hoeveelheid": 400, "eenheid": "gram", "opmerking": "schalen"},
+    {"naam": "cashewnootslukjes", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": "sachet"},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "arachideolie", "hoeveelheid": 1.5, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["wok", "aziatisch", "teriyaki", "cashew", "snel"],
+  "bereidingstijd_min": 15,
+  "bereidingswijze": "1. Breng een ruime pan water aan de kook. Voeg als het water kookt de noedels toe, kook in 5 min. beetgaar of giet af. 2. Verhit ondertussen 1 el olie in de wok of hapjespan en bak de wokgroente 3 min. al omscheppend op hoog vuur. Voeg de helft van de woksaus toe en roerbak nog 1 min. Breng op smaak met peper en eventueel zout. 3. Verhit ondertussen de rest van de olie in een grote koekenpan en bak de pangasiusreepjes 5 min. al omscheppend op hoog vuur. Voeg de laatste 2 min. de rest van de woksaus toe. 4. Meng de noedels met de groente en verdeel over diepe borden. Verdeel de vis erover en bestrooi met de cashewnootslukjes.",
+  "bron": "allerhande"
+}

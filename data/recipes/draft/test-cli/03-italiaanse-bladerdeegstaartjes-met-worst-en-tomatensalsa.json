@@ -1,0 +1,24 @@
+{
+  "id": "italiaanse-bladerdeegstaartjes-met-worst-en-tomatensalsa",
+  "naam": "Italiaanse bladerdeegstaartjes met worst & tomatensalsa",
+  "categorie": "vlees",
+  "basis": "geen",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "varkensbraadworst", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": "4 stuks"},
+    {"naam": "boerensoepgroente", "hoeveelheid": 350, "eenheid": "gram", "opmerking": "1 zak"},
+    {"naam": "rol vers bladerdeeg", "hoeveelheid": 270, "eenheid": "gram", "opmerking": null},
+    {"naam": "zoete-paprikapuree", "hoeveelheid": 200, "eenheid": "gram", "opmerking": "1 potje"},
+    {"naam": "sjallot", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "peterselie", "hoeveelheid": 15, "eenheid": "gram", "opmerking": "1 zakje"},
+    {"naam": "trostomaten", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": "1 schaal"},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["italiaans", "bladerdeeg", "worst", "tomatensalsa", "hartig", "ovenschotel"],
+  "bereidingstijd_min": 50,
+  "bereidingswijze": "Verwarm de oven voor op 180°C. Haal het vel van de worsten. Verhit de olie in de hapjespan en bak het worst vlees 8 min. op hoog vuur. Druk het vlees met een houten lepel in stukjes. Voeg de boerensoepgroente toe en bak 3 min. op middelhoog vuur. Snijd het bladerdeeg in 4 gelijke rechthoekige stukken en rol deze een beetje uit in de breedte. Leg op een met bakpapier beklede bakplaat en prik de randen pm. Verdeel de paprikapuree en het gehaktmengsel erover. Bak ca. 20 min. in het midden van de oven. Snipper ondertussen de sjallot en snijd de peterselie fijn. Snijd de tomaten in kleine blokjes en meng met de sjallot en peterselie. Breng op smaak met peper en eventueel zout. Neem de taartjes uit de oven en verdeel een deel van de tomatensalsa erover. Serveer de rest erbij.",
+  "bron": "allerhande.box"
+}
