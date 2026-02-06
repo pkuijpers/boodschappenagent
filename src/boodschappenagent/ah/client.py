@@ -1,63 +1,10 @@
-"""
-Albert Heijn "Mijn Lijstjes" API Client
-
-POC implementatie voor het automatisch toevoegen van producten aan een AH lijstje.
-"""
+"""Albert Heijn "Mijn Lijstjes" API Client."""
 
 import json
-from dataclasses import dataclass
 
 import requests
 
-
-@dataclass
-class Product:
-    """AH Product data."""
-
-    id: int
-    title: str
-    brand: str
-    size: str
-    price: float
-    category: str
-    is_orderable: bool
-
-    @classmethod
-    def from_api(cls, data: dict) -> Product:
-        return cls(
-            id=data["id"],
-            title=data["title"],
-            brand=data.get("brand", ""),
-            size=data.get("salesUnitSize", ""),
-            price=data.get("priceV2", {}).get("now", {}).get("amount", 0),
-            category=data.get("category", ""),
-            is_orderable=data.get("availability", {}).get("isOrderable", False),
-        )
-
-
-@dataclass
-class FavoriteList:
-    """AH Favorite List data."""
-
-    id: str
-    name: str
-    total_items: int
-    items: list[dict]
-    products: list[Product] | None = None  # Optional: full product details
-
-    @classmethod
-    def from_api(cls, data: dict) -> FavoriteList:
-        products = None
-        if "products" in data and data["products"]:
-            products = [Product.from_api(p) for p in data["products"]]
-
-        return cls(
-            id=data["id"],
-            name=data["description"],
-            total_items=data.get("totalSize", 0),
-            items=data.get("items", []),
-            products=products,
-        )
+from boodschappenagent.ah.models import FavoriteList, Product
 
 
 class AHClient:
@@ -440,7 +387,10 @@ if __name__ == "__main__":
     import sys
 
     if len(sys.argv) < 2:
-        print("Usage: python ah_client.py <har_file> [command] [args...]")
+        print(
+            "Usage: python -m boodschappenagent.ah.client"
+            " <har_file> [command] [args...]"
+        )
         print()
         print("Commands:")
         print("  lists                    - Show all lists")
@@ -472,7 +422,7 @@ if __name__ == "__main__":
         print(f"\nProducts in '{lst.name}' ({lst.total_items} items):")
         if lst.products:
             for p in lst.products[:20]:  # Show first 20
-                print(f"  [{p.id}] {p.title} - {p.size} - €{p.price:.2f}")
+                print(f"  [{p.id}] {p.title} - {p.size} - \u20ac{p.price:.2f}")
             if len(lst.products) > 20:
                 print(f"  ... and {len(lst.products) - 20} more")
 
@@ -481,7 +431,7 @@ if __name__ == "__main__":
         products = client.search_products(query, limit=5)
         print(f"\nSearch results for '{query}':")
         for p in products:
-            print(f"  [{p.id}] {p.title} - {p.size} - €{p.price:.2f}")
+            print(f"  [{p.id}] {p.title} - {p.size} - \u20ac{p.price:.2f}")
 
     elif command == "smart":
         query = sys.argv[3] if len(sys.argv) > 3 else "melk"
@@ -492,7 +442,7 @@ if __name__ == "__main__":
             print(f"  Source: {source}")
             print(
                 f"  [{product.id}] {product.title} - {product.size} - "
-                f"€{product.price:.2f}"
+                f"\u20ac{product.price:.2f}"
             )
         else:
             print(f"\nNo results for '{query}'")
