@@ -1,62 +1,42 @@
-"""Albert Heijn "Mijn Lijstjes" API Client."""
-
-import json
+"""Albert Heijn GraphQL API Client met OAuth2 token authenticatie."""
 
 import requests
 
+from boodschappenagent.ah.auth import AHTokenManager
 from boodschappenagent.ah.models import FavoriteList, Product
 
 
 class AHClient:
-    """Client voor de Albert Heijn GraphQL API."""
+    """Client voor de Albert Heijn GraphQL API (Mobile API)."""
 
-    ENDPOINT = "https://www.ah.nl/gql"
+    ENDPOINT = "https://api.ah.nl/graphql"
 
     DEFAULT_HEADERS = {
         "Content-Type": "application/json",
-        "x-client-platform-type": "Web",
-        "x-client-name": "ah-favorites",
-        "x-client-version": "1.5.75",
-        "Origin": "https://www.ah.nl",
-        "Referer": "https://www.ah.nl/favorieten",
-        "User-Agent": (
-            "Mozilla/5.0 (X11; Linux x86_64; rv:147.0) Gecko/20100101 Firefox/147.0"
-        ),
+        "User-Agent": "Appie/8.22.3",
+        "X-Application": "AHWEBSHOP",
     }
 
-    def __init__(self, cookies: dict):
-        """
-        Initialize client with session cookies.
-
-        Args:
-            cookies: Dict met cookies (minimaal SSID nodig)
-        """
+    def __init__(self, token_manager: AHTokenManager):
+        """Initialize client with token manager for authentication."""
+        self.token_manager = token_manager
         self.session = requests.Session()
         self.session.headers.update(self.DEFAULT_HEADERS)
-        self.session.cookies.update(cookies)
 
     @classmethod
-    def from_cookie_file(cls, path: str) -> AHClient:
-        """Load client from exported cookies JSON file."""
-        with open(path) as f:
-            cookies = json.load(f)
-        return cls(cookies)
+    def from_token_file(cls, path: str | None = None) -> AHClient:
+        """Create client using stored tokens."""
+        from pathlib import Path
 
-    @classmethod
-    def from_har_file(cls, path: str) -> AHClient:
-        """Extract cookies from HAR file and create client."""
-        with open(path) as f:
-            har = json.load(f)
-
-        cookies = {}
-        for entry in har["log"]["entries"]:
-            for cookie in entry["request"].get("cookies", []):
-                cookies[cookie["name"]] = cookie["value"]
-
-        return cls(cookies)
+        token_path = Path(path) if path else None
+        return cls(AHTokenManager(token_path=token_path))
 
     def _execute(self, query: str, variables: dict, operation_name: str) -> dict:
         """Execute GraphQL query/mutation."""
+        # Ensure valid token before each request
+        token = self.token_manager.get_access_token()
+        self.session.headers["Authorization"] = f"Bearer {token}"
+
         payload = {
             "operationName": operation_name,
             "variables": variables,
@@ -96,15 +76,7 @@ class AHClient:
         return [FavoriteList.from_api(lst) for lst in data["favoriteListV2"]]
 
     def get_list_with_products(self, list_id: str) -> FavoriteList:
-        """
-        Get a specific list with full product details.
-
-        Args:
-            list_id: UUID of the list
-
-        Returns:
-            FavoriteList with products populated
-        """
+        """Get a specific list with full product details."""
         query = """
         query favoriteListWithProducts($ids: [String!]!) {
           favoriteListV2(ids: $ids) {
@@ -138,7 +110,6 @@ class AHClient:
         return FavoriteList.from_api(data["favoriteListV2"][0])
 
     # Base ingredients to extract from compound words
-    # e.g., "scharreleieren" -> "eieren"
     BASE_INGREDIENTS = [
         "eieren",
         "melk",
@@ -167,14 +138,6 @@ class AHClient:
         2. All search words appear in title
         3. Main keyword appears in title
         4. Base ingredient from compound word (e.g., "scharreleieren" -> "eieren")
-        5. Category match (e.g., both are in "Zuivel, eieren")
-
-        Args:
-            search_term: Search term to match
-            products: List of products to search in
-
-        Returns:
-            Best matching product or None
         """
         if not products:
             return None
@@ -193,18 +156,15 @@ class AHClient:
             if all(word in title_lower for word in search_words):
                 return p
 
-        # 3. Main keyword (first word or longest word) matches
+        # 3. Main keyword (longest word) matches
         main_word = max(search_words, key=len) if search_words else search_lower
         for p in products:
             if main_word in p.title.lower():
                 return p
 
         # 4. Extract base ingredient from compound words
-        # e.g., "scharreleieren" contains "eieren", "halfvolle melk" contains "melk"
         for base in self.BASE_INGREDIENTS:
-            # Check if base ingredient is in the search term
             if base in search_lower or any(base in word for word in search_words):
-                # Find products that contain this base ingredient
                 for p in products:
                     title_lower = p.title.lower()
                     if base in title_lower:
@@ -222,27 +182,18 @@ class AHClient:
         """
         Smart search: first check reference list, then fall back to API search.
 
-        Args:
-            search_term: Search term
-            reference_list_id: Optional list ID to check first (will fetch products)
-            reference_products: Optional pre-loaded products to check first
-            limit: Max results for API search fallback
-
         Returns:
             Tuple of (Product, source) where source is "reference" or "search"
         """
-        # Get reference products if list_id provided
         if reference_list_id and not reference_products:
             ref_list = self.get_list_with_products(reference_list_id)
             reference_products = ref_list.products
 
-        # Check reference list first
         if reference_products:
             match = self.find_product_in_list(search_term, reference_products)
             if match:
                 return (match, "reference")
 
-        # Fall back to API search
         results = self.search_products(search_term, limit=limit)
         if results:
             return (results[0], "search")
@@ -250,12 +201,7 @@ class AHClient:
         return (None, "not_found")
 
     def create_list(self, name: str) -> str:
-        """
-        Create a new favorite list.
-
-        Returns:
-            ID of the created list
-        """
+        """Create a new favorite list. Returns the list ID."""
         query = """
         mutation addFavoriteList($description: String!) {
           favoriteListAddV2(description: $description) {
@@ -280,16 +226,7 @@ class AHClient:
     # =========================================================================
 
     def search_products(self, query: str, limit: int = 10) -> list[Product]:
-        """
-        Search for products.
-
-        Args:
-            query: Search term
-            limit: Max number of results (default 10)
-
-        Returns:
-            List of matching products
-        """
+        """Search for products."""
         gql_query = """
         query productSearch($input: SearchProductsInput!) {
           searchProducts(input: $input) {
@@ -336,16 +273,7 @@ class AHClient:
     def add_products_to_list(
         self, list_id: str, products: list[tuple[int, int]]
     ) -> dict:
-        """
-        Add products to a favorite list.
-
-        Args:
-            list_id: UUID of the list
-            products: List of (product_id, quantity) tuples
-
-        Returns:
-            Updated list data
-        """
+        """Add products to a favorite list."""
         query = """
         mutation addProducts($id: String!, $products: [FavoriteListProductMutation!]!) {
           favoriteListProductsAddV2(id: $id, products: $products) {
@@ -383,29 +311,60 @@ class AHClient:
 # CLI voor quick testing
 # =============================================================================
 
+LOGIN_URL = (
+    "https://login.ah.nl/secure/oauth/authorize"
+    "?client_id=appie"
+    "&redirect_uri=appie://login-exit"
+    "&response_type=code"
+)
+
 if __name__ == "__main__":
     import sys
 
     if len(sys.argv) < 2:
         print(
             "Usage: python -m boodschappenagent.ah.client"
-            " <har_file> [command] [args...]"
+            " <command> [args...]"
         )
         print()
         print("Commands:")
+        print("  login <code>             - Login with authorization code")
         print("  lists                    - Show all lists")
         print("  products <list_id>       - Show products in a list")
         print("  search <query>           - Search products")
         print("  smart <query> <ref_list> - Smart search (check ref list first)")
         print("  create <name>            - Create new list")
         print("  add <list_id> <product_id> [qty]  - Add product to list")
+        print()
+        print("First-time setup:")
+        print(f"  1. Open: {LOGIN_URL}")
+        print("  2. Log in with your AH account")
+        print("  3. Copy the code from the redirect URL")
+        print("  4. Run: python -m boodschappenagent.ah.client login <code>")
         sys.exit(1)
 
-    har_file = sys.argv[1]
-    command = sys.argv[2] if len(sys.argv) > 2 else "lists"
+    command = sys.argv[1]
 
-    print(f"Loading cookies from {har_file}...")
-    client = AHClient.from_har_file(har_file)
+    if command == "login":
+        if len(sys.argv) < 3:
+            print(f"Open this URL and log in:\n  {LOGIN_URL}")
+            print("\nThen run:")
+            print("  python -m boodschappenagent.ah.client login <code>")
+            sys.exit(1)
+        auth_code = sys.argv[2]
+        token_manager = AHTokenManager()
+        token_manager.login(auth_code)
+        print("Login successful! Tokens saved.")
+        sys.exit(0)
+
+    # All other commands need authentication
+    token_manager = AHTokenManager()
+    if not token_manager.is_authenticated():
+        print("Not authenticated. Run 'login' first.")
+        print(f"  Open: {LOGIN_URL}")
+        sys.exit(1)
+
+    client = AHClient(token_manager)
 
     if command == "lists":
         lists = client.get_lists()
@@ -414,28 +373,28 @@ if __name__ == "__main__":
             print(f"  - {lst.name} ({lst.total_items} items) [{lst.id}]")
 
     elif command == "products":
-        list_id = sys.argv[3] if len(sys.argv) > 3 else None
+        list_id = sys.argv[2] if len(sys.argv) > 2 else None
         if not list_id:
             print("Usage: products <list_id>")
             sys.exit(1)
         lst = client.get_list_with_products(list_id)
         print(f"\nProducts in '{lst.name}' ({lst.total_items} items):")
         if lst.products:
-            for p in lst.products[:20]:  # Show first 20
+            for p in lst.products[:20]:
                 print(f"  [{p.id}] {p.title} - {p.size} - \u20ac{p.price:.2f}")
             if len(lst.products) > 20:
                 print(f"  ... and {len(lst.products) - 20} more")
 
     elif command == "search":
-        query = sys.argv[3] if len(sys.argv) > 3 else "melk"
+        query = sys.argv[2] if len(sys.argv) > 2 else "melk"
         products = client.search_products(query, limit=5)
         print(f"\nSearch results for '{query}':")
         for p in products:
             print(f"  [{p.id}] {p.title} - {p.size} - \u20ac{p.price:.2f}")
 
     elif command == "smart":
-        query = sys.argv[3] if len(sys.argv) > 3 else "melk"
-        ref_list = sys.argv[4] if len(sys.argv) > 4 else None
+        query = sys.argv[2] if len(sys.argv) > 2 else "melk"
+        ref_list = sys.argv[3] if len(sys.argv) > 3 else None
         product, source = client.smart_search(query, reference_list_id=ref_list)
         if product:
             print(f"\nSmart search for '{query}':")
@@ -448,14 +407,14 @@ if __name__ == "__main__":
             print(f"\nNo results for '{query}'")
 
     elif command == "create":
-        name = sys.argv[3] if len(sys.argv) > 3 else "TestAPI"
+        name = sys.argv[2] if len(sys.argv) > 2 else "TestAPI"
         list_id = client.create_list(name)
         print(f"\nCreated list '{name}' with ID: {list_id}")
 
     elif command == "add":
-        list_id = sys.argv[3]
-        product_id = int(sys.argv[4])
-        qty = int(sys.argv[5]) if len(sys.argv) > 5 else 1
+        list_id = sys.argv[2]
+        product_id = int(sys.argv[3])
+        qty = int(sys.argv[4]) if len(sys.argv) > 4 else 1
         result = client.add_products_to_list(list_id, [(product_id, qty)])
         print(
             f"\nAdded product {product_id} to list. Total items: {result['totalSize']}"

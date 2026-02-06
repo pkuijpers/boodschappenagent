@@ -4,11 +4,12 @@ Unit tests for AH Client.
 Run with: uv run pytest tests/test_ah_client.py -v
 """
 
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 
 import pytest
 
 from boodschappenagent import AHClient, FavoriteList, Product
+from boodschappenagent.ah.auth import AHTokenManager
 
 # =============================================================================
 # Fixtures
@@ -98,11 +99,12 @@ def sample_products():
 
 @pytest.fixture
 def mock_client():
-    """Create a mock AH client without actual HTTP session."""
-    with patch.object(AHClient, "__init__", lambda _self, _cookies: None):
-        client = AHClient.__new__(AHClient)
-        client.session = Mock()
-        return client
+    """Create a mock AH client without actual HTTP calls."""
+    mock_token_manager = Mock(spec=AHTokenManager)
+    mock_token_manager.get_access_token.return_value = "test-token"
+    client = AHClient(mock_token_manager)
+    client.session = Mock()
+    return client
 
 
 # =============================================================================
