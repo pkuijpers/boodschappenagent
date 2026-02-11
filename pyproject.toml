@@ -1,7 +1,7 @@
 [project]
 name = "boodschappenagent"
 version = "0.1.0"
-description = "Add your description here"
+description = "End-to-end grocery automation: van recepten naar een gevulde AH-winkelwagen"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [

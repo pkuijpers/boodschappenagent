@@ -4,41 +4,33 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Boodschappenagent ("grocery agent") is an end-to-end grocery automation system. The project is currently in POC/planning phase.
+Boodschappenagent ("grocery agent") is an end-to-end grocery automation system that automates the weekly grocery process: plan a menu, generate a shopping list, and order at Albert Heijn.
 
 ### System Components
 
-1. **Receptendatabase** — Recipe storage with ingredients, portions, seasons, and tags
-2. **Menuplanner** — Automated weekly menu suggestions based on season and variety
-3. **Voorraadbeheer** — Inventory tracking with smart restock suggestions
-4. **Boodschappenlijst-generator** — Aggregates and optimizes shopping lists
-5. **AH-integratie** — Albert Heijn integration for placing orders
+| Component | Status | Description |
+|-----------|--------|-------------|
+| Receptendatabase | Done | 30 recipes in JSON with ingredients, portions, seasons, tags |
+| Menuplanner | Done | Weekly menu with variety constraints, season logic, history |
+| Boodschappenlijst | Planned | Aggregate ingredients into optimized shopping list |
+| Voorraadbeheer | Planned | Inventory tracking with smart restock suggestions |
+| AH-integratie | POC | OAuth2 mobile API for favorites and orders |
 
 ### Development Phases
 
-1. Digitize recipes and set up database
-2. Build menu planner with portion calculation
+1. ~~Digitize recipes and set up database~~ (done)
+2. ~~Build menu planner with portion calculation~~ (done)
 3. Shopping list generator
 4. Add inventory management
 5. AH integration (after POC decision)
 
-## Integration Approaches Under Evaluation
-
-Two approaches are being evaluated for AH integration:
-
-1. **Optie B: Mijn Lijstje API** - Reverse-engineering AH's internal API to add products to a shopping list programmatically. Preferred if API endpoints are stable and accessible.
-
-2. **Optie C: Browser Automation (Playwright)** - Automating browser interactions to search and add products. Fallback option if API approach fails.
-
-## Key Technical Decisions (Pending POC Results)
+## Key Technical Decisions
 
 - **Language**: Python 3.14+
 - **Package management**: uv (use `uv` for all Python dependency and environment management)
-- **Database**: SQLite or JSON files (TBD)
-- **Frontend**: Simple web UI or CLI, with PWA for mobile access
-- **Browser automation**: Playwright (if needed for AH integration)
-- **Authentication**: Cookie-based session management (both AH approaches)
-- **Product mapping**: Ingredient-to-search-term translation with fallback strategies
+- **Data storage**: JSON files (recipes in `data/recipes/`, history in `data/history.json`)
+- **AH authentication**: OAuth2 mobile API (`api.ah.nl/mobile-auth/v1/auth/token`, client_id `appie`)
+- **AH GraphQL**: `api.ah.nl/graphql` (mobile endpoint)
 
 ## Development Workflow
 
@@ -88,29 +80,67 @@ uv run ruff format . # Format code
 ## Project Structure
 
 ```
-src/
-└── boodschappenagent/       # Main package (src-layout)
-    ├── __init__.py          # Exports: AHClient, FavoriteList, Product
-    └── ah_client.py         # AH API client
+src/boodschappenagent/
+    __init__.py              # Exports: AHClient, AHTokenManager, FavoriteList, Product
+    models/
+        __init__.py          # Exports: Recipe, Ingredient, Categorie, Basis, Seizoen
+        enums.py             # Seizoen, Categorie, Basis enums
+        ingredient.py        # Ingredient dataclass with scale()
+        recipe.py            # Recipe dataclass with scale_to_portions(), to_dict/from_dict
+    repository/
+        __init__.py          # Exports: RecipeRepository, RecipeSearch
+        recipe_repository.py # JSON load/save/delete for recipes
+        recipe_search.py     # Fluent filtering API (seizoen, categorie, tags, naam)
+    planner/
+        __init__.py          # Exports: MenuPlanner, MenuHistory, DagInput, DagPlanning, WeekMenu
+        models.py            # DagInput, DagPlanning, WeekMenu (frozen dataclasses)
+        history.py           # MenuHistory (JSON persistence for menu history)
+        menu_planner.py      # MenuPlanner (selection logic with variety + fallback)
+    utils/
+        __init__.py          # Exports: PortionCalculator
+        portion_calculator.py # Scale recipes with smart rounding per unit
+    ah/
+        __init__.py          # Exports: AHClient, AHTokenManager, FavoriteList, Product
+        auth.py              # AHTokenManager (OAuth2 token management)
+        client.py            # AHClient (GraphQL queries, product search, list management)
+        models.py            # Product, FavoriteList dataclasses
+    digitizer/
+        __init__.py          # Exports: BatchProcessor, PDFProcessor, RecipeExtractor
+        pdf_processor.py     # PDF page extraction via PyMuPDF
+        recipe_extractor.py  # Claude Vision API for recipe OCR
+        batch_processor.py   # Batch processing of recipe PDFs
+    cli/
+        digitize.py          # CLI tool for bulk recipe digitization
 
-tests/                       # Unit tests
-├── conftest.py
-├── test_ah_client.py
-└── test_10_products.py
+data/
+    recipes/                 # 30 recipes in 4 subdirectories
+        gevogelte/           # 7 chicken/poultry recipes
+        vis/                 # 5 fish recipes
+        vlees/               # 6 meat recipes
+        vegetarisch/         # 8 vegetarian recipes
+        draft/               # Unprocessed recipe batches
 
-poc-ah-lijstje/              # POC documentation
-└── API_DOCUMENTATION.md
+tests/                       # 248 unit tests
+docs/                        # Design documentation
 ```
 
-### Usage
+### Key Imports
 
 ```python
-from boodschappenagent import AHClient, Product, FavoriteList
+from boodschappenagent import AHClient, AHTokenManager, Product, FavoriteList
+from boodschappenagent.models import Recipe, Ingredient, Categorie, Basis, Seizoen
+from boodschappenagent.repository import RecipeRepository, RecipeSearch
+from boodschappenagent.planner import MenuPlanner, MenuHistory, DagInput, DagPlanning, WeekMenu
+from boodschappenagent.utils import PortionCalculator
 ```
 
-## Test Products
+## Architecture Patterns
 
-The POC uses a standard set of 10 products to evaluate both approaches: halfvolle melk, scharrelei, rundergehakt, verse spinazie, knoflook, Parmezaanse kaas, spaghetti, passata, verse basilicum, and pancetta.
+- **Frozen dataclasses** for all domain models (Recipe, Ingredient, DagInput, DagPlanning, WeekMenu)
+- **`to_dict()` / `from_dict()`** pattern for JSON serialization
+- **Fluent interface** for RecipeSearch (chained filtering)
+- **Progressive constraint relaxation** in MenuPlanner (strict → relaxed fallback)
+- **`random.Random(seed)`** for deterministic testing of random selection
 
 ## Documentation Lookup
 
