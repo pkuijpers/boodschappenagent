@@ -678,3 +678,189 @@ def _make_accepteer_args(**kwargs: str) -> type:
     import argparse
 
     return argparse.Namespace(command="accepteer", **kwargs)
+
+
+def _make_boodschappen_args(**kwargs: str) -> type:
+    """Maak args voor boodschappen command."""
+    import argparse
+
+    return argparse.Namespace(command="boodschappen", **kwargs)
+
+
+def _setup_recipes_with_ingredients(base: Path) -> Path:
+    """Maak recipes dir met recepten die echte ingrediënten hebben."""
+    recipes_dir = base / "recipes"
+    recipes_dir.mkdir()
+    recipes = [
+        Recipe(
+            id="pasta-pesto",
+            naam="Pasta Pesto",
+            categorie=Categorie.VEGETARISCH,
+            basis=Basis.PASTA,
+            seizoenen=[Seizoen.ALLE],
+            basis_porties=4,
+            ingredienten=[
+                Ingredient(naam="pasta", hoeveelheid=500, eenheid="gram"),
+                Ingredient(naam="pesto", hoeveelheid=100, eenheid="gram"),
+                Ingredient(naam="ui", hoeveelheid=1, eenheid="stuks"),
+            ],
+            bereidingstijd_min=20,
+        ),
+        Recipe(
+            id="rijst-groenten",
+            naam="Rijst Met Groenten",
+            categorie=Categorie.VEGETARISCH,
+            basis=Basis.RIJST,
+            seizoenen=[Seizoen.ALLE],
+            basis_porties=4,
+            ingredienten=[
+                Ingredient(naam="rijst", hoeveelheid=400, eenheid="gram"),
+                Ingredient(naam="ui", hoeveelheid=2, eenheid="stuks"),
+                Ingredient(naam="paprika", hoeveelheid=2, eenheid="stuks"),
+            ],
+            bereidingstijd_min=25,
+        ),
+    ]
+    for r in recipes:
+        cat_dir = recipes_dir / r.categorie.value
+        cat_dir.mkdir(exist_ok=True)
+        path = cat_dir / f"{r.id}.json"
+        path.write_text(json.dumps(r.to_dict(), ensure_ascii=False), encoding="utf-8")
+    return recipes_dir
+
+
+class TestCmdBoodschappen:
+    """Tests voor het boodschappen command."""
+
+    def test_boodschappen_geen_menu(self, tmp_path: Path) -> None:
+        from boodschappenagent.cli.menu import cmd_boodschappen
+
+        menu_path = tmp_path / "current_menu.json"
+        args = _make_boodschappen_args(
+            recipes_dir=str(tmp_path / "recipes"),
+            menu=str(menu_path),
+        )
+
+        result = cmd_boodschappen(args)
+        assert result == 1
+
+    def test_boodschappen_print_lijst(
+        self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        from boodschappenagent.cli.menu import cmd_boodschappen
+
+        recipes_dir = _setup_recipes_with_ingredients(tmp_path)
+        menu_path = tmp_path / "current_menu.json"
+        menu_data = {
+            "week_start": "2026-02-09",
+            "dagen": [
+                {"dag": 0, "recept_id": "pasta-pesto", "personen": 2},
+                {"dag": 1, "recept_id": "rijst-groenten", "personen": 2},
+                {"dag": 2, "recept_id": None, "personen": 0},
+            ],
+        }
+        menu_path.write_text(json.dumps(menu_data), encoding="utf-8")
+
+        args = _make_boodschappen_args(
+            recipes_dir=str(recipes_dir),
+            menu=str(menu_path),
+        )
+
+        result = cmd_boodschappen(args)
+
+        assert result == 0
+        output = capsys.readouterr().out
+        assert "pasta" in output.lower()
+        assert "pesto" in output.lower()
+        assert "ui" in output.lower()
+        assert "rijst" in output.lower()
+
+    def test_boodschappen_aggregeert_ingredienten(
+        self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        """Ui komt in beide recepten voor, moet geaggregeerd worden."""
+        from boodschappenagent.cli.menu import cmd_boodschappen
+
+        recipes_dir = _setup_recipes_with_ingredients(tmp_path)
+        menu_path = tmp_path / "current_menu.json"
+        menu_data = {
+            "week_start": "2026-02-09",
+            "dagen": [
+                {"dag": 0, "recept_id": "pasta-pesto", "personen": 4},
+                {"dag": 1, "recept_id": "rijst-groenten", "personen": 4},
+            ],
+        }
+        menu_path.write_text(json.dumps(menu_data), encoding="utf-8")
+
+        args = _make_boodschappen_args(
+            recipes_dir=str(recipes_dir),
+            menu=str(menu_path),
+        )
+
+        result = cmd_boodschappen(args)
+
+        assert result == 0
+        output = capsys.readouterr().out
+        # "ui" moet precies 1x voorkomen in de lijst (geaggregeerd)
+        lines = [line for line in output.split("\n") if "ui" in line.lower().split()]
+        assert len(lines) == 1
+        # 1 ui (pasta-pesto 4pers) + 2 uien (rijst-groenten 4pers) = 3
+        assert "3" in lines[0]
+
+    def test_boodschappen_schaalt_porties(
+        self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        """Recepten moeten geschaald worden naar het aantal personen."""
+        from boodschappenagent.cli.menu import cmd_boodschappen
+
+        recipes_dir = _setup_recipes_with_ingredients(tmp_path)
+        menu_path = tmp_path / "current_menu.json"
+        # Pasta pesto basis=4 porties, 500g pasta. Voor 2 personen = 250g.
+        menu_data = {
+            "week_start": "2026-02-09",
+            "dagen": [
+                {"dag": 0, "recept_id": "pasta-pesto", "personen": 2},
+            ],
+        }
+        menu_path.write_text(json.dumps(menu_data), encoding="utf-8")
+
+        args = _make_boodschappen_args(
+            recipes_dir=str(recipes_dir),
+            menu=str(menu_path),
+        )
+
+        result = cmd_boodschappen(args)
+
+        assert result == 0
+        output = capsys.readouterr().out
+        lines = [line for line in output.split("\n") if "pasta" in line.lower().split()]
+        assert len(lines) == 1
+        assert "250" in lines[0]
+
+    def test_boodschappen_skipt_vrije_dagen(
+        self, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        from boodschappenagent.cli.menu import cmd_boodschappen
+
+        recipes_dir = _setup_recipes_with_ingredients(tmp_path)
+        menu_path = tmp_path / "current_menu.json"
+        # Alleen vrije dagen
+        menu_data = {
+            "week_start": "2026-02-09",
+            "dagen": [
+                {"dag": 0, "recept_id": None, "personen": 0},
+            ],
+        }
+        menu_path.write_text(json.dumps(menu_data), encoding="utf-8")
+
+        args = _make_boodschappen_args(
+            recipes_dir=str(recipes_dir),
+            menu=str(menu_path),
+        )
+
+        result = cmd_boodschappen(args)
+
+        assert result == 0
+        output = capsys.readouterr().out
+        lower = output.lower()
+        assert "geen ingrediënten" in lower or "0 ingrediënten" in lower
