@@ -6,6 +6,7 @@ Usage:
     uv run python -m boodschappenagent.cli.menu plan --dagen ma:4,vr:3 --vrij zo
     uv run python -m boodschappenagent.cli.menu toon
     uv run python -m boodschappenagent.cli.menu vervang di
+    uv run python -m boodschappenagent.cli.menu boodschappen
     uv run python -m boodschappenagent.cli.menu accepteer
 """
 
@@ -17,11 +18,16 @@ import sys
 from datetime import date, timedelta
 from pathlib import Path
 
+from boodschappenagent.boodschappenlijst import (
+    BoodschappenlijstGenerator,
+    IngredientNormalizer,
+)
 from boodschappenagent.models import Seizoen
 from boodschappenagent.planner.history import MenuHistory
 from boodschappenagent.planner.menu_planner import MenuPlanner
 from boodschappenagent.planner.models import DagInput, DagPlanning, WeekMenu
 from boodschappenagent.repository.recipe_repository import RecipeRepository
+from boodschappenagent.utils import PortionCalculator
 
 DAG_NAMEN = {"ma": 0, "di": 1, "wo": 2, "do": 3, "vr": 4, "za": 5, "zo": 6}
 DAG_NAMEN_LANG = {
@@ -303,6 +309,55 @@ def _activate_dag(
     return WeekMenu(week_start=menu.week_start, dagen=nieuwe_dagen)
 
 
+def _print_boodschappenlijst(lijst: object) -> None:
+    """Print een boodschappenlijst als tabel."""
+    if not lijst.regels:
+        print("\nGeen ingrediënten nodig (alleen vrije dagen).")
+        return
+
+    print(f"\nBoodschappenlijst (week van {lijst.week_start})")
+    print(f"{'─' * 55}")
+    print(f"  {'Ingrediënt':<25} {'Hoeveelheid':>12} {'Eenheid':<15}")
+    print(f"{'─' * 55}")
+
+    for regel in lijst.regels:
+        naam = regel.display_naam
+        if len(naam) > 23:
+            naam = naam[:20] + "..."
+        hoeveelheid = (
+            str(int(regel.hoeveelheid))
+            if regel.hoeveelheid == int(regel.hoeveelheid)
+            else f"{regel.hoeveelheid:.1f}"
+        )
+        print(f"  {naam:<25} {hoeveelheid:>12} {regel.eenheid:<15}")
+
+    print(f"{'─' * 55}")
+    print(f"  Totaal: {len(lijst.regels)} ingrediënten")
+
+
+def cmd_boodschappen(args: argparse.Namespace) -> int:
+    """Genereer een boodschappenlijst voor het huidige weekmenu."""
+    menu_path = Path(args.menu)
+    if not menu_path.exists():
+        print("Error: geen huidig menu gevonden. Gebruik 'plan' om er een te maken.")
+        return 1
+
+    recipes = _load_recipes(args.recipes_dir)
+    recipes_by_id = {r.id: r for r in recipes}
+
+    data = json.loads(menu_path.read_text(encoding="utf-8"))
+    menu = WeekMenu.from_dict(data, recipes_by_id)
+
+    generator = BoodschappenlijstGenerator(
+        normalizer=IngredientNormalizer(),
+        portion_calculator=PortionCalculator(),
+    )
+    lijst = generator.genereer(menu)
+
+    _print_boodschappenlijst(lijst)
+    return 0
+
+
 def cmd_accepteer(args: argparse.Namespace) -> int:
     """Accepteer het huidige menu en sla op in geschiedenis."""
     menu_path = Path(args.menu)
@@ -418,6 +473,12 @@ def main() -> int:
         help="Markeer dag als vrij (niet koken)",
     )
 
+    # boodschappen command
+    subparsers.add_parser(
+        "boodschappen",
+        help="Genereer een boodschappenlijst voor het huidige menu",
+    )
+
     # accepteer command
     subparsers.add_parser(
         "accepteer",
@@ -430,6 +491,7 @@ def main() -> int:
         "plan": cmd_plan,
         "toon": cmd_toon,
         "vervang": cmd_vervang,
+        "boodschappen": cmd_boodschappen,
         "accepteer": cmd_accepteer,
     }
 
