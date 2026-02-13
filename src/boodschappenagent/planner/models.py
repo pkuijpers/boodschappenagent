@@ -65,6 +65,29 @@ class DagPlanning:
             "personen": self.personen,
         }
 
+    @classmethod
+    def from_dict(cls, data: dict[str, Any], recipes: dict[str, Recipe]) -> DagPlanning:
+        """Maak DagPlanning van dictionary.
+
+        Args:
+            data: Dictionary met dag, recept_id, personen.
+            recipes: Lookup dict van recept ID naar Recipe.
+
+        Returns:
+            DagPlanning instantie.
+
+        Raises:
+            ValueError: Als recept_id niet gevonden wordt.
+        """
+        recept_id = data["recept_id"]
+        recept = None
+        if recept_id is not None:
+            if recept_id not in recipes:
+                msg = f"recept niet gevonden: {recept_id}"
+                raise ValueError(msg)
+            recept = recipes[recept_id]
+        return cls(dag=data["dag"], recept=recept, personen=data["personen"])
+
 
 @dataclass(frozen=True)
 class WeekMenu:
@@ -101,3 +124,17 @@ class WeekMenu:
             "week_start": self.week_start,
             "dagen": [d.to_dict() for d in self.dagen],
         }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any], recipes: dict[str, Recipe]) -> WeekMenu:
+        """Maak WeekMenu van dictionary.
+
+        Args:
+            data: Dictionary met week_start en dagen.
+            recipes: Lookup dict van recept ID naar Recipe.
+
+        Returns:
+            WeekMenu instantie.
+        """
+        dagen = [DagPlanning.from_dict(d, recipes) for d in data["dagen"]]
+        return cls(week_start=data["week_start"], dagen=dagen)

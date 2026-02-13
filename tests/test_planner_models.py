@@ -114,6 +114,36 @@ class TestDagPlanning:
             dag.recept = None  # type: ignore[misc]
 
 
+class TestDagPlanningFromDict:
+    """Tests voor DagPlanning.from_dict()."""
+
+    def test_dag_met_recept(self) -> None:
+        recipe = _make_recipe("pasta-bolognese")
+        recipes = {recipe.id: recipe}
+        data = {"dag": 0, "recept_id": "pasta-bolognese", "personen": 2}
+
+        result = DagPlanning.from_dict(data, recipes)
+
+        assert result.dag == 0
+        assert result.recept == recipe
+        assert result.personen == 2
+
+    def test_dag_niet_thuis(self) -> None:
+        data = {"dag": 3, "recept_id": None, "personen": 0}
+
+        result = DagPlanning.from_dict(data, {})
+
+        assert result.dag == 3
+        assert result.recept is None
+        assert result.personen == 0
+
+    def test_onbekend_recept_id_raises(self) -> None:
+        data = {"dag": 0, "recept_id": "bestaat-niet", "personen": 2}
+
+        with pytest.raises(ValueError, match="bestaat-niet"):
+            DagPlanning.from_dict(data, {})
+
+
 class TestWeekMenu:
     """Tests voor WeekMenu dataclass."""
 
@@ -137,9 +167,7 @@ class TestWeekMenu:
 
     def test_meer_dan_7_dagen_raises(self) -> None:
         recept = _make_recipe()
-        dagen = [
-            DagPlanning(dag=i % 7, recept=recept, personen=2) for i in range(8)
-        ]
+        dagen = [DagPlanning(dag=i % 7, recept=recept, personen=2) for i in range(8)]
         with pytest.raises(ValueError, match="maximaal 7 dagen per week"):
             WeekMenu(week_start="2026-02-09", dagen=dagen)
 
@@ -190,3 +218,55 @@ class TestWeekMenu:
         menu = WeekMenu(week_start="2026-02-09", dagen=dagen)
         with pytest.raises(AttributeError):
             menu.week_start = "2026-02-16"  # type: ignore[misc]
+
+
+class TestWeekMenuFromDict:
+    """Tests voor WeekMenu.from_dict()."""
+
+    def test_volledig_weekmenu(self) -> None:
+        r1 = _make_recipe("recept-a")
+        r2 = _make_recipe("recept-b")
+        recipes = {r.id: r for r in [r1, r2]}
+        data = {
+            "week_start": "2026-02-09",
+            "dagen": [
+                {"dag": 0, "recept_id": "recept-a", "personen": 2},
+                {"dag": 1, "recept_id": "recept-b", "personen": 4},
+                {"dag": 2, "recept_id": None, "personen": 0},
+            ],
+        }
+
+        result = WeekMenu.from_dict(data, recipes)
+
+        assert result.week_start == "2026-02-09"
+        assert len(result.dagen) == 3
+        assert result.dagen[0].recept == r1
+        assert result.dagen[1].recept == r2
+        assert result.dagen[2].recept is None
+
+    def test_leeg_weekmenu(self) -> None:
+        data = {"week_start": "2026-02-09", "dagen": []}
+
+        result = WeekMenu.from_dict(data, {})
+
+        assert result.week_start == "2026-02-09"
+        assert result.dagen == []
+
+    def test_roundtrip_to_dict_from_dict(self) -> None:
+        r1 = _make_recipe("recept-roundtrip")
+        recipes = {r1.id: r1}
+        menu = WeekMenu(
+            week_start="2026-02-09",
+            dagen=[
+                DagPlanning(dag=0, recept=r1, personen=2),
+                DagPlanning(dag=1, recept=None, personen=0),
+            ],
+        )
+
+        data = menu.to_dict()
+        restored = WeekMenu.from_dict(data, recipes)
+
+        assert restored.week_start == menu.week_start
+        assert len(restored.dagen) == len(menu.dagen)
+        assert restored.dagen[0].recept.id == r1.id
+        assert restored.dagen[1].recept is None
