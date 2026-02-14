@@ -41,11 +41,17 @@ info:
   contact:
     name: Boodschappenagent
   license:
-    name: Private
+    name: LicenseRef-Private
+    identifier: LicenseRef-Private
 
 servers:
-  - url: http://localhost:8000/v1
+  - url: "{baseUrl}/v1"
     description: Local development server
+    variables:
+      baseUrl:
+        default: http://localhost:8000
+
+security: []
 
 tags:
   - name: Recipes
@@ -2263,8 +2269,7 @@ components:
           description: "Unit (gram, stuks, eetlepel, liter, naar smaak, etc.)."
           example: "stuks"
         note:
-          type: string
-          nullable: true
+          type: ["string", "null"]
           description: "Optional note (e.g., 'finely chopped', 'duo pack')."
           example: "fijngesneden"
 
@@ -2330,19 +2335,16 @@ components:
           minimum: 1
           example: 25
         instructions:
-          type: string
-          nullable: true
+          type: ["string", "null"]
           description: Cooking instructions.
           example: "1. Bring a large pot of water to a boil..."
         source:
-          type: string
-          nullable: true
+          type: ["string", "null"]
           description: "Source (e.g., 'Cookbook p. 47', 'AH Allerhande')."
           example: "AH Allerhande Box"
         last_cooked:
-          type: string
+          type: ["string", "null"]
           format: date
-          nullable: true
           readOnly: true
           description: Date the recipe was last cooked.
           example: "2026-01-15"
@@ -2382,11 +2384,9 @@ components:
           type: integer
           minimum: 1
         instructions:
-          type: string
-          nullable: true
+          type: ["string", "null"]
         source:
-          type: string
-          nullable: true
+          type: ["string", "null"]
 
     ListRecipesResponse:
       type: object
@@ -2427,13 +2427,11 @@ components:
           description: Date (YYYY-MM-DD).
           example: "2026-02-09"
         recipe_id:
-          type: string
-          nullable: true
+          type: ["string", "null"]
           description: Recipe ID (null for HelloFresh/not home).
           example: "spaanse-rijstschotel-chorizo-kip"
         recipe_display_name:
-          type: string
-          nullable: true
+          type: ["string", "null"]
           description: Recipe name.
           example: "Spaanse rijstschotel met chorizo en kip"
         recipe_category:
@@ -2447,9 +2445,8 @@ components:
         type:
           $ref: "#/components/schemas/DayType"
         last_cooked:
-          type: string
+          type: ["string", "null"]
           format: date
-          nullable: true
           description: When this recipe was last cooked.
           example: "2026-01-15"
 
@@ -2516,13 +2513,13 @@ components:
           type: integer
           example: 2
         recipe:
-          $ref: "#/components/schemas/Recipe"
-          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/Recipe"
+            - type: "null"
           description: Full recipe (null for HelloFresh/not home).
         last_cooked:
-          type: string
+          type: ["string", "null"]
           format: date
-          nullable: true
           description: When this recipe was last cooked.
 
     GenerateMenuRequest:
@@ -2676,8 +2673,7 @@ components:
         type:
           $ref: "#/components/schemas/InventoryItemType"
         current_status:
-          type: boolean
-          nullable: true
+          type: ["boolean", "null"]
           description: Current stock status (null if unknown).
           example: true
         used_in_recipes:
@@ -2775,8 +2771,7 @@ components:
             type: string
           example: ["Penne met gehaktballetjes"]
         note:
-          type: string
-          nullable: true
+          type: ["string", "null"]
           description: "Optional note (e.g., 'Weekly staple', 'Manually added')."
           example: null
 
@@ -2937,13 +2932,11 @@ components:
           type: boolean
           example: true
         expires_at:
-          type: string
+          type: ["string", "null"]
           format: date-time
-          nullable: true
           example: "2026-02-14T21:30:00Z"
         login_url:
-          type: string
-          nullable: true
+          type: ["string", "null"]
           description: Login URL (only when not logged in).
 
     AHProduct:
@@ -2981,8 +2974,7 @@ components:
           description: Search term.
           example: "spaghetti"
         reference_list_id:
-          type: string
-          nullable: true
+          type: ["string", "null"]
           description: |
             Optional: AH list ID to search in first
             (for product matching with previously ordered products).
@@ -3064,8 +3056,7 @@ components:
           description: Name for the new AH list. Default "Week X groceries".
           example: "Week 7 groceries"
         reference_list_id:
-          type: string
-          nullable: true
+          type: ["string", "null"]
           description: AH list with previously ordered products (for better matching).
           example: "ah-list-456"
 
@@ -3088,8 +3079,9 @@ components:
             - `none`: Not found
           example: "search"
         ah_product:
-          $ref: "#/components/schemas/AHProduct"
-          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/AHProduct"
+            - type: "null"
         quantity:
           type: integer
           description: Quantity ordered.
@@ -3144,13 +3136,13 @@ components:
           description: True if a recipe is planned.
           example: true
         menu_id:
-          type: string
-          nullable: true
+          type: ["string", "null"]
           description: The menu ID (null if no menu for this week).
           example: "2026-W07"
         day:
-          $ref: "#/components/schemas/MenuDay"
-          nullable: true
+          oneOf:
+            - $ref: "#/components/schemas/MenuDay"
+            - type: "null"
           description: The full day planning (null if no menu).
         previous_date:
           type: string
@@ -3219,8 +3211,7 @@ components:
           default: 3
           example: 3
         ah_reference_list_id:
-          type: string
-          nullable: true
+          type: ["string", "null"]
           description: AH list used as reference for product matching.
           example: "ah-list-456"
 
@@ -3249,8 +3240,7 @@ components:
           type: integer
           minimum: 1
         ah_reference_list_id:
-          type: string
-          nullable: true
+          type: ["string", "null"]
 
     # -----------------------------------------------------------------------
     # Error
