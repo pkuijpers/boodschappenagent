@@ -2,3 +2,8 @@
 __pycache__/
 *.pyc
 .env
+.coverage
+data/current_menu.json
+data/history.json
+data/voorraad.json
+logs/

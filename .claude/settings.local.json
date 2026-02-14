@@ -6,7 +6,18 @@
       "Bash(uv run ruff:*)",
       "Bash(uv sync:*)",
       "mcp__context7__resolve-library-id",
-      "mcp__context7__query-docs"
+      "mcp__context7__query-docs",
+      "Bash(find:*)",
+      "mcp__puppeteer__puppeteer_connect_active_tab",
+      "mcp__puppeteer__puppeteer_screenshot",
+      "Bash(uv run python:*)",
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(test:*)"
     ]
-  }
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "puppeteer"
+  ]
 }
