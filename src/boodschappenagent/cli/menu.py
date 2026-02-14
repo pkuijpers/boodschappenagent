@@ -354,6 +354,14 @@ def cmd_boodschappen(args: argparse.Namespace) -> int:
     )
     lijst = generator.genereer(menu)
 
+    if getattr(args, "filter_voorraad", False):
+        from boodschappenagent.voorraadbeheer.filter import BoodschappenlijstFilter
+        from boodschappenagent.voorraadbeheer.repository import VoorraadRepository
+
+        voorraad_repo = VoorraadRepository(Path(args.voorraad))
+        voorraad_filter = BoodschappenlijstFilter(voorraad_repo)
+        lijst = voorraad_filter.filter_op_voorraad(lijst)
+
     _print_boodschappenlijst(lijst)
     return 0
 
@@ -401,6 +409,11 @@ def main() -> int:
         "--menu",
         default="data/current_menu.json",
         help="Pad naar huidig menu bestand (standaard: data/current_menu.json)",
+    )
+    parser.add_argument(
+        "--voorraad",
+        default="data/voorraad.json",
+        help="Pad naar voorraad bestand (standaard: data/voorraad.json)",
     )
 
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -474,9 +487,15 @@ def main() -> int:
     )
 
     # boodschappen command
-    subparsers.add_parser(
+    boodschappen_parser = subparsers.add_parser(
         "boodschappen",
         help="Genereer een boodschappenlijst voor het huidige menu",
+    )
+    boodschappen_parser.add_argument(
+        "--filter-voorraad",
+        "-f",
+        action="store_true",
+        help="Filter items die op voorraad zijn en voeg verse basics toe",
     )
 
     # accepteer command
