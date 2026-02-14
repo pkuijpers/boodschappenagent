@@ -1,0 +1,3295 @@
+openapi: 3.1.0
+info:
+  title: Boodschappenagent API
+  version: v1
+  description: |
+    REST API for the Boodschappenagent (grocery agent) system: automatically plan
+    weekly menus, generate shopping lists, track inventory, and order at Albert Heijn.
+
+    ## Design Principles
+
+    This API follows the [Google API Design Guide](https://google.aip.dev):
+
+    - **Resource-oriented design**: All functionality is modeled as resources
+      with standard CRUD operations (List, Get, Create, Update, Delete).
+    - **Custom methods**: Non-CRUD operations use `POST` with `:verb` suffix
+      (e.g., `POST /v1/menus:generate`).
+    - **snake_case**: All field names use snake_case.
+    - **Pagination**: Collections support `page_size` and `page_token`.
+    - **Standard error codes**: HTTP status codes per Google API conventions.
+
+    ## Weekly Flow
+
+    The API supports the following user flow:
+
+    1. **Generate menu** — `POST /v1/menus:generate`
+    2. **Replace recipes** — `POST /v1/menus/{menu}/days/{day}:replaceRecipe`
+    3. **Shuffle entire week** — `POST /v1/menus/{menu}:shuffle`
+    4. **Inventory check** — `POST /v1/inventory:generateChecks` + `POST /v1/inventory/items:batchUpdate`
+    5. **Shopping list** — `POST /v1/shoppingLists:generate`
+    6. **Send to AH** — `POST /v1/shoppingLists/{shopping_list}:sendToAH`
+
+    ## Cooking Mode
+
+    Retrieve today's recipe: `GET /v1/today`
+
+    ## Domain Values
+
+    Category, base, and season enum values use Dutch terms to match
+    the recipe data (e.g., `vlees`, `gevogelte`, `rijst`, `winter`).
+
+  contact:
+    name: Boodschappenagent
+  license:
+    name: Private
+
+servers:
+  - url: http://localhost:8000/v1
+    description: Local development server
+
+tags:
+  - name: Recipes
+    description: Recipe database — all recipes with ingredients, seasons, and metadata.
+  - name: Menus
+    description: |
+      Weekly menus — automatically generated or manually composed.
+      Each menu contains day plans with recipes and portion counts.
+  - name: Inventory
+    description: |
+      Inventory management — track which shelf-stable and fresh staple products
+      are in stock. Generates check suggestions based on the weekly menu.
+  - name: Shopping Lists
+    description: |
+      Shopping lists — aggregated ingredients from the weekly menu,
+      filtered by inventory, with manual additions.
+  - name: AH Integration
+    description: |
+      Albert Heijn integration — OAuth2 authentication, product search,
+      list management, and sending groceries to AH.
+  - name: Today
+    description: Cooking mode — today's recipe.
+  - name: Settings
+    description: User settings.
+
+# ===========================================================================
+# Paths
+# ===========================================================================
+paths:
+
+  # =========================================================================
+  # Recipes
+  # =========================================================================
+
+  /recipes:
+    get:
+      operationId: listRecipes
+      summary: List all recipes
+      description: |
+        Returns all recipes, optionally filtered by season, category,
+        tags, or search term. Supports pagination.
+
+        Filter parameters can be combined (AND logic).
+      tags: [Recipes]
+      parameters:
+        - name: page_size
+          in: query
+          description: Maximum number of results per page.
+          schema:
+            type: integer
+            default: 50
+            maximum: 100
+        - name: page_token
+          in: query
+          description: Token for the next page (from previous response).
+          schema:
+            type: string
+        - name: filter.season
+          in: query
+          description: |
+            Filter by season. Recipes with season `alle` (all) are always included.
+          schema:
+            $ref: "#/components/schemas/Season"
+        - name: filter.category
+          in: query
+          description: Filter by category (protein source).
+          schema:
+            $ref: "#/components/schemas/Category"
+        - name: filter.base
+          in: query
+          description: Filter by carbohydrate base.
+          schema:
+            $ref: "#/components/schemas/Base"
+        - name: filter.tags
+          in: query
+          description: |
+            Filter by tags. Separate multiple tags with commas.
+            Default AND logic (recipe must have all tags).
+          schema:
+            type: string
+          example: "spaans,kip"
+        - name: filter.tags_match
+          in: query
+          description: How tags are combined.
+          schema:
+            type: string
+            enum: [all, any]
+            default: all
+        - name: search
+          in: query
+          description: |
+            Search term for fuzzy matching on recipe name.
+            Also finds recipes with small typos.
+          schema:
+            type: string
+          example: "spagheti"
+        - name: order_by
+          in: query
+          description: |
+            Sort field. Prefix with `-` for descending.
+            Default: alphabetical by display_name.
+          schema:
+            type: string
+            enum: [display_name, -display_name, prep_time_minutes, -prep_time_minutes, last_cooked, -last_cooked]
+            default: display_name
+      responses:
+        "200":
+          description: List of recipes.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListRecipesResponse"
+              example:
+                recipes:
+                  - name: "recipes/spaanse-rijstschotel-chorizo-kip"
+                    recipe_id: "spaanse-rijstschotel-chorizo-kip"
+                    display_name: "Spaanse rijstschotel met chorizo en kip"
+                    category: "gevogelte"
+                    base: "rijst"
+                    seasons: ["alle"]
+                    base_portions: 4
+                    ingredients:
+                      - ingredient_name: "notenrijst"
+                        quantity: 275
+                        unit: "gram"
+                      - ingredient_name: "cherrytomaten"
+                        quantity: 250
+                        unit: "gram"
+                      - ingredient_name: "chorizo"
+                        quantity: 100
+                        unit: "gram"
+                      - ingredient_name: "kipfiletblokjes"
+                        quantity: 1
+                        unit: "stuks"
+                        note: "duopak"
+                    tags: ["spaans", "kip"]
+                    prep_time_minutes: 25
+                    source: "AH Allerhande Box"
+                    last_cooked: "2026-01-15"
+                    times_cooked: 5
+                  - name: "recipes/spaghetti-bolognese"
+                    recipe_id: "spaghetti-bolognese"
+                    display_name: "Spaghetti Bolognese"
+                    category: "vlees"
+                    base: "pasta"
+                    seasons: ["alle"]
+                    base_portions: 2
+                    ingredients:
+                      - ingredient_name: "spaghetti"
+                        quantity: 250
+                        unit: "gram"
+                      - ingredient_name: "rundergehakt"
+                        quantity: 250
+                        unit: "gram"
+                      - ingredient_name: "passata"
+                        quantity: 400
+                        unit: "gram"
+                      - ingredient_name: "ui"
+                        quantity: 1
+                        unit: "stuks"
+                    tags: ["italiaans", "pasta"]
+                    prep_time_minutes: 30
+                    source: "Kookboek p. 12"
+                next_page_token: ""
+                total_size: 30
+
+  /recipes/{recipe_id}:
+    get:
+      operationId: getRecipe
+      summary: Get a recipe
+      description: Returns a single recipe with all details.
+      tags: [Recipes]
+      parameters:
+        - $ref: "#/components/parameters/RecipeId"
+        - name: portions
+          in: query
+          description: |
+            Optional: scale ingredients to this number of portions.
+            If omitted, base portions are used.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 12
+      responses:
+        "200":
+          description: The recipe.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Recipe"
+              example:
+                name: "recipes/spaanse-rijstschotel-chorizo-kip"
+                recipe_id: "spaanse-rijstschotel-chorizo-kip"
+                display_name: "Spaanse rijstschotel met chorizo en kip"
+                category: "gevogelte"
+                base: "rijst"
+                seasons: ["alle"]
+                base_portions: 4
+                ingredients:
+                  - ingredient_name: "notenrijst"
+                    quantity: 275
+                    unit: "gram"
+                  - ingredient_name: "paprikamix"
+                    quantity: 3
+                    unit: "stuks"
+                  - ingredient_name: "cherrytomaten"
+                    quantity: 250
+                    unit: "gram"
+                  - ingredient_name: "chorizo"
+                    quantity: 100
+                    unit: "gram"
+                  - ingredient_name: "kipfiletblokjes"
+                    quantity: 1
+                    unit: "stuks"
+                    note: "duopak"
+                  - ingredient_name: "komijn"
+                    quantity: 2
+                    unit: "stuks"
+                    note: "sachets"
+                  - ingredient_name: "peterselie"
+                    quantity: 15
+                    unit: "gram"
+                  - ingredient_name: "peper"
+                    quantity: 1
+                    unit: "naar smaak"
+                  - ingredient_name: "zout"
+                    quantity: 1
+                    unit: "naar smaak"
+                tags: ["spaans", "kip"]
+                prep_time_minutes: 25
+                instructions: "1. Breng een ruime pan water met eventueel zout aan de kook..."
+                source: "AH Allerhande Box"
+                last_cooked: "2026-01-15"
+                times_cooked: 5
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    patch:
+      operationId: updateRecipe
+      summary: Update a recipe
+      description: |
+        Update fields of an existing recipe. Only provided fields
+        are changed (merge semantics).
+      tags: [Recipes]
+      parameters:
+        - $ref: "#/components/parameters/RecipeId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RecipeUpdate"
+            example:
+              display_name: "Spaanse rijstschotel met chorizo en kip (aangepast)"
+              prep_time_minutes: 30
+              tags: ["spaans", "kip", "one-pot"]
+      responses:
+        "200":
+          description: The updated recipe.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Recipe"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      operationId: deleteRecipe
+      summary: Delete a recipe
+      tags: [Recipes]
+      parameters:
+        - $ref: "#/components/parameters/RecipeId"
+      responses:
+        "204":
+          description: Recipe deleted.
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  # =========================================================================
+  # Menus
+  # =========================================================================
+
+  /menus:
+    get:
+      operationId: listMenus
+      summary: List weekly menus
+      description: |
+        Returns saved weekly menus, sorted by date (newest first).
+        Includes both confirmed menus (in history) and draft menus.
+      tags: [Menus]
+      parameters:
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            default: 10
+            maximum: 52
+        - name: page_token
+          in: query
+          schema:
+            type: string
+        - name: filter.status
+          in: query
+          description: Filter by menu status.
+          schema:
+            type: string
+            enum: [draft, confirmed]
+      responses:
+        "200":
+          description: List of weekly menus.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListMenusResponse"
+              example:
+                menus:
+                  - name: "menus/2026-W07"
+                    menu_id: "2026-W07"
+                    week_start: "2026-02-09"
+                    status: "draft"
+                    days:
+                      - day: 0
+                        day_label: "maandag"
+                        date: "2026-02-09"
+                        recipe_id: "spaanse-rijstschotel-chorizo-kip"
+                        recipe_display_name: "Spaanse rijstschotel met chorizo en kip"
+                        recipe_category: "gevogelte"
+                        recipe_base: "rijst"
+                        portions: 2
+                        type: "recipe"
+                        last_cooked: "2026-01-15"
+                      - day: 1
+                        day_label: "dinsdag"
+                        date: "2026-02-10"
+                        type: "hellofresh"
+                        portions: 0
+                      - day: 2
+                        day_label: "woensdag"
+                        date: "2026-02-11"
+                        type: "hellofresh"
+                        portions: 0
+                      - day: 3
+                        day_label: "donderdag"
+                        date: "2026-02-12"
+                        type: "hellofresh"
+                        portions: 0
+                      - day: 4
+                        day_label: "vrijdag"
+                        date: "2026-02-13"
+                        recipe_id: "zalm-teriyaki"
+                        recipe_display_name: "Zalm teriyaki"
+                        recipe_category: "vis"
+                        recipe_base: "rijst"
+                        portions: 2
+                        type: "recipe"
+                        last_cooked: "2025-12-20"
+                      - day: 5
+                        day_label: "zaterdag"
+                        date: "2026-02-14"
+                        recipe_id: "kip-tandoori"
+                        recipe_display_name: "Kip tandoori"
+                        recipe_category: "gevogelte"
+                        recipe_base: "rijst"
+                        portions: 4
+                        type: "recipe"
+                        last_cooked: "2025-12-28"
+                      - day: 6
+                        day_label: "zondag"
+                        date: "2026-02-15"
+                        recipe_id: "moussaka"
+                        recipe_display_name: "Moussaka"
+                        recipe_category: "vlees"
+                        recipe_base: "aardappel"
+                        portions: 4
+                        type: "recipe"
+                        last_cooked: "2025-12-31"
+                next_page_token: ""
+                total_size: 1
+
+  /menus:generate:
+    post:
+      operationId: generateMenu
+      summary: Generate a weekly menu
+      description: |
+        Automatically generates a weekly menu using the MenuPlanner.
+        Takes into account:
+        - Current season
+        - Category and base variety (no repeats back-to-back)
+        - Recently cooked recipes (no repeat within 3 weeks)
+        - HelloFresh days (no recipe needed)
+        - Default portions (weekdays 2p, weekends 4p)
+      tags: [Menus]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerateMenuRequest"
+            examples:
+              standard_week:
+                summary: Standard week — 4 cooking days, 3x HelloFresh
+                value:
+                  week_start: "2026-02-09"
+                  season: "winter"
+                  days:
+                    - day: 0
+                      portions: 2
+                      type: "recipe"
+                    - day: 1
+                      type: "hellofresh"
+                    - day: 2
+                      type: "hellofresh"
+                    - day: 3
+                      type: "hellofresh"
+                    - day: 4
+                      portions: 2
+                      type: "recipe"
+                    - day: 5
+                      portions: 4
+                      type: "recipe"
+                    - day: 6
+                      portions: 4
+                      type: "recipe"
+              busy_week:
+                summary: Busy week — only weekend cooking
+                value:
+                  week_start: "2026-02-16"
+                  season: "winter"
+                  days:
+                    - day: 0
+                      type: "not_home"
+                    - day: 1
+                      type: "hellofresh"
+                    - day: 2
+                      type: "hellofresh"
+                    - day: 3
+                      type: "hellofresh"
+                    - day: 4
+                      type: "not_home"
+                    - day: 5
+                      portions: 4
+                      type: "recipe"
+                    - day: 6
+                      portions: 4
+                      type: "recipe"
+              summer_week:
+                summary: Summer week — light dishes
+                value:
+                  week_start: "2026-06-22"
+                  season: "zomer"
+                  days:
+                    - day: 0
+                      portions: 2
+                      type: "recipe"
+                    - day: 1
+                      type: "hellofresh"
+                    - day: 2
+                      type: "hellofresh"
+                    - day: 3
+                      type: "hellofresh"
+                    - day: 4
+                      portions: 2
+                      type: "recipe"
+                    - day: 5
+                      portions: 2
+                      type: "recipe"
+                    - day: 6
+                      portions: 2
+                      type: "recipe"
+      responses:
+        "200":
+          description: The generated weekly menu.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Menu"
+              example:
+                name: "menus/2026-W07"
+                menu_id: "2026-W07"
+                week_start: "2026-02-09"
+                status: "draft"
+                season: "winter"
+                days:
+                  - day: 0
+                    day_label: "maandag"
+                    date: "2026-02-09"
+                    recipe_id: "italiaanse-runderstoof-met-pompoen"
+                    recipe_display_name: "Italiaanse runderstoof met pompoen"
+                    recipe_category: "vlees"
+                    recipe_base: "aardappel"
+                    portions: 2
+                    type: "recipe"
+                    last_cooked: "2025-11-20"
+                  - day: 1
+                    day_label: "dinsdag"
+                    date: "2026-02-10"
+                    type: "hellofresh"
+                    portions: 0
+                  - day: 2
+                    day_label: "woensdag"
+                    date: "2026-02-11"
+                    type: "hellofresh"
+                    portions: 0
+                  - day: 3
+                    day_label: "donderdag"
+                    date: "2026-02-12"
+                    type: "hellofresh"
+                    portions: 0
+                  - day: 4
+                    day_label: "vrijdag"
+                    date: "2026-02-13"
+                    recipe_id: "vis-teriyaki-met-noedels-en-cashewhoten"
+                    recipe_display_name: "Vis teriyaki met noedels en cashewnoten"
+                    recipe_category: "vis"
+                    recipe_base: "pasta"
+                    portions: 2
+                    type: "recipe"
+                    last_cooked: "2025-12-06"
+                  - day: 5
+                    day_label: "zaterdag"
+                    date: "2026-02-14"
+                    recipe_id: "thaise-roerbak-met-kip-en-homemade-satesaus"
+                    recipe_display_name: "Thaise roerbak met kip en homemade satesaus"
+                    recipe_category: "gevogelte"
+                    recipe_base: "rijst"
+                    portions: 4
+                    type: "recipe"
+                    last_cooked: "2025-12-15"
+                  - day: 6
+                    day_label: "zondag"
+                    date: "2026-02-15"
+                    recipe_id: "winterse-pompoenquiche"
+                    recipe_display_name: "Winterse pompoenquiche"
+                    recipe_category: "vegetarisch"
+                    recipe_base: "brood"
+                    portions: 4
+                    type: "recipe"
+                    last_cooked: "2025-11-30"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /menus/{menu_id}:
+    get:
+      operationId: getMenu
+      summary: Get a weekly menu
+      tags: [Menus]
+      parameters:
+        - $ref: "#/components/parameters/MenuId"
+      responses:
+        "200":
+          description: The weekly menu.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Menu"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      operationId: deleteMenu
+      summary: Delete a weekly menu
+      tags: [Menus]
+      parameters:
+        - $ref: "#/components/parameters/MenuId"
+      responses:
+        "204":
+          description: Menu deleted.
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /menus/{menu_id}:shuffle:
+    post:
+      operationId: shuffleMenu
+      summary: Shuffle the entire weekly menu
+      description: |
+        Generates a completely new weekly menu to replace the current one.
+        Preserves the day configuration (portions, HelloFresh days) but selects
+        new recipes. The old proposal is overwritten.
+      tags: [Menus]
+      parameters:
+        - $ref: "#/components/parameters/MenuId"
+      responses:
+        "200":
+          description: The new weekly menu.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Menu"
+              example:
+                name: "menus/2026-W07"
+                menu_id: "2026-W07"
+                week_start: "2026-02-09"
+                status: "draft"
+                season: "winter"
+                days:
+                  - day: 0
+                    day_label: "maandag"
+                    date: "2026-02-09"
+                    recipe_id: "zuurkoolschotel-met-ham-en-crunchy-spek"
+                    recipe_display_name: "Zuurkoolschotel met ham en crunchy spek"
+                    recipe_category: "vlees"
+                    recipe_base: "aardappel"
+                    portions: 2
+                    type: "recipe"
+                    last_cooked: "2025-11-10"
+                  - day: 1
+                    day_label: "dinsdag"
+                    date: "2026-02-10"
+                    type: "hellofresh"
+                    portions: 0
+                  - day: 2
+                    day_label: "woensdag"
+                    date: "2026-02-11"
+                    type: "hellofresh"
+                    portions: 0
+                  - day: 3
+                    day_label: "donderdag"
+                    date: "2026-02-12"
+                    type: "hellofresh"
+                    portions: 0
+                  - day: 4
+                    day_label: "vrijdag"
+                    date: "2026-02-13"
+                    recipe_id: "hollandse-rijstschotel-met-warmgerookte-zalm"
+                    recipe_display_name: "Hollandse rijstschotel met warmgerookte zalm"
+                    recipe_category: "vis"
+                    recipe_base: "rijst"
+                    portions: 2
+                    type: "recipe"
+                    last_cooked: "2025-12-01"
+                  - day: 5
+                    day_label: "zaterdag"
+                    date: "2026-02-14"
+                    recipe_id: "enchiladas-met-gerookte-kip-cheddar-champignons"
+                    recipe_display_name: "Enchiladas met gerookte kip, cheddar en champignons"
+                    recipe_category: "gevogelte"
+                    recipe_base: "brood"
+                    portions: 4
+                    type: "recipe"
+                    last_cooked: "2025-10-20"
+                  - day: 6
+                    day_label: "zondag"
+                    date: "2026-02-15"
+                    recipe_id: "pompoensoep-met-selderijrolie-eikruim-en-naanbrood"
+                    recipe_display_name: "Pompoensoep met selderijrolie, eikruim en naanbrood"
+                    recipe_category: "vegetarisch"
+                    recipe_base: "brood"
+                    portions: 4
+                    type: "recipe"
+                    last_cooked: "2025-11-25"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /menus/{menu_id}:confirm:
+    post:
+      operationId: confirmMenu
+      summary: Confirm the weekly menu
+      description: |
+        Confirms the weekly menu and saves it to the menu history.
+        After confirmation, the recipes are included in the "recently cooked"
+        calculation for future menu generation.
+      tags: [Menus]
+      parameters:
+        - $ref: "#/components/parameters/MenuId"
+      responses:
+        "200":
+          description: The confirmed menu.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Menu"
+              example:
+                name: "menus/2026-W07"
+                menu_id: "2026-W07"
+                week_start: "2026-02-09"
+                status: "confirmed"
+                season: "winter"
+                days:
+                  - day: 0
+                    day_label: "maandag"
+                    date: "2026-02-09"
+                    recipe_id: "italiaanse-runderstoof-met-pompoen"
+                    recipe_display_name: "Italiaanse runderstoof met pompoen"
+                    recipe_category: "vlees"
+                    recipe_base: "aardappel"
+                    portions: 2
+                    type: "recipe"
+                    last_cooked: "2026-02-09"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: Menu is already confirmed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                code: 409
+                status: "ALREADY_EXISTS"
+                message: "Menu 2026-W07 is already confirmed."
+
+  # -------------------------------------------------------------------------
+  # Menu Days
+  # -------------------------------------------------------------------------
+
+  /menus/{menu_id}/days/{day}:
+    get:
+      operationId: getMenuDay
+      summary: Get day planning
+      description: |
+        Returns the planning for a specific day, including the full recipe
+        with ingredients (scaled to the specified number of portions).
+      tags: [Menus]
+      parameters:
+        - $ref: "#/components/parameters/MenuId"
+        - $ref: "#/components/parameters/DayNumber"
+      responses:
+        "200":
+          description: The day planning with full recipe details.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MenuDay"
+              examples:
+                recipe_day:
+                  summary: Day with recipe
+                  value:
+                    name: "menus/2026-W07/days/0"
+                    day: 0
+                    day_label: "maandag"
+                    date: "2026-02-09"
+                    type: "recipe"
+                    portions: 2
+                    recipe:
+                      name: "recipes/italiaanse-runderstoof-met-pompoen"
+                      recipe_id: "italiaanse-runderstoof-met-pompoen"
+                      display_name: "Italiaanse runderstoof met pompoen"
+                      category: "vlees"
+                      base: "aardappel"
+                      seasons: ["herfst", "winter"]
+                      base_portions: 2
+                      ingredients:
+                        - ingredient_name: "runderstoofvlees"
+                          quantity: 300
+                          unit: "gram"
+                        - ingredient_name: "pompoen"
+                          quantity: 300
+                          unit: "gram"
+                        - ingredient_name: "passata"
+                          quantity: 400
+                          unit: "gram"
+                        - ingredient_name: "ui"
+                          quantity: 1
+                          unit: "stuks"
+                      tags: ["italiaans", "stoofgerecht"]
+                      prep_time_minutes: 90
+                      instructions: "1. Snijd het vlees in blokjes..."
+                      source: "Kookboek p. 34"
+                    last_cooked: "2025-11-20"
+                hellofresh_day:
+                  summary: HelloFresh day
+                  value:
+                    name: "menus/2026-W07/days/1"
+                    day: 1
+                    day_label: "dinsdag"
+                    date: "2026-02-10"
+                    type: "hellofresh"
+                    portions: 0
+                    recipe: null
+                    last_cooked: null
+                not_home_day:
+                  summary: Not home
+                  value:
+                    name: "menus/2026-W07/days/4"
+                    day: 4
+                    day_label: "vrijdag"
+                    date: "2026-02-13"
+                    type: "not_home"
+                    portions: 0
+                    recipe: null
+                    last_cooked: null
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    patch:
+      operationId: updateMenuDay
+      summary: Update day planning
+      description: |
+        Change the number of portions or the day type.
+        Use `:replaceRecipe` or `:setRecipe` to change the recipe itself.
+      tags: [Menus]
+      parameters:
+        - $ref: "#/components/parameters/MenuId"
+        - $ref: "#/components/parameters/DayNumber"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateMenuDayRequest"
+            examples:
+              change_portions:
+                summary: Change portions
+                value:
+                  portions: 4
+              to_hellofresh:
+                summary: Mark as HelloFresh day
+                value:
+                  type: "hellofresh"
+              to_not_home:
+                summary: Mark as not home
+                value:
+                  type: "not_home"
+      responses:
+        "200":
+          description: The updated day planning.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MenuDay"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /menus/{menu_id}/days/{day}:replaceRecipe:
+    post:
+      operationId: replaceMenuDayRecipe
+      summary: Replace the recipe for a day
+      description: |
+        Lets the MenuPlanner choose a new recipe for this day.
+        Takes into account variety relative to neighboring days
+        and the rest of the weekly menu.
+      tags: [Menus]
+      parameters:
+        - $ref: "#/components/parameters/MenuId"
+        - $ref: "#/components/parameters/DayNumber"
+      responses:
+        "200":
+          description: The day planning with the new recipe.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MenuDay"
+              example:
+                name: "menus/2026-W07/days/0"
+                day: 0
+                day_label: "maandag"
+                date: "2026-02-09"
+                type: "recipe"
+                portions: 2
+                recipe:
+                  name: "recipes/penne-gehaktballetjes-venkel-tomatensaus"
+                  recipe_id: "penne-gehaktballetjes-venkel-tomatensaus"
+                  display_name: "Penne met gehaktballetjes en venkel-tomatensaus"
+                  category: "vlees"
+                  base: "pasta"
+                  seasons: ["alle"]
+                  base_portions: 2
+                  ingredients:
+                    - ingredient_name: "penne"
+                      quantity: 250
+                      unit: "gram"
+                    - ingredient_name: "rundergehakt"
+                      quantity: 250
+                      unit: "gram"
+                    - ingredient_name: "venkelknol"
+                      quantity: 1
+                      unit: "stuks"
+                    - ingredient_name: "passata"
+                      quantity: 400
+                      unit: "gram"
+                  tags: ["italiaans", "pasta"]
+                  prep_time_minutes: 35
+                  source: "Kookboek p. 18"
+                last_cooked: "2025-10-15"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /menus/{menu_id}/days/{day}:setRecipe:
+    post:
+      operationId: setMenuDayRecipe
+      summary: Manually set a recipe for a day
+      description: |
+        Set a specific recipe for this day. Use this when the user picks
+        a recipe from the recipe picker (instead of the automatic replacement).
+      tags: [Menus]
+      parameters:
+        - $ref: "#/components/parameters/MenuId"
+        - $ref: "#/components/parameters/DayNumber"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SetRecipeRequest"
+            example:
+              recipe_id: "spaghetti-bolognese"
+              portions: 2
+      responses:
+        "200":
+          description: The day planning with the chosen recipe.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MenuDay"
+              example:
+                name: "menus/2026-W07/days/0"
+                day: 0
+                day_label: "maandag"
+                date: "2026-02-09"
+                type: "recipe"
+                portions: 2
+                recipe:
+                  name: "recipes/spaghetti-bolognese"
+                  recipe_id: "spaghetti-bolognese"
+                  display_name: "Spaghetti Bolognese"
+                  category: "vlees"
+                  base: "pasta"
+                  seasons: ["alle"]
+                  base_portions: 2
+                  ingredients:
+                    - ingredient_name: "spaghetti"
+                      quantity: 250
+                      unit: "gram"
+                    - ingredient_name: "rundergehakt"
+                      quantity: 250
+                      unit: "gram"
+                    - ingredient_name: "passata"
+                      quantity: 400
+                      unit: "gram"
+                    - ingredient_name: "ui"
+                      quantity: 1
+                      unit: "stuks"
+                  tags: ["italiaans", "pasta"]
+                  prep_time_minutes: 30
+                  source: "Kookboek p. 12"
+                last_cooked: "2025-12-20"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  # =========================================================================
+  # Inventory
+  # =========================================================================
+
+  /inventory/items:
+    get:
+      operationId: listInventoryItems
+      summary: List all inventory items
+      description: |
+        Returns all tracked inventory items, optionally filtered by type or stock status.
+      tags: [Inventory]
+      parameters:
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            default: 100
+            maximum: 200
+        - name: page_token
+          in: query
+          schema:
+            type: string
+        - name: filter.type
+          in: query
+          description: Filter by inventory item type.
+          schema:
+            $ref: "#/components/schemas/InventoryItemType"
+        - name: filter.in_stock
+          in: query
+          description: Filter by stock status.
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: List of inventory items.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListInventoryItemsResponse"
+              example:
+                items:
+                  - name: "inventory/items/melk"
+                    item_name: "melk"
+                    type: "vers_basis"
+                    in_stock: true
+                    last_checked: "2026-02-07"
+                  - name: "inventory/items/eieren"
+                    item_name: "eieren"
+                    type: "vers_basis"
+                    in_stock: false
+                    last_checked: "2026-02-07"
+                  - name: "inventory/items/pasta"
+                    item_name: "pasta"
+                    type: "houdbaar"
+                    in_stock: true
+                    last_checked: "2026-02-01"
+                  - name: "inventory/items/passata"
+                    item_name: "passata"
+                    type: "houdbaar"
+                    in_stock: true
+                    last_checked: "2026-01-25"
+                  - name: "inventory/items/rijst"
+                    item_name: "rijst"
+                    type: "houdbaar"
+                    in_stock: false
+                    last_checked: "2026-02-07"
+                next_page_token: ""
+                total_size: 45
+
+    post:
+      operationId: createInventoryItem
+      summary: Create an inventory item
+      tags: [Inventory]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateInventoryItemRequest"
+            example:
+              item_name: "kokosmelk"
+              type: "houdbaar"
+              in_stock: true
+      responses:
+        "201":
+          description: The created item.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InventoryItem"
+              example:
+                name: "inventory/items/kokosmelk"
+                item_name: "kokosmelk"
+                type: "houdbaar"
+                in_stock: true
+                last_checked: "2026-02-14"
+        "409":
+          description: Item already exists.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                code: 409
+                status: "ALREADY_EXISTS"
+                message: "Inventory item 'kokosmelk' already exists."
+
+  /inventory/items/{item_name}:
+    get:
+      operationId: getInventoryItem
+      summary: Get an inventory item
+      tags: [Inventory]
+      parameters:
+        - $ref: "#/components/parameters/InventoryItemName"
+      responses:
+        "200":
+          description: The inventory item.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InventoryItem"
+              example:
+                name: "inventory/items/pasta"
+                item_name: "pasta"
+                type: "houdbaar"
+                in_stock: true
+                last_checked: "2026-02-01"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    patch:
+      operationId: updateInventoryItem
+      summary: Update an inventory item
+      tags: [Inventory]
+      parameters:
+        - $ref: "#/components/parameters/InventoryItemName"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateInventoryItemRequest"
+            examples:
+              in_stock:
+                summary: Mark as in stock
+                value:
+                  in_stock: true
+              out_of_stock:
+                summary: Mark as out of stock
+                value:
+                  in_stock: false
+      responses:
+        "200":
+          description: The updated item.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InventoryItem"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      operationId: deleteInventoryItem
+      summary: Delete an inventory item
+      tags: [Inventory]
+      parameters:
+        - $ref: "#/components/parameters/InventoryItemName"
+      responses:
+        "204":
+          description: Item deleted.
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /inventory:generateChecks:
+    post:
+      operationId: generateInventoryChecks
+      summary: Generate inventory check suggestions
+      description: |
+        Generates a sorted list of suggestions for the inventory check,
+        based on the weekly menu and the season.
+
+        Priorities:
+        - **high**: Fresh staple products (always check)
+        - **medium**: Shelf-stable products used in the weekly menu
+        - **low**: Seasonal products
+      tags: [Inventory]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerateChecksRequest"
+            example:
+              menu_id: "2026-W07"
+              season: "winter"
+      responses:
+        "200":
+          description: List of check suggestions.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerateChecksResponse"
+              example:
+                checks:
+                  - item_name: "melk"
+                    reason: "Fresh staple — check weekly"
+                    priority: "high"
+                    type: "vers_basis"
+                    current_status: true
+                  - item_name: "eieren"
+                    reason: "Fresh staple — check weekly"
+                    priority: "high"
+                    type: "vers_basis"
+                    current_status: false
+                  - item_name: "boter"
+                    reason: "Fresh staple — check weekly"
+                    priority: "high"
+                    type: "vers_basis"
+                    current_status: true
+                  - item_name: "kaas"
+                    reason: "Fresh staple — check weekly"
+                    priority: "high"
+                    type: "vers_basis"
+                    current_status: true
+                  - item_name: "passata"
+                    reason: "Used in weekly menu"
+                    priority: "medium"
+                    type: "houdbaar"
+                    current_status: true
+                    used_in_recipes:
+                      - "Italiaanse runderstoof met pompoen"
+                      - "Penne met gehaktballetjes en venkel-tomatensaus"
+                  - item_name: "rijst"
+                    reason: "Used in weekly menu"
+                    priority: "medium"
+                    type: "houdbaar"
+                    current_status: false
+                    used_in_recipes:
+                      - "Thaise roerbak met kip en homemade satesaus"
+                  - item_name: "pompoen"
+                    reason: "Seasonal (winter) — check stock"
+                    priority: "low"
+                    type: "houdbaar"
+                    current_status: null
+                total_size: 7
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /inventory/items:batchUpdate:
+    post:
+      operationId: batchUpdateInventoryItems
+      summary: Batch update inventory status
+      description: |
+        Update multiple inventory items at once. Intended for processing
+        answers to the inventory check (Yes/No per item).
+      tags: [Inventory]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BatchUpdateInventoryRequest"
+            example:
+              updates:
+                - item_name: "melk"
+                  in_stock: true
+                - item_name: "eieren"
+                  in_stock: false
+                - item_name: "boter"
+                  in_stock: true
+                - item_name: "kaas"
+                  in_stock: true
+                - item_name: "passata"
+                  in_stock: true
+                - item_name: "rijst"
+                  in_stock: false
+      responses:
+        "200":
+          description: The updated items.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BatchUpdateInventoryResponse"
+              example:
+                updated_items:
+                  - name: "inventory/items/melk"
+                    item_name: "melk"
+                    type: "vers_basis"
+                    in_stock: true
+                    last_checked: "2026-02-14"
+                  - name: "inventory/items/eieren"
+                    item_name: "eieren"
+                    type: "vers_basis"
+                    in_stock: false
+                    last_checked: "2026-02-14"
+                  - name: "inventory/items/boter"
+                    item_name: "boter"
+                    type: "vers_basis"
+                    in_stock: true
+                    last_checked: "2026-02-14"
+                  - name: "inventory/items/kaas"
+                    item_name: "kaas"
+                    type: "vers_basis"
+                    in_stock: true
+                    last_checked: "2026-02-14"
+                  - name: "inventory/items/passata"
+                    item_name: "passata"
+                    type: "houdbaar"
+                    in_stock: true
+                    last_checked: "2026-02-14"
+                  - name: "inventory/items/rijst"
+                    item_name: "rijst"
+                    type: "houdbaar"
+                    in_stock: false
+                    last_checked: "2026-02-14"
+                total_updated: 6
+
+  # =========================================================================
+  # Shopping Lists
+  # =========================================================================
+
+  /shoppingLists:
+    get:
+      operationId: listShoppingLists
+      summary: List shopping lists
+      tags: [Shopping Lists]
+      parameters:
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            default: 10
+            maximum: 52
+        - name: page_token
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of shopping lists.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListShoppingListsResponse"
+              example:
+                shopping_lists:
+                  - name: "shoppingLists/2026-W07"
+                    list_id: "2026-W07"
+                    week_start: "2026-02-09"
+                    total_items: 23
+                    status: "draft"
+                    create_time: "2026-02-14T19:30:00Z"
+                next_page_token: ""
+                total_size: 1
+
+  /shoppingLists:generate:
+    post:
+      operationId: generateShoppingList
+      summary: Generate a shopping list
+      description: |
+        Generates a shopping list based on:
+        1. Ingredients from the weekly menu (scaled to portions)
+        2. Fresh staple products that are out of stock
+        3. Shelf-stable products that are out of stock
+
+        Ingredients are:
+        - Normalized (synonyms, units)
+        - Aggregated (e.g., "2x 200g ground beef" becomes "400g ground beef")
+        - Rounded to logical packaging sizes
+        - Filtered by inventory status
+      tags: [Shopping Lists]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerateShoppingListRequest"
+            example:
+              menu_id: "2026-W07"
+              include_fresh_basics: true
+      responses:
+        "200":
+          description: The generated shopping list.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShoppingList"
+              example:
+                name: "shoppingLists/2026-W07"
+                list_id: "2026-W07"
+                week_start: "2026-02-09"
+                status: "draft"
+                create_time: "2026-02-14T19:30:00Z"
+                sections:
+                  - section_name: "Meat & fish"
+                    items:
+                      - item_id: "item-001"
+                        ingredient_name: "runderstoofvlees"
+                        quantity: 300
+                        unit: "gram"
+                        checked: false
+                        source_recipes: ["Italiaanse runderstoof met pompoen"]
+                      - item_id: "item-002"
+                        ingredient_name: "rundergehakt"
+                        quantity: 250
+                        unit: "gram"
+                        checked: false
+                        source_recipes: ["Penne met gehaktballetjes"]
+                      - item_id: "item-003"
+                        ingredient_name: "kipfilet"
+                        quantity: 400
+                        unit: "gram"
+                        checked: false
+                        source_recipes: ["Thaise roerbak met kip"]
+                  - section_name: "Dairy"
+                    items:
+                      - item_id: "item-010"
+                        ingredient_name: "eieren"
+                        quantity: 6
+                        unit: "stuks"
+                        checked: false
+                        source_recipes: []
+                        note: "Weekly staple"
+                  - section_name: "Produce"
+                    items:
+                      - item_id: "item-020"
+                        ingredient_name: "pompoen"
+                        quantity: 300
+                        unit: "gram"
+                        checked: false
+                        source_recipes: ["Italiaanse runderstoof met pompoen"]
+                      - item_id: "item-021"
+                        ingredient_name: "ui"
+                        quantity: 4
+                        unit: "stuks"
+                        checked: false
+                        source_recipes:
+                          - "Italiaanse runderstoof met pompoen"
+                          - "Penne met gehaktballetjes"
+                          - "Thaise roerbak met kip"
+                  - section_name: "Shelf-stable"
+                    items:
+                      - item_id: "item-030"
+                        ingredient_name: "rijst"
+                        quantity: 500
+                        unit: "gram"
+                        checked: false
+                        source_recipes: ["Thaise roerbak met kip"]
+                        note: "Out of stock"
+                  - section_name: "Manually added"
+                    items: []
+                total_items: 23
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /shoppingLists/{list_id}:
+    get:
+      operationId: getShoppingList
+      summary: Get a shopping list
+      tags: [Shopping Lists]
+      parameters:
+        - $ref: "#/components/parameters/ShoppingListId"
+      responses:
+        "200":
+          description: The shopping list.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShoppingList"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      operationId: deleteShoppingList
+      summary: Delete a shopping list
+      tags: [Shopping Lists]
+      parameters:
+        - $ref: "#/components/parameters/ShoppingListId"
+      responses:
+        "204":
+          description: List deleted.
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /shoppingLists/{list_id}/items:
+    post:
+      operationId: addShoppingListItem
+      summary: Add an item manually
+      description: |
+        Add a product manually to the shopping list.
+        Appears in the "Manually added" section.
+      tags: [Shopping Lists]
+      parameters:
+        - $ref: "#/components/parameters/ShoppingListId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddShoppingListItemRequest"
+            example:
+              ingredient_name: "avocado"
+              quantity: 2
+              unit: "stuks"
+      responses:
+        "201":
+          description: The added item.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShoppingListItem"
+              example:
+                item_id: "item-040"
+                ingredient_name: "avocado"
+                quantity: 2
+                unit: "stuks"
+                checked: false
+                source_recipes: []
+                note: "Manually added"
+
+  /shoppingLists/{list_id}/items/{item_id}:
+    patch:
+      operationId: updateShoppingListItem
+      summary: Update an item
+      description: |
+        Change the quantity or mark as checked.
+        Checked items are not included when sending to AH.
+      tags: [Shopping Lists]
+      parameters:
+        - $ref: "#/components/parameters/ShoppingListId"
+        - $ref: "#/components/parameters/ShoppingListItemId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateShoppingListItemRequest"
+            examples:
+              check_off:
+                summary: Check off item (already at home)
+                value:
+                  checked: true
+              change_quantity:
+                summary: Change quantity
+                value:
+                  quantity: 500
+      responses:
+        "200":
+          description: The updated item.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShoppingListItem"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      operationId: deleteShoppingListItem
+      summary: Remove an item from the list
+      tags: [Shopping Lists]
+      parameters:
+        - $ref: "#/components/parameters/ShoppingListId"
+        - $ref: "#/components/parameters/ShoppingListItemId"
+      responses:
+        "204":
+          description: Item removed.
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /shoppingLists/{list_id}:sendToAH:
+    post:
+      operationId: sendShoppingListToAH
+      summary: Send shopping list to Albert Heijn
+      description: |
+        For each unchecked item on the shopping list, finds the best matching
+        AH product and adds it to an AH favorites list.
+
+        Matching strategy per item:
+        1. Search in reference list (previously ordered products)
+        2. Search via AH product search API
+        3. Mark as "not found" if no match
+
+        Returns a report with the result per item.
+      tags: [Shopping Lists]
+      parameters:
+        - $ref: "#/components/parameters/ShoppingListId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SendToAHRequest"
+            example:
+              ah_list_name: "Week 7 groceries"
+              reference_list_id: "existing-ah-list-id-123"
+      responses:
+        "200":
+          description: Result of the AH integration.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SendToAHResponse"
+              example:
+                ah_list_id: "new-ah-list-id-456"
+                ah_list_name: "Week 7 groceries"
+                total_items: 23
+                matched: 21
+                not_found: 2
+                results:
+                  - ingredient_name: "runderstoofvlees"
+                    status: "matched"
+                    source: "search"
+                    ah_product:
+                      product_id: 12345
+                      title: "AH Runderstoofvlees"
+                      brand: "AH"
+                      size: "400 g"
+                      price: 5.99
+                    quantity: 1
+                  - ingredient_name: "eieren"
+                    status: "matched"
+                    source: "reference"
+                    ah_product:
+                      product_id: 67890
+                      title: "AH Scharreleieren"
+                      brand: "AH"
+                      size: "10 stuks"
+                      price: 3.49
+                    quantity: 1
+                  - ingredient_name: "venkelknol"
+                    status: "not_found"
+                    source: "none"
+                    ah_product: null
+                    quantity: 0
+        "401":
+          description: Not logged in to Albert Heijn.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                code: 401
+                status: "UNAUTHENTICATED"
+                message: "Not logged in to Albert Heijn. Use POST /v1/ah:login."
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  # =========================================================================
+  # AH Integration
+  # =========================================================================
+
+  /ah:login:
+    post:
+      operationId: ahLogin
+      summary: Log in to Albert Heijn
+      description: |
+        Exchange an OAuth2 authorization code for access and refresh tokens.
+
+        Step 1: Open the login URL in a browser:
+        ```
+        https://login.ah.nl/secure/oauth/authorize?client_id=appie&redirect_uri=appie://login-exit&response_type=code
+        ```
+
+        Step 2: Log in with your AH account. After redirect, copy the `code`
+        parameter from the URL.
+
+        Step 3: Send the code to this endpoint.
+
+        Tokens are automatically refreshed (valid ~2 hours, auto-refresh).
+      tags: [AH Integration]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AHLoginRequest"
+            example:
+              authorization_code: "abc123def456"
+      responses:
+        "200":
+          description: Login successful.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AHLoginResponse"
+              example:
+                authenticated: true
+                expires_at: "2026-02-14T21:30:00Z"
+                message: "Login successful. Tokens saved."
+        "400":
+          description: Invalid authorization code.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                code: 400
+                status: "INVALID_ARGUMENT"
+                message: "Invalid or expired authorization code."
+
+  /ah/status:
+    get:
+      operationId: getAHStatus
+      summary: Check AH authentication status
+      description: Checks whether valid AH tokens are present.
+      tags: [AH Integration]
+      responses:
+        "200":
+          description: Authentication status.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AHStatusResponse"
+              examples:
+                logged_in:
+                  summary: Logged in
+                  value:
+                    authenticated: true
+                    expires_at: "2026-02-14T21:30:00Z"
+                not_logged_in:
+                  summary: Not logged in
+                  value:
+                    authenticated: false
+                    expires_at: null
+                    login_url: "https://login.ah.nl/secure/oauth/authorize?client_id=appie&redirect_uri=appie://login-exit&response_type=code"
+
+  /ah/products:search:
+    post:
+      operationId: searchAHProducts
+      summary: Search AH products
+      description: |
+        Search products in the Albert Heijn catalog.
+        Optionally search in a reference list first (previously ordered products).
+      tags: [AH Integration]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SearchAHProductsRequest"
+            example:
+              query: "spaghetti"
+              limit: 5
+      responses:
+        "200":
+          description: Search results.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchAHProductsResponse"
+              example:
+                products:
+                  - product_id: 11111
+                    title: "AH Spaghetti"
+                    brand: "AH"
+                    size: "500 g"
+                    price: 0.89
+                    category: "Pasta, rijst en wereldkeuken"
+                    is_orderable: true
+                  - product_id: 22222
+                    title: "De Cecco Spaghetti No.12"
+                    brand: "De Cecco"
+                    size: "500 g"
+                    price: 2.29
+                    category: "Pasta, rijst en wereldkeuken"
+                    is_orderable: true
+                  - product_id: 33333
+                    title: "AH Volkoren spaghetti"
+                    brand: "AH"
+                    size: "500 g"
+                    price: 1.09
+                    category: "Pasta, rijst en wereldkeuken"
+                    is_orderable: true
+                total_size: 3
+        "401":
+          description: Not logged in to Albert Heijn.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /ah/lists:
+    get:
+      operationId: listAHLists
+      summary: List AH favorites lists
+      tags: [AH Integration]
+      responses:
+        "200":
+          description: List of AH lists.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListAHListsResponse"
+              example:
+                lists:
+                  - list_id: "ah-list-123"
+                    name: "Week 6 groceries"
+                    total_items: 18
+                  - list_id: "ah-list-456"
+                    name: "Standard groceries"
+                    total_items: 25
+                total_size: 2
+        "401":
+          description: Not logged in to Albert Heijn.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    post:
+      operationId: createAHList
+      summary: Create a new AH list
+      tags: [AH Integration]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAHListRequest"
+            example:
+              name: "Week 7 groceries"
+      responses:
+        "201":
+          description: The created list.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AHList"
+              example:
+                list_id: "ah-list-789"
+                name: "Week 7 groceries"
+                total_items: 0
+        "401":
+          description: Not logged in to Albert Heijn.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /ah/lists/{ah_list_id}:
+    get:
+      operationId: getAHList
+      summary: Get an AH list with products
+      tags: [AH Integration]
+      parameters:
+        - name: ah_list_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: The AH list with product details.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AHListWithProducts"
+              example:
+                list_id: "ah-list-123"
+                name: "Week 6 groceries"
+                total_items: 3
+                products:
+                  - product_id: 11111
+                    title: "AH Spaghetti"
+                    brand: "AH"
+                    size: "500 g"
+                    price: 0.89
+                    quantity: 1
+                  - product_id: 67890
+                    title: "AH Scharreleieren"
+                    brand: "AH"
+                    size: "10 stuks"
+                    price: 3.49
+                    quantity: 1
+                  - product_id: 12345
+                    title: "AH Runderstoofvlees"
+                    brand: "AH"
+                    size: "400 g"
+                    price: 5.99
+                    quantity: 1
+        "401":
+          description: Not logged in to Albert Heijn.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  # =========================================================================
+  # Today (Cooking Mode)
+  # =========================================================================
+
+  /today:
+    get:
+      operationId: getToday
+      summary: Get today's recipe
+      description: |
+        Returns the day planning for today from the most recent (confirmed)
+        weekly menu. Includes the full recipe with ingredients, scaled
+        to the number of portions.
+
+        If there is no menu for today, returns an empty response.
+      tags: [Today]
+      parameters:
+        - name: date
+          in: query
+          description: |
+            Optional: view the recipe for a different date.
+            Format: YYYY-MM-DD. Default: today.
+          schema:
+            type: string
+            format: date
+          example: "2026-02-14"
+      responses:
+        "200":
+          description: Today's recipe.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TodayResponse"
+              examples:
+                with_recipe:
+                  summary: Day with a recipe
+                  value:
+                    date: "2026-02-14"
+                    day_label: "zaterdag"
+                    has_recipe: true
+                    menu_id: "2026-W07"
+                    day:
+                      name: "menus/2026-W07/days/5"
+                      day: 5
+                      day_label: "zaterdag"
+                      date: "2026-02-14"
+                      type: "recipe"
+                      portions: 4
+                      recipe:
+                        name: "recipes/thaise-roerbak-met-kip-en-homemade-satesaus"
+                        recipe_id: "thaise-roerbak-met-kip-en-homemade-satesaus"
+                        display_name: "Thaise roerbak met kip en homemade satesaus"
+                        category: "gevogelte"
+                        base: "rijst"
+                        seasons: ["alle"]
+                        base_portions: 4
+                        ingredients:
+                          - ingredient_name: "kipfilet"
+                            quantity: 400
+                            unit: "gram"
+                          - ingredient_name: "noedels"
+                            quantity: 300
+                            unit: "gram"
+                          - ingredient_name: "pindakaas"
+                            quantity: 3
+                            unit: "eetlepel"
+                          - ingredient_name: "sojasaus"
+                            quantity: 2
+                            unit: "eetlepel"
+                          - ingredient_name: "knoflook"
+                            quantity: 2
+                            unit: "teen"
+                        tags: ["aziatisch", "kip"]
+                        prep_time_minutes: 25
+                        instructions: "1. Snijd de kip in reepjes..."
+                        source: "Kookboek p. 67"
+                    previous_date: "2026-02-13"
+                    next_date: "2026-02-15"
+                hellofresh_day:
+                  summary: HelloFresh day
+                  value:
+                    date: "2026-02-10"
+                    day_label: "dinsdag"
+                    has_recipe: false
+                    menu_id: "2026-W07"
+                    day:
+                      name: "menus/2026-W07/days/1"
+                      day: 1
+                      day_label: "dinsdag"
+                      date: "2026-02-10"
+                      type: "hellofresh"
+                      portions: 0
+                      recipe: null
+                    previous_date: "2026-02-09"
+                    next_date: "2026-02-11"
+                no_menu:
+                  summary: No menu for this date
+                  value:
+                    date: "2026-03-01"
+                    day_label: "zondag"
+                    has_recipe: false
+                    menu_id: null
+                    day: null
+                    previous_date: "2026-02-28"
+                    next_date: "2026-03-02"
+
+  # =========================================================================
+  # Settings
+  # =========================================================================
+
+  /settings:
+    get:
+      operationId: getSettings
+      summary: Get settings
+      tags: [Settings]
+      responses:
+        "200":
+          description: The user settings.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Settings"
+              example:
+                name: "settings"
+                hellofresh_days: [1, 2, 3]
+                default_portions:
+                  weekday: 2
+                  weekend: 4
+                fresh_basics:
+                  - ingredient_name: "melk"
+                    quantity: 1
+                    unit: "liter"
+                  - ingredient_name: "eieren"
+                    quantity: 6
+                    unit: "stuks"
+                  - ingredient_name: "boter"
+                    quantity: 250
+                    unit: "gram"
+                  - ingredient_name: "kaas"
+                    quantity: 500
+                    unit: "gram"
+                  - ingredient_name: "optimel"
+                    quantity: 1.5
+                    unit: "liter"
+                  - ingredient_name: "gelderse worst"
+                    quantity: 100
+                    unit: "gram"
+                  - ingredient_name: "rookvlees"
+                    quantity: 100
+                    unit: "gram"
+                  - ingredient_name: "kipfilet"
+                    quantity: 100
+                    unit: "gram"
+                  - ingredient_name: "yoghurt"
+                    quantity: 1
+                    unit: "liter"
+                recent_weeks_exclusion: 3
+                ah_reference_list_id: "ah-list-456"
+
+    patch:
+      operationId: updateSettings
+      summary: Update settings
+      tags: [Settings]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SettingsUpdate"
+            examples:
+              change_hellofresh_days:
+                summary: Change HelloFresh days
+                value:
+                  hellofresh_days: [1, 2, 3]
+              change_portions:
+                summary: Change default portions
+                value:
+                  default_portions:
+                    weekday: 2
+                    weekend: 4
+              add_fresh_basic:
+                summary: Add fresh staple product
+                value:
+                  fresh_basics:
+                    - ingredient_name: "melk"
+                      quantity: 1
+                      unit: "liter"
+                    - ingredient_name: "eieren"
+                      quantity: 6
+                      unit: "stuks"
+                    - ingredient_name: "boter"
+                      quantity: 250
+                      unit: "gram"
+                    - ingredient_name: "kaas"
+                      quantity: 500
+                      unit: "gram"
+                    - ingredient_name: "haverdrank"
+                      quantity: 1
+                      unit: "liter"
+      responses:
+        "200":
+          description: The updated settings.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Settings"
+
+# ===========================================================================
+# Components
+# ===========================================================================
+components:
+
+  # =========================================================================
+  # Parameters
+  # =========================================================================
+  parameters:
+    RecipeId:
+      name: recipe_id
+      in: path
+      required: true
+      description: "Recipe slug ID (e.g., `spaanse-rijstschotel-chorizo-kip`)."
+      schema:
+        type: string
+        pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      example: "spaanse-rijstschotel-chorizo-kip"
+
+    MenuId:
+      name: menu_id
+      in: path
+      required: true
+      description: "Menu ID in ISO week format (e.g., `2026-W07`)."
+      schema:
+        type: string
+        pattern: "^\\d{4}-W\\d{2}$"
+      example: "2026-W07"
+
+    DayNumber:
+      name: day
+      in: path
+      required: true
+      description: "Day of week as number: 0=Monday, 6=Sunday."
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 6
+      example: 0
+
+    InventoryItemName:
+      name: item_name
+      in: path
+      required: true
+      description: "Normalized name of the inventory item."
+      schema:
+        type: string
+      example: "pasta"
+
+    ShoppingListId:
+      name: list_id
+      in: path
+      required: true
+      description: "Shopping list ID (e.g., `2026-W07`)."
+      schema:
+        type: string
+      example: "2026-W07"
+
+    ShoppingListItemId:
+      name: item_id
+      in: path
+      required: true
+      description: "Unique item ID within the shopping list."
+      schema:
+        type: string
+      example: "item-001"
+
+  # =========================================================================
+  # Responses
+  # =========================================================================
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            code: 404
+            status: "NOT_FOUND"
+            message: "The requested resource does not exist."
+
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            code: 400
+            status: "INVALID_ARGUMENT"
+            message: "Invalid request. Check the parameters."
+
+  # =========================================================================
+  # Schemas
+  # =========================================================================
+  schemas:
+
+    # -----------------------------------------------------------------------
+    # Enums
+    # -----------------------------------------------------------------------
+
+    Season:
+      type: string
+      description: |
+        Season for recipe filtering. Values are in Dutch to match recipe data.
+        - `lente` — Spring
+        - `zomer` — Summer
+        - `herfst` — Autumn
+        - `winter` — Winter
+        - `alle` — All seasons
+      enum: [lente, zomer, herfst, winter, alle]
+      example: "winter"
+
+    Category:
+      type: string
+      description: |
+        Recipe category based on protein source. Values are in Dutch.
+        - `vlees` — Meat (beef, pork, lamb)
+        - `gevogelte` — Poultry (chicken, turkey, duck)
+        - `vis` — Fish & seafood
+        - `vegetarisch` — Vegetarian (eggs, cheese, tofu)
+        - `veganistisch` — Vegan (plant-based)
+      enum: [vlees, gevogelte, vis, vegetarisch, veganistisch]
+      example: "gevogelte"
+
+    Base:
+      type: string
+      description: |
+        Carbohydrate base of the recipe. Values are in Dutch.
+        - `pasta` — Pasta (spaghetti, penne, noodles)
+        - `rijst` — Rice (basmati, risotto)
+        - `aardappel` — Potato (boiled, mashed, fries)
+        - `brood` — Bread (bread, dough, wraps)
+        - `geen` — None (salads, soups without carbs)
+      enum: [pasta, rijst, aardappel, brood, geen]
+      example: "rijst"
+
+    DayType:
+      type: string
+      description: |
+        Type of day planning.
+        - `recipe` — Cooking day with a recipe
+        - `hellofresh` — HelloFresh delivery day (no own recipe needed)
+        - `not_home` — Not at home (skip)
+      enum: [recipe, hellofresh, not_home]
+      example: "recipe"
+
+    InventoryItemType:
+      type: string
+      description: |
+        Type of inventory item:
+        - `houdbaar` — Shelf-stable (pasta, rice, cans, spices) — binary tracking
+        - `vers_basis` — Fresh staple (milk, eggs, butter) — ordered weekly by default
+      enum: [houdbaar, vers_basis]
+      example: "houdbaar"
+
+    CheckPriority:
+      type: string
+      description: Priority of a check suggestion.
+      enum: [high, medium, low]
+      example: "high"
+
+    # -----------------------------------------------------------------------
+    # Recipe
+    # -----------------------------------------------------------------------
+
+    Ingredient:
+      type: object
+      required: [ingredient_name, quantity, unit]
+      properties:
+        ingredient_name:
+          type: string
+          description: Name of the ingredient.
+          example: "ui"
+        quantity:
+          type: number
+          description: Amount (> 0).
+          example: 2
+        unit:
+          type: string
+          description: "Unit (gram, stuks, eetlepel, liter, naar smaak, etc.)."
+          example: "stuks"
+        note:
+          type: string
+          nullable: true
+          description: "Optional note (e.g., 'finely chopped', 'duo pack')."
+          example: "fijngesneden"
+
+    Recipe:
+      type: object
+      description: A recipe with ingredients and metadata.
+      required:
+        - name
+        - recipe_id
+        - display_name
+        - category
+        - base
+        - seasons
+        - base_portions
+        - ingredients
+        - prep_time_minutes
+      properties:
+        name:
+          type: string
+          description: "Resource name. Format: `recipes/{recipe_id}`."
+          readOnly: true
+          example: "recipes/spaanse-rijstschotel-chorizo-kip"
+        recipe_id:
+          type: string
+          description: Unique slug ID.
+          pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          example: "spaanse-rijstschotel-chorizo-kip"
+        display_name:
+          type: string
+          description: Display name of the recipe (max 100 chars).
+          maxLength: 100
+          example: "Spaanse rijstschotel met chorizo en kip"
+        category:
+          $ref: "#/components/schemas/Category"
+        base:
+          $ref: "#/components/schemas/Base"
+        seasons:
+          type: array
+          description: Seasons in which the recipe fits.
+          items:
+            $ref: "#/components/schemas/Season"
+          minItems: 1
+          example: ["alle"]
+        base_portions:
+          type: integer
+          description: Default number of portions (>= 1).
+          minimum: 1
+          example: 4
+        ingredients:
+          type: array
+          description: Ingredients (scaled to base_portions).
+          items:
+            $ref: "#/components/schemas/Ingredient"
+        tags:
+          type: array
+          description: Tags for filtering.
+          items:
+            type: string
+          example: ["spaans", "kip"]
+        prep_time_minutes:
+          type: integer
+          description: Preparation time in minutes.
+          minimum: 1
+          example: 25
+        instructions:
+          type: string
+          nullable: true
+          description: Cooking instructions.
+          example: "1. Bring a large pot of water to a boil..."
+        source:
+          type: string
+          nullable: true
+          description: "Source (e.g., 'Cookbook p. 47', 'AH Allerhande')."
+          example: "AH Allerhande Box"
+        last_cooked:
+          type: string
+          format: date
+          nullable: true
+          readOnly: true
+          description: Date the recipe was last cooked.
+          example: "2026-01-15"
+        times_cooked:
+          type: integer
+          readOnly: true
+          description: Number of times this recipe has been cooked.
+          example: 5
+
+    RecipeUpdate:
+      type: object
+      description: Fields to update on a recipe (merge semantics).
+      properties:
+        display_name:
+          type: string
+          maxLength: 100
+        category:
+          $ref: "#/components/schemas/Category"
+        base:
+          $ref: "#/components/schemas/Base"
+        seasons:
+          type: array
+          items:
+            $ref: "#/components/schemas/Season"
+        base_portions:
+          type: integer
+          minimum: 1
+        ingredients:
+          type: array
+          items:
+            $ref: "#/components/schemas/Ingredient"
+        tags:
+          type: array
+          items:
+            type: string
+        prep_time_minutes:
+          type: integer
+          minimum: 1
+        instructions:
+          type: string
+          nullable: true
+        source:
+          type: string
+          nullable: true
+
+    ListRecipesResponse:
+      type: object
+      properties:
+        recipes:
+          type: array
+          items:
+            $ref: "#/components/schemas/Recipe"
+        next_page_token:
+          type: string
+          description: Token for the next page (empty if no more pages).
+        total_size:
+          type: integer
+          description: Total number of recipes (may be an estimate).
+
+    # -----------------------------------------------------------------------
+    # Menu
+    # -----------------------------------------------------------------------
+
+    MenuDaySummary:
+      type: object
+      description: Summary of a day planning (for menu overview).
+      required: [day, day_label, date, type]
+      properties:
+        day:
+          type: integer
+          description: "Day of week (0=Mon, 6=Sun)."
+          minimum: 0
+          maximum: 6
+          example: 0
+        day_label:
+          type: string
+          description: Name of the weekday (in Dutch).
+          example: "maandag"
+        date:
+          type: string
+          format: date
+          description: Date (YYYY-MM-DD).
+          example: "2026-02-09"
+        recipe_id:
+          type: string
+          nullable: true
+          description: Recipe ID (null for HelloFresh/not home).
+          example: "spaanse-rijstschotel-chorizo-kip"
+        recipe_display_name:
+          type: string
+          nullable: true
+          description: Recipe name.
+          example: "Spaanse rijstschotel met chorizo en kip"
+        recipe_category:
+          $ref: "#/components/schemas/Category"
+        recipe_base:
+          $ref: "#/components/schemas/Base"
+        portions:
+          type: integer
+          description: Number of portions (0 for HelloFresh/not home).
+          example: 2
+        type:
+          $ref: "#/components/schemas/DayType"
+        last_cooked:
+          type: string
+          format: date
+          nullable: true
+          description: When this recipe was last cooked.
+          example: "2026-01-15"
+
+    Menu:
+      type: object
+      description: A weekly menu with day plannings.
+      required: [name, menu_id, week_start, status, days]
+      properties:
+        name:
+          type: string
+          description: "Resource name. Format: `menus/{menu_id}`."
+          readOnly: true
+          example: "menus/2026-W07"
+        menu_id:
+          type: string
+          description: Menu ID (ISO week number).
+          example: "2026-W07"
+        week_start:
+          type: string
+          format: date
+          description: Monday of the week.
+          example: "2026-02-09"
+        status:
+          type: string
+          enum: [draft, confirmed]
+          description: |
+            - `draft`: Working version, not yet confirmed.
+            - `confirmed`: Confirmed and saved to history.
+          example: "draft"
+        season:
+          $ref: "#/components/schemas/Season"
+        days:
+          type: array
+          description: Day plannings (max 7).
+          items:
+            $ref: "#/components/schemas/MenuDaySummary"
+          maxItems: 7
+
+    MenuDay:
+      type: object
+      description: Full day planning with recipe details.
+      required: [name, day, day_label, date, type, portions]
+      properties:
+        name:
+          type: string
+          description: "Resource name. Format: `menus/{menu_id}/days/{day}`."
+          readOnly: true
+          example: "menus/2026-W07/days/0"
+        day:
+          type: integer
+          minimum: 0
+          maximum: 6
+          example: 0
+        day_label:
+          type: string
+          example: "maandag"
+        date:
+          type: string
+          format: date
+          example: "2026-02-09"
+        type:
+          $ref: "#/components/schemas/DayType"
+        portions:
+          type: integer
+          example: 2
+        recipe:
+          $ref: "#/components/schemas/Recipe"
+          nullable: true
+          description: Full recipe (null for HelloFresh/not home).
+        last_cooked:
+          type: string
+          format: date
+          nullable: true
+          description: When this recipe was last cooked.
+
+    GenerateMenuRequest:
+      type: object
+      required: [week_start, season, days]
+      properties:
+        week_start:
+          type: string
+          format: date
+          description: Monday of the week (YYYY-MM-DD).
+          example: "2026-02-09"
+        season:
+          $ref: "#/components/schemas/Season"
+        days:
+          type: array
+          description: Configuration per day.
+          items:
+            type: object
+            required: [day, type]
+            properties:
+              day:
+                type: integer
+                description: "Day of week (0=Mon, 6=Sun)."
+                minimum: 0
+                maximum: 6
+              portions:
+                type: integer
+                description: Number of portions (required when type is `recipe`).
+                minimum: 1
+                maximum: 12
+              type:
+                $ref: "#/components/schemas/DayType"
+          minItems: 1
+          maxItems: 7
+
+    UpdateMenuDayRequest:
+      type: object
+      properties:
+        portions:
+          type: integer
+          minimum: 1
+          maximum: 12
+          description: New number of portions.
+        type:
+          $ref: "#/components/schemas/DayType"
+
+    SetRecipeRequest:
+      type: object
+      required: [recipe_id]
+      properties:
+        recipe_id:
+          type: string
+          description: ID of the chosen recipe.
+          example: "spaghetti-bolognese"
+        portions:
+          type: integer
+          minimum: 1
+          maximum: 12
+          description: Optional new number of portions.
+
+    ListMenusResponse:
+      type: object
+      properties:
+        menus:
+          type: array
+          items:
+            $ref: "#/components/schemas/Menu"
+        next_page_token:
+          type: string
+        total_size:
+          type: integer
+
+    # -----------------------------------------------------------------------
+    # Inventory
+    # -----------------------------------------------------------------------
+
+    InventoryItem:
+      type: object
+      required: [name, item_name, type, in_stock, last_checked]
+      properties:
+        name:
+          type: string
+          description: "Resource name. Format: `inventory/items/{item_name}`."
+          readOnly: true
+          example: "inventory/items/pasta"
+        item_name:
+          type: string
+          description: Normalized ingredient name.
+          example: "pasta"
+        type:
+          $ref: "#/components/schemas/InventoryItemType"
+        in_stock:
+          type: boolean
+          description: True if the item is in stock.
+          example: true
+        last_checked:
+          type: string
+          format: date
+          description: Date of last check (YYYY-MM-DD).
+          example: "2026-02-07"
+
+    CreateInventoryItemRequest:
+      type: object
+      required: [item_name, type]
+      properties:
+        item_name:
+          type: string
+          example: "kokosmelk"
+        type:
+          $ref: "#/components/schemas/InventoryItemType"
+        in_stock:
+          type: boolean
+          default: false
+          example: true
+
+    UpdateInventoryItemRequest:
+      type: object
+      properties:
+        in_stock:
+          type: boolean
+        type:
+          $ref: "#/components/schemas/InventoryItemType"
+
+    ListInventoryItemsResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/InventoryItem"
+        next_page_token:
+          type: string
+        total_size:
+          type: integer
+
+    CheckSuggestion:
+      type: object
+      description: Suggestion to check an inventory item.
+      required: [item_name, reason, priority, type]
+      properties:
+        item_name:
+          type: string
+          description: Ingredient name.
+          example: "passata"
+        reason:
+          type: string
+          description: Why this suggestion (for display).
+          example: "Used in weekly menu"
+        priority:
+          $ref: "#/components/schemas/CheckPriority"
+        type:
+          $ref: "#/components/schemas/InventoryItemType"
+        current_status:
+          type: boolean
+          nullable: true
+          description: Current stock status (null if unknown).
+          example: true
+        used_in_recipes:
+          type: array
+          description: Recipes in which this ingredient is used.
+          items:
+            type: string
+          example: ["Italiaanse runderstoof met pompoen"]
+
+    GenerateChecksRequest:
+      type: object
+      required: [menu_id, season]
+      properties:
+        menu_id:
+          type: string
+          description: Menu ID to generate checks for.
+          example: "2026-W07"
+        season:
+          $ref: "#/components/schemas/Season"
+
+    GenerateChecksResponse:
+      type: object
+      properties:
+        checks:
+          type: array
+          description: "Sorted: high > medium > low, then alphabetically."
+          items:
+            $ref: "#/components/schemas/CheckSuggestion"
+        total_size:
+          type: integer
+          example: 7
+
+    BatchUpdateInventoryRequest:
+      type: object
+      required: [updates]
+      properties:
+        updates:
+          type: array
+          description: List of items to update.
+          items:
+            type: object
+            required: [item_name, in_stock]
+            properties:
+              item_name:
+                type: string
+                example: "melk"
+              in_stock:
+                type: boolean
+                example: true
+          minItems: 1
+
+    BatchUpdateInventoryResponse:
+      type: object
+      properties:
+        updated_items:
+          type: array
+          items:
+            $ref: "#/components/schemas/InventoryItem"
+        total_updated:
+          type: integer
+          example: 6
+
+    # -----------------------------------------------------------------------
+    # Shopping Lists
+    # -----------------------------------------------------------------------
+
+    ShoppingListItem:
+      type: object
+      required: [item_id, ingredient_name, quantity, unit, checked]
+      properties:
+        item_id:
+          type: string
+          description: Unique item ID.
+          example: "item-001"
+        ingredient_name:
+          type: string
+          description: Normalized ingredient name.
+          example: "rundergehakt"
+        quantity:
+          type: number
+          description: Amount (rounded to logical packaging sizes).
+          example: 500
+        unit:
+          type: string
+          description: Unit.
+          example: "gram"
+        checked:
+          type: boolean
+          description: True if item is checked off (already at home).
+          example: false
+        source_recipes:
+          type: array
+          description: Recipes this ingredient comes from.
+          items:
+            type: string
+          example: ["Penne met gehaktballetjes"]
+        note:
+          type: string
+          nullable: true
+          description: "Optional note (e.g., 'Weekly staple', 'Manually added')."
+          example: null
+
+    ShoppingListSection:
+      type: object
+      required: [section_name, items]
+      properties:
+        section_name:
+          type: string
+          description: "Section name (e.g., 'Meat & fish', 'Dairy')."
+          example: "Meat & fish"
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ShoppingListItem"
+
+    ShoppingList:
+      type: object
+      required: [name, list_id, week_start, status, sections, total_items]
+      properties:
+        name:
+          type: string
+          description: "Resource name. Format: `shoppingLists/{list_id}`."
+          readOnly: true
+          example: "shoppingLists/2026-W07"
+        list_id:
+          type: string
+          example: "2026-W07"
+        week_start:
+          type: string
+          format: date
+          example: "2026-02-09"
+        status:
+          type: string
+          enum: [draft, sent_to_ah]
+          example: "draft"
+        create_time:
+          type: string
+          format: date-time
+          readOnly: true
+          example: "2026-02-14T19:30:00Z"
+        sections:
+          type: array
+          description: Grouped items by product category.
+          items:
+            $ref: "#/components/schemas/ShoppingListSection"
+        total_items:
+          type: integer
+          description: Total number of items on the list.
+          example: 23
+
+    GenerateShoppingListRequest:
+      type: object
+      required: [menu_id]
+      properties:
+        menu_id:
+          type: string
+          description: Menu ID to generate the shopping list from.
+          example: "2026-W07"
+        include_fresh_basics:
+          type: boolean
+          description: |
+            If true, fresh staple products that are out of stock
+            are automatically added.
+          default: true
+          example: true
+
+    AddShoppingListItemRequest:
+      type: object
+      required: [ingredient_name, quantity, unit]
+      properties:
+        ingredient_name:
+          type: string
+          example: "avocado"
+        quantity:
+          type: number
+          example: 2
+        unit:
+          type: string
+          example: "stuks"
+
+    UpdateShoppingListItemRequest:
+      type: object
+      properties:
+        quantity:
+          type: number
+          description: New quantity.
+        checked:
+          type: boolean
+          description: Checked off (true = already at home).
+
+    ListShoppingListsResponse:
+      type: object
+      properties:
+        shopping_lists:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: "shoppingLists/2026-W07"
+              list_id:
+                type: string
+                example: "2026-W07"
+              week_start:
+                type: string
+                format: date
+                example: "2026-02-09"
+              total_items:
+                type: integer
+                example: 23
+              status:
+                type: string
+                enum: [draft, sent_to_ah]
+                example: "draft"
+              create_time:
+                type: string
+                format: date-time
+                example: "2026-02-14T19:30:00Z"
+        next_page_token:
+          type: string
+        total_size:
+          type: integer
+
+    # -----------------------------------------------------------------------
+    # AH Integration
+    # -----------------------------------------------------------------------
+
+    AHLoginRequest:
+      type: object
+      required: [authorization_code]
+      properties:
+        authorization_code:
+          type: string
+          description: OAuth2 authorization code from the redirect URL.
+          example: "abc123def456"
+
+    AHLoginResponse:
+      type: object
+      properties:
+        authenticated:
+          type: boolean
+          example: true
+        expires_at:
+          type: string
+          format: date-time
+          description: Expiry time of the access token.
+          example: "2026-02-14T21:30:00Z"
+        message:
+          type: string
+          example: "Login successful. Tokens saved."
+
+    AHStatusResponse:
+      type: object
+      properties:
+        authenticated:
+          type: boolean
+          example: true
+        expires_at:
+          type: string
+          format: date-time
+          nullable: true
+          example: "2026-02-14T21:30:00Z"
+        login_url:
+          type: string
+          nullable: true
+          description: Login URL (only when not logged in).
+
+    AHProduct:
+      type: object
+      properties:
+        product_id:
+          type: integer
+          example: 11111
+        title:
+          type: string
+          example: "AH Spaghetti"
+        brand:
+          type: string
+          example: "AH"
+        size:
+          type: string
+          example: "500 g"
+        price:
+          type: number
+          format: double
+          example: 0.89
+        category:
+          type: string
+          example: "Pasta, rijst en wereldkeuken"
+        is_orderable:
+          type: boolean
+          example: true
+
+    SearchAHProductsRequest:
+      type: object
+      required: [query]
+      properties:
+        query:
+          type: string
+          description: Search term.
+          example: "spaghetti"
+        reference_list_id:
+          type: string
+          nullable: true
+          description: |
+            Optional: AH list ID to search in first
+            (for product matching with previously ordered products).
+        limit:
+          type: integer
+          default: 10
+          maximum: 50
+          description: Maximum number of results.
+
+    SearchAHProductsResponse:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            $ref: "#/components/schemas/AHProduct"
+        total_size:
+          type: integer
+
+    AHList:
+      type: object
+      properties:
+        list_id:
+          type: string
+          example: "ah-list-789"
+        name:
+          type: string
+          example: "Week 7 groceries"
+        total_items:
+          type: integer
+          example: 0
+
+    AHListWithProducts:
+      type: object
+      properties:
+        list_id:
+          type: string
+          example: "ah-list-123"
+        name:
+          type: string
+          example: "Week 6 groceries"
+        total_items:
+          type: integer
+          example: 3
+        products:
+          type: array
+          items:
+            allOf:
+              - $ref: "#/components/schemas/AHProduct"
+              - type: object
+                properties:
+                  quantity:
+                    type: integer
+                    example: 1
+
+    CreateAHListRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          example: "Week 7 groceries"
+
+    ListAHListsResponse:
+      type: object
+      properties:
+        lists:
+          type: array
+          items:
+            $ref: "#/components/schemas/AHList"
+        total_size:
+          type: integer
+
+    SendToAHRequest:
+      type: object
+      properties:
+        ah_list_name:
+          type: string
+          description: Name for the new AH list. Default "Week X groceries".
+          example: "Week 7 groceries"
+        reference_list_id:
+          type: string
+          nullable: true
+          description: AH list with previously ordered products (for better matching).
+          example: "ah-list-456"
+
+    SendToAHResultItem:
+      type: object
+      properties:
+        ingredient_name:
+          type: string
+          example: "runderstoofvlees"
+        status:
+          type: string
+          enum: [matched, not_found]
+          example: "matched"
+        source:
+          type: string
+          enum: [reference, search, none]
+          description: |
+            - `reference`: Found in reference list
+            - `search`: Found via AH search API
+            - `none`: Not found
+          example: "search"
+        ah_product:
+          $ref: "#/components/schemas/AHProduct"
+          nullable: true
+        quantity:
+          type: integer
+          description: Quantity ordered.
+          example: 1
+
+    SendToAHResponse:
+      type: object
+      properties:
+        ah_list_id:
+          type: string
+          description: ID of the created AH list.
+          example: "new-ah-list-id-456"
+        ah_list_name:
+          type: string
+          example: "Week 7 groceries"
+        total_items:
+          type: integer
+          description: Total number of items on the shopping list.
+          example: 23
+        matched:
+          type: integer
+          description: Number of successfully matched items.
+          example: 21
+        not_found:
+          type: integer
+          description: Number of items for which no AH product was found.
+          example: 2
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/SendToAHResultItem"
+
+    # -----------------------------------------------------------------------
+    # Today
+    # -----------------------------------------------------------------------
+
+    TodayResponse:
+      type: object
+      required: [date, day_label, has_recipe]
+      properties:
+        date:
+          type: string
+          format: date
+          description: The requested date.
+          example: "2026-02-14"
+        day_label:
+          type: string
+          description: Name of the weekday (in Dutch).
+          example: "zaterdag"
+        has_recipe:
+          type: boolean
+          description: True if a recipe is planned.
+          example: true
+        menu_id:
+          type: string
+          nullable: true
+          description: The menu ID (null if no menu for this week).
+          example: "2026-W07"
+        day:
+          $ref: "#/components/schemas/MenuDay"
+          nullable: true
+          description: The full day planning (null if no menu).
+        previous_date:
+          type: string
+          format: date
+          description: The previous day (for navigation).
+          example: "2026-02-13"
+        next_date:
+          type: string
+          format: date
+          description: The next day (for navigation).
+          example: "2026-02-15"
+
+    # -----------------------------------------------------------------------
+    # Settings
+    # -----------------------------------------------------------------------
+
+    FreshBasicItem:
+      type: object
+      required: [ingredient_name, quantity, unit]
+      properties:
+        ingredient_name:
+          type: string
+          example: "melk"
+        quantity:
+          type: number
+          example: 1
+        unit:
+          type: string
+          example: "liter"
+
+    Settings:
+      type: object
+      properties:
+        name:
+          type: string
+          readOnly: true
+          example: "settings"
+        hellofresh_days:
+          type: array
+          description: "Weekdays with HelloFresh delivery (0=Mon, 6=Sun)."
+          items:
+            type: integer
+            minimum: 0
+            maximum: 6
+          example: [1, 2, 3]
+        default_portions:
+          type: object
+          description: Default number of portions per day type.
+          properties:
+            weekday:
+              type: integer
+              description: Portions on weekdays (Mon-Fri).
+              example: 2
+            weekend:
+              type: integer
+              description: Portions on weekends (Sat-Sun).
+              example: 4
+        fresh_basics:
+          type: array
+          description: Fresh staple products for the weekly shopping list.
+          items:
+            $ref: "#/components/schemas/FreshBasicItem"
+        recent_weeks_exclusion:
+          type: integer
+          description: Number of weeks back for "recently cooked" exclusion.
+          default: 3
+          example: 3
+        ah_reference_list_id:
+          type: string
+          nullable: true
+          description: AH list used as reference for product matching.
+          example: "ah-list-456"
+
+    SettingsUpdate:
+      type: object
+      description: Fields to update (merge semantics).
+      properties:
+        hellofresh_days:
+          type: array
+          items:
+            type: integer
+            minimum: 0
+            maximum: 6
+        default_portions:
+          type: object
+          properties:
+            weekday:
+              type: integer
+            weekend:
+              type: integer
+        fresh_basics:
+          type: array
+          items:
+            $ref: "#/components/schemas/FreshBasicItem"
+        recent_weeks_exclusion:
+          type: integer
+          minimum: 1
+        ah_reference_list_id:
+          type: string
+          nullable: true
+
+    # -----------------------------------------------------------------------
+    # Error
+    # -----------------------------------------------------------------------
+
+    Error:
+      type: object
+      description: Error response per Google API conventions.
+      required: [code, status, message]
+      properties:
+        code:
+          type: integer
+          description: HTTP status code.
+          example: 404
+        status:
+          type: string
+          description: |
+            Google API error code:
+            - `INVALID_ARGUMENT` (400)
+            - `UNAUTHENTICATED` (401)
+            - `NOT_FOUND` (404)
+            - `ALREADY_EXISTS` (409)
+            - `INTERNAL` (500)
+          example: "NOT_FOUND"
+        message:
+          type: string
+          description: Human-readable error description.
+          example: "The requested resource does not exist."
+        details:
+          type: array
+          description: Optional additional error details.
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                description: The field that caused the error.
+                example: "recipe_id"
+              description:
+                type: string
+                description: Description of the problem.
+                example: "Recipe not found with ID: unknown-recipe"
