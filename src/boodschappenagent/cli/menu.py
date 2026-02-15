@@ -7,6 +7,8 @@ Usage:
     uv run python -m boodschappenagent.cli.menu toon
     uv run python -m boodschappenagent.cli.menu vervang di
     uv run python -m boodschappenagent.cli.menu boodschappen
+    uv run python -m boodschappenagent.cli.menu bestel
+    uv run python -m boodschappenagent.cli.menu bestel --filter-voorraad --ref <list_id>
     uv run python -m boodschappenagent.cli.menu accepteer
 """
 
@@ -337,10 +339,24 @@ def _print_boodschappenlijst(lijst: object) -> None:
 
 def cmd_boodschappen(args: argparse.Namespace) -> int:
     """Genereer een boodschappenlijst voor het huidige weekmenu."""
+    lijst = _genereer_boodschappenlijst(args)
+    if lijst is None:
+        return 1
+
+    _print_boodschappenlijst(lijst)
+    return 0
+
+
+def _genereer_boodschappenlijst(args: argparse.Namespace) -> object | None:
+    """Genereer een boodschappenlijst uit het huidige menu.
+
+    Returns:
+        Boodschappenlijst of None als er geen menu is.
+    """
     menu_path = Path(args.menu)
     if not menu_path.exists():
         print("Error: geen huidig menu gevonden. Gebruik 'plan' om er een te maken.")
-        return 1
+        return None
 
     recipes = _load_recipes(args.recipes_dir)
     recipes_by_id = {r.id: r for r in recipes}
@@ -362,7 +378,64 @@ def cmd_boodschappen(args: argparse.Namespace) -> int:
         voorraad_filter = BoodschappenlijstFilter(voorraad_repo)
         lijst = voorraad_filter.filter_op_voorraad(lijst)
 
+    return lijst
+
+
+def cmd_bestel(args: argparse.Namespace) -> int:
+    """Bestel de boodschappen bij Albert Heijn."""
+    from boodschappenagent.ah.auth import AHTokenManager
+    from boodschappenagent.ah.client import AHClient
+    from boodschappenagent.ah.integration import AHIntegratie
+
+    lijst = _genereer_boodschappenlijst(args)
+    if lijst is None:
+        return 1
+
+    if not lijst.regels:
+        print("\nGeen ingrediënten om te bestellen (alleen vrije dagen).")
+        return 0
+
     _print_boodschappenlijst(lijst)
+
+    # AH authenticatie
+    token_manager = AHTokenManager()
+    if not token_manager.is_authenticated():
+        print("\nError: niet ingelogd bij AH.")
+        print("Gebruik eerst: python -m boodschappenagent.ah.client login <code>")
+        return 1
+
+    client = AHClient(token_manager)
+    integratie = AHIntegratie(client)
+
+    print("\nProducten zoeken bij AH...")
+    resultaat = integratie.sync_naar_lijst(
+        lijst,
+        lijst_naam=args.naam if args.naam else None,
+        referentie_lijst_id=args.ref if args.ref else None,
+    )
+
+    print(f"\nAH lijst aangemaakt: {resultaat.lijst_naam}")
+    print(f"  Lijst ID: {resultaat.lijst_id}")
+
+    samenvatting = resultaat.samenvatting
+    print(f"\n  Gevonden:      {samenvatting['gevonden']}/{samenvatting['totaal']}")
+    print(f"  Niet gevonden: {samenvatting['niet_gevonden']}")
+
+    if resultaat.gevonden:
+        print("\nToegevoegd:")
+        for m in resultaat.gevonden:
+            p = m.product
+            print(
+                f"  {m.regel.naam} -> {p.title}"
+                f" ({p.size}, \u20ac{p.price:.2f})"
+                f" [{m.bron}]"
+            )
+
+    if resultaat.niet_gevonden:
+        print("\nNiet gevonden:")
+        for m in resultaat.niet_gevonden:
+            print(f"  {m.regel.naam}")
+
     return 0
 
 
@@ -498,6 +571,28 @@ def main() -> int:
         help="Filter items die op voorraad zijn en voeg verse basics toe",
     )
 
+    # bestel command
+    bestel_parser = subparsers.add_parser(
+        "bestel",
+        help="Bestel de boodschappen bij Albert Heijn",
+    )
+    bestel_parser.add_argument(
+        "--filter-voorraad",
+        "-f",
+        action="store_true",
+        help="Filter items die op voorraad zijn en voeg verse basics toe",
+    )
+    bestel_parser.add_argument(
+        "--naam",
+        "-n",
+        help="Naam voor de AH lijst (standaard: Boodschappen YYYY-MM-DD)",
+    )
+    bestel_parser.add_argument(
+        "--ref",
+        "-r",
+        help="AH referentielijst ID voor snellere productmatching",
+    )
+
     # accepteer command
     subparsers.add_parser(
         "accepteer",
@@ -511,6 +606,7 @@ def main() -> int:
         "toon": cmd_toon,
         "vervang": cmd_vervang,
         "boodschappen": cmd_boodschappen,
+        "bestel": cmd_bestel,
         "accepteer": cmd_accepteer,
     }
 

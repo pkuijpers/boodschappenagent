@@ -322,10 +322,7 @@ if __name__ == "__main__":
     import sys
 
     if len(sys.argv) < 2:
-        print(
-            "Usage: python -m boodschappenagent.ah.client"
-            " <command> [args...]"
-        )
+        print("Usage: python -m boodschappenagent.ah.client <command> [args...]")
         print()
         print("Commands:")
         print("  login <code>             - Login with authorization code")

@@ -1,0 +1,566 @@
+"""
+Unit tests for AH Integration.
+
+Run with: uv run pytest tests/test_ah_integration.py -v
+"""
+
+from unittest.mock import Mock
+
+import pytest
+
+from boodschappenagent.ah.auth import AHTokenManager
+from boodschappenagent.ah.client import AHClient
+from boodschappenagent.ah.integration import AHIntegratie, ProductMatch, SyncResultaat
+from boodschappenagent.ah.models import FavoriteList, Product
+from boodschappenagent.boodschappenlijst.models import (
+    Boodschappenlijst,
+    BoodschappenRegel,
+)
+
+# =============================================================================
+# Fixtures
+# =============================================================================
+
+
+@pytest.fixture
+def melk_regel():
+    """BoodschappenRegel voor melk."""
+    return BoodschappenRegel(
+        naam="melk",
+        hoeveelheid=1.0,
+        eenheid="liter",
+        originele_namen=frozenset({"melk"}),
+    )
+
+
+@pytest.fixture
+def ui_regel():
+    """BoodschappenRegel voor ui."""
+    return BoodschappenRegel(
+        naam="ui",
+        hoeveelheid=2.0,
+        eenheid="stuks",
+        originele_namen=frozenset({"ui", "uien"}),
+    )
+
+
+@pytest.fixture
+def knoflook_regel():
+    """BoodschappenRegel voor knoflook."""
+    return BoodschappenRegel(
+        naam="knoflook",
+        hoeveelheid=3.0,
+        eenheid="teen",
+        originele_namen=frozenset({"knoflook"}),
+    )
+
+
+@pytest.fixture
+def melk_product():
+    """AH Product voor melk."""
+    return Product(
+        id=100,
+        title="AH Halfvolle melk",
+        brand="AH",
+        size="1 l",
+        price=1.29,
+        category="Zuivel",
+        is_orderable=True,
+    )
+
+
+@pytest.fixture
+def ui_product():
+    """AH Product voor ui."""
+    return Product(
+        id=200,
+        title="AH Uien",
+        brand="AH",
+        size="1 kg",
+        price=1.49,
+        category="Groenten",
+        is_orderable=True,
+    )
+
+
+@pytest.fixture
+def knoflook_product():
+    """AH Product voor knoflook."""
+    return Product(
+        id=300,
+        title="AH Knoflook",
+        brand="AH",
+        size="2 stuks",
+        price=1.39,
+        category="Groenten",
+        is_orderable=True,
+    )
+
+
+@pytest.fixture
+def boodschappenlijst(melk_regel, ui_regel, knoflook_regel):
+    """Boodschappenlijst met 3 regels."""
+    return Boodschappenlijst(
+        week_start="2026-02-16",
+        regels=[knoflook_regel, melk_regel, ui_regel],
+    )
+
+
+@pytest.fixture
+def lege_boodschappenlijst():
+    """Lege boodschappenlijst."""
+    return Boodschappenlijst(week_start="2026-02-16", regels=[])
+
+
+@pytest.fixture
+def mock_client():
+    """AHClient met gemockte token manager."""
+    mock_token_manager = Mock(spec=AHTokenManager)
+    mock_token_manager.get_access_token.return_value = "test-token"
+    client = AHClient(mock_token_manager)
+    client.session = Mock()
+    return client
+
+
+# =============================================================================
+# ProductMatch Tests
+# =============================================================================
+
+
+class TestProductMatch:
+    """Tests voor ProductMatch dataclass."""
+
+    def test_gevonden_match(self, melk_regel, melk_product):
+        """Test ProductMatch met gevonden product."""
+        match = ProductMatch(
+            regel=melk_regel,
+            product=melk_product,
+            bron="zoekopdracht",
+        )
+
+        assert match.regel is melk_regel
+        assert match.product is melk_product
+        assert match.bron == "zoekopdracht"
+        assert match.gevonden is True
+
+    def test_niet_gevonden_match(self, melk_regel):
+        """Test ProductMatch zonder gevonden product."""
+        match = ProductMatch(
+            regel=melk_regel,
+            product=None,
+            bron="niet_gevonden",
+        )
+
+        assert match.product is None
+        assert match.bron == "niet_gevonden"
+        assert match.gevonden is False
+
+    def test_referentie_bron(self, melk_regel, melk_product):
+        """Test ProductMatch met referentielijst als bron."""
+        match = ProductMatch(
+            regel=melk_regel,
+            product=melk_product,
+            bron="referentie",
+        )
+
+        assert match.bron == "referentie"
+        assert match.gevonden is True
+
+    def test_is_frozen(self, melk_regel, melk_product):
+        """Test dat ProductMatch immutable is."""
+        match = ProductMatch(
+            regel=melk_regel,
+            product=melk_product,
+            bron="zoekopdracht",
+        )
+
+        with pytest.raises(AttributeError):
+            match.product = None
+
+
+# =============================================================================
+# SyncResultaat Tests
+# =============================================================================
+
+
+class TestSyncResultaat:
+    """Tests voor SyncResultaat dataclass."""
+
+    def test_alle_gevonden(self, melk_regel, ui_regel, melk_product, ui_product):
+        """Test SyncResultaat wanneer alle producten gevonden zijn."""
+        matches = [
+            ProductMatch(regel=melk_regel, product=melk_product, bron="zoekopdracht"),
+            ProductMatch(regel=ui_regel, product=ui_product, bron="referentie"),
+        ]
+        resultaat = SyncResultaat(
+            lijst_id="list-123",
+            lijst_naam="Boodschappen 2026-02-16",
+            matches=matches,
+        )
+
+        assert resultaat.lijst_id == "list-123"
+        assert resultaat.lijst_naam == "Boodschappen 2026-02-16"
+        assert len(resultaat.gevonden) == 2
+        assert len(resultaat.niet_gevonden) == 0
+
+    def test_gedeeltelijk_gevonden(self, melk_regel, ui_regel, melk_product):
+        """Test SyncResultaat met gedeeltelijke matches."""
+        matches = [
+            ProductMatch(regel=melk_regel, product=melk_product, bron="zoekopdracht"),
+            ProductMatch(regel=ui_regel, product=None, bron="niet_gevonden"),
+        ]
+        resultaat = SyncResultaat(
+            lijst_id="list-123",
+            lijst_naam="Boodschappen 2026-02-16",
+            matches=matches,
+        )
+
+        assert len(resultaat.gevonden) == 1
+        assert len(resultaat.niet_gevonden) == 1
+        assert resultaat.gevonden[0].regel is melk_regel
+        assert resultaat.niet_gevonden[0].regel is ui_regel
+
+    def test_geen_gevonden(self, melk_regel, ui_regel):
+        """Test SyncResultaat wanneer niets gevonden is."""
+        matches = [
+            ProductMatch(regel=melk_regel, product=None, bron="niet_gevonden"),
+            ProductMatch(regel=ui_regel, product=None, bron="niet_gevonden"),
+        ]
+        resultaat = SyncResultaat(
+            lijst_id="list-123",
+            lijst_naam="Test",
+            matches=matches,
+        )
+
+        assert len(resultaat.gevonden) == 0
+        assert len(resultaat.niet_gevonden) == 2
+
+    def test_samenvatting(
+        self, melk_regel, ui_regel, knoflook_regel, melk_product, ui_product
+    ):
+        """Test samenvatting property."""
+        matches = [
+            ProductMatch(regel=melk_regel, product=melk_product, bron="zoekopdracht"),
+            ProductMatch(regel=ui_regel, product=ui_product, bron="referentie"),
+            ProductMatch(regel=knoflook_regel, product=None, bron="niet_gevonden"),
+        ]
+        resultaat = SyncResultaat(
+            lijst_id="list-123",
+            lijst_naam="Test",
+            matches=matches,
+        )
+
+        samenvatting = resultaat.samenvatting
+        assert samenvatting["totaal"] == 3
+        assert samenvatting["gevonden"] == 2
+        assert samenvatting["niet_gevonden"] == 1
+
+    def test_lege_matches(self):
+        """Test SyncResultaat met lege matches."""
+        resultaat = SyncResultaat(
+            lijst_id="list-123",
+            lijst_naam="Test",
+            matches=[],
+        )
+
+        assert len(resultaat.gevonden) == 0
+        assert len(resultaat.niet_gevonden) == 0
+        assert resultaat.samenvatting["totaal"] == 0
+
+    def test_is_frozen(self, melk_regel, melk_product):
+        """Test dat SyncResultaat immutable is."""
+        resultaat = SyncResultaat(
+            lijst_id="list-123",
+            lijst_naam="Test",
+            matches=[
+                ProductMatch(
+                    regel=melk_regel, product=melk_product, bron="zoekopdracht"
+                ),
+            ],
+        )
+
+        with pytest.raises(AttributeError):
+            resultaat.lijst_id = "other"
+
+
+# =============================================================================
+# AHIntegratie.zoek_producten Tests
+# =============================================================================
+
+
+class TestZoekProducten:
+    """Tests voor AHIntegratie.zoek_producten method."""
+
+    def test_zoekt_alle_regels(
+        self, mock_client, boodschappenlijst, melk_product, ui_product, knoflook_product
+    ):
+        """Test dat alle regels gezocht worden via smart_search."""
+        mock_client.smart_search = Mock(
+            side_effect=[
+                (knoflook_product, "search"),
+                (melk_product, "search"),
+                (ui_product, "search"),
+            ]
+        )
+
+        integratie = AHIntegratie(mock_client)
+        matches = integratie.zoek_producten(boodschappenlijst)
+
+        assert len(matches) == 3
+        assert mock_client.smart_search.call_count == 3
+
+    def test_gebruikt_regelnaam_als_zoekterm(self, mock_client, boodschappenlijst):
+        """Test dat de naam van de regel als zoekterm gebruikt wordt."""
+        mock_client.smart_search = Mock(return_value=(None, "niet_gevonden"))
+
+        integratie = AHIntegratie(mock_client)
+        integratie.zoek_producten(boodschappenlijst)
+
+        zoektermen = [c.args[0] for c in mock_client.smart_search.call_args_list]
+        assert "knoflook" in zoektermen
+        assert "melk" in zoektermen
+        assert "ui" in zoektermen
+
+    def test_geeft_referentie_producten_mee(
+        self, mock_client, boodschappenlijst, melk_product
+    ):
+        """Test dat referentie-producten eenmalig geladen en meegegeven worden."""
+        ref_products = [melk_product]
+        mock_list = FavoriteList(
+            id="ref-id",
+            name="Referentie",
+            total_items=1,
+            items=[],
+            products=ref_products,
+        )
+        mock_client.get_list_with_products = Mock(return_value=mock_list)
+        mock_client.smart_search = Mock(return_value=(None, "niet_gevonden"))
+
+        integratie = AHIntegratie(mock_client)
+        integratie.zoek_producten(boodschappenlijst, referentie_lijst_id="ref-id")
+
+        # Referentielijst wordt eenmalig geladen
+        mock_client.get_list_with_products.assert_called_once_with("ref-id")
+
+        # Alle smart_search calls krijgen reference_products mee
+        for c in mock_client.smart_search.call_args_list:
+            assert c.kwargs["reference_products"] is ref_products
+
+    def test_zonder_referentielijst(self, mock_client, boodschappenlijst):
+        """Test zoeken zonder referentielijst."""
+        mock_client.smart_search = Mock(return_value=(None, "niet_gevonden"))
+
+        integratie = AHIntegratie(mock_client)
+        integratie.zoek_producten(boodschappenlijst)
+
+        for c in mock_client.smart_search.call_args_list:
+            assert c.kwargs.get("reference_products") is None
+
+    def test_lege_boodschappenlijst(self, mock_client, lege_boodschappenlijst):
+        """Test met lege boodschappenlijst."""
+        mock_client.smart_search = Mock()
+
+        integratie = AHIntegratie(mock_client)
+        matches = integratie.zoek_producten(lege_boodschappenlijst)
+
+        assert matches == []
+        mock_client.smart_search.assert_not_called()
+
+    def test_match_resultaten_correct(self, mock_client, melk_regel, melk_product):
+        """Test dat ProductMatch correct opgebouwd wordt."""
+        lijst = Boodschappenlijst(week_start="2026-02-16", regels=[melk_regel])
+        mock_client.smart_search = Mock(return_value=(melk_product, "search"))
+
+        integratie = AHIntegratie(mock_client)
+        matches = integratie.zoek_producten(lijst)
+
+        assert len(matches) == 1
+        match = matches[0]
+        assert match.regel is melk_regel
+        assert match.product is melk_product
+        assert match.bron == "zoekopdracht"
+
+    def test_bron_mapping_reference(self, mock_client, melk_regel, melk_product):
+        """Test dat 'reference' bron vertaald wordt naar 'referentie'."""
+        lijst = Boodschappenlijst(week_start="2026-02-16", regels=[melk_regel])
+        mock_client.smart_search = Mock(return_value=(melk_product, "reference"))
+
+        integratie = AHIntegratie(mock_client)
+        matches = integratie.zoek_producten(lijst)
+
+        assert matches[0].bron == "referentie"
+
+    def test_bron_mapping_search(self, mock_client, melk_regel, melk_product):
+        """Test dat 'search' bron vertaald wordt naar 'zoekopdracht'."""
+        lijst = Boodschappenlijst(week_start="2026-02-16", regels=[melk_regel])
+        mock_client.smart_search = Mock(return_value=(melk_product, "search"))
+
+        integratie = AHIntegratie(mock_client)
+        matches = integratie.zoek_producten(lijst)
+
+        assert matches[0].bron == "zoekopdracht"
+
+    def test_bron_mapping_not_found(self, mock_client, melk_regel):
+        """Test dat 'not_found' bron vertaald wordt naar 'niet_gevonden'."""
+        lijst = Boodschappenlijst(week_start="2026-02-16", regels=[melk_regel])
+        mock_client.smart_search = Mock(return_value=(None, "not_found"))
+
+        integratie = AHIntegratie(mock_client)
+        matches = integratie.zoek_producten(lijst)
+
+        assert matches[0].bron == "niet_gevonden"
+
+
+# =============================================================================
+# AHIntegratie.sync_naar_lijst Tests
+# =============================================================================
+
+
+class TestSyncNaarLijst:
+    """Tests voor AHIntegratie.sync_naar_lijst method."""
+
+    def test_maakt_lijst_aan_met_default_naam(self, mock_client, boodschappenlijst):
+        """Test dat een AH lijst aangemaakt wordt met default naam."""
+        mock_client.create_list = Mock(return_value="new-list-id")
+        mock_client.smart_search = Mock(return_value=(None, "not_found"))
+        mock_client.add_products_to_list = Mock()
+
+        integratie = AHIntegratie(mock_client)
+        resultaat = integratie.sync_naar_lijst(boodschappenlijst)
+
+        mock_client.create_list.assert_called_once_with("Boodschappen 2026-02-16")
+        assert resultaat.lijst_naam == "Boodschappen 2026-02-16"
+
+    def test_maakt_lijst_aan_met_custom_naam(self, mock_client, boodschappenlijst):
+        """Test dat een AH lijst aangemaakt wordt met custom naam."""
+        mock_client.create_list = Mock(return_value="new-list-id")
+        mock_client.smart_search = Mock(return_value=(None, "not_found"))
+        mock_client.add_products_to_list = Mock()
+
+        integratie = AHIntegratie(mock_client)
+        resultaat = integratie.sync_naar_lijst(
+            boodschappenlijst, lijst_naam="Mijn Weekboodschappen"
+        )
+
+        mock_client.create_list.assert_called_once_with("Mijn Weekboodschappen")
+        assert resultaat.lijst_naam == "Mijn Weekboodschappen"
+
+    def test_voegt_gevonden_producten_toe(
+        self, mock_client, boodschappenlijst, melk_product, ui_product, knoflook_product
+    ):
+        """Test dat gevonden producten aan de lijst toegevoegd worden."""
+        mock_client.create_list = Mock(return_value="new-list-id")
+        mock_client.smart_search = Mock(
+            side_effect=[
+                (knoflook_product, "search"),
+                (melk_product, "search"),
+                (ui_product, "search"),
+            ]
+        )
+        mock_client.add_products_to_list = Mock(return_value={"totalSize": 3})
+
+        integratie = AHIntegratie(mock_client)
+        integratie.sync_naar_lijst(boodschappenlijst)
+
+        mock_client.add_products_to_list.assert_called_once()
+        call_args = mock_client.add_products_to_list.call_args
+        assert call_args.args[0] == "new-list-id"
+        # Check dat alle product IDs meegegeven worden
+        product_ids = {pid for pid, _ in call_args.args[1]}
+        assert product_ids == {100, 200, 300}
+
+    def test_voegt_alleen_gevonden_producten_toe(
+        self, mock_client, boodschappenlijst, melk_product
+    ):
+        """Test dat alleen gevonden producten toegevoegd worden."""
+        mock_client.create_list = Mock(return_value="new-list-id")
+        # Alleen melk gevonden, rest niet
+        mock_client.smart_search = Mock(
+            side_effect=[
+                (None, "not_found"),  # knoflook
+                (melk_product, "search"),  # melk
+                (None, "not_found"),  # ui
+            ]
+        )
+        mock_client.add_products_to_list = Mock(return_value={"totalSize": 1})
+
+        integratie = AHIntegratie(mock_client)
+        resultaat = integratie.sync_naar_lijst(boodschappenlijst)
+
+        call_args = mock_client.add_products_to_list.call_args
+        product_ids = [pid for pid, _ in call_args.args[1]]
+        assert product_ids == [100]
+        assert len(resultaat.gevonden) == 1
+        assert len(resultaat.niet_gevonden) == 2
+
+    def test_geen_producten_gevonden(self, mock_client, boodschappenlijst):
+        """Test wanneer geen enkel product gevonden wordt."""
+        mock_client.create_list = Mock(return_value="new-list-id")
+        mock_client.smart_search = Mock(return_value=(None, "not_found"))
+        mock_client.add_products_to_list = Mock()
+
+        integratie = AHIntegratie(mock_client)
+        resultaat = integratie.sync_naar_lijst(boodschappenlijst)
+
+        # Lijst wordt wel aangemaakt, maar add wordt niet aangeroepen
+        mock_client.create_list.assert_called_once()
+        mock_client.add_products_to_list.assert_not_called()
+        assert resultaat.lijst_id == "new-list-id"
+        assert len(resultaat.niet_gevonden) == 3
+
+    def test_lege_boodschappenlijst(self, mock_client, lege_boodschappenlijst):
+        """Test met lege boodschappenlijst."""
+        mock_client.create_list = Mock(return_value="new-list-id")
+        mock_client.add_products_to_list = Mock()
+
+        integratie = AHIntegratie(mock_client)
+        resultaat = integratie.sync_naar_lijst(lege_boodschappenlijst)
+
+        mock_client.create_list.assert_called_once()
+        mock_client.add_products_to_list.assert_not_called()
+        assert len(resultaat.matches) == 0
+
+    def test_resultaat_bevat_lijst_id(self, mock_client, boodschappenlijst):
+        """Test dat het resultaat de lijst ID bevat."""
+        mock_client.create_list = Mock(return_value="abc-456")
+        mock_client.smart_search = Mock(return_value=(None, "not_found"))
+
+        integratie = AHIntegratie(mock_client)
+        resultaat = integratie.sync_naar_lijst(boodschappenlijst)
+
+        assert resultaat.lijst_id == "abc-456"
+
+    def test_quantiteit_is_1_per_product(self, mock_client, melk_regel, melk_product):
+        """Test dat quantity standaard 1 is per product."""
+        lijst = Boodschappenlijst(week_start="2026-02-16", regels=[melk_regel])
+        mock_client.create_list = Mock(return_value="new-list-id")
+        mock_client.smart_search = Mock(return_value=(melk_product, "search"))
+        mock_client.add_products_to_list = Mock(return_value={"totalSize": 1})
+
+        integratie = AHIntegratie(mock_client)
+        integratie.sync_naar_lijst(lijst)
+
+        call_args = mock_client.add_products_to_list.call_args
+        products = call_args.args[1]
+        assert products == [(100, 1)]
+
+    def test_geeft_referentie_door_aan_zoek_producten(
+        self, mock_client, boodschappenlijst, melk_product
+    ):
+        """Test dat referentie_lijst_id doorgegeven wordt."""
+        ref_products = [melk_product]
+        mock_list = FavoriteList(
+            id="ref-id",
+            name="Referentie",
+            total_items=1,
+            items=[],
+            products=ref_products,
+        )
+        mock_client.get_list_with_products = Mock(return_value=mock_list)
+        mock_client.create_list = Mock(return_value="new-list-id")
+        mock_client.smart_search = Mock(return_value=(None, "not_found"))
+
+        integratie = AHIntegratie(mock_client)
+        integratie.sync_naar_lijst(boodschappenlijst, referentie_lijst_id="ref-id")
+
+        mock_client.get_list_with_products.assert_called_once_with("ref-id")
