@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Albert{% endblock %}</title>
+
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ah: {
+                            blue: '#00A0E2',
+                            'blue-dark': '#0077B3',
+                            'blue-light': '#E6F4FA',
+                            orange: '#FF6B00',
+                            green: '#4CAF50',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- AH kleuren als CSS custom properties -->
+    <style>
+        :root {
+            --ah-blue: #00A0E2;
+            --ah-blue-dark: #0077B3;
+            --ah-blue-light: #E6F4FA;
+            --ah-orange: #FF6B00;
+            --ah-green: #4CAF50;
+            --gray-100: #F5F5F5;
+            --gray-400: #9E9E9E;
+            --gray-800: #424242;
+        }
+    </style>
+
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+</head>
+<body class="bg-white text-gray-800 min-h-screen flex flex-col" hx-boost="true">
+
+    <!-- Main content -->
+    <main class="flex-1 pb-20">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Tab bar -->
+    {% include "components/tab_bar.html" %}
+
+</body>
+</html>
