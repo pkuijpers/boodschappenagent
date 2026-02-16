@@ -3,13 +3,43 @@
 {% block title %}Week — Albert{% endblock %}
 
 {% block content %}
-<div class="max-w-lg mx-auto px-4 pt-6">
-    <header class="flex items-center justify-between mb-6">
+<div class="max-w-lg mx-auto pt-6">
+    <header class="flex items-center justify-between mb-6 px-4">
+        {% if week_nummer %}
+        <h1 class="text-2xl font-semibold text-gray-800">Week {{ week_nummer }}</h1>
+        {% else %}
         <h1 class="text-2xl font-semibold text-gray-800">Weekoverzicht</h1>
+        {% endif %}
+        <button data-testid="shuffle-button"
+                hx-post="/week/shuffle"
+                hx-target="#week-content"
+                hx-swap="innerHTML"
+                class="p-2 rounded-full hover:bg-gray-100 active:bg-gray-200 transition-colors"
+                aria-label="Shuffle weekmenu">
+            <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+        </button>
     </header>
 
-    <div id="week-content">
-        <p class="text-gray-400 text-center py-12">Weekmenu wordt geladen...</p>
+    <div id="week-content" class="space-y-2 px-2">
+        {% if dagen %}
+            {% for dag in dagen %}
+                {% include "components/dagkaart.html" %}
+            {% endfor %}
+        {% else %}
+            <p class="text-gray-400 text-center py-12">Weekmenu wordt geladen...</p>
+        {% endif %}
     </div>
+
+    {% if dagen %}
+    <div class="mt-6 mb-8 px-4">
+        <a href="/voorraad"
+           class="block w-full text-center py-3 px-4 bg-ah-blue text-white font-semibold rounded-lg hover:bg-ah-blue-dark transition-colors">
+            Verder naar boodschappen
+        </a>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

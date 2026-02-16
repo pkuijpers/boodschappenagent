@@ -100,16 +100,16 @@ tests/
 
 **Doel:** Werkende FastAPI-app met Tailwind, HTMX en eerste lege pagina.
 
-- [ ] Dependencies toevoegen: `fastapi`, `uvicorn`, `jinja2`, `python-multipart`
-- [ ] Dev-dependencies toevoegen: `playwright`, `httpx` (voor async TestClient)
-- [ ] `web/app.py` — FastAPI app factory met Jinja2 templating
-- [ ] `web/dependencies.py` — Dependency injection voor `RecipeRepository`, `MenuPlanner`, `MenuHistory`
-- [ ] `templates/base.html` — Layout met Tailwind CDN, HTMX, AH-kleurenpalet als CSS custom properties
-- [ ] `templates/components/tab_bar.html` — Tab-bar (Week / Vandaag / Instellingen)
-- [ ] Tailwind config met custom kleuren (AH Blauw `#00A0E2`, etc.)
-- [ ] Eerste route `GET /` → redirect naar `/week`
-- [ ] `GET /week` → rendert lege weekoverzicht-pagina met layout
-- [ ] Test: `TestClient` valideert dat `/week` een 200 teruggeeft met correcte HTML-structuur
+- [x] Dependencies toevoegen: `fastapi`, `uvicorn`, `jinja2`, `python-multipart`
+- [x] Dev-dependencies toevoegen: `playwright`, `httpx` (voor async TestClient)
+- [x] `web/app.py` — FastAPI app factory met Jinja2 templating
+- [x] `web/dependencies.py` — Dependency injection voor `RecipeRepository`, `MenuPlanner`, `MenuHistory`
+- [x] `templates/base.html` — Layout met Tailwind CDN, HTMX, AH-kleurenpalet als CSS custom properties
+- [x] `templates/components/tab_bar.html` — Tab-bar (Week / Vandaag / Instellingen)
+- [x] Tailwind config met custom kleuren (AH Blauw `#00A0E2`, etc.)
+- [x] Eerste route `GET /` → redirect naar `/week`
+- [x] `GET /week` → rendert lege weekoverzicht-pagina met layout
+- [x] Test: `TestClient` valideert dat `/week` een 200 teruggeeft met correcte HTML-structuur
 - [ ] Playwright installeren: `playwright install chromium`
 
 **Definitie of done:** `uv run uvicorn boodschappenagent.web.app:create_app --factory` start, `/week` toont een gestylede lege pagina met tab-bar.

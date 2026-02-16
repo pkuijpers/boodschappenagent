@@ -9,6 +9,9 @@ Receptendatabase ──> Menuplanner ──> Boodschappenlijst ──> AH-integr
                                           ^
                                           │
                                     Voorraadbeheer
+
+                        Web UI (FastAPI + HTMX + Tailwind)
+                        └── Verbindt alle componenten in een browser-interface
 ```
 
 | Component | Status | Beschrijving |
@@ -18,14 +21,17 @@ Receptendatabase ──> Menuplanner ──> Boodschappenlijst ──> AH-integr
 | Boodschappenlijst | Gepland | Aggregatie en optimalisatie van ingredienten |
 | Voorraadbeheer | Gepland | Voorraad bijhouden met slimme restock-suggesties |
 | AH-integratie | POC | OAuth2 mobile API voor favorieten en bestellingen |
+| Web UI | In ontwikkeling | FastAPI + HTMX + Tailwind CSS frontend |
 
 ## Quickstart
 
 ```bash
 uv sync                  # Installeer dependencies
-uv run pytest            # Run tests (248 tests)
+uv run pytest            # Run tests (440 unit tests)
+uv run pytest -m e2e     # Run E2E tests (Playwright)
 uv run ruff check .      # Lint
 uv run ruff format .     # Format
+uv run uvicorn boodschappenagent.web.app:create_app --factory --reload  # Start dev server
 ```
 
 Vereist Python 3.14+.
@@ -41,10 +47,13 @@ src/boodschappenagent/
     ah/                  # AHClient, AHTokenManager (OAuth2 mobile API)
     digitizer/           # PDF-naar-recept extractie via Claude Vision
     cli/                 # CLI tooling (digitize)
+    web/                 # FastAPI app, Jinja2 templates, HTMX + Tailwind
 
 data/recipes/            # 30 recepten in 4 categorieen (gevogelte, vis, vlees, vegetarisch)
 
-tests/                   # 248 unit tests, TDD
+tests/                   # 440 unit tests, TDD
+    web/                 # FastAPI route tests (TestClient)
+    e2e/                 # Playwright E2E tests (live server, iPhone 13 emulatie)
 docs/                    # Ontwerpdocumentatie
 ```
 
@@ -115,6 +124,17 @@ lists = client.get_lists()
 results = client.search_products("spaghetti")
 ```
 
+### Web UI
+
+Server-side rendered frontend met FastAPI, HTMX en Tailwind CSS. Geen SPA — HTMX vervangt HTML-fragmenten bij interacties.
+
+```bash
+uv run uvicorn boodschappenagent.web.app:create_app --factory --reload
+# Open http://127.0.0.1:8000/week
+```
+
+**Status:** Fase 0 (project setup) afgerond. Base layout met Tailwind, HTMX, AH-kleurenpalet en tab-bar navigatie. Zie `docs/implementatieplan-ui.md` voor de volledige fasering.
+
 ### Portiecalculator
 
 Schaalt recepten naar gewenst aantal porties met slimme afronding per eenheid.
@@ -135,3 +155,15 @@ uv run pytest --cov              # Coverage rapport
 uv run pytest tests/test_menu_planner.py  # Specifiek testbestand
 uv run ruff check --fix .        # Auto-fix lint issues
 ```
+
+### E2E Tests (Playwright)
+
+E2E tests draaien een live FastAPI-server met testdata en emuleren een iPhone 13 (390x844).
+
+```bash
+uv run playwright install        # Eenmalig: installeer browsers
+uv run pytest -m e2e             # Run E2E tests (headless)
+uv run pytest -m e2e --headed    # Run E2E tests met zichtbare browser
+```
+
+Tests zijn gemarkeerd met `@pytest.mark.e2e` en staan in `tests/e2e/`.

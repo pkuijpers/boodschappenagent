@@ -161,26 +161,28 @@ De keuze tussen optie B en C wordt gemaakt na afronding van beide POCs.
 
 ## 8. Technische Implementatie
 
-### Voorgestelde tech stack
+### Tech stack
 
-- **Database:** SQLite of JSON-bestanden
-- **Backend:** Python voor de logica
-- **Frontend:** Eenvoudige web UI of CLI
-- **Mobiel:** PWA (Progressive Web App) voor toegang via telefoon
+- **Data-opslag:** JSON-bestanden (recepten, geschiedenis, voorraad)
+- **Backend:** Python 3.14+ met FastAPI (server-side rendering)
+- **Frontend:** HTMX + Tailwind CSS (geen SPA, HTML-over-the-wire)
+- **Templating:** Jinja2
+- **Package management:** uv
 
 ### Fasering
 
-1. Recepten digitaliseren en database opzetten
-2. Menuplanner bouwen met portieberekening
+1. ~~Recepten digitaliseren en database opzetten~~ (klaar)
+2. ~~Menuplanner bouwen met portieberekening~~ (klaar)
 3. Boodschappenlijst-generator
 4. Voorraadbeheer toevoegen
 5. AH-integratie (na POC-keuze)
+6. Web UI — FastAPI + HTMX + Tailwind CSS (fase 0 klaar, zie `implementatieplan-ui.md`)
 
 ---
 
 ## 9. Volgende stappen
 
-1. **POC AH-integratie starten** — Beide opties onderzoeken
-2. **Recepten digitaliseren** — Papieren recepten omzetten naar gestructureerd formaat
-3. **Datamodel finaliseren** — Exacte velden en relaties vastleggen
-4. **Eerste prototype** — Minimale versie van menuplanner + boodschappenlijst
+1. **Web UI fase 1** — Weekoverzicht met dagkaarten, shuffle, receptkiezer
+2. **Boodschappenlijst-generator** — Aggregatie van ingrediënten uit weekmenu
+3. **Voorraadbeheer** — Voorraadcheck flow in de UI
+4. **AH-integratie** — Boodschappenlijst versturen naar AH (na POC-keuze)
