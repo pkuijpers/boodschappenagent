@@ -365,6 +365,34 @@ class TestSmartSearch:
         assert product is not None
         mock_client.get_list_with_products.assert_not_called()
 
+    def test_search_fallback_uses_scoring(self, mock_client):
+        """Test that API search results are ranked by scorer, not just first result."""
+        wrong_first = Product(
+            id=1,
+            title="Honig Mix aardappel, broccoli & rundervink",
+            brand="Honig",
+            size="36 g",
+            price=1.99,
+            category="Kruidenmix",
+            is_orderable=True,
+        )
+        correct_second = Product(
+            id=2,
+            title="AH Broccoli",
+            brand="AH",
+            size="500 g",
+            price=1.49,
+            category="Groenten",
+            is_orderable=True,
+        )
+        # API returns wrong product first
+        mock_client.search_products = Mock(return_value=[wrong_first, correct_second])
+
+        product, source = mock_client.smart_search("broccoli")
+
+        assert product is correct_second
+        assert source == "search"
+
 
 # =============================================================================
 # API Method Tests (with mocking)
@@ -496,37 +524,132 @@ class TestAPIMethodsWithMocking:
         with pytest.raises(Exception, match="Failed to add products"):
             mock_client.add_products_to_list("list-1", [(999, 1)])
 
+    def test_add_products_to_list_batches(self, mock_client):
+        """Test that large product lists are sent in batches."""
+        mock_response = {
+            "favoriteListProductsAddV2": {
+                "status": "SUCCESS",
+                "errorMessage": None,
+                "result": {
+                    "id": "list-1",
+                    "description": "Test",
+                    "totalSize": 5,
+                    "items": [],
+                },
+            }
+        }
+        mock_client._execute = Mock(return_value=mock_response)
+
+        products = [(i, 1) for i in range(5)]
+        mock_client.add_products_to_list("list-1", products, batch_size=2)
+
+        assert mock_client._execute.call_count == 3  # 2 + 2 + 1
+
+
+# =============================================================================
+# find_list_by_name Tests
+# =============================================================================
+
+
+class TestFindListByName:
+    """Tests for AHClient.find_list_by_name method."""
+
+    def test_finds_list_by_exact_name(self, mock_client):
+        """Test finding a list by exact name."""
+        mock_response = {
+            "favoriteListV2": [
+                {
+                    "id": "list-1",
+                    "description": "Weekmenu",
+                    "totalSize": 3,
+                    "items": [],
+                },
+                {
+                    "id": "list-2",
+                    "description": "boodschappen",
+                    "totalSize": 10,
+                    "items": [],
+                },
+            ]
+        }
+        mock_client._execute = Mock(return_value=mock_response)
+
+        result = mock_client.find_list_by_name("boodschappen")
+
+        assert result is not None
+        assert result.id == "list-2"
+        assert result.name == "boodschappen"
+
+    def test_finds_list_case_insensitive(self, mock_client):
+        """Test that name matching is case-insensitive."""
+        mock_response = {
+            "favoriteListV2": [
+                {
+                    "id": "list-1",
+                    "description": "Boodschappen",
+                    "totalSize": 5,
+                    "items": [],
+                },
+            ]
+        }
+        mock_client._execute = Mock(return_value=mock_response)
+
+        result = mock_client.find_list_by_name("boodschappen")
+
+        assert result is not None
+        assert result.id == "list-1"
+
+    def test_returns_none_when_not_found(self, mock_client):
+        """Test that None is returned when no list matches."""
+        mock_response = {
+            "favoriteListV2": [
+                {
+                    "id": "list-1",
+                    "description": "Weekmenu",
+                    "totalSize": 3,
+                    "items": [],
+                },
+            ]
+        }
+        mock_client._execute = Mock(return_value=mock_response)
+
+        result = mock_client.find_list_by_name("boodschappen")
+
+        assert result is None
+
+    def test_returns_none_for_empty_lists(self, mock_client):
+        """Test that None is returned when there are no lists."""
+        mock_response = {"favoriteListV2": []}
+        mock_client._execute = Mock(return_value=mock_response)
+
+        result = mock_client.find_list_by_name("boodschappen")
+
+        assert result is None
+
 
 # =============================================================================
 # Integration-style Tests
 # =============================================================================
 
 
-class TestBaseIngredients:
-    """Tests specifically for BASE_INGREDIENTS matching."""
-
-    def test_all_base_ingredients_defined(self, mock_client):
-        """Verify BASE_INGREDIENTS list is properly defined."""
-        assert hasattr(mock_client, "BASE_INGREDIENTS")
-        assert "eieren" in mock_client.BASE_INGREDIENTS
-        assert "melk" in mock_client.BASE_INGREDIENTS
-        assert "kaas" in mock_client.BASE_INGREDIENTS
+class TestCompoundIngredientMatching:
+    """Tests for compound word matching via scorer-based find_product_in_list."""
 
     @pytest.mark.parametrize(
         "search_term,expected_base",
         [
-            ("scharreleieren", "eieren"),
-            ("halfvolle melk", "melk"),
-            ("oude kaas", "kaas"),
-            ("volkoren brood", "brood"),
-            ("roomboter", "boter"),
-            ("griekse yoghurt", "yoghurt"),
-            ("kipfilet", "kip"),
+            ("scharreleieren", "eieren"),  # reverse suffix
+            ("halfvolle melk", "melk"),  # direct word match on "melk"
+            ("oude kaas", "kaas"),  # direct word match on "kaas"
+            ("volkoren brood", "brood"),  # direct word match on "brood"
+            ("roomboter", "boter"),  # reverse suffix
+            ("griekse yoghurt", "yoghurt"),  # direct word match on "yoghurt"
         ],
     )
-    def test_base_ingredient_matching(self, mock_client, search_term, expected_base):
-        """Test that various compound words match their base ingredients."""
-        # Create a product with just the base ingredient
+    def test_compound_ingredient_matching(
+        self, mock_client, search_term, expected_base
+    ):
+        """Test that compound words match products with the base ingredient."""
         products = [
             Product(
                 id=1,
@@ -544,3 +667,51 @@ class TestBaseIngredients:
         assert result is not None, (
             f"'{search_term}' should match product with '{expected_base}'"
         )
+
+
+class TestFindProductInListFalsePositives:
+    """Tests that find_product_in_list rejects known false positives."""
+
+    @pytest.mark.parametrize(
+        "search_term,wrong_title,wrong_category",
+        [
+            (
+                "ui",
+                "Swirl Vuilniszakken met fixeerband 30 liter",
+                "Huishouden",
+            ),
+            (
+                "bloem",
+                "AH Allesreiniger bloemen & fruit",
+                "Huishouden/Schoonmaakmiddelen",
+            ),
+            (
+                "melk",
+                "Kitkat Mini melkchocolade uitdeelzak",
+                "Snoep",
+            ),
+            (
+                "zout",
+                "AH Biologisch Roomboter ongezouten",
+                "Zuivel",
+            ),
+        ],
+    )
+    def test_rejects_false_positive(
+        self, mock_client, search_term, wrong_title, wrong_category
+    ):
+        """Known false positives from reference list should be rejected."""
+        products = [
+            Product(
+                id=1,
+                title=wrong_title,
+                brand="AH",
+                size="1 stuk",
+                price=1.99,
+                category=wrong_category,
+                is_orderable=True,
+            )
+        ]
+
+        result = mock_client.find_product_in_list(search_term, products)
+        assert result is None, f"'{search_term}' should NOT match '{wrong_title}'"

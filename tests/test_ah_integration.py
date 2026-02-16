@@ -119,6 +119,8 @@ def mock_client():
     mock_token_manager.get_access_token.return_value = "test-token"
     client = AHClient(mock_token_manager)
     client.session = Mock()
+    # Default: geen auto-detect referentielijst
+    client.find_list_by_name = Mock(return_value=None)
     return client
 
 
@@ -347,7 +349,8 @@ class TestZoekProducten:
             assert c.kwargs["reference_products"] is ref_products
 
     def test_zonder_referentielijst(self, mock_client, boodschappenlijst):
-        """Test zoeken zonder referentielijst."""
+        """Test zoeken zonder referentielijst en zonder auto-detect match."""
+        mock_client.find_list_by_name = Mock(return_value=None)
         mock_client.smart_search = Mock(return_value=(None, "niet_gevonden"))
 
         integratie = AHIntegratie(mock_client)
@@ -355,6 +358,72 @@ class TestZoekProducten:
 
         for c in mock_client.smart_search.call_args_list:
             assert c.kwargs.get("reference_products") is None
+
+    def test_auto_detect_referentielijst(
+        self, mock_client, boodschappenlijst, melk_product
+    ):
+        """Test dat 'boodschappen' lijst automatisch gevonden wordt."""
+        ref_products = [melk_product]
+        found_list = FavoriteList(
+            id="auto-id",
+            name="boodschappen",
+            total_items=1,
+            items=[],
+        )
+        mock_list_with_products = FavoriteList(
+            id="auto-id",
+            name="boodschappen",
+            total_items=1,
+            items=[],
+            products=ref_products,
+        )
+        mock_client.find_list_by_name = Mock(return_value=found_list)
+        mock_client.get_list_with_products = Mock(return_value=mock_list_with_products)
+        mock_client.smart_search = Mock(return_value=(None, "not_found"))
+
+        integratie = AHIntegratie(mock_client)
+        integratie.zoek_producten(boodschappenlijst)
+
+        mock_client.find_list_by_name.assert_called_once_with("boodschappen")
+        mock_client.get_list_with_products.assert_called_once_with("auto-id")
+        for c in mock_client.smart_search.call_args_list:
+            assert c.kwargs["reference_products"] is ref_products
+
+    def test_auto_detect_niet_gevonden(self, mock_client, boodschappenlijst):
+        """Test dat zonder 'boodschappen' lijst gewoon doorgegaan wordt."""
+        mock_client.find_list_by_name = Mock(return_value=None)
+        mock_client.get_list_with_products = Mock()
+        mock_client.smart_search = Mock(return_value=(None, "not_found"))
+
+        integratie = AHIntegratie(mock_client)
+        integratie.zoek_producten(boodschappenlijst)
+
+        mock_client.find_list_by_name.assert_called_once_with("boodschappen")
+        mock_client.get_list_with_products.assert_not_called()
+        for c in mock_client.smart_search.call_args_list:
+            assert c.kwargs.get("reference_products") is None
+
+    def test_expliciet_ref_id_heeft_voorrang(
+        self, mock_client, boodschappenlijst, melk_product
+    ):
+        """Test dat expliciet ref-ID voorrang heeft boven auto-detect."""
+        ref_products = [melk_product]
+        mock_list = FavoriteList(
+            id="explicit-id",
+            name="Mijn Lijst",
+            total_items=1,
+            items=[],
+            products=ref_products,
+        )
+        mock_client.get_list_with_products = Mock(return_value=mock_list)
+        mock_client.find_list_by_name = Mock()
+        mock_client.smart_search = Mock(return_value=(None, "not_found"))
+
+        integratie = AHIntegratie(mock_client)
+        integratie.zoek_producten(boodschappenlijst, referentie_lijst_id="explicit-id")
+
+        mock_client.find_list_by_name.assert_not_called()
+        mock_client.get_list_with_products.assert_called_once_with("explicit-id")
 
     def test_lege_boodschappenlijst(self, mock_client, lege_boodschappenlijst):
         """Test met lege boodschappenlijst."""
@@ -543,6 +612,31 @@ class TestSyncNaarLijst:
         call_args = mock_client.add_products_to_list.call_args
         products = call_args.args[1]
         assert products == [(100, 1)]
+
+    def test_dedupliceert_producten(self, mock_client, melk_product):
+        """Test dat duplicate product IDs samengevoegd worden met opgetelde quantity."""
+        regel1 = BoodschappenRegel(
+            naam="melk", hoeveelheid=1.0, eenheid="liter",
+            originele_namen=frozenset({"melk"}),
+        )
+        regel2 = BoodschappenRegel(
+            naam="volle melk", hoeveelheid=1.0, eenheid="liter",
+            originele_namen=frozenset({"volle melk"}),
+        )
+        lijst = Boodschappenlijst(week_start="2026-02-16", regels=[regel1, regel2])
+        mock_client.create_list = Mock(return_value="new-list-id")
+        # Beide regels matchen hetzelfde product
+        mock_client.smart_search = Mock(return_value=(melk_product, "search"))
+        mock_client.add_products_to_list = Mock(return_value={"totalSize": 1})
+
+        integratie = AHIntegratie(mock_client)
+        integratie.sync_naar_lijst(lijst)
+
+        call_args = mock_client.add_products_to_list.call_args
+        products = call_args.args[1]
+        # Moet 1 product zijn met quantity 2
+        assert len(products) == 1
+        assert products[0] == (100, 2)
 
     def test_geeft_referentie_door_aan_zoek_producten(
         self, mock_client, boodschappenlijst, melk_product

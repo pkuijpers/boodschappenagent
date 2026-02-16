@@ -4,6 +4,7 @@ from boodschappenagent.ah.auth import AHTokenManager
 from boodschappenagent.ah.client import AHClient
 from boodschappenagent.ah.integration import AHIntegratie, ProductMatch, SyncResultaat
 from boodschappenagent.ah.models import FavoriteList, Product
+from boodschappenagent.ah.product_scorer import ProductScore, ProductScorer
 
 __all__ = [
     "AHClient",
@@ -12,5 +13,7 @@ __all__ = [
     "FavoriteList",
     "Product",
     "ProductMatch",
+    "ProductScore",
+    "ProductScorer",
     "SyncResultaat",
 ]

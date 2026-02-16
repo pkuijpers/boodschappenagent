@@ -590,7 +590,7 @@ def main() -> int:
     bestel_parser.add_argument(
         "--ref",
         "-r",
-        help="AH referentielijst ID voor snellere productmatching",
+        help="AH referentielijst ID (standaard: 'boodschappen' lijst)",
     )
 
     # accepteer command

@@ -4,6 +4,7 @@ import requests
 
 from boodschappenagent.ah.auth import AHTokenManager
 from boodschappenagent.ah.models import FavoriteList, Product
+from boodschappenagent.ah.product_scorer import ProductScorer
 
 
 class AHClient:
@@ -109,66 +110,40 @@ class AHClient:
             raise Exception(f"List not found: {list_id}")
         return FavoriteList.from_api(data["favoriteListV2"][0])
 
-    # Base ingredients to extract from compound words
-    BASE_INGREDIENTS = [
-        "eieren",
-        "melk",
-        "kaas",
-        "brood",
-        "boter",
-        "yoghurt",
-        "vlees",
-        "kip",
-        "vis",
-        "groente",
-        "fruit",
-        "pasta",
-        "rijst",
-        "aardappel",
-    ]
+    def find_list_by_name(self, name: str) -> FavoriteList | None:
+        """Find a favorite list by name (case-insensitive).
+
+        Args:
+            name: The list name to search for.
+
+        Returns:
+            FavoriteList if found, None otherwise.
+        """
+        lists = self.get_lists()
+        name_lower = name.lower()
+        for lst in lists:
+            if lst.name.lower() == name_lower:
+                return lst
+        return None
+
+    REFERENCE_MATCH_THRESHOLD = 40.0
 
     def find_product_in_list(
         self, search_term: str, products: list[Product]
     ) -> Product | None:
-        """
-        Find a matching product in a list of products.
+        """Find a matching product in a list using scored matching.
 
-        Matching strategy:
-        1. Exact title match (case-insensitive)
-        2. All search words appear in title
-        3. Main keyword appears in title
-        4. Base ingredient from compound word (e.g., "scharreleieren" -> "eieren")
+        Uses ProductScorer to evaluate all products and returns the best
+        match only if it exceeds a minimum quality threshold.
         """
         if not products:
             return None
 
-        search_lower = search_term.lower()
-        search_words = search_lower.split()
+        scorer = ProductScorer()
+        ranked = scorer.rank_products(search_term, products)
 
-        # 1. Exact match
-        for p in products:
-            if search_lower == p.title.lower():
-                return p
-
-        # 2. All words match
-        for p in products:
-            title_lower = p.title.lower()
-            if all(word in title_lower for word in search_words):
-                return p
-
-        # 3. Main keyword (longest word) matches
-        main_word = max(search_words, key=len) if search_words else search_lower
-        for p in products:
-            if main_word in p.title.lower():
-                return p
-
-        # 4. Extract base ingredient from compound words
-        for base in self.BASE_INGREDIENTS:
-            if base in search_lower or any(base in word for word in search_words):
-                for p in products:
-                    title_lower = p.title.lower()
-                    if base in title_lower:
-                        return p
+        if ranked and ranked[0].total >= self.REFERENCE_MATCH_THRESHOLD:
+            return ranked[0].product
 
         return None
 
@@ -196,7 +171,10 @@ class AHClient:
 
         results = self.search_products(search_term, limit=limit)
         if results:
-            return (results[0], "search")
+            scorer = ProductScorer()
+            best = scorer.best_match(search_term, results)
+            if best:
+                return (best, "search")
 
         return (None, "not_found")
 
@@ -271,9 +249,9 @@ class AHClient:
         return [Product.from_api(p) for p in data["searchProducts"]["products"]]
 
     def add_products_to_list(
-        self, list_id: str, products: list[tuple[int, int]]
+        self, list_id: str, products: list[tuple[int, int]], batch_size: int = 15
     ) -> dict:
-        """Add products to a favorite list."""
+        """Add products to a favorite list (in batches to avoid API limits)."""
         query = """
         mutation addProducts($id: String!, $products: [FavoriteListProductMutation!]!) {
           favoriteListProductsAddV2(id: $id, products: $products) {
@@ -293,16 +271,19 @@ class AHClient:
         }
         """
 
-        variables = {
-            "id": list_id,
-            "products": [{"productId": pid, "quantity": qty} for pid, qty in products],
-        }
+        result = None
+        for i in range(0, len(products), batch_size):
+            batch = products[i : i + batch_size]
+            variables = {
+                "id": list_id,
+                "products": [{"productId": pid, "quantity": qty} for pid, qty in batch],
+            }
 
-        data = self._execute(query, variables, "addProducts")
-        result = data["favoriteListProductsAddV2"]
+            data = self._execute(query, variables, "addProducts")
+            result = data["favoriteListProductsAddV2"]
 
-        if result["status"] != "SUCCESS":
-            raise Exception(f"Failed to add products: {result['errorMessage']}")
+            if result["status"] != "SUCCESS":
+                raise Exception(f"Failed to add products: {result['errorMessage']}")
 
         return result["result"]
 

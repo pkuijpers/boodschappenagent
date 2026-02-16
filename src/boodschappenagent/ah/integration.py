@@ -16,6 +16,8 @@ _BRON_VERTALING = {
     "not_found": "niet_gevonden",
 }
 
+DEFAULT_REFERENTIE_LIJST_NAAM = "boodschappen"
+
 
 @dataclass(frozen=True)
 class ProductMatch:
@@ -102,6 +104,12 @@ class AHIntegratie:
         if referentie_lijst_id:
             ref_list = self._client.get_list_with_products(referentie_lijst_id)
             reference_products = ref_list.products
+        else:
+            # Auto-detect "boodschappen" lijst
+            found = self._client.find_list_by_name(DEFAULT_REFERENTIE_LIJST_NAAM)
+            if found:
+                ref_list = self._client.get_list_with_products(found.id)
+                reference_products = ref_list.products
 
         matches = []
         for regel in lijst.regels:
@@ -143,8 +151,14 @@ class AHIntegratie:
 
         matches = self.zoek_producten(lijst, referentie_lijst_id=referentie_lijst_id)
 
-        # Voeg alleen gevonden producten toe (quantity=1 per product)
-        gevonden = [(m.product.id, 1) for m in matches if m.gevonden]
+        # Voeg alleen gevonden producten toe, dedupliceer op product ID
+        product_quantities: dict[int, int] = {}
+        for m in matches:
+            if m.gevonden:
+                product_quantities[m.product.id] = (
+                    product_quantities.get(m.product.id, 0) + 1
+                )
+        gevonden = list(product_quantities.items())
         if gevonden:
             self._client.add_products_to_list(lijst_id, gevonden)
 
