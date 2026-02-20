@@ -1,5 +1,5 @@
 {% if dag.type == "recept" %}
-<div data-testid="dagkaart" data-type="recept" id="dag-{{ dag.dag }}"
+<div data-testid="dagkaart" data-type="recept" data-dag="{{ dag.dag }}" id="dag-{{ dag.dag }}"
      class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
     <div class="flex items-center justify-between mb-1">
         <span class="text-sm font-medium text-gray-500">{{ dag.dag_naam }}</span>
@@ -14,13 +14,13 @@
     </div>
 </div>
 {% elif dag.type == "hellofresh" %}
-<div data-testid="dagkaart" data-type="hellofresh" id="dag-{{ dag.dag }}"
+<div data-testid="dagkaart" data-type="hellofresh" data-dag="{{ dag.dag }}" id="dag-{{ dag.dag }}"
      class="rounded-xl p-4 border bg-hf-bg border-hf-border">
     <span class="text-sm font-medium text-hf-text">{{ dag.dag_naam }}</span>
     <div class="text-sm text-hf-text">HelloFresh</div>
 </div>
 {% elif dag.type == "niet-thuis" %}
-<div data-testid="dagkaart" data-type="niet-thuis" id="dag-{{ dag.dag }}"
+<div data-testid="dagkaart" data-type="niet-thuis" data-dag="{{ dag.dag }}" id="dag-{{ dag.dag }}"
      class="rounded-xl p-4 bg-muted-bg">
     <span class="text-sm font-medium text-gray-400">{{ dag.dag_naam }}</span>
     <div class="text-sm text-gray-400">Niet thuis</div>

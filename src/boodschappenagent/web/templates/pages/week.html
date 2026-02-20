@@ -6,7 +6,7 @@
 <div class="max-w-lg mx-auto pt-6">
     <header class="flex items-center justify-between mb-6 px-4">
         {% if week_nummer %}
-        <h1 class="text-2xl font-semibold text-gray-800">Week {{ week_nummer }}</h1>
+        <h1 data-testid="week-nummer" class="text-2xl font-semibold text-gray-800">Week {{ week_nummer }}</h1>
         {% else %}
         <h1 class="text-2xl font-semibold text-gray-800">Weekoverzicht</h1>
         {% endif %}
@@ -23,7 +23,7 @@
         </button>
     </header>
 
-    <div id="week-content" class="space-y-2 px-2">
+    <div id="week-content" data-testid="week-content" class="space-y-2 px-2">
         {% if dagen %}
             {% for dag in dagen %}
                 {% include "components/dagkaart.html" %}

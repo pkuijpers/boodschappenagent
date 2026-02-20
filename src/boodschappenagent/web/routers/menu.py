@@ -73,11 +73,16 @@ async def week(request: Request):
                 }
             )
 
+    context = {
+        "week_nummer": week_nummer,
+        "dagen": dagen,
+    }
+
+    is_htmx = request.headers.get("HX-Request") == "true"
+    template_name = "fragments/week_content.html" if is_htmx else "pages/week.html"
+
     return templates.TemplateResponse(
         request=request,
-        name="pages/week.html",
-        context={
-            "week_nummer": week_nummer,
-            "dagen": dagen,
-        },
+        name=template_name,
+        context=context,
     )

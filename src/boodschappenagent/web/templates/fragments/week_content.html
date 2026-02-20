@@ -1,0 +1,7 @@
+{% if dagen %}
+    {% for dag in dagen %}
+        {% include "components/dagkaart.html" %}
+    {% endfor %}
+{% else %}
+    <p class="text-gray-400 text-center py-12">Weekmenu wordt geladen...</p>
+{% endif %}
