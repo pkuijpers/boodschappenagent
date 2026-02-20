@@ -6,11 +6,12 @@ from boodschappenagent.planner import MenuHistory, MenuPlanner
 from boodschappenagent.repository import RecipeRepository
 
 DATA_DIR = Path(__file__).resolve().parents[3] / "data"
+RECIPE_DIRS = ["gevogelte", "vis", "vlees", "vegetarisch"]
 
 
 def get_recipe_repository() -> RecipeRepository:
-    """Geeft een RecipeRepository terug met de standaard data directory."""
-    return RecipeRepository(DATA_DIR / "recipes")
+    """Geeft een RecipeRepository terug."""
+    return RecipeRepository()
 
 
 def get_menu_history() -> MenuHistory:
@@ -19,7 +20,10 @@ def get_menu_history() -> MenuHistory:
 
 
 def get_menu_planner() -> MenuPlanner:
-    """Geeft een MenuPlanner terug met repository en history."""
+    """Geeft een MenuPlanner terug met recepten en history."""
     repository = get_recipe_repository()
     history = get_menu_history()
-    return MenuPlanner(repository=repository, history=history)
+    recipes = []
+    for subdir in RECIPE_DIRS:
+        recipes.extend(repository.load_all(DATA_DIR / "recipes" / subdir))
+    return MenuPlanner(recipes=recipes, history=history)

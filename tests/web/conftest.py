@@ -1,18 +1,95 @@
 """FastAPI TestClient fixtures voor web integratietests."""
 
-from pathlib import Path
-
 import pytest
+from bs4 import BeautifulSoup
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from boodschappenagent.planner import MenuHistory, MenuPlanner
+from boodschappenagent.models import Basis, Categorie, Ingredient, Seizoen
+from boodschappenagent.models.recipe import Recipe
+from boodschappenagent.planner import DagPlanning, MenuHistory, MenuPlanner, WeekMenu
 from boodschappenagent.repository import RecipeRepository
 from boodschappenagent.web.app import create_app
-from boodschappenagent.web.dependencies import get_menu_history
+from boodschappenagent.web.dependencies import (
+    DATA_DIR,
+    RECIPE_DIRS,
+    get_menu_history,
+    get_menu_planner,
+)
 
-DATA_DIR = Path(__file__).resolve().parents[2] / "data"
-RECIPE_DIRS = ["gevogelte", "vis", "vlees", "vegetarisch"]
+WEEK_START = "2026-02-16"  # Week 8
+
+
+# --- Recipe test data ---
+
+
+def _make_recipe(id: str, naam: str, categorie: Categorie, basis: Basis) -> Recipe:
+    """Helper om een minimaal Recipe object te maken."""
+    return Recipe(
+        id=id,
+        naam=naam,
+        categorie=categorie,
+        basis=basis,
+        seizoenen=[Seizoen.ALLE],
+        basis_porties=2,
+        ingredienten=[
+            Ingredient(naam="test", hoeveelheid=1, eenheid="stuk"),
+        ],
+    )
+
+
+RECEPTEN = [
+    _make_recipe("kip-curry", "Kip curry", Categorie.GEVOGELTE, Basis.RIJST),
+    _make_recipe("bolognese", "Pasta bolognese", Categorie.VLEES, Basis.PASTA),
+    _make_recipe("zalm", "Zalm teriyaki", Categorie.VIS, Basis.RIJST),
+    _make_recipe("linzensoep", "Rode linzensoep", Categorie.VEGETARISCH, Basis.GEEN),
+    _make_recipe("kip-pesto", "Kip pesto pasta", Categorie.GEVOGELTE, Basis.PASTA),
+    _make_recipe("vissticks", "Vissticks", Categorie.VIS, Basis.AARDAPPEL),
+    _make_recipe("chili", "Chili sin carne", Categorie.VEGETARISCH, Basis.RIJST),
+]
+
+
+# --- WeekMenu builders ---
+
+
+def make_full_week_menu(personen: int = 2) -> WeekMenu:
+    """Maak een weekmenu met 7 kookdagen."""
+    dagen = [
+        DagPlanning(dag=i, recept=RECEPTEN[i], personen=personen) for i in range(7)
+    ]
+    return WeekMenu(week_start=WEEK_START, dagen=dagen)
+
+
+def make_week_menu_met_niet_thuis(niet_thuis_dag: int = 5) -> WeekMenu:
+    """Maak een weekmenu met één niet-thuis dag."""
+    dagen = []
+    for i in range(7):
+        if i == niet_thuis_dag:
+            dagen.append(DagPlanning(dag=i, recept=None, personen=0))
+        else:
+            dagen.append(DagPlanning(dag=i, recept=RECEPTEN[i], personen=2))
+    return WeekMenu(week_start=WEEK_START, dagen=dagen)
+
+
+# --- TestClient helpers ---
+
+
+def set_week_menu(
+    client: TestClient,
+    week_menu: WeekMenu,
+    hellofresh_dagen: set | None = None,
+):
+    """Stel weekmenu en hellofresh_dagen in op app.state."""
+    client.app.state.week_menu = week_menu
+    client.app.state.hellofresh_dagen = hellofresh_dagen or set()
+
+
+def soup(response) -> BeautifulSoup:
+    """Parse HTML response naar BeautifulSoup."""
+    return BeautifulSoup(response.text, "html.parser")
+
+
+# --- Fixtures ---
 
 
 @pytest.fixture
@@ -37,13 +114,11 @@ def menu_planner(recipe_repository, menu_history) -> MenuPlanner:
 
 
 @pytest.fixture
-def app_with_overrides(menu_history) -> FastAPI:
-    """App met dependency_overrides voor alleen user-generated data (history).
-
-    RecipeRepository en MenuPlanner draaien echt.
-    """
+def app_with_overrides(menu_history, menu_planner) -> FastAPI:
+    """App met dependency_overrides voor user-generated data en planner."""
     app = create_app()
     app.dependency_overrides[get_menu_history] = lambda: menu_history
+    app.dependency_overrides[get_menu_planner] = lambda: menu_planner
     return app
 
 

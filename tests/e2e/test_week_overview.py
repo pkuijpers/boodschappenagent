@@ -166,17 +166,17 @@ class TestNietThuisDag:
 
 
 class TestNavigatieElementen:
-    """Shuffle-knop en 'Verder naar boodschappen' knop zijn aanwezig."""
+    """Genereer-knop en 'Verder naar boodschappen' knop zijn aanwezig."""
 
-    def test_shuffle_knop_zichtbaar(self, week_page: Page):
-        """Shuffle-knop is zichtbaar in de header."""
-        shuffle = week_page.locator("[data-testid='shuffle-button']")
-        expect(shuffle).to_be_visible()
+    def test_genereer_knop_zichtbaar(self, week_page: Page):
+        """Genereer-knop is zichtbaar in de header."""
+        genereer = week_page.locator("[data-testid='genereer-button']")
+        expect(genereer).to_be_visible()
 
-    def test_shuffle_knop_heeft_htmx_post(self, week_page: Page):
-        """Shuffle-knop heeft een hx-post attribuut naar /week/shuffle."""
-        shuffle = week_page.locator("[data-testid='shuffle-button']")
-        expect(shuffle).to_have_attribute("hx-post", "/week/shuffle")
+    def test_genereer_knop_heeft_htmx_post(self, week_page: Page):
+        """Genereer-knop heeft een hx-post attribuut naar /week/genereer."""
+        genereer = week_page.locator("[data-testid='genereer-button']")
+        expect(genereer).to_have_attribute("hx-post", "/week/genereer")
 
     def test_verder_naar_boodschappen_knop(self, week_page: Page):
         """'Verder naar boodschappen' knop is zichtbaar onderaan."""
