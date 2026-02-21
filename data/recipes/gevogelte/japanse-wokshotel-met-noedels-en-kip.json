@@ -1,0 +1,19 @@
+{
+  "id": "japanse-wokshotel-met-noedels-en-kip",
+  "naam": "Japanse wokshotel met noedels en kip",
+  "categorie": "gevogelte",
+  "basis": "pasta",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "ananas", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "kipfiletblokjes", "hoeveelheid": 200, "eenheid": "gram", "opmerking": null},
+    {"naam": "zoete chilisaus", "hoeveelheid": 2, "eenheid": "el", "opmerking": null},
+    {"naam": "japanse wokgroente champignons en peulen", "hoeveelheid": 800, "eenheid": "gram", "opmerking": "gesneden"},
+    {"naam": "Chinese eiermie", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null}
+  ],
+  "tags": ["wok", "aziatisch", "noedels", "snel"],
+  "bereidingstijd_min": 20,
+  "bereidingswijze": "1 Breng een ruime pan water aan de kook. Halveer de wortel en snij de helft, niet de hele wortel in kleine blokjes. Verhit ondertussen de wokolie in een wok of ruime pan. 2 Voeg 3e kikkererwten bij en wok 3 min. Voeg de chilisaus en rijst, evenals olie in knuige brokjes en 4 min. roosteren. Voeg overige ingrediënten als mossel, rib blaadjes overbekijk Bereit de courgette, kook met wortel en boter heel.",
+  "bron": null
+}

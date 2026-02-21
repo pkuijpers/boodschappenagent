@@ -1,0 +1,25 @@
+{
+  "id": "mexicaanse-mais-tomatensoep-met-rijst-en-limoencreme",
+  "naam": "Mexicaanse mais-tomatensoep met rijst & limoencreme",
+  "categorie": "vegetarisch",
+  "basis": "rijst",
+  "seizoenen": ["alle"],
+  "basis_porties": 2,
+  "ingredienten": [
+    {"naam": "gele rijst", "hoeveelheid": 100, "eenheid": "gram", "opmerking": null},
+    {"naam": "mais", "hoeveelheid": 150, "eenheid": "g", "opmerking": null},
+    {"naam": "tasty tom-trostomaten", "hoeveelheid": 190, "eenheid": "gram", "opmerking": null},
+    {"naam": "groentebouillontablet", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "gerookte paprikapoeder", "hoeveelheid": 1, "eenheid": "theelepel", "opmerking": null},
+    {"naam": "tomato frito", "hoeveelheid": 180, "eenheid": "gram", "opmerking": null},
+    {"naam": "biologische crème fraîche", "hoeveelheid": 65, "eenheid": "gram", "opmerking": null},
+    {"naam": "koriander", "hoeveelheid": 7.5, "eenheid": "gram", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "arachideolie", "hoeveelheid": 0.5, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["mexicaans", "soep", "tomaten", "mais", "koriander", "crème fraîche"],
+  "bereidingstijd_min": 25,
+  "bereidingswijze": "Kook de rijst in 8 min. gaar. Giet af en laat met de deksel op de pan staan tot gebruik. Borstel de maiskolf met de olie. Verhit de grillpan en gril de mais in 15 min. rondom goudbruin en gaar. Neem uit de pan. Zet de maiskolf rechtop op een snijplank. Snijd met een mes de korrels van boven naar beneden los van de kolf. Snijd ondertussen de tomaten in stukjes en doe samen met de groenebouillontablet, paprikapoeder, tomato frito en 150 ml water in een soeppan. Breng aan de kook en laat 15 min. op laag vuur koken. Doe de mais bij de soep en verwarm nog 5 min. op laag vuur. Klop ondertussen de limoencreme. Rasp de groene schil van de halve limoen. Halveer de helft, pers 1/4 uit en snijd de andere helft in 2 partjes. Roer de crème fraîche met het limoensap en -rasp. Snijd de koriander grof. Verdeel de rijst over 2 kommen, schep de soep erop en verdeel de limoencreme erover. Bestrooi met de koriander en serveer de limoenpartjes erbij.",
+  "bron": null
+}
