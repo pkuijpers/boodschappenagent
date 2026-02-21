@@ -1,0 +1,35 @@
+<div data-testid="portiescherm" class="px-4 py-6">
+    <!-- Terug knop -->
+    <button data-testid="terug-naar-kiezer"
+            hx-get="/week/dag/{{ dag }}/receptkiezer"
+            hx-target="#sheet"
+            hx-swap="innerHTML"
+            class="mb-4 flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+        Terug
+    </button>
+
+    <h2 class="text-lg font-semibold text-gray-800 mb-1">{{ recept.naam }}</h2>
+    <p class="text-sm text-gray-400 mb-6">Hoeveel porties?</p>
+
+    <!-- Portie knoppen -->
+    <div class="flex gap-3 mb-8" data-testid="portie-knoppen">
+        {% for n in [2, 3, 4] %}
+        <button data-testid="portie-{{ n }}"
+                hx-post="/week/dag/{{ dag }}/bevestig"
+                hx-vals='{"personen": "{{ n }}", "recipe_id": "{{ recept.id }}"}'
+                hx-target="#dag-{{ dag }}"
+                hx-swap="outerHTML"
+                class="flex-1 py-4 rounded-xl border-2 text-lg font-bold transition-colors
+                       {% if n == huidig_personen %}
+                       border-ah-blue bg-ah-blue-light text-ah-blue
+                       {% else %}
+                       border-gray-200 text-gray-700 hover:border-ah-blue
+                       {% endif %}">
+            {{ n }}
+        </button>
+        {% endfor %}
+    </div>
+</div>

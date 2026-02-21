@@ -122,31 +122,31 @@ tests/
 
 #### 1a. Menu genereren en tonen
 
-- [ ] `GET /week` — Haalt huidig weekmenu op (of genereert nieuw via `MenuPlanner`)
-- [ ] `templates/pages/week.html` — Weekoverzicht met header ("Week {nr}"), shuffle-knop, lijst dagkaarten
-- [ ] `templates/components/dagkaart.html` — Component met 3 states:
+- [x] `GET /week` — Haalt huidig weekmenu op (of genereert nieuw via `MenuPlanner`)
+- [x] `templates/pages/week.html` — Weekoverzicht met header ("Week {nr}"), shuffle-knop, lijst dagkaarten
+- [x] `templates/components/dagkaart.html` — Component met 3 states:
   - **Recept:** Naam, porties, categorie-emoji, basis, "X mnd geleden"
   - **HelloFresh:** Oranje balk, niet interactief
   - **Niet thuis:** Grijze balk
-- [ ] "Verder naar boodschappen" knop onderaan
-- [ ] Tests: Weekoverzicht toont 7 dagen, correcte receptnamen, HelloFresh-dagen zijn oranje
+- [x] "Verder naar boodschappen" knop onderaan
+- [x] Tests: Weekoverzicht toont 7 dagen, correcte receptnamen, HelloFresh-dagen zijn oranje
 
 #### 1b. Shuffle
 
-- [ ] `POST /week/shuffle` → HTMX swap van het weekoverzicht (`hx-target="#week-content"`)
-- [ ] Genereert volledig nieuw menu, rendert dagkaarten opnieuw
-- [ ] Test: Na shuffle zijn recepten anders (seed-based test)
+- [x] `POST /week/shuffle` → HTMX swap van het weekoverzicht (`hx-target="#week-content"`)
+- [x] Genereert volledig nieuw menu, rendert dagkaarten opnieuw
+- [x] Test: Na shuffle zijn recepten anders (seed-based test)
 
 #### 1c. Vervang recept (↻ knop)
 
-- [ ] `GET /week/dag/{dag}/receptkiezer` → Rendert receptkiezer als partial (sheet)
-- [ ] `templates/pages/receptkiezer.html` — Zoekbalk, filter chips, receptenlijst
-- [ ] `templates/components/receptrij.html` — Naam, categorie, basis, bereidingstijd, "laatst gegeten"
-- [ ] `GET /week/dag/{dag}/receptkiezer?search=...&categorie=...` → HTMX live zoeken
-- [ ] `POST /week/dag/{dag}/kies/{recipe_id}` → Toont portiescherm
-- [ ] `templates/pages/porties.html` — Portiekeuze (2/3/4), "Toevoegen" knop
-- [ ] `POST /week/dag/{dag}/bevestig` → Plaatst recept, swapt dagkaart
-- [ ] Tests:
+- [x] `GET /week/dag/{dag}/receptkiezer` → Rendert receptkiezer als partial (sheet)
+- [x] `templates/pages/receptkiezer.html` — Zoekbalk, filter chips, receptenlijst
+- [x] `templates/components/receptrij.html` — Naam, categorie, basis, bereidingstijd, "laatst gegeten"
+- [x] `GET /week/dag/{dag}/receptkiezer?search=...&categorie=...` → HTMX live zoeken
+- [x] `POST /week/dag/{dag}/kies/{recipe_id}` → Toont portiescherm
+- [x] `templates/pages/porties.html` — Portiekeuze (2/3/4), "Toevoegen" knop
+- [x] `POST /week/dag/{dag}/bevestig` → Plaatst recept, swapt dagkaart
+- [x] Tests:
   - Receptkiezer toont recepten gesorteerd op "lang niet gegeten"
   - Zoeken filtert live
   - Filter chips werken (meerdere selecteerbaar)

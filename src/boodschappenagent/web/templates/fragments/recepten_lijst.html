@@ -1,0 +1,9 @@
+{% if recepten %}
+    {% for recept in recepten %}
+        {% include "components/receptrij.html" %}
+    {% endfor %}
+{% else %}
+    <p data-testid="geen-recepten" class="text-gray-400 text-center py-8 text-sm">
+        Geen recepten gevonden.
+    </p>
+{% endif %}

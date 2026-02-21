@@ -46,5 +46,40 @@
     <!-- Tab bar -->
     {% include "components/tab_bar.html" %}
 
+    <!-- Sheet backdrop -->
+    <div id="sheet-backdrop"
+         class="hidden fixed inset-0 bg-black/40 z-40"
+         onclick="htmx.trigger(document.body, 'closeSheet')">
+    </div>
+
+    <!-- Sheet -->
+    <div id="sheet"
+         class="fixed inset-x-0 bottom-0 z-50 bg-white rounded-t-2xl shadow-2xl max-h-[85vh] overflow-y-auto translate-y-full transition-transform duration-300">
+    </div>
+
+    <script>
+        document.body.addEventListener('htmx:afterSettle', function(evt) {
+            if (evt.detail.target && evt.detail.target.id === 'sheet') {
+                var sheet = document.getElementById('sheet');
+                var backdrop = document.getElementById('sheet-backdrop');
+                if (sheet && sheet.children.length > 0) {
+                    sheet.classList.remove('translate-y-full');
+                    backdrop.classList.remove('hidden');
+                }
+            }
+        });
+        document.body.addEventListener('closeSheet', function() {
+            var sheet = document.getElementById('sheet');
+            var backdrop = document.getElementById('sheet-backdrop');
+            if (sheet) {
+                sheet.classList.add('translate-y-full');
+                sheet.innerHTML = '';
+            }
+            if (backdrop) {
+                backdrop.classList.add('hidden');
+            }
+        });
+    </script>
+
 </body>
 </html>

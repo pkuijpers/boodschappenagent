@@ -13,6 +13,7 @@ from boodschappenagent.web.app import create_app
 from boodschappenagent.web.dependencies import (
     DATA_DIR,
     RECIPE_DIRS,
+    get_all_recipes,
     get_menu_history,
     get_menu_planner,
 )
@@ -114,11 +115,26 @@ def menu_planner(recipe_repository, menu_history) -> MenuPlanner:
 
 
 @pytest.fixture
-def app_with_overrides(menu_history, menu_planner) -> FastAPI:
+def all_recipes(recipe_repository) -> list[Recipe]:
+    """Alle recepten uit data/recipes/ + test recepten — voor receptkiezer tests."""
+    recipes: list[Recipe] = []
+    for subdir in RECIPE_DIRS:
+        recipes.extend(recipe_repository.load_all(DATA_DIR / "recipes" / subdir))
+    # Voeg test recepten toe zodat kies/bevestig routes werken met test data
+    existing_ids = {r.id for r in recipes}
+    for r in RECEPTEN:
+        if r.id not in existing_ids:
+            recipes.append(r)
+    return recipes
+
+
+@pytest.fixture
+def app_with_overrides(menu_history, menu_planner, all_recipes) -> FastAPI:
     """App met dependency_overrides voor user-generated data en planner."""
     app = create_app()
     app.dependency_overrides[get_menu_history] = lambda: menu_history
     app.dependency_overrides[get_menu_planner] = lambda: menu_planner
+    app.dependency_overrides[get_all_recipes] = lambda: all_recipes
     return app
 
 

@@ -1,0 +1,24 @@
+<button data-testid="receptrij"
+        data-recept-id="{{ recept.id }}"
+        hx-post="/week/dag/{{ dag }}/kies/{{ recept.id }}"
+        hx-target="#sheet"
+        hx-swap="innerHTML"
+        class="w-full text-left px-4 py-3 border-b border-gray-100 hover:bg-gray-50 active:bg-gray-100 transition-colors">
+    <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2 flex-1 min-w-0">
+            <span class="text-lg flex-shrink-0">{{ recept.categorie_emoji }}</span>
+            <div class="min-w-0">
+                <p data-testid="recept-naam" class="text-sm font-semibold text-gray-800 truncate">
+                    {{ recept.naam }}
+                </p>
+                <p class="text-xs text-gray-400 mt-0.5">
+                    <span data-testid="recept-basis">{{ recept.basis }}</span>
+                    · <span data-testid="bereidingstijd">{{ recept.bereidingstijd_min }} min</span>
+                </p>
+            </div>
+        </div>
+        <span data-testid="laatst-gegeten" class="text-xs text-gray-400 flex-shrink-0 ml-2">
+            {{ recept.laatst_gegeten }}
+        </span>
+    </div>
+</button>

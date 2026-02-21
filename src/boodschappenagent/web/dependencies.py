@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+from boodschappenagent.models import Recipe
 from boodschappenagent.planner import MenuHistory, MenuPlanner
 from boodschappenagent.repository import RecipeRepository
 
@@ -17,6 +18,15 @@ def get_recipe_repository() -> RecipeRepository:
 def get_menu_history() -> MenuHistory:
     """Geeft een MenuHistory terug met de standaard history file."""
     return MenuHistory(DATA_DIR / "history.json")
+
+
+def get_all_recipes() -> list[Recipe]:
+    """Geeft alle recepten terug uit alle categorieën."""
+    repository = get_recipe_repository()
+    recipes: list[Recipe] = []
+    for subdir in RECIPE_DIRS:
+        recipes.extend(repository.load_all(DATA_DIR / "recipes" / subdir))
+    return recipes
 
 
 def get_menu_planner() -> MenuPlanner:

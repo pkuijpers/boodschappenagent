@@ -1,0 +1,67 @@
+<div class="flex flex-col h-full" data-testid="receptkiezer" data-dag="{{ dag }}">
+    <!-- Header -->
+    <div class="flex items-center justify-between px-4 pt-4 pb-2">
+        <h2 class="text-lg font-semibold text-gray-800">Recept kiezen</h2>
+        <button data-testid="sluit-sheet"
+                class="p-1.5 rounded-full hover:bg-gray-100"
+                onclick="htmx.trigger(document.body, 'closeSheet')"
+                aria-label="Sluiten">
+            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Zoekbalk -->
+    <div class="px-4 pb-3">
+        <input type="search"
+               name="search"
+               data-testid="zoekbalk"
+               placeholder="Zoek recept..."
+               value="{{ search }}"
+               hx-get="/week/dag/{{ dag }}/receptkiezer"
+               hx-trigger="keyup changed delay:300ms"
+               hx-target="#recepten-lijst"
+               hx-include="[name='categorie']:checked"
+               class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-ah-blue"/>
+    </div>
+
+    <!-- Filter chips -->
+    <div class="px-4 pb-3 flex gap-2 flex-wrap" data-testid="filter-chips">
+        <label class="cursor-pointer">
+            <input type="checkbox" name="categorie" value=""
+                   class="sr-only peer"
+                   {% if not geselecteerde_categorieen %}checked{% endif %}
+                   hx-get="/week/dag/{{ dag }}/receptkiezer"
+                   hx-trigger="change"
+                   hx-target="#recepten-lijst"
+                   hx-include="[name='search']"/>
+            <span class="px-3 py-1 rounded-full text-sm border transition-colors
+                         {% if not geselecteerde_categorieen %}bg-ah-blue text-white border-ah-blue{% else %}bg-white text-gray-600 border-gray-300{% endif %}">
+                Alles
+            </span>
+        </label>
+        {% for cat in categorieen %}
+        <label class="cursor-pointer">
+            <input type="checkbox" name="categorie" value="{{ cat.value }}"
+                   class="sr-only peer"
+                   {% if cat.value in geselecteerde_categorieen %}checked{% endif %}
+                   hx-get="/week/dag/{{ dag }}/receptkiezer"
+                   hx-trigger="change"
+                   hx-target="#recepten-lijst"
+                   hx-include="[name='search'], [name='categorie']:checked"
+                   />
+            <span data-testid="filter-chip-{{ cat.value }}"
+                  class="px-3 py-1 rounded-full text-sm border transition-colors
+                         {% if cat.value in geselecteerde_categorieen %}bg-ah-blue text-white border-ah-blue{% else %}bg-white text-gray-600 border-gray-300{% endif %}">
+                {{ categorie_emoji[cat.value] }} {{ cat.value|capitalize }}
+            </span>
+        </label>
+        {% endfor %}
+    </div>
+
+    <!-- Receptenlijst -->
+    <div id="recepten-lijst" class="flex-1 overflow-y-auto px-2">
+        {% include "fragments/recepten_lijst.html" %}
+    </div>
+</div>

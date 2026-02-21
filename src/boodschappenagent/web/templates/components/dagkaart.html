@@ -10,13 +10,12 @@
             <span data-testid="categorie" class="text-lg">{{ dag.categorie_emoji }}</span>
             <span class="text-base font-semibold text-gray-800">{{ dag.recept.naam }}</span>
         </div>
-        <button data-testid="shuffle-dag-button"
-                hx-post="/week/shuffle"
-                hx-vals='{"dag": "{{ dag.dag }}"}'
-                hx-target="#week-content"
+        <button data-testid="vervang-dag-button"
+                hx-get="/week/dag/{{ dag.dag }}/receptkiezer"
+                hx-target="#sheet"
                 hx-swap="innerHTML"
                 class="p-1.5 rounded-full hover:bg-gray-100 active:bg-gray-200 transition-colors"
-                aria-label="Shuffle recept voor {{ dag.dag_naam }}">
+                aria-label="Vervang recept voor {{ dag.dag_naam }}">
             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
