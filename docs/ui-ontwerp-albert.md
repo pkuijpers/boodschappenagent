@@ -1,13 +1,14 @@
 # UI Ontwerp: Albert
 
-**Versie:** 1.1
-**Datum:** 2026-02-13
+**Versie:** 1.2
+**Datum:** 2026-02-27
 **Platform:** iOS/iPadOS (mobiel-first)
 
 ### Changelog
 
 | Versie | Wijziging |
 |--------|-----------|
+| 1.2 | Dag aanpassen: tap op dagkaart opent gecombineerde sheet (personen, dagtype, random recept). Zoekfunctie verwijderd. |
 | 1.1 | Automatisch weekvoorstel: app start met gevuld menu i.p.v. lege dagen |
 | 1.0 | Initieel ontwerp |
 
@@ -147,14 +148,14 @@ Geen lege dagen meer — je begint met een compleet weekmenu en past aan waar no
 │  Voorstel voor deze week          🔀   │  ← Shuffle: genereer nieuw voorstel
 │                                         │
 │  ┌─────────────────────────────────┐   │
-│  │ MA 10 feb                    2p │   │
-│  │ Ossobuco                     ↻  │   │  ← ↻ = vervang dit recept
+│  │ MA 10 feb                    2p │   │  ← Hele kaart is tappable
+│  │ Ossobuco                        │   │
 │  │ 🥔 Aardappel · Vlees            │   │
 │  │ ░░░░░░░░░░░░ 3 mnd geleden      │   │  ← Subtiele indicator: lang niet gehad
 │  └─────────────────────────────────┘   │
 │                                         │
 │  ┌─────────────────────────────────┐   │
-│  │ DI 11 feb              HelloFresh│   │  ← Oranje accent
+│  │ DI 11 feb              HelloFresh│   │  ← Oranje accent, ook tappable
 │  │ ████████████████████████████████│   │
 │  └─────────────────────────────────┘   │
 │                                         │
@@ -170,21 +171,21 @@ Geen lege dagen meer — je begint met een compleet weekmenu en past aan waar no
 │                                         │
 │  ┌─────────────────────────────────┐   │
 │  │ VR 14 feb                    2p │   │
-│  │ Zalm teriyaki                ↻  │   │
+│  │ Zalm teriyaki                   │   │
 │  │ 🍚 Rijst · Vis                  │   │
 │  │ ░░░░░░░░ 2 mnd geleden          │   │
 │  └─────────────────────────────────┘   │
 │                                         │
 │  ┌─────────────────────────────────┐   │
 │  │ ZA 15 feb                    4p │   │  ← Weekend: 4 personen
-│  │ Kip tandoori                 ↻  │   │
+│  │ Kip tandoori                    │   │
 │  │ 🍚 Rijst · Gevogelte            │   │
 │  │ ░░░░░░ 6 wkn geleden            │   │
 │  └─────────────────────────────────┘   │
 │                                         │
 │  ┌─────────────────────────────────┐   │
 │  │ ZO 16 feb                    4p │   │
-│  │ Moussaka                     ↻  │   │
+│  │ Moussaka                        │   │
 │  │ 🥔 Aardappel · Vlees            │   │
 │  │ ░░░░░ 5 wkn geleden             │   │
 │  └─────────────────────────────────┘   │
@@ -196,132 +197,89 @@ Geen lege dagen meer — je begint met een compleet weekmenu en past aan waar no
 └─────────────────────────────────────────┘
 ```
 
-**Na handmatig vervangen van een recept:**
-
-```
-┌─────────────────────────────────────────┐
-│ ◀ Week 7                    Albert   ● │
-├─────────────────────────────────────────┤
-│                                         │
-│  Voorstel voor deze week          🔀   │
-│                                         │
-│  ┌─────────────────────────────────┐   │
-│  │ MA 10 feb                    2p │   │
-│  │ Spaghetti Bolognese          ↻  │   │  ← Door jou gekozen (vervangt voorstel)
-│  │ 🍝 Pasta · Vlees                │   │
-│  └─────────────────────────────────┘   │
-│  ...                                    │
-└─────────────────────────────────────────┘
-```
-
 **Interacties:**
 - **🔀 Shuffle** (rechtsboven) → Genereer volledig nieuw weekvoorstel
-- **Tap ↻** op een dag → Vervang alleen dit recept (toont receptkiezer)
-- **Swipe dag naar links** → Snelle vervang-actie
-- **Tap op dag** → Details bekijken, porties aanpassen
+- **Tap op dagkaart** → Dag aanpassen (toont gecombineerde sheet voor dagtype, porties en recept)
 - **"Verder naar boodschappen"** → Direct beschikbaar (alles is al ingevuld)
 
 ---
 
-### 5.2 Receptkiezer (Vervangmodus)
+### 5.2 Dag aanpassen
 
-Opent als sheet wanneer je een voorgesteld recept wilt vervangen.
-Focus op snel een alternatief vinden.
+Opent als sheet wanneer je op een dagkaart tapt.
+Combineert dagtype, porties en receptkeuze in één scherm — geen aparte stappen.
 
 ```
 ┌─────────────────────────────────────────┐
 │ ─────                                   │  ← Drag handle
 │                                         │
-│  Vervang recept voor maandag            │
-│  Nu: Ossobuco                           │  ← Toont huidige suggestie
+│  Maandag 10 feb                         │
+│  Ossobuco · 2 personen                  │  ← Huidige staat
+│                                         │
 ├─────────────────────────────────────────┤
-│  ┌─────────────────────────────────┐   │
-│  │ 🔍 Zoek recept...               │   │  ← Zoekbalk
-│  └─────────────────────────────────┘   │
 │                                         │
-│  ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐   │
-│  │Alle│ │Vlees│ │Kip │ │Vis │ │Vega│   │  ← Filter chips (horizontaal scrollen)
-│  └────┘ └────┘ └────┘ └────┘ └────┘   │
-│                                         │
-│  Lang niet gegeten                      │  ← Sectie header
-│  ─────────────────────────────────────  │
-│                                         │
-│  ┌─────────────────────────────────┐   │
-│  │ Ossobuco                        │   │
-│  │ Vlees · Aardappel · 45 min      │   │
-│  │ 3 maanden geleden               │   │  ← Wanneer laatst gegeten
-│  └─────────────────────────────────┘   │
-│                                         │
-│  ┌─────────────────────────────────┐   │
-│  │ Zalm teriyaki                   │   │
-│  │ Vis · Rijst · 25 min            │   │
-│  │ 2 maanden geleden               │   │
-│  └─────────────────────────────────┘   │
-│                                         │
-│  ┌─────────────────────────────────┐   │
-│  │ Moussaka                        │   │
-│  │ Vlees · Aardappel · 60 min      │   │
-│  │ 6 weken geleden                 │   │
-│  └─────────────────────────────────┘   │
-│                                         │
-│  ┌─────────────────────────────────┐   │
-│  │ Risotto champignons             │   │
-│  │ Vegetarisch · Rijst · 35 min    │   │
-│  │ 5 weken geleden                 │   │
-│  └─────────────────────────────────┘   │
-│                                         │
-│  ... (scrollbaar)                       │
-│                                         │
-└─────────────────────────────────────────┘
-```
-
-**Interacties:**
-- Tap op recept → Portiescherm
-- Zoeken filtert live
-- Filter chips zijn toggles (meerdere selecteerbaar)
-- Pull-to-dismiss om terug te gaan
-
----
-
-### 5.3 Porties Kiezen
-
-Snel tussenscherm na receptselectie.
-
-```
-┌─────────────────────────────────────────┐
-│ ─────                                   │
-│                                         │
-│  Spaghetti Bolognese                    │
-│  Maandag 10 februari                    │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐│
+│  │Geen menu │ │ • Recept │ │HelloFresh ││  ← Dagtype selector
+│  └──────────┘ └──────────┘ └──────────┘│
 │                                         │
 ├─────────────────────────────────────────┤
 │                                         │
 │  Aantal personen                        │
 │                                         │
-│     ┌─────┐   ┌─────┐   ┌─────┐        │
-│     │     │   │     │   │     │        │
-│     │  2  │   │  3  │   │  4  │        │
-│     │     │   │     │   │     │        │
-│     └─────┘   └─────┘   └─────┘        │
-│       ▲                                 │  ← 2 is default doordeweeks
-│    geselecteerd                         │
+│  ┌────┐   ┌────┐   ┌────┐              │
+│  │ 2  │   │ 3  │   │ 4  │             │
+│  └────┘   └────┘   └────┘             │
+│    ▲ geselecteerd                       │
 │                                         │
 ├─────────────────────────────────────────┤
 │                                         │
 │  ┌─────────────────────────────────┐   │
-│  │           Toevoegen             │   │  ← Primaire actie
+│  │  🔀  Ander recept               │   │  ← Variety-aware random selectie
 │  └─────────────────────────────────┘   │
 │                                         │
 └─────────────────────────────────────────┘
 ```
 
-**Slimme defaults:**
-- Ma/Vr: 2 personen (doordeweeks)
-- Za/Zo: 4 personen (weekend met kinderen)
+**States van het sheet:**
+
+*Dagtype = Geen menu:*
+```
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐│
+│  │• Geen    │ │  Recept  │ │HelloFresh ││
+│  └──────────┘ └──────────┘ └──────────┘│
+│                                         │
+│  (personen-selector en "Ander recept"   │
+│   zijn verborgen)                       │
+```
+Dagkaart wordt niet-thuis (grijs).
+
+*Dagtype = HelloFresh:*
+```
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐│
+│  │Geen menu │ │  Recept  │ │•HelloFresh││
+│  └──────────┘ └──────────┘ └──────────┘│
+│                                         │
+│  (personen-selector en "Ander recept"   │
+│   zijn verborgen)                       │
+```
+Dagkaart wordt HelloFresh (oranje).
+
+**"🔀 Ander recept" knop:**
+- Selecteert een nieuw recept via dezelfde logica als de MenuPlanner
+- Houdt rekening met de andere dagen: geen 2x kip achter elkaar, variatie in categorie en basis
+- Receptnaam in de sheet-header update direct
+- Dagkaart in de achtergrond update ook direct (HTMX out-of-band)
+- Meerdere keren drukken geeft steeds een ander voorstel
+
+**Interacties:**
+- Tap dagtype knop → Dagkaart update direct (HTMX), sheet blijft open
+- Tap personen knop → Portie update direct (HTMX), sheet blijft open
+- Tap "🔀 Ander recept" → Nieuw variety-aware recept, sheet + kaart update direct
+- Pull-to-dismiss om terug te gaan (wijzigingen zijn al opgeslagen)
 
 ---
 
-### 5.4 Voorraadcheck
+### 5.3 Voorraadcheck
 
 Na het afronden van de weekplanning. Checklist-stijl.
 
@@ -388,7 +346,7 @@ Na het afronden van de weekplanning. Checklist-stijl.
 
 ---
 
-### 5.5 Boodschappenlijst
+### 5.4 Boodschappenlijst
 
 Overzicht van alles wat besteld gaat worden. Laatste controle.
 
@@ -450,7 +408,7 @@ Overzicht van alles wat besteld gaat worden. Laatste controle.
 
 ---
 
-### 5.6 AH Koppeling (Bevestiging)
+### 5.5 AH Koppeling (Bevestiging)
 
 Na "Verstuur naar AH" - bevestigingsscherm.
 
@@ -486,7 +444,7 @@ Na "Verstuur naar AH" - bevestigingsscherm.
 
 ---
 
-### 5.7 Kookmodus (Dagelijks)
+### 5.6 Kookmodus (Dagelijks)
 
 Apart toegankelijk, los van de wekelijkse planning.
 
@@ -565,28 +523,27 @@ Op iPad wordt een split-view gebruikt:
 ```
 ┌────────────────────────┬────────────────────────────────────────┐
 │                        │                                        │
-│  Week 7           🔀   │   Vervang recept                       │
-│  ──────────────────    │   Nu: Zalm teriyaki                    │
+│  Week 7           🔀   │   Vrijdag aanpassen                    │
+│  ──────────────────    │   Zalm teriyaki · 2 personen           │
 │                        │   ──────────────────                   │
-│  MA 10  Ossobuco    ↻  │                                        │
-│  DI 11  HelloFresh     │   🔍 Zoek recept...                    │
+│  MA 10  Ossobuco       │                                        │
+│  DI 11  HelloFresh     │  [Geen menu] [• Recept] [HelloFresh]  │
 │  WO 12  HelloFresh     │                                        │
-│  DO 13  HelloFresh     │   [Alle] [Vlees] [Kip] [Vis] [Vega]   │
-│  VR 14  Zalm teriy. ←↻ │                                        │
-│  ZA 15  Kip tandoori↻  │   Gebakken zalmfilet                  │
-│  ZO 16  Moussaka    ↻  │   Vis · Geen · 20 min                 │
-│                        │   4 maanden geleden                   │
-│                        │                                        │
-│  ┌──────────────────┐  │   Vissticks met puree                 │
-│  │  Naar            │  │   Vis · Aardappel · 25 min            │
-│  │  boodschappen →  │  │   2 maanden geleden                   │
+│  DO 13  HelloFresh     │   Aantal personen                      │
+│  VR 14  Zalm teriy. ←  │   [2•]  [3]  [4]                      │
+│  ZA 15  Kip tandoori   │                                        │
+│  ZO 16  Moussaka       │  ┌────────────────────────────────┐   │
+│                        │  │  🔀  Ander recept              │   │
+│  ┌──────────────────┐  │  └────────────────────────────────┘   │
+│  │  Naar            │  │                                        │
+│  │  boodschappen →  │  │                                        │
 │  └──────────────────┘  │                                        │
-│                        │   ...                                  │
+│                        │                                        │
 └────────────────────────┴────────────────────────────────────────┘
 ```
 
-Het rechter paneel toont de receptkiezer alleen wanneer je op ↻ tapt.
-Standaard is het rechter paneel leeg of toont het receptdetails.
+Het rechter paneel toont de dag-aanpassen sheet wanneer je op een dagkaart tapt.
+Standaard is het rechter paneel leeg.
 
 ---
 
@@ -597,15 +554,16 @@ Standaard is het rechter paneel leeg of toont het receptdetails.
 ```
 ┌─────────────────────────────────────────┐
 │ MA 10 feb                           2p │  ← Header: dag, datum, porties
-│ Ossobuco                             ↻ │  ← Receptnaam, vervang-icoon
+│ Ossobuco                               │  ← Receptnaam
 │ 🥔 Aardappel · Vlees                   │  ← Metadata (basis, categorie)
 │ ░░░░░░░░░░░░ 3 mnd geleden             │  ← Wanneer laatst gegeten
 └─────────────────────────────────────────┘
+▲ Hele kaart is tappable → opent dag-aanpassen sheet
 
 States:
-- Voorstel: receptnaam + metadata + "lang niet gegeten" indicator + ↻ icoon
-- Handmatig gekozen: receptnaam + metadata + ↻ icoon (geen indicator)
-- HelloFresh: Oranje balk, niet interactief
+- Recept: receptnaam + metadata + "lang niet gegeten" indicator (hele kaart tappable)
+- HelloFresh: Oranje balk (hele kaart tappable → kan HelloFresh uitzetten)
+- Geen menu: Grijze balk (hele kaart tappable → kan dagtype wijzigen)
 ```
 
 ### 8.2 Receptrij
@@ -659,8 +617,9 @@ States:
 | Actie | Animatie |
 |-------|----------|
 | Weekvoorstel laden | Kaarten verschijnen met staggered fade-in (0.1s delay per dag) |
-| 🔀 Shuffle | Alle kaarten roteren uit, nieuwe kaarten roteren in |
-| ↻ Recept vervangen | Oude naam fade out naar links, nieuwe fade in vanaf rechts |
+| 🔀 Shuffle (hele week) | Alle kaarten roteren uit, nieuwe kaarten roteren in |
+| 🔀 Ander recept (dag) | Receptnaam in sheet fade out → in; dagkaart update in achtergrond |
+| Dagtype wisselen | Dagkaart update met crossfade; sheet past inhoud aan |
 | Voorraad Ja/Nee | Button highlight, snelle fade |
 | Naar AH verzonden | Vinkje schaalt in, confetti-hint |
 | Dag wisselen (kookmodus) | Crossfade met slide |
@@ -695,12 +654,16 @@ Buiten scope van v1, maar rekening mee houden in architectuur:
 | Keuze | Rationale |
 |-------|-----------|
 | **Automatisch weekvoorstel** | Minder werk: alleen aanpassen wat niet bevalt, niet alles zelf kiezen |
-| **↻ Vervang i.p.v. + Kies** | Positieve framing: je hebt al iets, vervang alleen indien nodig |
+| **Tap op dagkaart → gecombineerde sheet** | Één tap geeft toegang tot alle aanpassingen voor die dag |
+| **Geen zoekfunctie** | Bladeren door recepten is traag en leidt tot keuzestress; systeem stelt voor |
+| **"🔀 Ander recept" i.p.v. zoekbalk** | Eén tap, variety-aware alternatief — sneller dan zoeken |
 | **🔀 Shuffle voor hele week** | Snelle reset als het voorstel helemaal niet past |
+| **Dagtype als 3-knops selector** | Eén handeling voor geen menu / recept / HelloFresh, geen apart scherm |
+| **Directe HTMX updates** | Sheet blijft open, dagkaart update in achtergrond — geen navigatieonderbreking |
 | Half-modal sheets | Snelle context-switches zonder navigatie te verliezen |
 | Ja/Nee in plaats van checkboxes | Duidelijker dan alleen vinkjes, geen dubbelzinnigheid |
 | "Lang niet gegeten" indicator | Transparantie over waarom het systeem dit recept voorstelt |
-| HelloFresh als oranje blokken | Duidelijk onderscheid, geen interactie nodig |
+| HelloFresh als oranje blokken | Duidelijk onderscheid; ook tappable om dagtype te wijzigen |
 | Kookboekverwijzing i.p.v. instructies | De fysieke bron blijft leidend |
 | Standaard "Nee" bij voorraadcheck | Veilige default: liever te veel bestellen dan te weinig |
 

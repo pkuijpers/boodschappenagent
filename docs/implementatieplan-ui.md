@@ -137,20 +137,49 @@ tests/
 - [x] Genereert volledig nieuw menu, rendert dagkaarten opnieuw
 - [x] Test: Na shuffle zijn recepten anders (seed-based test)
 
-#### 1c. Vervang recept (↻ knop)
+#### 1c. Dag aanpassen (tap op dagkaart)
 
-- [x] `GET /week/dag/{dag}/receptkiezer` → Rendert receptkiezer als partial (sheet)
-- [x] `templates/pages/receptkiezer.html` — Zoekbalk, filter chips, receptenlijst
-- [x] `templates/components/receptrij.html` — Naam, categorie, basis, bereidingstijd, "laatst gegeten"
-- [x] `GET /week/dag/{dag}/receptkiezer?search=...&categorie=...` → HTMX live zoeken
-- [x] `POST /week/dag/{dag}/kies/{recipe_id}` → Toont portiescherm
-- [x] `templates/pages/porties.html` — Portiekeuze (2/3/4), "Toevoegen" knop
-- [x] `POST /week/dag/{dag}/bevestig` → Plaatst recept, swapt dagkaart
-- [x] Tests:
-  - Receptkiezer toont recepten gesorteerd op "lang niet gegeten"
-  - Zoeken filtert live
-  - Filter chips werken (meerdere selecteerbaar)
-  - Na bevestiging is de dagkaart geüpdatet
+Herontworpen: tap op dagkaart opent een gecombineerde "dag aanpassen" sheet.
+Zoekfunctionaliteit vervalt; vervangen door variety-aware random selectie.
+
+- [ ] Dagkaart volledig tappable maken (verwijder ↻ knop, voeg hx-get toe aan de kaart zelf)
+- [ ] `GET /week/dag/{dag}/aanpassen` → Rendert dag-aanpassen sheet
+- [ ] `templates/pages/dag_aanpassen.html` — Dagtype selector, personen selector, "Ander recept" knop
+- [ ] Dagtype selector (Geen menu / Recept / HelloFresh) — drie knoppen, directe HTMX update:
+  - `POST /week/dag/{dag}/stel-type-in` met `type=geen_menu|recept|hellofresh`
+  - Swapt dagkaart (out-of-band) + update sheet-inhoud
+- [ ] Personen selector (2/3/4) — directe HTMX update:
+  - `POST /week/dag/{dag}/stel-personen-in` met `personen=2|3|4`
+  - Swapt dagkaart (out-of-band), sheet blijft open
+- [ ] "🔀 Ander recept" knop:
+  - Hergebruikt bestaande `POST /week/dag/{dag}/shuffle` logica (`planner.vervang_recept`)
+  - Houdt rekening met andere dagen (variety: geen 2x kip etc.)
+  - Swapt dagkaart (out-of-band) + update receptnaam in sheet-header
+  - Meerdere keren drukken → steeds ander variety-aware voorstel
+- [ ] Verwijder zoekbalk, filter chips en receptenlijst uit receptkiezer
+- [ ] Verwijder `templates/pages/receptkiezer.html`, `templates/components/receptrij.html`, `templates/fragments/recepten_lijst.html`
+
+**Testbestand-wijzigingen:**
+- `tests/web/test_receptkiezer.py` → herschrijven naar `test_dag_aanpassen.py`:
+  - **Verwijder:** `TestDagkaartVervangKnop`, `TestReceptkiezerZoeken`, `TestReceptkiezerFilterChips`, `TestReceptkiezerSortering`, `TestKiesRecept`, `TestBevestigRecept`
+  - **Hernoem:** `TestReceptkiezerOpenen` → `TestDagAanpassenOpenen` (route `/aanpassen`, geen zoekbalk/filterchips)
+  - **Hernoem:** `TestDagkaartVervangKnop` → `TestDagkaartTappable` (hx-get naar `/aanpassen`, geen `vervang-dag-button`)
+  - **Behoud:** `TestSheetInfrastructuur`, `TestFormatTijdGeleden`
+  - **Nieuw:** `TestDagTypeSelector` — POST stel-type-in wisselt dagkaart correct
+  - **Nieuw:** `TestPersonenSelector` — POST stel-personen-in update porties, sheet blijft open
+  - **Nieuw:** `TestAnderRecept` — POST shuffle geeft variety-aware resultaat, OOB dagkaart update
+- `tests/web/test_recept_shufflen.py` → shuffle endpoint retourneert voortaan OOB-fragment (dagkaart + sheet-header) i.p.v. volledige weekoverzicht:
+  - Update `TestShuffleRetourneertFragment`: verwacht OOB dagkaart-fragment, niet 7 dagkaarten
+  - Behoud `TestShuffleEnkelRecept`, `TestShuffleRespecteertVariatie`, `TestShuffleNietThuisDag`
+
+**Unit tests nieuwe routes:**
+- `GET /week/dag/{dag}/aanpassen` → 200, bevat dagtype-selector en (indien recept) personen-selector en "Ander recept" knop
+- `GET /week/dag/{dag}/aanpassen` zonder weekmenu → 404
+- `POST /week/dag/{dag}/stel-type-in` met `type=geen_menu` → dagkaart type=niet-thuis
+- `POST /week/dag/{dag}/stel-type-in` met `type=hellofresh` → dagkaart type=hellofresh
+- `POST /week/dag/{dag}/stel-type-in` met `type=recept` → dagkaart type=recept (huidig recept blijft)
+- `POST /week/dag/{dag}/stel-personen-in` met `personen=4` → dagkaart toont 4 porties
+- Sheet blijft open na personen/recept wijziging (geen closeSheet trigger, wél bij dagtype=geen_menu of hellofresh)
 
 ---
 
@@ -247,14 +276,23 @@ tests/
 
 - [ ] `test_weekly_flow.py` — Complete wekelijkse flow:
   1. Open `/week` → Weekoverzicht met automatisch voorstel
-  2. Klik shuffle → Nieuw voorstel
-  3. Klik ↻ op een dag → Receptkiezer opent
-  4. Zoek en selecteer recept → Portiescherm
-  5. Bevestig → Dagkaart geüpdatet
-  6. "Verder naar boodschappen" → Voorraadcheck
-  7. Beantwoord Ja/Nee → Boodschappenlijst
-  8. Controleer lijst → Verstuur naar AH
-  9. Bevestigingsscherm
+  2. Klik shuffle → Nieuw voorstel gegenereerd, dagkaarten vernieuwd
+  3. Tap op een dagkaart → Dag aanpassen sheet opent
+  4. Tap dagtype "Geen menu" → Dagkaart wordt grijs, personen/recept-opties verdwijnen
+  5. Tap dagtype "Recept" → Dagkaart herstelt, personen-selector en "Ander recept" zijn zichtbaar
+  6. Tap "Ander recept" → Receptnaam in sheet wijzigt, dagkaart in achtergrond update
+  7. Tap "Ander recept" nogmaals → Ander recept (no repeat test)
+  8. Tap personen "4" → Dagkaart toont 4 porties
+  9. Sluit sheet → Dagkaart toont gewijzigde dag correct
+  10. "Verder naar boodschappen" → Voorraadcheck
+  11. Beantwoord Ja/Nee → Boodschappenlijst
+  12. Controleer lijst → Verstuur naar AH
+  13. Bevestigingsscherm
+- [ ] `test_dag_aanpassen.py` — Dag aanpassen interacties (E2E):
+  - Sheet opent bij tap op recept-kaart
+  - Sheet opent bij tap op HelloFresh-kaart (kan HelloFresh uitzetten)
+  - Sheet opent bij tap op niet-thuis-kaart
+  - Dagtype wisselen update kaart direct zichtbaar in achtergrond
 - [ ] `test_kookmodus.py` — Kookmodus navigatie
 - [ ] `test_responsive.py` — Mobiel vs desktop viewport tests
 
@@ -284,12 +322,11 @@ async def week(request: Request):
 
 | UI-actie | HTMX-attribuut | Route | Swap |
 |----------|---------------|-------|------|
-| Shuffle week | `hx-post="/week/shuffle"` | `POST /week/shuffle` | `#week-content` |
-| Vervang recept | `hx-get="/week/dag/0/receptkiezer"` | `GET /week/dag/{dag}/receptkiezer` | `#sheet` (modal) |
-| Zoek recept | `hx-get` + `hx-trigger="keyup changed delay:300ms"` | `GET /week/dag/{dag}/receptkiezer?search=...` | `#recepten-lijst` |
-| Filter chip | `hx-get` + `hx-include="[name='categorie']"` | `GET /week/dag/{dag}/receptkiezer?categorie=...` | `#recepten-lijst` |
-| Kies recept | `hx-post="/week/dag/0/kies/spaghetti-bolognese"` | `POST /week/dag/{dag}/kies/{recipe_id}` | `#sheet` |
-| Bevestig porties | `hx-post="/week/dag/0/bevestig"` | `POST /week/dag/{dag}/bevestig` | `#dag-0` + sluit sheet |
+| Shuffle hele week | `hx-post="/week/genereer"` | `POST /week/genereer` | `#week-content` |
+| Tap dagkaart | `hx-get="/week/dag/0/aanpassen"` | `GET /week/dag/{dag}/aanpassen` | `#sheet` (modal) |
+| Dagtype wisselen | `hx-post="/week/dag/0/stel-type-in"` | `POST /week/dag/{dag}/stel-type-in` | `#sheet` + OOB `#dag-0` |
+| Personen aanpassen | `hx-post="/week/dag/0/stel-personen-in"` | `POST /week/dag/{dag}/stel-personen-in` | OOB `#dag-0` (sheet blijft open) |
+| Ander recept | `hx-post="/week/shuffle"` (hidden `dag` input) | `POST /week/shuffle` (dag als form field) | OOB `#dag-0` + `#sheet-header` |
 | Voorraad Ja/Nee | `hx-post="/voorraad/pasta/status"` | `POST /voorraad/{item}/status` | `#voorraad-pasta` |
 | Toggle boodschap | `hx-patch="/boodschappen/item-001"` | `PATCH /boodschappen/{item_id}` | `#item-001` |
 | Verstuur naar AH | `hx-post="/boodschappen/verstuur-naar-ah"` | `POST /boodschappen/verstuur-naar-ah` | body (volledig scherm) |
