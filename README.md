@@ -18,8 +18,8 @@ Receptendatabase ──> Menuplanner ──> Boodschappenlijst ──> AH-integr
 |-----------|--------|--------------|
 | Receptendatabase | Klaar | 30 recepten in JSON, zoeken op seizoen/categorie/tags |
 | Menuplanner | Klaar | Weekmenu met variatie, seizoenslogica en geschiedenis |
-| Boodschappenlijst | Gepland | Aggregatie en optimalisatie van ingredienten |
-| Voorraadbeheer | Gepland | Voorraad bijhouden met slimme restock-suggesties |
+| Boodschappenlijst | Klaar | Aggregatie en optimalisatie van ingrediënten |
+| Voorraadbeheer | Klaar | Voorraad bijhouden met slimme restock-suggesties |
 | AH-integratie | POC | OAuth2 mobile API voor favorieten en bestellingen |
 | Web UI | In ontwikkeling | FastAPI + HTMX + Tailwind CSS frontend |
 
@@ -46,7 +46,7 @@ src/boodschappenagent/
     utils/               # PortionCalculator
     ah/                  # AHClient, AHTokenManager (OAuth2 mobile API)
     digitizer/           # PDF-naar-recept extractie via Claude Vision
-    cli/                 # CLI tooling (digitize)
+    cli/                 # CLI tooling (menu, voorraad, digitize)
     web/                 # FastAPI app, Jinja2 templates, HTMX + Tailwind
 
 data/recipes/            # 30 recepten in 4 categorieen (gevogelte, vis, vlees, vegetarisch)
@@ -143,6 +143,80 @@ Schaalt recepten naar gewenst aantal porties met slimme afronding per eenheid.
 from boodschappenagent.utils import PortionCalculator
 
 scaled = PortionCalculator.scale_recipe(recipe, porties=3)
+```
+
+## CLI Gebruik
+
+### Weekmenu plannen en bestellen
+
+De volledige workflow van menu plannen tot bestellen bij AH:
+
+```bash
+# 1. Weekmenu genereren (seizoen wordt automatisch gedetecteerd)
+uv run python -m boodschappenagent.cli.menu plan
+
+# 2. Menu bekijken
+uv run python -m boodschappenagent.cli.menu toon
+
+# 3. Recept vervangen (bijv. dinsdag)
+uv run python -m boodschappenagent.cli.menu vervang di
+
+# 4. Boodschappenlijst genereren
+uv run python -m boodschappenagent.cli.menu boodschappen
+
+# 5. Bestellen bij Albert Heijn
+uv run python -m boodschappenagent.cli.menu bestel
+
+# 6. Menu accepteren (opslaan in geschiedenis)
+uv run python -m boodschappenagent.cli.menu accepteer
+```
+
+**Opties bij `plan`:**
+
+| Optie | Beschrijving | Voorbeeld |
+|-------|-------------|-----------|
+| `-p`, `--personen` | Standaard personen per dag (default: 2) | `-p 4` |
+| `-v`, `--vrij` | Vrije dagen (komma-gescheiden) | `--vrij za,zo` |
+| `-d`, `--dagen` | Per-dag personen (dag:aantal) | `--dagen ma:4,vr:3` |
+| `-s`, `--seizoen` | Seizoen override (auto-detect) | `--seizoen winter` |
+| `-w`, `--week` | Week startdatum | `--week 2026-03-02` |
+
+**Opties bij `vervang`:**
+
+| Optie | Beschrijving | Voorbeeld |
+|-------|-------------|-----------|
+| `-p`, `--personen` | Wijzig aantal personen | `vervang di -p 4` |
+| `-v`, `--vrij` | Markeer dag als vrij | `vervang do --vrij` |
+| `-s`, `--seizoen` | Seizoen override | `vervang di -s zomer` |
+
+**Opties bij `bestel`:**
+
+| Optie | Beschrijving | Voorbeeld |
+|-------|-------------|-----------|
+| `-f`, `--filter-voorraad` | Filter items op voorraad | `bestel -f` |
+| `-n`, `--naam` | Naam voor de AH lijst | `bestel -n "Week 10"` |
+| `-r`, `--ref` | AH referentielijst ID | `bestel --ref <list_id>` |
+
+### Voorraadbeheer
+
+Beheer je voorraad om boodschappenlijsten te optimaliseren:
+
+```bash
+# Voorraad initialiseren met standaard items
+uv run python -m boodschappenagent.cli.voorraad init
+
+# Voorraad bekijken
+uv run python -m boodschappenagent.cli.voorraad toon
+
+# Item markeren als op voorraad of leeg
+uv run python -m boodschappenagent.cli.voorraad set pasta --op
+uv run python -m boodschappenagent.cli.voorraad set melk --leeg
+
+# Interactieve wekelijkse voorraadcheck
+uv run python -m boodschappenagent.cli.voorraad check
+
+# Synchroniseer voorraad met receptendatabase (ontdek nieuwe items)
+uv run python -m boodschappenagent.cli.voorraad sync
 ```
 
 ## Development
