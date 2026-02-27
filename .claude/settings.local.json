@@ -13,11 +13,27 @@
       "Bash(uv run python:*)",
       "Bash(grep:*)",
       "Bash(ls:*)",
-      "Bash(test:*)"
+      "Bash(test:*)",
+      "Bash(git fetch origin main)",
+      "Bash(git rebase origin/main)",
+      "Bash(ruff check:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "puppeteer"
-  ]
+  ],
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /home/pieter/projects/albert/agent-backend && uv run ruff check --fix $(echo $CLAUDE_TOOL_INPUT | jq -r '.file_path // empty') 2>/dev/null || true"
+          }
+        ]
+      }
+    ]
+  }
 }
