@@ -53,29 +53,33 @@
         </button>
     </div>
 
-    {% if dag.type == "recept" %}
+    <!-- Vaste-hoogte wrapper: voorkomt hoogteverspringing bij wisselen van dagtype.
+         min-h-[10rem] = 160px is ruim genoeg voor personen selector (100px) + knop (52px). -->
+    <div class="min-h-[10rem] flex flex-col">
+        {% if dag.type == "recept" %}
 
-    <!-- Personen selector -->
-    <div class="mb-5">
-        <div class="text-sm font-medium text-gray-600 mb-3">Aantal personen</div>
-        <div data-testid="personen-selector" class="flex gap-3">
-            {% for p in [2, 3, 4] %}
-            <button data-actief="{{ 'true' if dag.personen == p else 'false' }}"
-                    class="w-16 py-3 rounded-xl text-base font-semibold border transition-colors
-                           {% if dag.personen == p %}bg-ah-blue-light border-ah-blue text-ah-blue{% else %}bg-white border-gray-200 text-gray-600{% endif %}">
-                {{ p }}
-            </button>
-            {% endfor %}
+        <!-- Personen selector -->
+        <div class="mb-5">
+            <div class="text-sm font-medium text-gray-600 mb-3">Aantal personen</div>
+            <div data-testid="personen-selector" class="flex gap-3">
+                {% for p in [2, 3, 4] %}
+                <button data-actief="{{ 'true' if dag.personen == p else 'false' }}"
+                        class="w-16 py-3 rounded-xl text-base font-semibold border transition-colors
+                               {% if dag.personen == p %}bg-ah-blue-light border-ah-blue text-ah-blue{% else %}bg-white border-gray-200 text-gray-600{% endif %}">
+                    {{ p }}
+                </button>
+                {% endfor %}
+            </div>
         </div>
+
+        <!-- Ander recept knop -->
+        <button data-testid="ander-recept-button"
+                class="w-full py-3.5 rounded-xl text-base font-semibold bg-ah-blue text-white
+                       active:bg-ah-blue-dark transition-colors mt-auto">
+            🔀 Ander recept
+        </button>
+
+        {% endif %}
     </div>
-
-    <!-- Ander recept knop -->
-    <button data-testid="ander-recept-button"
-            class="w-full py-3.5 rounded-xl text-base font-semibold bg-ah-blue text-white
-                   active:bg-ah-blue-dark transition-colors">
-        🔀 Ander recept
-    </button>
-
-    {% endif %}
 
 </div>
