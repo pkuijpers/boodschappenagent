@@ -1,5 +1,6 @@
 {% if dag.type == "recept" %}
 <div data-testid="dagkaart" data-type="recept" data-dag="{{ dag.dag }}" id="dag-{{ dag.dag }}"
+     {% if oob %}hx-swap-oob="outerHTML"{% endif %}
      hx-get="/week/dag/{{ dag.dag }}/aanpassen"
      hx-target="#sheet"
      hx-swap="innerHTML"
@@ -18,6 +19,7 @@
 </div>
 {% elif dag.type == "hellofresh" %}
 <div data-testid="dagkaart" data-type="hellofresh" data-dag="{{ dag.dag }}" id="dag-{{ dag.dag }}"
+     {% if oob %}hx-swap-oob="outerHTML"{% endif %}
      hx-get="/week/dag/{{ dag.dag }}/aanpassen"
      hx-target="#sheet"
      hx-swap="innerHTML"
@@ -27,6 +29,7 @@
 </div>
 {% elif dag.type == "niet-thuis" %}
 <div data-testid="dagkaart" data-type="niet-thuis" data-dag="{{ dag.dag }}" id="dag-{{ dag.dag }}"
+     {% if oob %}hx-swap-oob="outerHTML"{% endif %}
      hx-get="/week/dag/{{ dag.dag }}/aanpassen"
      hx-target="#sheet"
      hx-swap="innerHTML"

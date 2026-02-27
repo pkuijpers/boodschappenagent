@@ -166,3 +166,71 @@ class TestDagAanpassenOpenen:
         set_week_menu(client, make_full_week_menu())
         response = client.get("/week/dag/7/aanpassen")
         assert response.status_code == 422
+
+
+class TestDagTypeSelector:
+    """S5.3: POST /week/dag/{dag}/stel-type-in wijzigt het dagtype."""
+
+    def test_stel_geen_menu_in_dagkaart_type(self, client: TestClient):
+        """S5.3.1: Dagkaart na stel geen_menu in heeft type niet-thuis."""
+        set_week_menu(client, make_full_week_menu())
+        response = client.post("/week/dag/0/stel-type-in", data={"type": "geen_menu"})
+        assert response.status_code == 200
+        assert soup(response).select_one('[data-type="niet-thuis"]') is not None
+
+    def test_stel_geen_menu_in_app_state(self, client: TestClient):
+        """S5.3.1: Na stel geen_menu in is dag 0 personen=0 in app.state."""
+        set_week_menu(client, make_full_week_menu())
+        client.post("/week/dag/0/stel-type-in", data={"type": "geen_menu"})
+        assert client.app.state.week_menu.dagen[0].personen == 0
+
+    def test_stel_hellofresh_in_dagkaart_type(self, client: TestClient):
+        """S5.3.2: Dagkaart na stel hellofresh in heeft type hellofresh."""
+        set_week_menu(client, make_full_week_menu())
+        response = client.post("/week/dag/0/stel-type-in", data={"type": "hellofresh"})
+        assert response.status_code == 200
+        assert soup(response).select_one('[data-type="hellofresh"]') is not None
+
+    def test_stel_hellofresh_in_app_state(self, client: TestClient):
+        """S5.3.2: Na stel hellofresh in is dag 0 in app.state.hellofresh_dagen."""
+        set_week_menu(client, make_full_week_menu())
+        client.post("/week/dag/0/stel-type-in", data={"type": "hellofresh"})
+        assert 0 in client.app.state.hellofresh_dagen
+
+    def test_zet_hellofresh_uit_dagkaart_type(self, client: TestClient):
+        """S5.3.3: Dagkaart na stel recept in (dag 2 was HF) heeft type recept."""
+        set_week_menu(client, make_full_week_menu(), hellofresh_dagen={2})
+        response = client.post("/week/dag/2/stel-type-in", data={"type": "recept"})
+        assert response.status_code == 200
+        assert soup(response).select_one('[data-type="recept"]') is not None
+
+    def test_zet_hellofresh_uit_app_state(self, client: TestClient):
+        """S5.3.3: Na recept instellen staat dag 2 niet meer in hellofresh_dagen."""
+        set_week_menu(client, make_full_week_menu(), hellofresh_dagen={2})
+        client.post("/week/dag/2/stel-type-in", data={"type": "recept"})
+        assert 2 not in client.app.state.hellofresh_dagen
+
+    def test_wijzigt_alleen_gevraagde_dag(self, client: TestClient):
+        """S5.3.4: Alleen dag 0 wordt gewijzigd; overige 6 dagen ongewijzigd."""
+        set_week_menu(client, make_full_week_menu())
+        client.post("/week/dag/0/stel-type-in", data={"type": "geen_menu"})
+        updated = client.app.state.week_menu
+        for i in range(1, 7):
+            assert updated.dagen[i].recept.id == RECEPTEN[i].id
+            assert updated.dagen[i].personen == 2
+
+    def test_ongeldig_type_geeft_422(self, client: TestClient):
+        """S5.3.5: Ongeldig dagtype geeft 422."""
+        set_week_menu(client, make_full_week_menu())
+        response = client.post(
+            "/week/dag/0/stel-type-in", data={"type": "onbekend"}
+        )
+        assert response.status_code == 422
+
+    def test_zonder_weekmenu_geeft_404(self, client: TestClient):
+        """S5.3.6: Zonder weekmenu geeft 404."""
+        client.app.state.week_menu = None
+        response = client.post(
+            "/week/dag/0/stel-type-in", data={"type": "geen_menu"}
+        )
+        assert response.status_code == 404

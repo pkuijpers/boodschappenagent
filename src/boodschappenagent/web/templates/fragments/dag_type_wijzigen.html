@@ -1,0 +1,7 @@
+{# Primair: bijgewerkte sheet-inhoud (vervangt #sheet innerHTML) #}
+{% include "components/dag_aanpassen.html" %}
+
+{# OOB: dagkaart in achtergrond bijwerken #}
+{% with oob=True %}
+{% include "components/dagkaart.html" %}
+{% endwith %}

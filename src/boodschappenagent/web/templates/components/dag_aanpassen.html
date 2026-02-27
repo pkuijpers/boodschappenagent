@@ -23,18 +23,30 @@
     <div data-testid="dagtype-selector" class="flex gap-2 mb-5">
         <button data-testid="dagtype-geen-menu"
                 data-actief="{{ 'true' if dag.type == 'niet-thuis' else 'false' }}"
+                hx-post="/week/dag/{{ dag.dag }}/stel-type-in"
+                hx-vals='{"type": "geen_menu"}'
+                hx-target="#sheet"
+                hx-swap="innerHTML"
                 class="flex-1 py-2.5 px-2 rounded-xl text-sm font-medium border transition-colors
                        {% if dag.type == 'niet-thuis' %}bg-ah-blue-light border-ah-blue text-ah-blue{% else %}bg-white border-gray-200 text-gray-600{% endif %}">
             Geen menu
         </button>
         <button data-testid="dagtype-recept"
                 data-actief="{{ 'true' if dag.type == 'recept' else 'false' }}"
+                hx-post="/week/dag/{{ dag.dag }}/stel-type-in"
+                hx-vals='{"type": "recept"}'
+                hx-target="#sheet"
+                hx-swap="innerHTML"
                 class="flex-1 py-2.5 px-2 rounded-xl text-sm font-medium border transition-colors
                        {% if dag.type == 'recept' %}bg-ah-blue-light border-ah-blue text-ah-blue{% else %}bg-white border-gray-200 text-gray-600{% endif %}">
             Recept
         </button>
         <button data-testid="dagtype-hellofresh"
                 data-actief="{{ 'true' if dag.type == 'hellofresh' else 'false' }}"
+                hx-post="/week/dag/{{ dag.dag }}/stel-type-in"
+                hx-vals='{"type": "hellofresh"}'
+                hx-target="#sheet"
+                hx-swap="innerHTML"
                 class="flex-1 py-2.5 px-2 rounded-xl text-sm font-medium border transition-colors
                        {% if dag.type == 'hellofresh' %}bg-ah-blue-light border-ah-blue text-ah-blue{% else %}bg-white border-gray-200 text-gray-600{% endif %}">
             HelloFresh

@@ -1,9 +1,9 @@
 """Menu routes — weekoverzicht en gerelateerde endpoints."""
 
 from datetime import date, timedelta
-from typing import Annotated
+from typing import Annotated, Literal
 
-from fastapi import APIRouter, Depends, Form, HTTPException, Query, Request
+from fastapi import APIRouter, Depends, Form, HTTPException, Path, Query, Request
 from fastapi.responses import RedirectResponse
 
 from boodschappenagent.models import Categorie, Recipe, Seizoen
@@ -166,24 +166,77 @@ async def shuffle(
 # --- Dag aanpassen ---
 
 
-@router.get("/week/dag/{dag}/aanpassen")
-async def dag_aanpassen(
-    dag: int,
-    request: Request,
-):
-    """Toon dag-aanpassen sheet voor een specifieke dag."""
-    if dag < 0 or dag > 6:
-        raise HTTPException(status_code=422, detail="Ongeldig dagnummer")
-
+def _get_week_menu_or_404(request: Request):
+    """Geef het weekmenu terug of raise HTTP 404."""
     week_menu = getattr(request.app.state, "week_menu", None)
     if week_menu is None:
         raise HTTPException(status_code=404, detail="Geen weekmenu beschikbaar")
+    return week_menu
+
+
+@router.get("/week/dag/{dag}/aanpassen")
+async def dag_aanpassen(
+    dag: Annotated[int, Path(ge=0, le=6)],
+    request: Request,
+):
+    """Toon dag-aanpassen sheet voor een specifieke dag."""
+    _get_week_menu_or_404(request)
 
     dag_context = _build_dag_context(dag, request)
     templates = request.app.state.templates
     return templates.TemplateResponse(
         request=request,
         name="components/dag_aanpassen.html",
+        context={"dag": dag_context},
+    )
+
+
+@router.post("/week/dag/{dag}/stel-type-in")
+async def stel_type_in(
+    dag: Annotated[int, Path(ge=0, le=6)],
+    request: Request,
+    dagtype: Annotated[
+        Literal["geen_menu", "recept", "hellofresh"], Form(alias="type")
+    ],
+):
+    """Wijzig het dagtype voor een specifieke dag.
+
+    Retourneert het bijgewerkte dagkaart-fragment (primair) plus een OOB-update
+    van de dag-aanpassen sheet zodat beide elementen synchroon blijven.
+    """
+    week_menu = _get_week_menu_or_404(request)
+    hellofresh_dagen = set(getattr(request.app.state, "hellofresh_dagen", set()))
+
+    nieuwe_dagen = []
+    for d in week_menu.dagen:
+        if d.dag == dag:
+            if dagtype == "geen_menu":
+                nieuwe_dagen.append(DagPlanning(dag=dag, recept=None, personen=0))
+            elif dagtype == "hellofresh":
+                nieuwe_dagen.append(d)
+            else:  # recept
+                personen = d.personen if d.personen > 0 else 2
+                nieuwe_dagen.append(
+                    DagPlanning(dag=dag, recept=d.recept, personen=personen)
+                )
+        else:
+            nieuwe_dagen.append(d)
+
+    if dagtype == "hellofresh":
+        hellofresh_dagen.add(dag)
+    else:
+        hellofresh_dagen.discard(dag)
+
+    request.app.state.week_menu = WeekMenu(
+        week_start=week_menu.week_start, dagen=nieuwe_dagen
+    )
+    request.app.state.hellofresh_dagen = hellofresh_dagen
+
+    dag_context = _build_dag_context(dag, request)
+    templates = request.app.state.templates
+    return templates.TemplateResponse(
+        request=request,
+        name="fragments/dag_type_wijzigen.html",
         context={"dag": dag_context},
     )
 
@@ -219,13 +272,8 @@ def _get_laatst_gegeten_dict(history: MenuHistory) -> dict[str, date]:
 
 
 def _validate_dag_voor_kiezer(request: Request, dag: int) -> None:
-    """Valideer dat dag geschikt is voor de receptkiezer."""
-    if dag < 0 or dag > 6:
-        raise HTTPException(status_code=422, detail="Ongeldig dagnummer")
-
-    week_menu = getattr(request.app.state, "week_menu", None)
-    if week_menu is None:
-        raise HTTPException(status_code=404, detail="Geen weekmenu beschikbaar")
+    """Valideer dat dag geschikt is voor de receptkiezer (geen HF of niet-thuis)."""
+    week_menu = _get_week_menu_or_404(request)
 
     hellofresh_dagen = getattr(request.app.state, "hellofresh_dagen", set())
     if dag in hellofresh_dagen:
@@ -272,7 +320,7 @@ def _build_dag_context(dag: int, request: Request) -> dict:
 
 @router.get("/week/dag/{dag}/receptkiezer")
 async def receptkiezer(
-    dag: int,
+    dag: Annotated[int, Path(ge=0, le=6)],
     request: Request,
     recipes: Annotated[list[Recipe], Depends(get_all_recipes)],
     history: Annotated[MenuHistory, Depends(get_menu_history)],
@@ -368,15 +416,13 @@ async def receptkiezer(
 
 @router.post("/week/dag/{dag}/kies/{recipe_id}")
 async def kies_recept(
-    dag: int,
+    dag: Annotated[int, Path(ge=0, le=6)],
     recipe_id: str,
     request: Request,
     recipes: Annotated[list[Recipe], Depends(get_all_recipes)],
 ):
     """Toon portiescherm voor een gekozen recept."""
-    week_menu = getattr(request.app.state, "week_menu", None)
-    if week_menu is None:
-        raise HTTPException(status_code=404, detail="Geen weekmenu beschikbaar")
+    week_menu = _get_week_menu_or_404(request)
 
     recept = next((r for r in recipes if r.id == recipe_id), None)
     if recept is None:
@@ -399,23 +445,18 @@ async def kies_recept(
 
 @router.post("/week/dag/{dag}/bevestig")
 async def bevestig(
-    dag: int,
+    dag: Annotated[int, Path(ge=0, le=6)],
     request: Request,
     recipes: Annotated[list[Recipe], Depends(get_all_recipes)],
     recipe_id: Annotated[str, Form()],
     personen: Annotated[int, Form()],
 ):
     """Bevestig recept en portiekeuze, update dagkaart."""
-    week_menu = getattr(request.app.state, "week_menu", None)
-    if week_menu is None:
-        raise HTTPException(status_code=404, detail="Geen weekmenu beschikbaar")
+    week_menu = _get_week_menu_or_404(request)
 
     recept = next((r for r in recipes if r.id == recipe_id), None)
     if recept is None:
         raise HTTPException(status_code=404, detail="Recept niet gevonden")
-
-    if dag < 0 or dag > 6:
-        raise HTTPException(status_code=422, detail="Ongeldig dagnummer")
 
     if personen < 1 or personen > 10:
         raise HTTPException(status_code=422, detail="Ongeldig aantal porties")

@@ -164,3 +164,60 @@ class TestDagAanpassenSheetOpenen:
         expect(
             week_page.locator("#sheet [data-testid='personen-selector']")
         ).to_have_count(0)
+
+
+class TestDagTypeWijzigenUI:
+    """E4/E5: Dagtype wijzigen via de sheet met HTMX-interactie.
+
+    Let op: deze tests muteren de app.state van de sessie-server.
+    Gebruik dag 4 (vrijdag) voor E4 en dag 6 (zondag) voor E5 —
+    dagindices die niet door eerder gedefinieerde tests worden gebruikt.
+    """
+
+    def test_dag_markeren_als_niet_thuis(self, week_page: Page):
+        """E4: Tap dagkaart → 'Geen menu' → dagkaart niet-thuis, sheet bijgewerkt."""
+        # Open sheet voor dag 4 (vrijdag, recept)
+        week_page.locator("[data-testid='dagkaart'][data-dag='4']").click()
+        week_page.wait_for_selector("#sheet [data-testid='dag-aanpassen']")
+
+        # Tap "Geen menu" knop in de sheet
+        week_page.locator("[data-testid='dagtype-geen-menu']").click()
+
+        # Wacht op dagkaart-update in achtergrond
+        week_page.wait_for_selector(
+            "[data-testid='dagkaart'][data-dag='4'][data-type='niet-thuis']"
+        )
+
+        # Dagkaart is nu niet-thuis
+        expect(week_page.locator("[data-testid='dagkaart'][data-dag='4']")).to_have_attribute(
+            "data-type", "niet-thuis"
+        )
+
+        # Sheet toont geen personen-selector meer
+        expect(
+            week_page.locator("#sheet [data-testid='personen-selector']")
+        ).to_have_count(0)
+
+    def test_dag_markeren_als_hellofresh(self, week_page: Page):
+        """E5: Tap dagkaart → 'HelloFresh' → dagkaart hellofresh, sheet bijgewerkt."""
+        # Open sheet voor dag 6 (zondag, recept)
+        week_page.locator("[data-testid='dagkaart'][data-dag='6']").click()
+        week_page.wait_for_selector("#sheet [data-testid='dag-aanpassen']")
+
+        # Tap "HelloFresh" knop in de sheet
+        week_page.locator("[data-testid='dagtype-hellofresh']").click()
+
+        # Wacht op dagkaart-update in achtergrond
+        week_page.wait_for_selector(
+            "[data-testid='dagkaart'][data-dag='6'][data-type='hellofresh']"
+        )
+
+        # Dagkaart is nu hellofresh
+        expect(week_page.locator("[data-testid='dagkaart'][data-dag='6']")).to_have_attribute(
+            "data-type", "hellofresh"
+        )
+
+        # Sheet toont geen "Ander recept" knop meer
+        expect(
+            week_page.locator("#sheet [data-testid='ander-recept-button']")
+        ).to_have_count(0)
