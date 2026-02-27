@@ -138,8 +138,12 @@ def live_server_url(app):
 
 
 @pytest.fixture
-def week_page(page, live_server_url):
-    """Navigeer naar /week en geef de Playwright-pagina terug."""
+def week_page(page, live_server_url, app):
+    """Navigeer naar /week, herstel test-staat en geef de Playwright-pagina terug."""
+    # Reset naar initiële test-staat voor isolatie tussen E2E tests
+    app.state.week_menu = TEST_WEEK_MENU
+    app.state.hellofresh_dagen = set(TEST_HELLOFRESH_DAGEN)
+    app.state.recept_backup = {}
     page.goto(f"{live_server_url}/week")
     page.wait_for_load_state("networkidle")
     return page

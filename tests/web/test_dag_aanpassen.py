@@ -234,3 +234,61 @@ class TestDagTypeSelector:
             "/week/dag/0/stel-type-in", data={"type": "geen_menu"}
         )
         assert response.status_code == 404
+
+    def test_niet_thuis_terug_naar_recept_dagkaart_type(self, client: TestClient):
+        """S5.3.7: Na geen_menu → recept heeft dagkaart type recept."""
+        set_week_menu(client, make_full_week_menu())
+        client.post("/week/dag/0/stel-type-in", data={"type": "geen_menu"})
+        response = client.post("/week/dag/0/stel-type-in", data={"type": "recept"})
+        assert response.status_code == 200
+        assert soup(response).select_one('[data-type="recept"]') is not None
+
+    def test_niet_thuis_terug_naar_recept_app_state(self, client: TestClient):
+        """S5.3.7: Na geen_menu → recept is dag 0 personen > 0 in app.state."""
+        set_week_menu(client, make_full_week_menu())
+        client.post("/week/dag/0/stel-type-in", data={"type": "geen_menu"})
+        client.post("/week/dag/0/stel-type-in", data={"type": "recept"})
+        assert client.app.state.week_menu.dagen[0].personen > 0
+
+    def test_niet_thuis_terug_naar_recept_heeft_recept(self, client: TestClient):
+        """S5.3.7: Na geen_menu → recept bevat dag 0 het originele recept."""
+        set_week_menu(client, make_full_week_menu())
+        client.post("/week/dag/0/stel-type-in", data={"type": "geen_menu"})
+        client.post("/week/dag/0/stel-type-in", data={"type": "recept"})
+        assert client.app.state.week_menu.dagen[0].recept is not None
+        assert client.app.state.week_menu.dagen[0].recept.id == RECEPTEN[0].id
+
+
+class TestGenereerBewaartDagtype:
+    """Genereer nieuw weekmenu behoudt niet-thuis en hellofresh configuratie."""
+
+    def test_genereer_bewaart_niet_thuis_dag(self, client: TestClient):
+        """Na genereer blijft een niet-thuis dag niet-thuis."""
+        set_week_menu(client, make_full_week_menu())
+        client.post("/week/dag/0/stel-type-in", data={"type": "geen_menu"})
+        client.post("/week/genereer")
+        assert client.app.state.week_menu.dagen[0].personen == 0
+
+    def test_genereer_bewaart_meerdere_niet_thuis_dagen(self, client: TestClient):
+        """Na genereer blijven meerdere niet-thuis dagen niet-thuis."""
+        set_week_menu(client, make_full_week_menu())
+        client.post("/week/dag/1/stel-type-in", data={"type": "geen_menu"})
+        client.post("/week/dag/3/stel-type-in", data={"type": "geen_menu"})
+        client.post("/week/genereer")
+        assert client.app.state.week_menu.dagen[1].personen == 0
+        assert client.app.state.week_menu.dagen[3].personen == 0
+
+    def test_genereer_overige_dagen_krijgen_nieuw_recept(self, client: TestClient):
+        """Na genereer hebben niet-niet-thuis dagen recepten."""
+        set_week_menu(client, make_full_week_menu())
+        client.post("/week/dag/0/stel-type-in", data={"type": "geen_menu"})
+        client.post("/week/genereer")
+        for i in range(1, 7):
+            assert client.app.state.week_menu.dagen[i].personen > 0
+            assert client.app.state.week_menu.dagen[i].recept is not None
+
+    def test_genereer_bewaart_hellofresh_dag(self, client: TestClient):
+        """Na genereer blijft een hellofresh dag hellofresh (via hellofresh_dagen)."""
+        set_week_menu(client, make_full_week_menu(), hellofresh_dagen={2})
+        client.post("/week/genereer")
+        assert 2 in client.app.state.hellofresh_dagen

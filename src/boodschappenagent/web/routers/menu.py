@@ -89,7 +89,11 @@ def _render_week(request: Request, context: dict):
 
 
 def _generate_week_menu(request: Request, planner: MenuPlanner) -> None:
-    """Genereer een weekmenu en sla op in app.state."""
+    """Genereer een weekmenu en sla op in app.state.
+
+    Bewaart niet-thuis dagen van het huidige weekmenu zodat de gebruiker
+    niet opnieuw hoeft in te stellen welke dagen geen menu hebben.
+    """
     today = date.today()
     week_start = today - timedelta(days=today.weekday())
     seizoen = MAAND_NAAR_SEIZOEN[today.month]
@@ -99,6 +103,23 @@ def _generate_week_menu(request: Request, planner: MenuPlanner) -> None:
         seizoen=seizoen,
         week_start=week_start.isoformat(),
     )
+
+    # Bewaar niet-thuis configuratie uit het huidige weekmenu
+    bestaand = getattr(request.app.state, "week_menu", None)
+    if bestaand is not None:
+        niet_thuis_indices = {d.dag for d in bestaand.dagen if d.personen == 0}
+        if niet_thuis_indices:
+            recept_backup = dict(getattr(request.app.state, "recept_backup", {}))
+            nieuwe_dagen = []
+            for d in week_menu.dagen:
+                if d.dag in niet_thuis_indices:
+                    recept_backup[d.dag] = d.recept  # backup het nieuwe recept
+                    nieuwe_dagen.append(DagPlanning(dag=d.dag, recept=None, personen=0))
+                else:
+                    nieuwe_dagen.append(d)
+            request.app.state.recept_backup = recept_backup
+            week_menu = WeekMenu(week_start=week_menu.week_start, dagen=nieuwe_dagen)
+
     request.app.state.week_menu = week_menu
 
 
@@ -206,18 +227,26 @@ async def stel_type_in(
     """
     week_menu = _get_week_menu_or_404(request)
     hellofresh_dagen = set(getattr(request.app.state, "hellofresh_dagen", set()))
+    recept_backup = dict(getattr(request.app.state, "recept_backup", {}))
 
     nieuwe_dagen = []
     for d in week_menu.dagen:
         if d.dag == dag:
             if dagtype == "geen_menu":
+                if d.recept is not None:
+                    recept_backup[dag] = d.recept
                 nieuwe_dagen.append(DagPlanning(dag=dag, recept=None, personen=0))
             elif dagtype == "hellofresh":
                 nieuwe_dagen.append(d)
             else:  # recept
+                recept = d.recept or recept_backup.get(dag)
+                if recept is None:
+                    raise HTTPException(
+                        status_code=422, detail="Geen recept beschikbaar"
+                    )
                 personen = d.personen if d.personen > 0 else 2
                 nieuwe_dagen.append(
-                    DagPlanning(dag=dag, recept=d.recept, personen=personen)
+                    DagPlanning(dag=dag, recept=recept, personen=personen)
                 )
         else:
             nieuwe_dagen.append(d)
@@ -231,6 +260,7 @@ async def stel_type_in(
         week_start=week_menu.week_start, dagen=nieuwe_dagen
     )
     request.app.state.hellofresh_dagen = hellofresh_dagen
+    request.app.state.recept_backup = recept_backup
 
     dag_context = _build_dag_context(dag, request)
     templates = request.app.state.templates

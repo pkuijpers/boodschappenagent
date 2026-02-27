@@ -167,12 +167,7 @@ class TestDagAanpassenSheetOpenen:
 
 
 class TestDagTypeWijzigenUI:
-    """E4/E5: Dagtype wijzigen via de sheet met HTMX-interactie.
-
-    Let op: deze tests muteren de app.state van de sessie-server.
-    Gebruik dag 4 (vrijdag) voor E4 en dag 6 (zondag) voor E5 —
-    dagindices die niet door eerder gedefinieerde tests worden gebruikt.
-    """
+    """E4/E5/E6/E7: Dagtype wijzigen via de sheet met HTMX-interactie."""
 
     def test_dag_markeren_als_niet_thuis(self, week_page: Page):
         """E4: Tap dagkaart → 'Geen menu' → dagkaart niet-thuis, sheet bijgewerkt."""
@@ -221,3 +216,47 @@ class TestDagTypeWijzigenUI:
         expect(
             week_page.locator("#sheet [data-testid='ander-recept-button']")
         ).to_have_count(0)
+
+    def test_niet_thuis_terug_naar_recept(self, week_page: Page):
+        """E6: Niet-thuis → Recept → dagkaart type recept."""
+        # Zet dag 4 op niet-thuis
+        week_page.locator("[data-testid='dagkaart'][data-dag='4']").click()
+        week_page.wait_for_selector("#sheet [data-testid='dag-aanpassen']")
+        week_page.locator("[data-testid='dagtype-geen-menu']").click()
+        week_page.wait_for_selector(
+            "[data-testid='dagkaart'][data-dag='4'][data-type='niet-thuis']"
+        )
+
+        # Zet dag 4 terug op recept
+        week_page.locator("[data-testid='dagtype-recept']").click()
+        week_page.wait_for_selector(
+            "[data-testid='dagkaart'][data-dag='4'][data-type='recept']"
+        )
+
+        expect(
+            week_page.locator("[data-testid='dagkaart'][data-dag='4']")
+        ).to_have_attribute("data-type", "recept")
+        expect(
+            week_page.locator("#sheet [data-testid='personen-selector']")
+        ).to_be_visible()
+
+    def test_genereer_bewaart_niet_thuis(self, week_page: Page):
+        """E7: Na genereer nieuw weekmenu blijft niet-thuis dag niet-thuis."""
+        # Zet dag 4 op niet-thuis
+        week_page.locator("[data-testid='dagkaart'][data-dag='4']").click()
+        week_page.wait_for_selector("#sheet [data-testid='dag-aanpassen']")
+        week_page.locator("[data-testid='dagtype-geen-menu']").click()
+        week_page.wait_for_selector(
+            "[data-testid='dagkaart'][data-dag='4'][data-type='niet-thuis']"
+        )
+
+        # Sluit sheet via backdrop klik, dan klik genereer-button
+        week_page.locator("#sheet-backdrop").click()
+        week_page.wait_for_selector("#sheet-backdrop", state="hidden")
+        week_page.locator("[data-testid='genereer-button']").click()
+        week_page.wait_for_load_state("networkidle")
+
+        # Dag 4 moet nog steeds niet-thuis zijn
+        expect(
+            week_page.locator("[data-testid='dagkaart'][data-dag='4']")
+        ).to_have_attribute("data-type", "niet-thuis")
