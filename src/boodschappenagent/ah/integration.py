@@ -7,6 +7,7 @@ from typing import Any
 
 from boodschappenagent.ah.client import AHClient
 from boodschappenagent.ah.models import Product
+from boodschappenagent.ah.quantity_calculator import bereken_aantal
 from boodschappenagent.boodschappenlijst.models import Boodschappenlijst
 
 # Vertaling van AHClient smart_search bronnen naar Nederlandse termen
@@ -33,6 +34,7 @@ class ProductMatch:
     regel: Any  # BoodschappenRegel (Any om circulaire import te vermijden)
     product: Product | None
     bron: str
+    aantal: int = 1
 
     @property
     def gevonden(self) -> bool:
@@ -117,11 +119,13 @@ class AHIntegratie:
                 regel.naam,
                 reference_products=reference_products,
             )
+            aantal = bereken_aantal(regel, product) if product else 1
             matches.append(
                 ProductMatch(
                     regel=regel,
                     product=product,
                     bron=_BRON_VERTALING.get(bron, bron),
+                    aantal=aantal,
                 )
             )
 
@@ -156,7 +160,7 @@ class AHIntegratie:
         for m in matches:
             if m.gevonden:
                 product_quantities[m.product.id] = (
-                    product_quantities.get(m.product.id, 0) + 1
+                    product_quantities.get(m.product.id, 0) + m.aantal
                 )
         gevonden = list(product_quantities.items())
         if gevonden:

@@ -168,6 +168,25 @@ class TestProductMatch:
         assert match.bron == "referentie"
         assert match.gevonden is True
 
+    def test_aantal_default_is_1(self, melk_regel, melk_product):
+        """Test dat ProductMatch.aantal standaard 1 is."""
+        match = ProductMatch(
+            regel=melk_regel,
+            product=melk_product,
+            bron="zoekopdracht",
+        )
+        assert match.aantal == 1
+
+    def test_aantal_kan_gezet_worden(self, melk_regel, melk_product):
+        """Test dat ProductMatch.aantal meegegeven kan worden."""
+        match = ProductMatch(
+            regel=melk_regel,
+            product=melk_product,
+            bron="zoekopdracht",
+            aantal=3,
+        )
+        assert match.aantal == 3
+
     def test_is_frozen(self, melk_regel, melk_product):
         """Test dat ProductMatch immutable is."""
         match = ProductMatch(
@@ -469,6 +488,33 @@ class TestZoekProducten:
 
         assert matches[0].bron == "zoekopdracht"
 
+    def test_berekent_aantal_voor_match(self, mock_client, melk_product):
+        """Test dat zoek_producten het berekende aantal meezet in ProductMatch."""
+        regel = BoodschappenRegel(
+            naam="melk",
+            hoeveelheid=2.0,
+            eenheid="liter",
+            originele_namen=frozenset({"melk"}),
+        )
+        lijst = Boodschappenlijst(week_start="2026-02-16", regels=[regel])
+        mock_client.smart_search = Mock(return_value=(melk_product, "search"))
+
+        integratie = AHIntegratie(mock_client)
+        matches = integratie.zoek_producten(lijst)
+
+        # 2 liter nodig, product is "1 l" → aantal=2
+        assert matches[0].aantal == 2
+
+    def test_aantal_1_bij_niet_gevonden(self, mock_client, melk_regel):
+        """Test dat aantal 1 is als product niet gevonden is."""
+        lijst = Boodschappenlijst(week_start="2026-02-16", regels=[melk_regel])
+        mock_client.smart_search = Mock(return_value=(None, "not_found"))
+
+        integratie = AHIntegratie(mock_client)
+        matches = integratie.zoek_producten(lijst)
+
+        assert matches[0].aantal == 1
+
     def test_bron_mapping_not_found(self, mock_client, melk_regel):
         """Test dat 'not_found' bron vertaald wordt naar 'niet_gevonden'."""
         lijst = Boodschappenlijst(week_start="2026-02-16", regels=[melk_regel])
@@ -599,8 +645,29 @@ class TestSyncNaarLijst:
 
         assert resultaat.lijst_id == "abc-456"
 
-    def test_quantiteit_is_1_per_product(self, mock_client, melk_regel, melk_product):
-        """Test dat quantity standaard 1 is per product."""
+    def test_quantiteit_berekend_uit_hoeveelheid(self, mock_client, melk_product):
+        """Test dat quantity berekend wordt op basis van hoeveelheid en product size."""
+        regel = BoodschappenRegel(
+            naam="melk",
+            hoeveelheid=2.0,
+            eenheid="liter",
+            originele_namen=frozenset({"melk"}),
+        )
+        lijst = Boodschappenlijst(week_start="2026-02-16", regels=[regel])
+        mock_client.create_list = Mock(return_value="new-list-id")
+        mock_client.smart_search = Mock(return_value=(melk_product, "search"))
+        mock_client.add_products_to_list = Mock(return_value={"totalSize": 1})
+
+        integratie = AHIntegratie(mock_client)
+        integratie.sync_naar_lijst(lijst)
+
+        call_args = mock_client.add_products_to_list.call_args
+        products = call_args.args[1]
+        # 2 liter nodig, product is 1 l → quantity=2
+        assert products == [(100, 2)]
+
+    def test_quantiteit_1_bij_exact_match(self, mock_client, melk_regel, melk_product):
+        """Test dat quantity 1 is als hoeveelheid exact matcht."""
         lijst = Boodschappenlijst(week_start="2026-02-16", regels=[melk_regel])
         mock_client.create_list = Mock(return_value="new-list-id")
         mock_client.smart_search = Mock(return_value=(melk_product, "search"))
@@ -611,7 +678,27 @@ class TestSyncNaarLijst:
 
         call_args = mock_client.add_products_to_list.call_args
         products = call_args.args[1]
+        # 1 liter nodig, product is 1 l → quantity=1
         assert products == [(100, 1)]
+
+    def test_quantiteit_1_bij_niet_berekenbare_eenheid(
+        self, mock_client, knoflook_regel, knoflook_product
+    ):
+        """Test dat quantity 1 is voor niet-berekenbare eenheden (teen)."""
+        lijst = Boodschappenlijst(
+            week_start="2026-02-16", regels=[knoflook_regel]
+        )
+        mock_client.create_list = Mock(return_value="new-list-id")
+        mock_client.smart_search = Mock(return_value=(knoflook_product, "search"))
+        mock_client.add_products_to_list = Mock(return_value={"totalSize": 1})
+
+        integratie = AHIntegratie(mock_client)
+        integratie.sync_naar_lijst(lijst)
+
+        call_args = mock_client.add_products_to_list.call_args
+        products = call_args.args[1]
+        # teen is niet-berekenbaar → quantity=1
+        assert products == [(300, 1)]
 
     def test_dedupliceert_producten(self, mock_client, melk_product):
         """Test dat duplicate product IDs samengevoegd worden met opgetelde quantity."""
