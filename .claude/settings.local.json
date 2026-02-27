@@ -1,6 +1,7 @@
 {
   "permissions": {
     "allow": [
+      "Task",
       "Bash(python3:*)",
       "Bash(uv run pytest:*)",
       "Bash(uv run ruff:*)",
@@ -17,6 +18,10 @@
       "Bash(git fetch origin main)",
       "Bash(git rebase origin/main)",
       "Bash(ruff check:*)"
+      "mcp__puppeteer__puppeteer_navigate",
+      "mcp__puppeteer__puppeteer_click",
+      "mcp__puppeteer__puppeteer_fill",
+      "mcp__puppeteer__puppeteer_evaluate"
     ]
   },
   "enableAllProjectMcpServers": true,
