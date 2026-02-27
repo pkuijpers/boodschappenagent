@@ -2,6 +2,25 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Project Conventions
+
+- This is a Python project using FastAPI, HTMX, and pytest
+- Always check existing codebase before creating new files or scripts — reuse existing CLI tools and modules
+- When editing files, double-check you are editing the correct file (e.g., testplan.md vs test code files, menu.py vs client.py)
+- Use ruff for linting; fix any line-length violations before committing
+
+## Testing
+
+- Always run the full test suite (`pytest` or equivalent) after any code changes before committing
+- Follow TDD workflow: write failing tests first (red), then implement (green), then refactor
+- When implementing test plan steps, use the exact naming conventions specified in the plan — do not invent alternative naming schemes
+
+## Git Workflow
+
+- When asked to commit, always check for unstaged files before finalizing
+- Support amending commits when user requests it
+- When rebasing, always verify the result compiles/tests pass before reporting success
+
 ## Project Overview
 
 Boodschappenagent ("grocery agent") is an end-to-end grocery automation system that automates the weekly grocery process: plan a menu, generate a shopping list, and order at Albert Heijn.
@@ -194,3 +213,4 @@ All colors and visual tokens are defined **once** in the Tailwind config in `bas
 ## Documentation Lookup
 
 Always use Context7 (via the `mcp__context7__resolve-library-id` and `mcp__context7__query-docs` tools) to look up documentation for libraries and frameworks. This ensures you get the most up-to-date information.
+
