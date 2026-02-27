@@ -1,26 +1,16 @@
 {% if dag.type == "recept" %}
 <div data-testid="dagkaart" data-type="recept" data-dag="{{ dag.dag }}" id="dag-{{ dag.dag }}"
-     class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+     hx-get="/week/dag/{{ dag.dag }}/aanpassen"
+     hx-target="#sheet"
+     hx-swap="innerHTML"
+     class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm cursor-pointer">
     <div class="flex items-center justify-between mb-1">
         <span class="text-sm font-medium text-gray-500">{{ dag.dag_naam }}</span>
         <span data-testid="porties" class="text-sm text-gray-400">{{ dag.personen }} porties</span>
     </div>
-    <div class="flex items-center justify-between">
-        <div class="flex items-center gap-2">
-            <span data-testid="categorie" class="text-lg">{{ dag.categorie_emoji }}</span>
-            <span class="text-base font-semibold text-gray-800">{{ dag.recept.naam }}</span>
-        </div>
-        <button data-testid="vervang-dag-button"
-                hx-get="/week/dag/{{ dag.dag }}/receptkiezer"
-                hx-target="#sheet"
-                hx-swap="innerHTML"
-                class="p-1.5 rounded-full hover:bg-gray-100 active:bg-gray-200 transition-colors"
-                aria-label="Vervang recept voor {{ dag.dag_naam }}">
-            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-            </svg>
-        </button>
+    <div class="flex items-center gap-2">
+        <span data-testid="categorie" class="text-lg">{{ dag.categorie_emoji }}</span>
+        <span class="text-base font-semibold text-gray-800">{{ dag.recept.naam }}</span>
     </div>
     <div class="mt-1">
         <span data-testid="basis" class="text-xs text-gray-400 capitalize">{{ dag.recept.basis.value }}</span>
@@ -28,13 +18,19 @@
 </div>
 {% elif dag.type == "hellofresh" %}
 <div data-testid="dagkaart" data-type="hellofresh" data-dag="{{ dag.dag }}" id="dag-{{ dag.dag }}"
-     class="rounded-xl p-4 border bg-hf-bg border-hf-border">
+     hx-get="/week/dag/{{ dag.dag }}/aanpassen"
+     hx-target="#sheet"
+     hx-swap="innerHTML"
+     class="rounded-xl p-4 border bg-hf-bg border-hf-border cursor-pointer">
     <span class="text-sm font-medium text-hf-text">{{ dag.dag_naam }}</span>
     <div class="text-sm text-hf-text">HelloFresh</div>
 </div>
 {% elif dag.type == "niet-thuis" %}
 <div data-testid="dagkaart" data-type="niet-thuis" data-dag="{{ dag.dag }}" id="dag-{{ dag.dag }}"
-     class="rounded-xl p-4 bg-muted-bg">
+     hx-get="/week/dag/{{ dag.dag }}/aanpassen"
+     hx-target="#sheet"
+     hx-swap="innerHTML"
+     class="rounded-xl p-4 bg-muted-bg cursor-pointer">
     <span class="text-sm font-medium text-gray-400">{{ dag.dag_naam }}</span>
     <div class="text-sm text-gray-400">Niet thuis</div>
 </div>

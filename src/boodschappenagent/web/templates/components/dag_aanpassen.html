@@ -1,0 +1,69 @@
+<div data-testid="dag-aanpassen" class="p-5 pb-8">
+
+    <!-- Drag handle -->
+    <div class="flex justify-center mb-5">
+        <div class="w-10 h-1 bg-gray-300 rounded-full"></div>
+    </div>
+
+    <!-- Header: dagnaam + huidige staat -->
+    <div class="mb-5">
+        <div class="text-sm font-medium text-gray-500 mb-0.5">{{ dag.dag_naam }}</div>
+        {% if dag.type == "recept" %}
+        <div class="text-xl font-semibold text-gray-800">
+            {{ dag.recept.naam }} &middot; {{ dag.personen }} personen
+        </div>
+        {% elif dag.type == "hellofresh" %}
+        <div class="text-xl font-semibold text-hf-text">HelloFresh</div>
+        {% else %}
+        <div class="text-xl font-semibold text-gray-400">Niet thuis</div>
+        {% endif %}
+    </div>
+
+    <!-- Dagtype selector -->
+    <div data-testid="dagtype-selector" class="flex gap-2 mb-5">
+        <button data-testid="dagtype-geen-menu"
+                data-actief="{{ 'true' if dag.type == 'niet-thuis' else 'false' }}"
+                class="flex-1 py-2.5 px-2 rounded-xl text-sm font-medium border transition-colors
+                       {% if dag.type == 'niet-thuis' %}bg-ah-blue-light border-ah-blue text-ah-blue{% else %}bg-white border-gray-200 text-gray-600{% endif %}">
+            Geen menu
+        </button>
+        <button data-testid="dagtype-recept"
+                data-actief="{{ 'true' if dag.type == 'recept' else 'false' }}"
+                class="flex-1 py-2.5 px-2 rounded-xl text-sm font-medium border transition-colors
+                       {% if dag.type == 'recept' %}bg-ah-blue-light border-ah-blue text-ah-blue{% else %}bg-white border-gray-200 text-gray-600{% endif %}">
+            Recept
+        </button>
+        <button data-testid="dagtype-hellofresh"
+                data-actief="{{ 'true' if dag.type == 'hellofresh' else 'false' }}"
+                class="flex-1 py-2.5 px-2 rounded-xl text-sm font-medium border transition-colors
+                       {% if dag.type == 'hellofresh' %}bg-ah-blue-light border-ah-blue text-ah-blue{% else %}bg-white border-gray-200 text-gray-600{% endif %}">
+            HelloFresh
+        </button>
+    </div>
+
+    {% if dag.type == "recept" %}
+
+    <!-- Personen selector -->
+    <div class="mb-5">
+        <div class="text-sm font-medium text-gray-600 mb-3">Aantal personen</div>
+        <div data-testid="personen-selector" class="flex gap-3">
+            {% for p in [2, 3, 4] %}
+            <button data-actief="{{ 'true' if dag.personen == p else 'false' }}"
+                    class="w-16 py-3 rounded-xl text-base font-semibold border transition-colors
+                           {% if dag.personen == p %}bg-ah-blue-light border-ah-blue text-ah-blue{% else %}bg-white border-gray-200 text-gray-600{% endif %}">
+                {{ p }}
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Ander recept knop -->
+    <button data-testid="ander-recept-button"
+            class="w-full py-3.5 rounded-xl text-base font-semibold bg-ah-blue text-white
+                   active:bg-ah-blue-dark transition-colors">
+        🔀 Ander recept
+    </button>
+
+    {% endif %}
+
+</div>

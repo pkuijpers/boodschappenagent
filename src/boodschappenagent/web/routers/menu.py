@@ -189,6 +189,31 @@ async def shuffle(
     return _render_week(request, context)
 
 
+# --- Dag aanpassen ---
+
+
+@router.get("/week/dag/{dag}/aanpassen")
+async def dag_aanpassen(
+    dag: int,
+    request: Request,
+):
+    """Toon dag-aanpassen sheet voor een specifieke dag."""
+    if dag < 0 or dag > 6:
+        raise HTTPException(status_code=422, detail="Ongeldig dagnummer")
+
+    week_menu = getattr(request.app.state, "week_menu", None)
+    if week_menu is None:
+        raise HTTPException(status_code=404, detail="Geen weekmenu beschikbaar")
+
+    dag_context = _build_dag_context(dag, request)
+    templates = request.app.state.templates
+    return templates.TemplateResponse(
+        request=request,
+        name="components/dag_aanpassen.html",
+        context={"dag": dag_context},
+    )
+
+
 # --- Helpers voor receptkiezer ---
 
 

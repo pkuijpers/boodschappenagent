@@ -30,52 +30,6 @@ class TestSheetInfrastructuur:
         assert backdrop is not None
 
 
-# --- Stap 2: Dagkaart vervang-knop ---
-
-
-class TestDagkaartVervangKnop:
-    """Dagkaart moet ↻ knop hebben die receptkiezer opent."""
-
-    def test_dagkaart_heeft_vervang_knop(self, client: TestClient):
-        set_week_menu(client, make_full_week_menu())
-        response = client.get("/week")
-        html = soup(response)
-        knoppen = html.select('[data-testid="vervang-dag-button"]')
-        assert len(knoppen) == 7
-
-    def test_vervang_knop_heeft_hx_get(self, client: TestClient):
-        set_week_menu(client, make_full_week_menu())
-        response = client.get("/week")
-        html = soup(response)
-        knop = html.select_one('[data-testid="vervang-dag-button"]')
-        assert knop is not None
-        assert knop.get("hx-get") == "/week/dag/0/receptkiezer"
-
-    def test_vervang_knop_target_is_sheet(self, client: TestClient):
-        set_week_menu(client, make_full_week_menu())
-        response = client.get("/week")
-        html = soup(response)
-        knop = html.select_one('[data-testid="vervang-dag-button"]')
-        assert knop is not None
-        assert knop.get("hx-target") == "#sheet"
-
-    def test_hellofresh_dagkaart_geen_vervang_knop(self, client: TestClient):
-        set_week_menu(client, make_full_week_menu(), hellofresh_dagen={2})
-        response = client.get("/week")
-        html = soup(response)
-        hf_kaart = html.select_one('[data-type="hellofresh"]')
-        assert hf_kaart is not None
-        assert hf_kaart.select_one('[data-testid="vervang-dag-button"]') is None
-
-    def test_niet_thuis_dagkaart_geen_vervang_knop(self, client: TestClient):
-        set_week_menu(client, make_week_menu_met_niet_thuis(niet_thuis_dag=5))
-        response = client.get("/week")
-        html = soup(response)
-        nt_kaart = html.select_one('[data-type="niet-thuis"]')
-        assert nt_kaart is not None
-        assert nt_kaart.select_one('[data-testid="vervang-dag-button"]') is None
-
-
 # --- Stap 4: Receptkiezer route ---
 
 
