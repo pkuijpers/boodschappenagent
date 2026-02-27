@@ -61,7 +61,6 @@ async def root():
 def _build_week_context(request: Request) -> dict:
     """Bouw template context op basis van app.state weekmenu."""
     week_menu = getattr(request.app.state, "week_menu", None)
-    hellofresh_dagen = getattr(request.app.state, "hellofresh_dagen", set())
 
     dagen = []
     week_nummer = None
@@ -69,32 +68,7 @@ def _build_week_context(request: Request) -> dict:
     if week_menu:
         week_start = date.fromisoformat(week_menu.week_start)
         week_nummer = week_start.isocalendar().week
-
-        for dag_planning in week_menu.dagen:
-            dag = dag_planning.dag
-            if dag in hellofresh_dagen:
-                dag_type = "hellofresh"
-            elif dag_planning.personen == 0:
-                dag_type = "niet-thuis"
-            else:
-                dag_type = "recept"
-
-            categorie_emoji = ""
-            if dag_planning.recept:
-                categorie_emoji = CATEGORIE_EMOJI.get(
-                    dag_planning.recept.categorie.value, ""
-                )
-
-            dagen.append(
-                {
-                    "dag": dag,
-                    "dag_naam": DAG_NAMEN[dag],
-                    "type": dag_type,
-                    "recept": dag_planning.recept,
-                    "personen": dag_planning.personen,
-                    "categorie_emoji": categorie_emoji,
-                }
-            )
+        dagen = [_build_dag_context(d.dag, request) for d in week_menu.dagen]
 
     return {
         "week_nummer": week_nummer,

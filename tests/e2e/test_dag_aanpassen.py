@@ -45,15 +45,13 @@ class TestDagkaartTappableUI:
             )
 
     def test_hellofresh_kaart_is_tappable(self, week_page: Page):
-        """HelloFresh-dagkaart (woensdag, dag 2) heeft hx-get='/week/dag/2/aanpassen'."""
-        hf_kaart = week_page.locator(
-            "[data-testid='dagkaart'][data-type='hellofresh']"
-        )
+        """HelloFresh-dagkaart (woensdag, dag 2) heeft hx-get aanpassen."""
+        hf_kaart = week_page.locator("[data-testid='dagkaart'][data-type='hellofresh']")
         expect(hf_kaart).to_have_count(1)
         expect(hf_kaart).to_have_attribute("hx-get", "/week/dag/2/aanpassen")
 
     def test_niet_thuis_kaart_is_tappable(self, week_page: Page):
-        """Niet-thuis-dagkaart (zaterdag, dag 5) heeft hx-get='/week/dag/5/aanpassen'."""
+        """Niet-thuis-dagkaart (zaterdag, dag 5) heeft hx-get aanpassen."""
         niet_thuis = week_page.locator(
             "[data-testid='dagkaart'][data-type='niet-thuis']"
         )
@@ -81,7 +79,6 @@ class TestSheetInfrastructuurUI:
 
     def test_sheet_is_initieel_niet_zichtbaar(self, week_page: Page):
         """Sheet is initieel buiten het scherm en niet zichtbaar voor de gebruiker."""
-        sheet = week_page.locator("#sheet")
         # Sheet heeft translate-y-full: schuift van onderaf het scherm in
         is_off_screen = week_page.evaluate("""
             () => {
@@ -112,7 +109,9 @@ class TestDagAanpassenSheetOpenen:
         """Tap op een recept-dagkaart opent de dag-aanpassen sheet."""
         week_page.locator("[data-testid='dagkaart'][data-dag='0']").click()
         week_page.wait_for_selector("#sheet [data-testid='dag-aanpassen']")
-        expect(week_page.locator("#sheet [data-testid='dag-aanpassen']")).to_be_visible()
+        expect(
+            week_page.locator("#sheet [data-testid='dag-aanpassen']")
+        ).to_be_visible()
 
     def test_tap_dagkaart_toont_backdrop(self, week_page: Page):
         """Na tap op dagkaart is de backdrop zichtbaar."""
@@ -124,13 +123,17 @@ class TestDagAanpassenSheetOpenen:
         """Sheet voor recept-dag bevat een dagtype-selector."""
         week_page.locator("[data-testid='dagkaart'][data-dag='0']").click()
         week_page.wait_for_selector("#sheet [data-testid='dagtype-selector']")
-        expect(week_page.locator("#sheet [data-testid='dagtype-selector']")).to_be_visible()
+        expect(
+            week_page.locator("#sheet [data-testid='dagtype-selector']")
+        ).to_be_visible()
 
     def test_tap_recept_dagkaart_toont_personen_selector(self, week_page: Page):
         """Sheet voor recept-dag bevat een personen-selector."""
         week_page.locator("[data-testid='dagkaart'][data-dag='0']").click()
         week_page.wait_for_selector("#sheet [data-testid='personen-selector']")
-        expect(week_page.locator("#sheet [data-testid='personen-selector']")).to_be_visible()
+        expect(
+            week_page.locator("#sheet [data-testid='personen-selector']")
+        ).to_be_visible()
 
     def test_tap_recept_dagkaart_toont_ander_recept_button(self, week_page: Page):
         """Sheet voor recept-dag bevat 'Ander recept' knop."""
@@ -144,12 +147,20 @@ class TestDagAanpassenSheetOpenen:
         """Tap op HelloFresh-dagkaart (dag 2) opent sheet zonder personen-selector."""
         week_page.locator("[data-testid='dagkaart'][data-dag='2']").click()
         week_page.wait_for_selector("#sheet [data-testid='dag-aanpassen']")
-        expect(week_page.locator("#sheet [data-testid='dag-aanpassen']")).to_be_visible()
-        expect(week_page.locator("#sheet [data-testid='personen-selector']")).to_have_count(0)
+        expect(
+            week_page.locator("#sheet [data-testid='dag-aanpassen']")
+        ).to_be_visible()
+        expect(
+            week_page.locator("#sheet [data-testid='personen-selector']")
+        ).to_have_count(0)
 
     def test_tap_niet_thuis_dagkaart_opent_sheet(self, week_page: Page):
         """Tap op niet-thuis-dagkaart (dag 5) opent sheet zonder personen-selector."""
         week_page.locator("[data-testid='dagkaart'][data-dag='5']").click()
         week_page.wait_for_selector("#sheet [data-testid='dag-aanpassen']")
-        expect(week_page.locator("#sheet [data-testid='dag-aanpassen']")).to_be_visible()
-        expect(week_page.locator("#sheet [data-testid='personen-selector']")).to_have_count(0)
+        expect(
+            week_page.locator("#sheet [data-testid='dag-aanpassen']")
+        ).to_be_visible()
+        expect(
+            week_page.locator("#sheet [data-testid='personen-selector']")
+        ).to_have_count(0)
