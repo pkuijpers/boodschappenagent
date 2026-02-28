@@ -34,14 +34,14 @@ class TestShuffleEnkelRecept:
         assert origineel_recept not in dag_0.get_text()
 
     def test_shuffle_dag_0_overige_dagen_ongewijzigd(self, client: TestClient):
+        """Overige dagen ongewijzigd in app.state (response bevat alleen dag 0)."""
         set_week_menu(client, make_full_week_menu())
 
-        s = soup(client.post("/week/shuffle", data={"dag": "0"}))
+        client.post("/week/shuffle", data={"dag": "0"})
 
+        updated_menu = client.app.state.week_menu
         for i in range(1, 7):
-            dagkaart = s.select_one(f'[data-testid="dagkaart"][data-dag="{i}"]')
-            assert dagkaart is not None
-            assert RECEPTEN[i].naam in dagkaart.get_text()
+            assert updated_menu.dagen[i].recept.id == RECEPTEN[i].id
 
     def test_shuffle_update_app_state(self, client: TestClient):
         set_week_menu(client, make_full_week_menu())
@@ -90,27 +90,41 @@ class TestShuffleNietThuisDag:
 
 
 class TestShuffleRetourneertFragment:
-    """S2.4: Shuffle met HTMX headers retourneert HTML-fragment."""
+    """S2.4: Shuffle retourneert altijd een OOB fragment (geen volledige pagina)."""
 
-    def test_shuffle_htmx_geen_html_wrapper(self, htmx_client: TestClient):
-        set_week_menu(htmx_client, make_full_week_menu())
-
-        response = htmx_client.post("/week/shuffle", data={"dag": "0"})
-
-        assert "<html" not in response.text
-        assert "</html>" not in response.text
-
-    def test_shuffle_htmx_bevat_dagkaarten(self, htmx_client: TestClient):
-        set_week_menu(htmx_client, make_full_week_menu())
-
-        s = soup(htmx_client.post("/week/shuffle", data={"dag": "0"}))
-
-        dagkaarten = s.select('[data-testid="dagkaart"]')
-        assert len(dagkaarten) == 7
-
-    def test_shuffle_browser_heeft_html_wrapper(self, client: TestClient):
+    def test_shuffle_geen_html_wrapper(self, client: TestClient):
+        """Shuffle retourneert altijd een fragment, ook zonder HTMX headers."""
         set_week_menu(client, make_full_week_menu())
 
         response = client.post("/week/shuffle", data={"dag": "0"})
 
-        assert "<html" in response.text
+        assert "<html" not in response.text
+        assert "</html>" not in response.text
+
+    def test_shuffle_bevat_precies_een_dagkaart(self, client: TestClient):
+        """S2.4: Precies 1 dagkaart in response (niet 7)."""
+        set_week_menu(client, make_full_week_menu())
+
+        s = soup(client.post("/week/shuffle", data={"dag": "0"}))
+
+        dagkaarten = s.select('[data-testid="dagkaart"]')
+        assert len(dagkaarten) == 1
+
+    def test_shuffle_geen_close_sheet_trigger(self, client: TestClient):
+        """S2.4: Geen closeSheet trigger; sheet blijft open."""
+        set_week_menu(client, make_full_week_menu())
+
+        response = client.post("/week/shuffle", data={"dag": "0"})
+
+        hx_trigger = response.headers.get("HX-Trigger", "")
+        assert "closeSheet" not in hx_trigger
+
+    def test_shuffle_dagkaart_heeft_oob_attribuut(self, client: TestClient):
+        """Dagkaart heeft hx-swap-oob voor OOB update van achtergrond-kaart."""
+        set_week_menu(client, make_full_week_menu())
+
+        s = soup(client.post("/week/shuffle", data={"dag": "0"}))
+
+        dagkaart = s.select_one('[data-testid="dagkaart"]')
+        assert dagkaart is not None
+        assert dagkaart.get("hx-swap-oob") is not None

@@ -91,35 +91,23 @@ def _render_week(request: Request, context: dict):
 def _generate_week_menu(request: Request, planner: MenuPlanner) -> None:
     """Genereer een weekmenu en sla op in app.state.
 
-    Bewaart niet-thuis dagen van het huidige weekmenu zodat de gebruiker
-    niet opnieuw hoeft in te stellen welke dagen geen menu hebben.
+    Bewaart het aantal personen per dag uit het huidige weekmenu, inclusief:
+    - Niet-thuis dagen (personen=0): blijven niet-thuis
+    - Aangepaste personen-aantallen (bijv. 3 of 4): worden overgenomen
     """
     today = date.today()
     week_start = today - timedelta(days=today.weekday())
     seizoen = MAAND_NAAR_SEIZOEN[today.month]
-    dag_inputs = [DagInput(dag=i, personen=2) for i in range(7)]
+
+    bestaand = getattr(request.app.state, "week_menu", None)
+    dag_personen = {d.dag: d.personen for d in bestaand.dagen} if bestaand else {}
+
+    dag_inputs = [DagInput(dag=i, personen=dag_personen.get(i, 2)) for i in range(7)]
     week_menu = planner.plan_week(
         week_input=dag_inputs,
         seizoen=seizoen,
         week_start=week_start.isoformat(),
     )
-
-    # Bewaar niet-thuis configuratie uit het huidige weekmenu
-    bestaand = getattr(request.app.state, "week_menu", None)
-    if bestaand is not None:
-        niet_thuis_indices = {d.dag for d in bestaand.dagen if d.personen == 0}
-        if niet_thuis_indices:
-            recept_backup = dict(getattr(request.app.state, "recept_backup", {}))
-            nieuwe_dagen = []
-            for d in week_menu.dagen:
-                if d.dag in niet_thuis_indices:
-                    recept_backup[d.dag] = d.recept  # backup het nieuwe recept
-                    nieuwe_dagen.append(DagPlanning(dag=d.dag, recept=None, personen=0))
-                else:
-                    nieuwe_dagen.append(d)
-            request.app.state.recept_backup = recept_backup
-            week_menu = WeekMenu(week_start=week_menu.week_start, dagen=nieuwe_dagen)
-
     request.app.state.week_menu = week_menu
 
 
@@ -154,6 +142,9 @@ async def shuffle(
 ):
     """Shuffle het recept voor een specifieke dag.
 
+    Retourneert een OOB-fragment: de bijgewerkte sheet-inhoud (primair) plus
+    een OOB-update van de dagkaart. De sheet blijft open (geen closeSheet trigger).
+
     Args:
         dag: Dagnummer (0-6) waarvoor het recept vervangen moet worden.
     """
@@ -164,8 +155,13 @@ async def shuffle(
     new_menu = planner.vervang_recept(week_menu, dag, seizoen)
     request.app.state.week_menu = new_menu
 
-    context = _build_week_context(request)
-    return _render_week(request, context)
+    dag_context = _build_dag_context(dag, request)
+    templates = request.app.state.templates
+    return templates.TemplateResponse(
+        request=request,
+        name="fragments/dag_aanpassen_response.html",
+        context={"dag": dag_context},
+    )
 
 
 # --- Dag aanpassen ---
@@ -250,7 +246,7 @@ async def stel_type_in(
     templates = request.app.state.templates
     return templates.TemplateResponse(
         request=request,
-        name="fragments/dag_type_wijzigen.html",
+        name="fragments/dag_aanpassen_response.html",
         context={"dag": dag_context},
     )
 
@@ -283,7 +279,7 @@ async def stel_personen_in(
     templates = request.app.state.templates
     return templates.TemplateResponse(
         request=request,
-        name="fragments/dag_type_wijzigen.html",
+        name="fragments/dag_aanpassen_response.html",
         context={"dag": dag_context},
     )
 

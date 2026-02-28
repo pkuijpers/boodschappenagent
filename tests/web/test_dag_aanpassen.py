@@ -307,6 +307,50 @@ class TestPersonenSelector:
         assert response.status_code == 404
 
 
+class TestAnderRecept:
+    """S2: "Ander recept" knop in sheet triggert shuffle en retourneert OOB dagkaart."""
+
+    def test_ander_recept_knop_heeft_hx_post(self, client: TestClient):
+        """De 'Ander recept' knop heeft hx-post="/week/shuffle"."""
+        set_week_menu(client, make_full_week_menu())
+        s = soup(client.get("/week/dag/0/aanpassen"))
+
+        knop = s.select_one('[data-testid="ander-recept-button"]')
+        assert knop is not None
+        assert knop.get("hx-post") == "/week/shuffle"
+
+    def test_ander_recept_knop_heeft_dag_in_vals(self, client: TestClient):
+        """De 'Ander recept' knop bevat het dag-nummer in hx-vals."""
+        set_week_menu(client, make_full_week_menu())
+        s = soup(client.get("/week/dag/3/aanpassen"))
+
+        knop = s.select_one('[data-testid="ander-recept-button"]')
+        assert knop is not None
+        hx_vals = knop.get("hx-vals", "")
+        assert "3" in hx_vals
+
+    def test_ander_recept_knop_target_sheet(self, client: TestClient):
+        """De 'Ander recept' knop heeft hx-target='#sheet'."""
+        set_week_menu(client, make_full_week_menu())
+        s = soup(client.get("/week/dag/0/aanpassen"))
+
+        knop = s.select_one('[data-testid="ander-recept-button"]')
+        assert knop is not None
+        assert knop.get("hx-target") == "#sheet"
+
+    def test_shuffle_toont_nieuwe_receptnaam_in_sheet(self, client: TestClient):
+        """Na shuffle bevat de sheet-header de nieuwe receptnaam."""
+        set_week_menu(client, make_full_week_menu())
+        origineel_recept = RECEPTEN[0].naam
+
+        response = client.post("/week/shuffle", data={"dag": "0"})
+
+        s = soup(response)
+        dag_aanpassen = s.select_one('[data-testid="dag-aanpassen"]')
+        assert dag_aanpassen is not None
+        assert origineel_recept not in dag_aanpassen.get_text()
+
+
 class TestGenereerBewaartDagtype:
     """Genereer nieuw weekmenu behoudt niet-thuis en hellofresh configuratie."""
 
