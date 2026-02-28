@@ -184,9 +184,9 @@ class TestDagTypeWijzigenUI:
         )
 
         # Dagkaart is nu niet-thuis
-        expect(week_page.locator("[data-testid='dagkaart'][data-dag='4']")).to_have_attribute(
-            "data-type", "niet-thuis"
-        )
+        expect(
+            week_page.locator("[data-testid='dagkaart'][data-dag='4']")
+        ).to_have_attribute("data-type", "niet-thuis")
 
         # Sheet toont geen personen-selector meer
         expect(
@@ -208,9 +208,9 @@ class TestDagTypeWijzigenUI:
         )
 
         # Dagkaart is nu hellofresh
-        expect(week_page.locator("[data-testid='dagkaart'][data-dag='6']")).to_have_attribute(
-            "data-type", "hellofresh"
-        )
+        expect(
+            week_page.locator("[data-testid='dagkaart'][data-dag='6']")
+        ).to_have_attribute("data-type", "hellofresh")
 
         # Sheet toont geen "Ander recept" knop meer
         expect(
@@ -240,6 +240,35 @@ class TestDagTypeWijzigenUI:
             week_page.locator("#sheet [data-testid='personen-selector']")
         ).to_be_visible()
 
+    def test_personen_aanpassen_via_sheet(self, week_page: Page):
+        """E7: Tap dagkaart → tap '2' in personen-selector → dagkaart toont '2 porties';
+        sheet blijft open."""
+        # TEST_WEEK_MENU dag 0 start met personen=4; we passen aan naar 2
+        week_page.locator("[data-testid='dagkaart'][data-dag='0']").click()
+        week_page.wait_for_selector("#sheet [data-testid='personen-selector']")
+
+        # Tap "2" in personen-selector
+        week_page.locator("[data-testid='personen-selector'] button").filter(
+            has_text="2"
+        ).click()
+
+        # Dagkaart toont nu "2 porties" — expect() wacht automatisch op HTMX update
+        porties = week_page.locator(
+            "[data-testid='dagkaart'][data-dag='0'] [data-testid='porties']"
+        )
+        expect(porties).to_contain_text("2")
+
+        # Sheet blijft open (personen-selector is nog zichtbaar)
+        expect(
+            week_page.locator("#sheet [data-testid='personen-selector']")
+        ).to_be_visible()
+
+        # Actieve staat in personen-selector is bijgewerkt naar "2"
+        actieve_knop = week_page.locator(
+            "#sheet [data-testid='personen-selector'] button[data-actief='true']"
+        )
+        expect(actieve_knop).to_contain_text("2")
+
     def test_genereer_bewaart_niet_thuis(self, week_page: Page):
         """E7: Na genereer nieuw weekmenu blijft niet-thuis dag niet-thuis."""
         # Zet dag 4 op niet-thuis
@@ -250,8 +279,8 @@ class TestDagTypeWijzigenUI:
             "[data-testid='dagkaart'][data-dag='4'][data-type='niet-thuis']"
         )
 
-        # Sluit sheet via backdrop klik, dan klik genereer-button
-        week_page.locator("#sheet-backdrop").click()
+        # Sluit sheet via backdrop klik bovenaan (buiten het sheet-gebied)
+        week_page.locator("#sheet-backdrop").click(position={"x": 10, "y": 10})
         week_page.wait_for_selector("#sheet-backdrop", state="hidden")
         week_page.locator("[data-testid='genereer-button']").click()
         week_page.wait_for_load_state("networkidle")

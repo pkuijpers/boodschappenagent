@@ -222,17 +222,13 @@ class TestDagTypeSelector:
     def test_ongeldig_type_geeft_422(self, client: TestClient):
         """S5.3.5: Ongeldig dagtype geeft 422."""
         set_week_menu(client, make_full_week_menu())
-        response = client.post(
-            "/week/dag/0/stel-type-in", data={"type": "onbekend"}
-        )
+        response = client.post("/week/dag/0/stel-type-in", data={"type": "onbekend"})
         assert response.status_code == 422
 
     def test_zonder_weekmenu_geeft_404(self, client: TestClient):
         """S5.3.6: Zonder weekmenu geeft 404."""
         client.app.state.week_menu = None
-        response = client.post(
-            "/week/dag/0/stel-type-in", data={"type": "geen_menu"}
-        )
+        response = client.post("/week/dag/0/stel-type-in", data={"type": "geen_menu"})
         assert response.status_code == 404
 
     def test_niet_thuis_terug_naar_recept_dagkaart_type(self, client: TestClient):
@@ -257,6 +253,58 @@ class TestDagTypeSelector:
         client.post("/week/dag/0/stel-type-in", data={"type": "recept"})
         assert client.app.state.week_menu.dagen[0].recept is not None
         assert client.app.state.week_menu.dagen[0].recept.id == RECEPTEN[0].id
+
+
+class TestPersonenSelector:
+    """S5.4: POST /week/dag/{dag}/stel-personen-in past het aantal personen aan."""
+
+    def test_stel_personen_in_app_state(self, client: TestClient):
+        """S5.4.1: Na stel-personen-in is dag 0 personen=4 in app.state."""
+        set_week_menu(client, make_full_week_menu())
+        client.post("/week/dag/0/stel-personen-in", data={"personen": "4"})
+        assert client.app.state.week_menu.dagen[0].personen == 4
+
+    def test_stel_personen_in_dagkaart_toont_porties(self, client: TestClient):
+        """S5.4.1: Response-dagkaart toont het bijgewerkte aantal porties."""
+        set_week_menu(client, make_full_week_menu())
+        response = client.post("/week/dag/0/stel-personen-in", data={"personen": "4"})
+        assert response.status_code == 200
+        porties = soup(response).select_one('[data-testid="porties"]')
+        assert porties is not None
+        assert "4" in porties.get_text()
+
+    def test_stel_personen_in_geen_close_sheet_trigger(self, client: TestClient):
+        """S5.4.2: Response bevat geen HX-Trigger closeSheet; sheet blijft open."""
+        set_week_menu(client, make_full_week_menu())
+        response = client.post("/week/dag/0/stel-personen-in", data={"personen": "4"})
+        hx_trigger = response.headers.get("HX-Trigger", "")
+        assert "closeSheet" not in hx_trigger
+
+    def test_stel_personen_in_wijzigt_alleen_gevraagde_dag(self, client: TestClient):
+        """S5.4.3: Alleen dag 0 wordt gewijzigd; overige 6 dagen ongewijzigd."""
+        set_week_menu(client, make_full_week_menu())
+        client.post("/week/dag/0/stel-personen-in", data={"personen": "4"})
+        updated = client.app.state.week_menu
+        for i in range(1, 7):
+            assert updated.dagen[i].personen == 2
+
+    def test_niet_thuis_dag_geeft_422(self, client: TestClient):
+        """S5.4.4: Niet-thuis dag geeft 422."""
+        set_week_menu(client, make_week_menu_met_niet_thuis(niet_thuis_dag=5))
+        response = client.post("/week/dag/5/stel-personen-in", data={"personen": "4"})
+        assert response.status_code == 422
+
+    def test_hellofresh_dag_geeft_422(self, client: TestClient):
+        """S5.4.4 (variant): HelloFresh dag geeft ook 422."""
+        set_week_menu(client, make_full_week_menu(), hellofresh_dagen={2})
+        response = client.post("/week/dag/2/stel-personen-in", data={"personen": "4"})
+        assert response.status_code == 422
+
+    def test_zonder_weekmenu_geeft_404(self, client: TestClient):
+        """S5.4.5: Zonder weekmenu geeft 404."""
+        client.app.state.week_menu = None
+        response = client.post("/week/dag/0/stel-personen-in", data={"personen": "4"})
+        assert response.status_code == 404
 
 
 class TestGenereerBewaartDagtype:

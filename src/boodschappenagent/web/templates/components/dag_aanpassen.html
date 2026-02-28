@@ -64,6 +64,10 @@
             <div data-testid="personen-selector" class="flex gap-3">
                 {% for p in [2, 3, 4] %}
                 <button data-actief="{{ 'true' if dag.personen == p else 'false' }}"
+                        hx-post="/week/dag/{{ dag.dag }}/stel-personen-in"
+                        hx-vals='{"personen": {{ p }}}'
+                        hx-target="#sheet"
+                        hx-swap="innerHTML"
                         class="w-16 py-3 rounded-xl text-base font-semibold border transition-colors
                                {% if dag.personen == p %}bg-ah-blue-light border-ah-blue text-ah-blue{% else %}bg-white border-gray-200 text-gray-600{% endif %}">
                     {{ p }}

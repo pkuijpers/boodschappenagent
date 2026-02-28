@@ -157,24 +157,8 @@ async def shuffle(
     Args:
         dag: Dagnummer (0-6) waarvoor het recept vervangen moet worden.
     """
-    week_menu = getattr(request.app.state, "week_menu", None)
-    if week_menu is None:
-        raise HTTPException(status_code=404, detail="Geen weekmenu beschikbaar")
-
-    # Controleer of de dag een recept heeft (niet niet-thuis/hellofresh)
-    dag_planning = next((d for d in week_menu.dagen if d.dag == dag), None)
-    if dag_planning is None or dag_planning.personen == 0:
-        raise HTTPException(
-            status_code=422,
-            detail="Kan geen recept shufflen voor een niet-thuis dag",
-        )
-
-    hellofresh_dagen = getattr(request.app.state, "hellofresh_dagen", set())
-    if dag in hellofresh_dagen:
-        raise HTTPException(
-            status_code=422,
-            detail="Kan geen recept shufflen voor een HelloFresh dag",
-        )
+    _get_recept_dag_or_422(request, dag)
+    week_menu = request.app.state.week_menu
 
     seizoen = MAAND_NAAR_SEIZOEN[date.today().month]
     new_menu = planner.vervang_recept(week_menu, dag, seizoen)
@@ -271,6 +255,39 @@ async def stel_type_in(
     )
 
 
+@router.post("/week/dag/{dag}/stel-personen-in")
+async def stel_personen_in(
+    dag: Annotated[int, Path(ge=0, le=6)],
+    request: Request,
+    personen: Annotated[int, Form()],
+):
+    """Pas het aantal personen aan voor een specifieke dag.
+
+    Retourneert het bijgewerkte dagkaart-fragment (OOB) plus de bijgewerkte
+    dag-aanpassen sheet. De sheet blijft open (geen closeSheet trigger).
+    """
+    _get_recept_dag_or_422(request, dag)
+    week_menu = request.app.state.week_menu
+
+    nieuwe_dagen = [
+        DagPlanning(dag=d.dag, recept=d.recept, personen=personen)
+        if d.dag == dag
+        else d
+        for d in week_menu.dagen
+    ]
+    request.app.state.week_menu = WeekMenu(
+        week_start=week_menu.week_start, dagen=nieuwe_dagen
+    )
+
+    dag_context = _build_dag_context(dag, request)
+    templates = request.app.state.templates
+    return templates.TemplateResponse(
+        request=request,
+        name="fragments/dag_type_wijzigen.html",
+        context={"dag": dag_context},
+    )
+
+
 # --- Helpers voor receptkiezer ---
 
 
@@ -301,21 +318,23 @@ def _get_laatst_gegeten_dict(history: MenuHistory) -> dict[str, date]:
     return result
 
 
-def _validate_dag_voor_kiezer(request: Request, dag: int) -> None:
-    """Valideer dat dag geschikt is voor de receptkiezer (geen HF of niet-thuis)."""
+def _get_recept_dag_or_422(request: Request, dag: int) -> DagPlanning:
+    """Geef de DagPlanning terug als het een recept-dag is, anders HTTP 422.
+
+    Raises HTTP 404 als er geen weekmenu is.
+    Raises HTTP 422 als de dag een HelloFresh of niet-thuis dag is.
+    """
     week_menu = _get_week_menu_or_404(request)
 
     hellofresh_dagen = getattr(request.app.state, "hellofresh_dagen", set())
     if dag in hellofresh_dagen:
-        raise HTTPException(
-            status_code=422, detail="Kan geen recept kiezen voor een HelloFresh dag"
-        )
+        raise HTTPException(status_code=422, detail="Dag is een HelloFresh dag")
 
     dag_planning = next((d for d in week_menu.dagen if d.dag == dag), None)
     if dag_planning is None or dag_planning.personen == 0:
-        raise HTTPException(
-            status_code=422, detail="Kan geen recept kiezen voor een niet-thuis dag"
-        )
+        raise HTTPException(status_code=422, detail="Dag is een niet-thuis dag")
+
+    return dag_planning
 
 
 def _build_dag_context(dag: int, request: Request) -> dict:
@@ -360,7 +379,7 @@ async def receptkiezer(
     """Toon receptkiezer voor een specifieke dag."""
     if categorie is None:
         categorie = []
-    _validate_dag_voor_kiezer(request, dag)
+    _get_recept_dag_or_422(request, dag)
 
     # Filter recepten
     recipe_search = RecipeSearch(recipes)
