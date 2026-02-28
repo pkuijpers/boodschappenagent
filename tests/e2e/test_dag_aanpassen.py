@@ -289,3 +289,60 @@ class TestDagTypeWijzigenUI:
         expect(
             week_page.locator("[data-testid='dagkaart'][data-dag='4']")
         ).to_have_attribute("data-type", "niet-thuis")
+
+    def test_ander_recept_via_sheet(self, week_page: Page):
+        """E6: Tap dagkaart → tap 'Ander recept' → dagkaart bijgewerkt, sheet blijft open."""
+        # Lees huidige receptnaam van dag 0 (maandag)
+        dag_0_naam_voor = week_page.locator(
+            "[data-testid='dagkaart'][data-dag='0']"
+        ).inner_text()
+
+        # Open sheet voor dag 0
+        week_page.locator("[data-testid='dagkaart'][data-dag='0']").click()
+        week_page.wait_for_selector("#sheet [data-testid='dag-aanpassen']")
+
+        # Tap 'Ander recept' knop
+        week_page.locator("[data-testid='ander-recept-button']").click()
+
+        # Wacht op sheet-update (receptnaam in header wijzigt)
+        week_page.wait_for_selector("#sheet [data-testid='dag-aanpassen']")
+
+        # Sheet blijft open (dag-aanpassen content aanwezig)
+        expect(
+            week_page.locator("#sheet [data-testid='dag-aanpassen']")
+        ).to_be_visible()
+
+        # Dagkaart dag 0 heeft een nieuw recept (receptnaam is anders)
+        dag_0_naam_na = week_page.locator(
+            "[data-testid='dagkaart'][data-dag='0']"
+        ).inner_text()
+        assert dag_0_naam_voor != dag_0_naam_na, (
+            f"Dagkaart dag 0 heeft dezelfde tekst na shuffle: '{dag_0_naam_na}'"
+        )
+
+    def test_genereer_hele_week(self, week_page: Page):
+        """E3: Klik genereer-knop → alle dagkaarten worden vervangen."""
+        # Lees huidige receptnamen
+        dagkaarten_voor = [
+            week_page.locator(
+                f"[data-testid='dagkaart'][data-dag='{i}']"
+            ).inner_text()
+            for i in [0, 1, 3, 4, 6]  # alleen recept-dagen (dag 2=HF, dag 5=niet-thuis)
+        ]
+
+        week_page.locator("[data-testid='genereer-button']").click()
+        week_page.wait_for_load_state("networkidle")
+
+        # Alle 7 dagkaarten zijn aanwezig
+        expect(week_page.locator("[data-testid='dagkaart']")).to_have_count(7)
+
+        # Receptnamen zijn veranderd (nieuw weekmenu)
+        dagkaarten_na = [
+            week_page.locator(
+                f"[data-testid='dagkaart'][data-dag='{i}']"
+            ).inner_text()
+            for i in [0, 1, 3, 4, 6]
+        ]
+        assert dagkaarten_voor != dagkaarten_na, (
+            "Dagkaarten zijn ongewijzigd na genereer"
+        )
