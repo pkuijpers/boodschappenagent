@@ -17,7 +17,7 @@
       "Bash(test:*)",
       "Bash(git fetch origin main)",
       "Bash(git rebase origin/main)",
-      "Bash(ruff check:*)"
+      "Bash(ruff check:*)",
       "mcp__puppeteer__puppeteer_navigate",
       "mcp__puppeteer__puppeteer_click",
       "mcp__puppeteer__puppeteer_fill",
