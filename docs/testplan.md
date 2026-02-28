@@ -46,13 +46,13 @@ Drie kritieke grenzen die getest moeten worden:
 └─────────────┘     └──────────────┘     └─────────────┘
       ▲                    ▲                     ▲
       │                    │                     │
-  seizoensfilter     variatie-logica      HTMX swap/target
+  CO2-kalender       variatie-logica      HTMX swap/target
   JSON laden         history check        fragment vs full page
 ```
 
 | Grens | Wat kan misgaan |
 |-------|-----------------|
-| Repository → Planner | Verkeerde seizoensfilter, lege receptenlijst, corrupt JSON |
+| Repository → Planner | Verkeerde CO2-filter, lege receptenlijst, corrupt JSON |
 | Planner → UI | Recept-data niet correct in template, verkeerde dagtype, ontbrekende emoji |
 | UI → Planner (mutatie) | Shuffle POST geeft verkeerd fragment terug, state raakt out-of-sync, porties niet correct doorgerekend |
 
@@ -152,14 +152,19 @@ Retourneert een OOB-fragment van één dagkaart zodat de sheet open blijft.
 
 ---
 
-### S4: Seizoensfiltering door de keten
+### S4: CO2-seizoensfiltering door de keten
 
 **Integratietest (TestClient)**
 
+Het oude seizoenssysteem (LENTE/ZOMER/HERFST/WINTER) is vervangen door de CO2-seizoenskalender. Recepten worden gefilterd op basis van de groenten-seizoenskalender (`data/reference/groenten_seizoenskalender.json`). Een recept is geschikt als de meerderheid (>50%) van de herkenbare groenten lage CO2 heeft voor de huidige maand.
+
 | # | Scenario | Input | Verwacht resultaat |
 |---|----------|-------|--------------------|
-| S4.1 | Wintermenu | Seizoen=WINTER in context | Alleen winterrecepten of ALLE-seizoen recepten geselecteerd |
-| S4.2 | Zomermenu | Seizoen=ZOMER in context | Alleen zomerrecepten of ALLE-seizoen recepten geselecteerd |
+| S4.1 | Februarimenu | maand="feb" | Alleen recepten waarvan >50% van de groenten lage CO2 hebben in februari (boerenkool, spruitjes, prei, etc.) |
+| S4.2 | Julimenu | maand="jul" | Alleen recepten waarvan >50% van de groenten lage CO2 hebben in juli (tomaat, paprika, courgette, sperziebonen, etc.) |
+| S4.3 | Ingredient-matching | Recept met "rode paprika" | Wordt herkend als "Paprika" uit de seizoenskalender |
+| S4.4 | Meerderheidsregel | Recept met 3 groenten, 2 in seizoen | Recept is geschikt (2/3 > 50%) |
+| S4.5 | Meerderheidsregel negatief | Recept met 3 groenten, 1 in seizoen | Recept is niet geschikt (1/3 < 50%) |
 
 ---
 
@@ -294,7 +299,7 @@ Overzicht van `data-testid` attributen die als contract dienen tussen templates 
 6. **S5.4: Personen selector** — Route `POST /week/dag/{dag}/stel-personen-in`; `TestPersonenSelector`
 7. **S2: Shuffle (OOB)** — `POST /week/shuffle` response wijzigen naar OOB single dagkaart; `TestAnderRecept` + update `TestShuffleRetourneertFragment`
 8. **S3: Regenereren** — Route `POST /week/genereer` (al grotendeels geïmplementeerd)
-9. **S4: Seizoensfiltering** — Integratietest met verschillende seizoenen
+9. **S4: CO2-seizoensfiltering** — Integratietest met ingredient-matching en meerderheidsregel per maand
 10. **E2–E7: Playwright** — E2E tests voor HTMX sheet-interacties; `test_dag_aanpassen.py` (E2E)
 
 **Testbestanden die wijzigen bij fase 1c implementatie:**

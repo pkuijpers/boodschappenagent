@@ -129,7 +129,7 @@ Geïnspireerd op Albert Heijn, maar subtieler voor dagelijks gebruik.
 | **Minder keuzestress** | Niet zelf 4 recepten bedenken, alleen afwijzen wat niet past |
 | **Slimme variatie** | MenuPlanner zorgt automatisch voor afwisseling (categorie, basis) |
 | **Lang niet gegeten** | Systeem kiest recepten die jullie lang niet hebben gehad |
-| **Seizoensgebonden** | Automatisch gefilterd op huidig seizoen |
+| **Lage CO2** | Automatisch gefilterd op groenten met lage CO2-voetafdruk voor de huidige maand |
 
 ---
 
@@ -644,7 +644,7 @@ Buiten scope van v1, maar rekening mee houden in architectuur:
 - **Delen met Ieke**: Weekmenu delen via link/widget
 - **Receptfoto's**: Visuele preview in receptkiezer
 - **Slimme suggesties**: "Je hebt al 2x pasta deze week"
-- **Seizoensfilter**: Automatisch filteren op huidig seizoen
+- **~~Seizoensfilter~~**: Vervangen door CO2-seizoenskalender (al geïmplementeerd in de menuplanner)
 - **Meerdere weken**: Vooruit plannen
 
 ---

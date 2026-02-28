@@ -28,7 +28,7 @@ Het systeem bestaat uit vijf hoofdcomponenten die op elkaar voortbouwen:
 ```
 
 1. **Receptendatabase** — Centrale opslag van alle recepten met ingrediënten
-2. **Menuplanner** — Automatische suggesties op basis van seizoen en variatie
+2. **Menuplanner** — Automatische suggesties op basis van CO2-seizoenskalender en variatie
 3. **Voorraadbeheer** — Bijhouden wat op voorraad is met slimme suggesties
 4. **Boodschappenlijst-generator** — Aggregeert en optimaliseert de benodigde producten
 5. **AH-integratie** — Koppeling met Albert Heijn voor het plaatsen van bestellingen
@@ -42,11 +42,12 @@ De receptendatabase vormt de fundering van het systeem. De bestaande papieren re
 ### Datamodel per recept
 
 - Naam en categorie (pasta, ovenschotel, soep, etc.)
-- Seizoen(en) waarin het recept past
 - Basisporties (standaard voor 2 personen)
 - Ingrediënten met hoeveelheden, schaalbaar naar porties
 - Tags voor variatie (kip, vegetarisch, vis, etc.)
 - Bereidingstijd en complexiteit
+
+> **Let op:** Het veld `seizoenen` is verwijderd uit recepten. Seizoensgeschiktheid wordt nu bepaald op basis van de CO2-seizoenskalender (zie sectie 4).
 
 ### Digitaliseren
 
@@ -61,9 +62,25 @@ Dit is eenmalig werk. Foto's van papieren recepten kunnen gestructureerd worden 
 - Per dag: aantal personen (1-4), of "niet thuis"
 - Eventuele voorkeuren ("zin in iets met vis", "snelle maaltijd")
 
+### CO2-seizoenskalender
+
+De menuplanner gebruikt een groenten-seizoenskalender (`data/reference/groenten_seizoenskalender.json`) om recepten te filteren op basis van hun CO2-voetafdruk. Dit vervangt het oude systeem met handmatige seizoenstags per recept.
+
+**Hoe het werkt:**
+
+1. **Ingredient-matching:** Ingrediëntnamen uit recepten worden automatisch gematcht tegen de seizoenskalender via fuzzy/substring matching (bijv. "rode paprika" → "Paprika", "kastanjechampignons" → "Champignon", "cherrytomaten" → "Tomaat").
+
+2. **Meerderheidsregel:** Een recept is seizoensgeschikt als de **meerderheid** (>50%) van de herkenbare groenten uit de kalender lage CO2 heeft voor de huidige maand. Ingrediënten die niet in de kalender voorkomen (kruiden, zuivel, vlees, pasta, etc.) worden genegeerd bij deze berekening.
+
+3. **Maandelijkse granulariteit:** In plaats van vier brede seizoenen (lente/zomer/herfst/winter) werkt het systeem op maandniveau, wat nauwkeuriger is.
+
+**Voorbeeld (februari):**
+- Bloemkool pizza's: groenten = bloemkool ✅, paprika ❌, champignon ✅, tomaat ❌, rucola ❌ → 2/5 = 40% → **niet geschikt**
+- Stampot boerenkool: groenten = boerenkool ✅, ui ✅ → 2/2 = 100% → **geschikt**
+
 ### Planningslogica
 
-- Filter recepten op huidig seizoen
+- Filter recepten op CO2-seizoenskalender voor de huidige maand
 - Variatie afdwingen: niet 2x dezelfde hoofdcategorie achter elkaar
 - Automatische portieberekening op basis van aantal personen
 - Houdt bij wat recent is gegeten (geen herhaling binnen X weken)
@@ -88,7 +105,7 @@ Een voorgesteld weekmenu dat handmatig aangepast kan worden.
 ### Slimme suggesties
 
 - Na X recepten met ingrediënt Y → "Check of je nog Y hebt"
-- Seizoensgebonden: "Herfst begint, heb je nog pompoensoep-ingrediënten?"
+- CO2-kalender: "Pompoen heeft lage CO2 van sep t/m mrt, heb je nog pompoensoep-ingrediënten?"
 
 ---
 
