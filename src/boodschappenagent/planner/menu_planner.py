@@ -1,46 +1,53 @@
-"""Weekmenu-planner met variatie- en seizoenslogica."""
+"""Weekmenu-planner met variatie- en CO2-seizoenslogica."""
 
 from __future__ import annotations
 
 import random
 
-from boodschappenagent.models import Recipe, Seizoen
+from boodschappenagent.models import Recipe
 from boodschappenagent.planner.history import MenuHistory
 from boodschappenagent.planner.models import DagInput, DagPlanning, WeekMenu
+from boodschappenagent.planner.seizoen_kalender import SeizoenKalender
 from boodschappenagent.repository.recipe_search import RecipeSearch
 
 
 class MenuPlanner:
-    """Weekmenu-planner met variatie- en seizoenslogica."""
+    """Weekmenu-planner met variatie- en CO2-seizoenslogica."""
 
     def __init__(
         self,
         recipes: list[Recipe],
         history: MenuHistory,
+        kalender: SeizoenKalender,
         *,
         random_seed: int | None = None,
     ) -> None:
         self._recipes = recipes
         self._history = history
+        self._kalender = kalender
         self._rng = random.Random(random_seed)
 
-    def _seasonal_and_recent(self, seizoen: Seizoen) -> tuple[list[Recipe], set[str]]:
-        """Haal seizoensrecepten en recent gegeten IDs op."""
-        seasonal = RecipeSearch(self._recipes).filter_by_seizoen(seizoen).results
+    def _seasonal_and_recent(self, maand: str) -> tuple[list[Recipe], set[str]]:
+        """Haal seizoensgeschikte recepten en recent gegeten IDs op."""
+        seasonal = (
+            RecipeSearch(self._recipes)
+            .filter_by_co2_maand(self._kalender, maand)
+            .results
+        )
         recent_ids = self._history.recent_recipe_ids()
         return seasonal, recent_ids
 
     def plan_week(
         self,
         week_input: list[DagInput],
-        seizoen: Seizoen,
+        maand: str,
         week_start: str,
     ) -> WeekMenu:
         """Plan een weekmenu.
 
         Args:
             week_input: Per dag het aantal personen (0 = niet thuis).
-            seizoen: Huidig seizoen voor filtering.
+            maand: Maandafkorting (jan, feb, ..., dec) voor CO2-filtering.
             week_start: Maandag van de week (YYYY-MM-DD).
 
         Returns:
@@ -49,7 +56,7 @@ class MenuPlanner:
         Raises:
             ValueError: Als er geen kandidaat-recepten beschikbaar zijn.
         """
-        seasonal, recent_ids = self._seasonal_and_recent(seizoen)
+        seasonal, recent_ids = self._seasonal_and_recent(maand)
 
         dagen: list[DagPlanning] = []
         used_ids: set[str] = set()
@@ -79,7 +86,7 @@ class MenuPlanner:
         self,
         week_menu: WeekMenu,
         dag: int,
-        seizoen: Seizoen,
+        maand: str,
     ) -> WeekMenu:
         """Vervang het recept voor een specifieke dag.
 
@@ -88,12 +95,12 @@ class MenuPlanner:
         Args:
             week_menu: Het huidige weekmenu.
             dag: De dag (0-6) waarvoor het recept vervangen moet worden.
-            seizoen: Huidig seizoen voor filtering.
+            maand: Maandafkorting (jan, feb, ..., dec) voor CO2-filtering.
 
         Returns:
             Nieuw WeekMenu met het vervangen recept.
         """
-        seasonal, recent_ids = self._seasonal_and_recent(seizoen)
+        seasonal, recent_ids = self._seasonal_and_recent(maand)
 
         dagen_by_dag = {d.dag: d for d in week_menu.dagen}
         target = dagen_by_dag[dag]
@@ -177,7 +184,7 @@ class MenuPlanner:
             return not_used
 
         if not seasonal:
-            msg = "geen kandidaat-recepten beschikbaar voor het gekozen seizoen"
+            msg = "geen kandidaat-recepten beschikbaar voor de huidige maand"
             raise ValueError(msg)
 
         # Laatste redmiddel: sta duplicaten toe

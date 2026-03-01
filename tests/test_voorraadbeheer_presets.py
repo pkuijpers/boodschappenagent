@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from boodschappenagent.boodschappenlijst.normalizer import IngredientNormalizer
-from boodschappenagent.models import Basis, Categorie, Ingredient, Recipe, Seizoen
+from boodschappenagent.models import Basis, Categorie, Ingredient, Recipe
 from boodschappenagent.voorraadbeheer.presets import extract_houdbaar_kandidaten
 
 
@@ -16,7 +16,6 @@ def _make_recipe(
         naam=f"Recept {recipe_id}",
         categorie=Categorie.VEGETARISCH,
         basis=Basis.PASTA,
-        seizoenen=[Seizoen.WINTER],
         basis_porties=2,
         ingredienten=ingredienten,
         bereidingstijd_min=20,

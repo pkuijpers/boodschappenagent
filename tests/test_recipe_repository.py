@@ -31,7 +31,6 @@ class TestRecipeRepositoryLoad:
         assert recipe.naam == "Pasta Carbonara"
         assert recipe.categorie == Categorie.VLEES
         assert recipe.basis == Basis.PASTA
-        assert recipe.seizoenen == [Seizoen.ALLE]
         assert recipe.basis_porties == 2
         assert len(recipe.ingredienten) == 2
         assert recipe.ingredienten[0].naam == "spaghetti"
@@ -229,7 +228,6 @@ class TestRecipeRepositorySave:
         assert data["naam"] == "Spaghetti Bolognese"
         assert data["categorie"] == "vlees"
         assert data["basis"] == "pasta"
-        assert data["seizoenen"] == ["alle"]
         assert data["basis_porties"] == 2
         assert len(data["ingredienten"]) == 4
 

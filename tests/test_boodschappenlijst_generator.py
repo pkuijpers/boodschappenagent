@@ -2,7 +2,7 @@
 
 from boodschappenagent.boodschappenlijst.generator import BoodschappenlijstGenerator
 from boodschappenagent.boodschappenlijst.normalizer import IngredientNormalizer
-from boodschappenagent.models import Basis, Categorie, Ingredient, Recipe, Seizoen
+from boodschappenagent.models import Basis, Categorie, Ingredient, Recipe
 from boodschappenagent.planner.models import DagPlanning, WeekMenu
 from boodschappenagent.utils import PortionCalculator
 
@@ -20,7 +20,6 @@ def _make_recipe(
         naam=recipe_id.replace("-", " ").title(),
         categorie=Categorie.VLEES,
         basis=Basis.PASTA,
-        seizoenen=[Seizoen.ALLE],
         basis_porties=basis_porties,
         ingredienten=ingredienten,
         bereidingstijd_min=30,
@@ -232,8 +231,7 @@ class TestAfrondingNaAggregatie:
                 )
             )
         dagen = [
-            DagPlanning(dag=i, recept=r, personen=4)
-            for i, r in enumerate(recepten)
+            DagPlanning(dag=i, recept=r, personen=4) for i, r in enumerate(recepten)
         ]
         menu = WeekMenu(week_start="2026-02-09", dagen=dagen)
         result = gen.genereer(menu)

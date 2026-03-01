@@ -22,7 +22,8 @@ class Recipe:
         naam: De naam van het recept (max 100 karakters).
         categorie: De categorie van het recept (proteïnebron).
         basis: De koolhydraatbasis van het recept.
-        seizoenen: Lijst van seizoenen waarin het recept past.
+        seizoenen: Deprecated — wordt genegeerd. Seizoensgeschiktheid wordt
+            bepaald via de CO2-seizoenskalender. Behouden voor backward compat.
         basis_porties: Standaard aantal porties (>= 1).
         ingredienten: Lijst van ingrediënten.
         tags: Lijst van tags voor filtering.
@@ -35,9 +36,9 @@ class Recipe:
     naam: str
     categorie: Categorie
     basis: Basis
-    seizoenen: list[Seizoen]
     basis_porties: int
     ingredienten: list[Ingredient]
+    seizoenen: list[Seizoen] = field(default_factory=list)
     tags: list[str] = field(default_factory=list)
     bereidingstijd_min: int = 30
     bereidingswijze: str | None = None
@@ -49,7 +50,6 @@ class Recipe:
         self._validate_naam()
         self._validate_basis_porties()
         self._validate_bereidingstijd()
-        self._validate_seizoenen()
 
     def _validate_id(self) -> None:
         """Valideer het id veld (slug format)."""
@@ -79,12 +79,6 @@ class Recipe:
         """Valideer bereidingstijd_min."""
         if self.bereidingstijd_min <= 0:
             msg = "bereidingstijd_min moet groter dan 0 zijn"
-            raise ValueError(msg)
-
-    def _validate_seizoenen(self) -> None:
-        """Valideer seizoenen."""
-        if not self.seizoenen:
-            msg = "seizoenen mag niet leeg zijn"
             raise ValueError(msg)
 
     def scale_to_portions(self, porties: int) -> Recipe:
@@ -139,12 +133,11 @@ class Recipe:
         Returns:
             Dictionary representatie van het recept.
         """
-        return {
+        result = {
             "id": self.id,
             "naam": self.naam,
             "categorie": self.categorie.value,
             "basis": self.basis.value,
-            "seizoenen": [s.value for s in self.seizoenen],
             "basis_porties": self.basis_porties,
             "ingredienten": [ing.to_dict() for ing in self.ingredienten],
             "tags": list(self.tags),
@@ -152,6 +145,9 @@ class Recipe:
             "bereidingswijze": self.bereidingswijze,
             "bron": self.bron,
         }
+        if self.seizoenen:
+            result["seizoenen"] = [s.value for s in self.seizoenen]
+        return result
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> Recipe:
@@ -172,7 +168,7 @@ class Recipe:
             naam=data["naam"],
             categorie=Categorie(data["categorie"]),
             basis=Basis(data["basis"]),
-            seizoenen=[Seizoen(s) for s in data["seizoenen"]],
+            seizoenen=[Seizoen(s) for s in data.get("seizoenen", [])],
             basis_porties=data["basis_porties"],
             ingredienten=ingredienten,
             tags=data.get("tags", []),

@@ -3,21 +3,76 @@
   "naam": "Zuurkoolschotel met ham & crunchy spek uit de oven",
   "categorie": "vlees",
   "basis": "aardappel",
-  "seizoenen": ["herfst", "winter"],
   "basis_porties": 2,
   "ingredienten": [
-    {"naam": "kruimige aardappelen", "hoeveelheid": 500, "eenheid": "gram", "opmerking": null},
-    {"naam": "rode ui", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
-    {"naam": "knoflook", "hoeveelheid": 1, "eenheid": "teen", "opmerking": null},
-    {"naam": "verse zuurkool", "hoeveelheid": 500, "eenheid": "gram", "opmerking": null},
-    {"naam": "yorkham", "hoeveelheid": 100, "eenheid": "gram", "opmerking": "ca. 200 g"},
-    {"naam": "karwijzaad", "hoeveelheid": 1, "eenheid": "theelepel", "opmerking": null},
-    {"naam": "katenspek", "hoeveelheid": 50, "eenheid": "gram", "opmerking": null},
-    {"naam": "peper", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
-    {"naam": "olijfolie", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null},
-    {"naam": "boter", "hoeveelheid": 15, "eenheid": "gram", "opmerking": null}
+    {
+      "naam": "kruimige aardappelen",
+      "hoeveelheid": 500,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "rode ui",
+      "hoeveelheid": 1,
+      "eenheid": "stuks",
+      "opmerking": null
+    },
+    {
+      "naam": "knoflook",
+      "hoeveelheid": 1,
+      "eenheid": "teen",
+      "opmerking": null
+    },
+    {
+      "naam": "verse zuurkool",
+      "hoeveelheid": 500,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "yorkham",
+      "hoeveelheid": 100,
+      "eenheid": "gram",
+      "opmerking": "ca. 200 g"
+    },
+    {
+      "naam": "karwijzaad",
+      "hoeveelheid": 1,
+      "eenheid": "theelepel",
+      "opmerking": null
+    },
+    {
+      "naam": "katenspek",
+      "hoeveelheid": 50,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "peper",
+      "hoeveelheid": 1,
+      "eenheid": "snuf",
+      "opmerking": null
+    },
+    {
+      "naam": "olijfolie",
+      "hoeveelheid": 1,
+      "eenheid": "eetlepel",
+      "opmerking": null
+    },
+    {
+      "naam": "boter",
+      "hoeveelheid": 15,
+      "eenheid": "gram",
+      "opmerking": null
+    }
   ],
-  "tags": ["oven", "comfort food", "Nederlands", "winter", "hartig"],
+  "tags": [
+    "oven",
+    "comfort food",
+    "Nederlands",
+    "winter",
+    "hartig"
+  ],
   "bereidingstijd_min": 45,
   "bereidingswijze": "1. Verwarm de oven voor op 180°C. Schil de aardappelen en snijd ze in gelijke stukken. Kook de aardappelen in 20 min. gaar. 2. Schil ondertussen de ui en ringen en de knoflook fijn. Verhit de olie in een koekenpan en fruit de knoflook 1 min. Voeg de ui toe en bak 4 min. op middelhoog vuur. Schep regelmatig om. 3. Spoel ondertussen de zuurkool af onder koud stromend water en laat uitlekken in een vergiet. Snijd de ham in stukjes. Giet de aardappelen af, maor vang een kopje kookvocht op. Stamp de aardappelen met de boter en eventueel wat kookvocht tot een smeuïge puree. Breng op smaak met peper. 4. Verdeel de aardappelpuree over de ovenschaal. Voeg de ham, zuurkool en het karwijzaad toe aan de knoflook en ui. Breng op smaak met peper. Verdeel het mengsel over de aardappelpuree en leg de plakjes spek er op. Bak ca. 20 min in het midden van de oven. TIP Je kunt de rest van de katenspek krokant bakken. Verkruimel het boven de schotel voor extra smaak en textuur.",
   "bron": null

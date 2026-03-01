@@ -3,21 +3,76 @@
   "naam": "Tuna-meltwraps met spitskool & appel",
   "categorie": "vis",
   "basis": "brood",
-  "seizoenen": ["alle"],
   "basis_porties": 4,
   "ingredienten": [
-    {"naam": "biologische rode uien", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
-    {"naam": "appels", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
-    {"naam": "tonijn in zonnebloemolie", "hoeveelheid": 320, "eenheid": "g", "opmerking": ""},
-    {"naam": "romige dressing", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null},
-    {"naam": "geraspte Goudse oude kaas", "hoeveelheid": 100, "eenheid": "gram", "opmerking": null},
-    {"naam": "meergranen tortillawraps", "hoeveelheid": 8, "eenheid": "stuks", "opmerking": null},
-    {"naam": "peterselie", "hoeveelheid": 15, "eenheid": "gram", "opmerking": null},
-    {"naam": "gesneden spitskool", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
-    {"naam": "dadel & notenmix", "hoeveelheid": 60, "eenheid": "gram", "opmerking": null},
-    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null}
+    {
+      "naam": "biologische rode uien",
+      "hoeveelheid": 2,
+      "eenheid": "stuks",
+      "opmerking": null
+    },
+    {
+      "naam": "appels",
+      "hoeveelheid": 2,
+      "eenheid": "stuks",
+      "opmerking": null
+    },
+    {
+      "naam": "tonijn in zonnebloemolie",
+      "hoeveelheid": 320,
+      "eenheid": "g",
+      "opmerking": ""
+    },
+    {
+      "naam": "romige dressing",
+      "hoeveelheid": 2,
+      "eenheid": "eetlepel",
+      "opmerking": null
+    },
+    {
+      "naam": "geraspte Goudse oude kaas",
+      "hoeveelheid": 100,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "meergranen tortillawraps",
+      "hoeveelheid": 8,
+      "eenheid": "stuks",
+      "opmerking": null
+    },
+    {
+      "naam": "peterselie",
+      "hoeveelheid": 15,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "gesneden spitskool",
+      "hoeveelheid": 400,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "dadel & notenmix",
+      "hoeveelheid": 60,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "peper",
+      "hoeveelheid": 1,
+      "eenheid": "naar smaak",
+      "opmerking": null
+    }
   ],
-  "tags": ["wraps", "tonijn", "spitskool", "appel", "grillen"],
+  "tags": [
+    "wraps",
+    "tonijn",
+    "spitskool",
+    "appel",
+    "grillen"
+  ],
   "bereidingstijd_min": 30,
   "bereidingswijze": "1. Snipper de uien zeer fijn. Boen de appels schoon. Snijd de appels in kwarten, verwijder het klokhuis en snijd het vruchtvlees in blokjes van circa ½ cm (brunoise). 2. Laat de tonijn uitlekken in een zeef en doe in een kom. Meng de tonijn met de ui en 1 eetl. romige dressing en de helft van de appel. Breng op smaak met peper. 3. Verdeel de kaas en het tonijn-appelmengsel over het midden van de wraps. Vouw eerst de zijkanten en daarna de onderkant van de wraps iets over de vulling en rol de wraps zo strak mogelijk op. Verhit de grillpan en gril per keer 4 wraps 5 min. Keer halverwege. Gril zo ook de andere 4 wraps. 4. Snijd ondertussen de peterselie fijn en meng met de spitskool, notenxmix, de rest van de appel en de rest van de dressing. Serveer de wraps met de salade.",
   "bron": "allerhande"

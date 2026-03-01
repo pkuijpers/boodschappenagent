@@ -3,22 +3,79 @@
   "naam": "Pappardelle met homemade pestogehaktballetjes in tomatensaus",
   "categorie": "vlees",
   "basis": "pasta",
-  "seizoenen": ["alle"],
   "basis_porties": 2,
   "ingredienten": [
-    {"naam": "biologische ui", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
-    {"naam": "rundergehakt", "hoeveelheid": 90, "eenheid": "gram", "opmerking": null},
-    {"naam": "pestospread", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": "uit bakje 90g"},
-    {"naam": "panko", "hoeveelheid": 0.5, "eenheid": "stuks", "opmerking": "half sachet"},
-    {"naam": "Italiaanse roerbakgroente", "hoeveelheid": 250, "eenheid": "gram", "opmerking": "champignons"},
-    {"naam": "passata", "hoeveelheid": 270, "eenheid": "gram", "opmerking": "la classica"},
-    {"naam": "pappardelle all'uovo", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
-    {"naam": "peterselie", "hoeveelheid": 7.5, "eenheid": "gram", "opmerking": null},
-    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
-    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
-    {"naam": "arachideolie", "hoeveelheid": 0.5, "eenheid": "eetlepel", "opmerking": null}
+    {
+      "naam": "biologische ui",
+      "hoeveelheid": 1,
+      "eenheid": "stuks",
+      "opmerking": null
+    },
+    {
+      "naam": "rundergehakt",
+      "hoeveelheid": 90,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "pestospread",
+      "hoeveelheid": 1,
+      "eenheid": "eetlepel",
+      "opmerking": "uit bakje 90g"
+    },
+    {
+      "naam": "panko",
+      "hoeveelheid": 0.5,
+      "eenheid": "stuks",
+      "opmerking": "half sachet"
+    },
+    {
+      "naam": "Italiaanse roerbakgroente",
+      "hoeveelheid": 250,
+      "eenheid": "gram",
+      "opmerking": "champignons"
+    },
+    {
+      "naam": "passata",
+      "hoeveelheid": 270,
+      "eenheid": "gram",
+      "opmerking": "la classica"
+    },
+    {
+      "naam": "pappardelle all'uovo",
+      "hoeveelheid": 250,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "peterselie",
+      "hoeveelheid": 7.5,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "peper",
+      "hoeveelheid": 1,
+      "eenheid": "naar smaak",
+      "opmerking": null
+    },
+    {
+      "naam": "zout",
+      "hoeveelheid": 1,
+      "eenheid": "naar smaak",
+      "opmerking": null
+    },
+    {
+      "naam": "arachideolie",
+      "hoeveelheid": 0.5,
+      "eenheid": "eetlepel",
+      "opmerking": null
+    }
   ],
-  "tags": ["italiaans", "rund"],
+  "tags": [
+    "italiaans",
+    "rund"
+  ],
   "bereidingstijd_min": 30,
   "bereidingswijze": "1. Snipper de ui en meng met het gehakt, de pesto en panko. Kneed goed. Vorm er met vochtige handen 8 gelijke balletjes van. Verhit de olie in de hapjespan en bak de gehaktballen op hoog vuur rondom bruin. Voeg de roerbakgroente toe en bak 2 min. mee. Voeg de passata toe en laat het geheel met de deksel op de pan 20 min. op laag vuur stoven. Breng op smaak met peper en eventueel zout.\n2. Kook ondertussen de pasta in 4 min. beetgaar en snijd de peterselie fijn. Giet de pasta af en verdeel over 2 borden. Schep de saus met de gehaktballen erover en garneer met de peterselie.\n\nTIP 1: De saus met de gehaktballen zou je al een dag van tevoren kunnen maken.\nTIP 2: Een ui snipperen is een makkie. Zien hoe? Bekijk de video op ah.nl/allerhande/ui.",
   "bron": "AH Allerhande Box"

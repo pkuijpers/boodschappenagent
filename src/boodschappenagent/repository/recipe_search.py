@@ -5,6 +5,7 @@ from __future__ import annotations
 from difflib import SequenceMatcher
 
 from boodschappenagent.models import Categorie, Recipe, Seizoen
+from boodschappenagent.planner.seizoen_kalender import SeizoenKalender
 
 
 class RecipeSearch:
@@ -55,6 +56,28 @@ class RecipeSearch:
             r
             for r in self._recipes
             if seizoen in r.seizoenen or Seizoen.ALLE in r.seizoenen
+        ]
+        return RecipeSearch(filtered)
+
+    def filter_by_co2_maand(
+        self,
+        kalender: SeizoenKalender,
+        maand: str,
+    ) -> RecipeSearch:
+        """Filter recepten op CO2-seizoensgeschiktheid voor de gegeven maand.
+
+        Gebruikt de SeizoenKalender om te bepalen of de meerderheid (>50%)
+        van de herkenbare groenten in een recept lage CO2 heeft.
+
+        Args:
+            kalender: De seizoenskalender voor ingredient-matching.
+            maand: Maandafkorting (jan, feb, ..., dec).
+
+        Returns:
+            Nieuwe RecipeSearch met seizoensgeschikte recepten.
+        """
+        filtered = [
+            r for r in self._recipes if kalender.recept_is_seizoensgeschikt(r, maand)
         ]
         return RecipeSearch(filtered)
 

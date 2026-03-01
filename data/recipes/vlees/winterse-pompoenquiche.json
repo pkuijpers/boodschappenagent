@@ -3,22 +3,82 @@
   "naam": "Winterse Pompoenquiche",
   "categorie": "vlees",
   "basis": "brood",
-  "seizoenen": ["herfst", "winter"],
   "basis_porties": 4,
   "ingredienten": [
-    {"naam": "uien", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
-    {"naam": "kastanjechampignons", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
-    {"naam": "magere spekreepjes", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
-    {"naam": "eieren", "hoeveelheid": 3, "eenheid": "stuks", "opmerking": null},
-    {"naam": "gedroogde tijm", "hoeveelheid": 2, "eenheid": "theelepel", "opmerking": null},
-    {"naam": "geraspte kaas voor ovengratin", "hoeveelheid": 150, "eenheid": "gram", "opmerking": null},
-    {"naam": "vers bladerdeeg", "hoeveelheid": 270, "eenheid": "gram", "opmerking": null},
-    {"naam": "pompoenstukjes", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
-    {"naam": "balsamico vinaigrette", "hoeveelheid": 60, "eenheid": "ml", "opmerking": null},
-    {"naam": "gemengde salade", "hoeveelheid": 150, "eenheid": "gram", "opmerking": null},
-    {"naam": "melk", "hoeveelheid": 150, "eenheid": "ml", "opmerking": null}
+    {
+      "naam": "uien",
+      "hoeveelheid": 2,
+      "eenheid": "stuks",
+      "opmerking": null
+    },
+    {
+      "naam": "kastanjechampignons",
+      "hoeveelheid": 400,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "magere spekreepjes",
+      "hoeveelheid": 250,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "eieren",
+      "hoeveelheid": 3,
+      "eenheid": "stuks",
+      "opmerking": null
+    },
+    {
+      "naam": "gedroogde tijm",
+      "hoeveelheid": 2,
+      "eenheid": "theelepel",
+      "opmerking": null
+    },
+    {
+      "naam": "geraspte kaas voor ovengratin",
+      "hoeveelheid": 150,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "vers bladerdeeg",
+      "hoeveelheid": 270,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "pompoenstukjes",
+      "hoeveelheid": 400,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "balsamico vinaigrette",
+      "hoeveelheid": 60,
+      "eenheid": "ml",
+      "opmerking": null
+    },
+    {
+      "naam": "gemengde salade",
+      "hoeveelheid": 150,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "melk",
+      "hoeveelheid": 150,
+      "eenheid": "ml",
+      "opmerking": null
+    }
   ],
-  "tags": ["quiche", "pompoen", "winter", "oven", "hartig"],
+  "tags": [
+    "quiche",
+    "pompoen",
+    "winter",
+    "oven",
+    "hartig"
+  ],
   "bereidingstijd_min": 65,
   "bereidingswijze": "1. Verwarm de oven voor op 200°C. Maak de uien schoon en snipper ze. Maak de champignons schoon met keukenpapier en snijd in kwarten. Verhit de olie in een koekenpan en bak de ui en champignons 10 min. op middelhoog vuur. 2. Verhit ondertussen een koekenpan zonder olie of boter en bak de spekreepjes in 7 min. goudbruin en krokant. Neem uit de pan en laat uitlekken op keukenpapier. 3. Klop ondertussen de eieren los met tijm en kom met de melk. Breng op smaak met peper en eventueel zout. 4. Rol het bladerdeeg uit met het bakpapier en leg het met het bakpapier naar onderen in de ovenschaal. Verdeel de pompoenblokjes, het uichampignonmengsel en de spekreepjes erover. Verdeel het eimengsel erover en bestrooi met de rest van de kaas. 5. Bak de quiche in ca. 45 min. onder in de oven gaar. Dek de taart af met aluminiumfolie als hij te donker wordt. Meng de vinaigrette vlak voor het serveren met de slamix en serveer bij de quiche.",
   "bron": null

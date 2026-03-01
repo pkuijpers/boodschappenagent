@@ -3,22 +3,83 @@
   "naam": "Homemade Kip Kerrie met Ananas & Sperziebonen",
   "categorie": "gevogelte",
   "basis": "rijst",
-  "seizoenen": ["zomer", "herfst"],
   "basis_porties": 4,
   "ingredienten": [
-    {"naam": "basmatirijst", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
-    {"naam": "verse ananasstukjes", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
-    {"naam": "scharrelkipfilets", "hoeveelheid": 500, "eenheid": "gram", "opmerking": null},
-    {"naam": "curry madras", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": "Euroma by Jonnie Boer"},
-    {"naam": "kookzuivel", "hoeveelheid": 250, "eenheid": "ml", "opmerking": null},
-    {"naam": "kippenbouillontablet", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
-    {"naam": "gebroken sperziebonen", "hoeveelheid": 600, "eenheid": "gram", "opmerking": "zak"},
-    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
-    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
-    {"naam": "arachideolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": "arachideolie"},
-    {"naam": "tarwebloem", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null}
+    {
+      "naam": "basmatirijst",
+      "hoeveelheid": 300,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "verse ananasstukjes",
+      "hoeveelheid": 250,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "scharrelkipfilets",
+      "hoeveelheid": 500,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "curry madras",
+      "hoeveelheid": 1,
+      "eenheid": "eetlepel",
+      "opmerking": "Euroma by Jonnie Boer"
+    },
+    {
+      "naam": "kookzuivel",
+      "hoeveelheid": 250,
+      "eenheid": "ml",
+      "opmerking": null
+    },
+    {
+      "naam": "kippenbouillontablet",
+      "hoeveelheid": 1,
+      "eenheid": "stuks",
+      "opmerking": null
+    },
+    {
+      "naam": "gebroken sperziebonen",
+      "hoeveelheid": 600,
+      "eenheid": "gram",
+      "opmerking": "zak"
+    },
+    {
+      "naam": "peper",
+      "hoeveelheid": 1,
+      "eenheid": "naar smaak",
+      "opmerking": null
+    },
+    {
+      "naam": "zout",
+      "hoeveelheid": 1,
+      "eenheid": "naar smaak",
+      "opmerking": null
+    },
+    {
+      "naam": "arachideolie",
+      "hoeveelheid": 2,
+      "eenheid": "eetlepel",
+      "opmerking": "arachideolie"
+    },
+    {
+      "naam": "tarwebloem",
+      "hoeveelheid": 2,
+      "eenheid": "eetlepel",
+      "opmerking": null
+    }
   ],
-  "tags": ["kerrie", "kip", "ananas", "sperziebonen", "kokos", "homemade"],
+  "tags": [
+    "kerrie",
+    "kip",
+    "ananas",
+    "sperziebonen",
+    "kokos",
+    "homemade"
+  ],
   "bereidingstijd_min": 20,
   "bereidingswijze": "1. Kook de rijst in 8 min gaar. Giet af en laat met de deksel op de pan staan tot gebruik. Halveer ondertussen de stukjes ananas en snijd de kip in blokjes. 2. Verhit een koekenpan zonder olie of boter en roostet het amandelschaafsel 3 min. op middelhoog vuur. Laat afkoelen op een bord. 3. Verhit de olie in dezelfde koekenpan en bak de kip 3 min. op middelhoog vuur. Voeg de curry madras en de bloem toe en bak 4 min. mee. Voeg al roerend de kookzuivel, bouillontablet en 250 ml water toe en laat op laag vuur 5 min. zachtjes koken. Breng op smaak met peper en eventueel zout. 4. Kook ondertussen de sperziebonen in water in 8 min. beetgaar. Verdeel de rijst over de 4 borden, schep de kip kerrie, ananas en sperziebonen ernaast en bestrooi met het amandelschaafsel. TIP Vet een kopje of klein kommetje in met een beetje olie. Schep de rijst erin, druk goed aan en stort de rijst op het bord.",
   "bron": "allerhande box"

@@ -3,23 +3,89 @@
   "naam": "Pompoensoep met selderijrolie, eikruim & naanbrood",
   "categorie": "vegetarisch",
   "basis": "brood",
-  "seizoenen": ["herfst", "winter"],
   "basis_porties": 2,
   "ingredienten": [
-    {"naam": "knoflookteen", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
-    {"naam": "jalapeño", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": "groen pepertje"},
-    {"naam": "winterpeen", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
-    {"naam": "pompoenstukjes", "hoeveelheid": 800, "eenheid": "gram", "opmerking": "à 400 g"},
-    {"naam": "groentebouillonblokjes", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
-    {"naam": "eieren", "hoeveelheid": 4, "eenheid": "stuks", "opmerking": null},
-    {"naam": "selderij", "hoeveelheid": 20, "eenheid": "gram", "opmerking": null},
-    {"naam": "mininaan knoflook/koriander", "hoeveelheid": 200, "eenheid": "gram", "opmerking": null},
-    {"naam": "tuinkers", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": "bakje"},
-    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
-    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
-    {"naam": "olijfolie", "hoeveelheid": 4, "eenheid": "eetlepel", "opmerking": "extra"}
+    {
+      "naam": "knoflookteen",
+      "hoeveelheid": 2,
+      "eenheid": "stuks",
+      "opmerking": null
+    },
+    {
+      "naam": "jalapeño",
+      "hoeveelheid": 1,
+      "eenheid": "stuks",
+      "opmerking": "groen pepertje"
+    },
+    {
+      "naam": "winterpeen",
+      "hoeveelheid": 400,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "pompoenstukjes",
+      "hoeveelheid": 800,
+      "eenheid": "gram",
+      "opmerking": "à 400 g"
+    },
+    {
+      "naam": "groentebouillonblokjes",
+      "hoeveelheid": 2,
+      "eenheid": "stuks",
+      "opmerking": null
+    },
+    {
+      "naam": "eieren",
+      "hoeveelheid": 4,
+      "eenheid": "stuks",
+      "opmerking": null
+    },
+    {
+      "naam": "selderij",
+      "hoeveelheid": 20,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "mininaan knoflook/koriander",
+      "hoeveelheid": 200,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "tuinkers",
+      "hoeveelheid": 1,
+      "eenheid": "stuks",
+      "opmerking": "bakje"
+    },
+    {
+      "naam": "peper",
+      "hoeveelheid": 1,
+      "eenheid": "naar smaak",
+      "opmerking": null
+    },
+    {
+      "naam": "zout",
+      "hoeveelheid": 1,
+      "eenheid": "naar smaak",
+      "opmerking": null
+    },
+    {
+      "naam": "olijfolie",
+      "hoeveelheid": 4,
+      "eenheid": "eetlepel",
+      "opmerking": "extra"
+    }
   ],
-  "tags": ["soep", "pompoen", "vegetarisch", "maaltijdsoep", "herfst", "selderijrolie"],
+  "tags": [
+    "soep",
+    "pompoen",
+    "vegetarisch",
+    "maaltijdsoep",
+    "herfst",
+    "selderijrolie"
+  ],
   "bereidingstijd_min": 25,
   "bereidingswijze": "Verwarm de oven voor op 200°C. Snijd de tenen knoflook fijn. Verwijder de steeltjes en zaadlijsten van de jalapeño en snijd in ringen. Verhit 2 eet lepels olie in een pan en bak de pompoenstukjes 2-3 min. Voeg 2 el olie toe aan een verkruimel de bouillontabletten erboven. Voeg een slok water toe en laat op laag vuur 15 min koken. Kook ondertussen de eieren 8 min hard. Giet af en laat schrikken onder koud stromend water. Pel de eieren en prak fijn met een vork. Snijd de selderij fijn en meng met de rest van de olie. Breng op smaak met peper en eventueel zout. Leg de minaroen op een rooster in het midden van de oven en bak ca. 10 min. Pureer de pompoensoep met de staafmixer. Breng op smaak met peper en eventueel zout. Verdeel de soep over 4 kommen, besprenkelt met de selderijrolie en bestrooi met de eikruim en tuinkiers.",
   "bron": "allerhande box"

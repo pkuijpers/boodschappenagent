@@ -3,23 +3,87 @@
   "naam": "Cannelloni met cherrytomaat, geitenkaas & pijnboompitten",
   "categorie": "vegetarisch",
   "basis": "pasta",
-  "seizoenen": ["alle"],
   "basis_porties": 2,
   "ingredienten": [
-    {"naam": "knoflook", "hoeveelheid": 2, "eenheid": "teen", "opmerking": null},
-    {"naam": "cherrytomaten", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
-    {"naam": "tijm", "hoeveelheid": 7.5, "eenheid": "gram", "opmerking": null},
-    {"naam": "tomatensaus", "hoeveelheid": 720, "eenheid": "ml", "opmerking": null},
-    {"naam": "Italiaanse roerbakgroente cavolo nero", "hoeveelheid": 800, "eenheid": "gram", "opmerking": null},
-    {"naam": "geitenkaas", "hoeveelheid": 200, "eenheid": "gram", "opmerking": "in blokjes"},
-    {"naam": "pijnboompitten", "hoeveelheid": 30, "eenheid": "gram", "opmerking": null},
-    {"naam": "lasagnebladeren all'uovo", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
-    {"naam": "peper", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": "naar smaak"},
-    {"naam": "zout", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": "naar smaak"},
-    { "naam": "olijfolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null },
-    {"naam": "wittewijnazijn", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null}
+    {
+      "naam": "knoflook",
+      "hoeveelheid": 2,
+      "eenheid": "teen",
+      "opmerking": null
+    },
+    {
+      "naam": "cherrytomaten",
+      "hoeveelheid": 250,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "tijm",
+      "hoeveelheid": 7.5,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "tomatensaus",
+      "hoeveelheid": 720,
+      "eenheid": "ml",
+      "opmerking": null
+    },
+    {
+      "naam": "Italiaanse roerbakgroente cavolo nero",
+      "hoeveelheid": 800,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "geitenkaas",
+      "hoeveelheid": 200,
+      "eenheid": "gram",
+      "opmerking": "in blokjes"
+    },
+    {
+      "naam": "pijnboompitten",
+      "hoeveelheid": 30,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "lasagnebladeren all'uovo",
+      "hoeveelheid": 250,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "peper",
+      "hoeveelheid": 1,
+      "eenheid": "snuf",
+      "opmerking": "naar smaak"
+    },
+    {
+      "naam": "zout",
+      "hoeveelheid": 1,
+      "eenheid": "snuf",
+      "opmerking": "naar smaak"
+    },
+    {
+      "naam": "olijfolie",
+      "hoeveelheid": 2,
+      "eenheid": "eetlepel",
+      "opmerking": null
+    },
+    {
+      "naam": "wittewijnazijn",
+      "hoeveelheid": 1,
+      "eenheid": "eetlepel",
+      "opmerking": null
+    }
   ],
-  "tags": ["oven", "pasta", "vegetarisch", "geitenkaas"],
+  "tags": [
+    "oven",
+    "pasta",
+    "vegetarisch",
+    "geitenkaas"
+  ],
   "bereidingstijd_min": 45,
   "bereidingswijze": "Snijd de tenen knoflook fijn. Halveer de tomaatjes. Ris de blaadjes van de tijm. Verhit 1 el olie in de hapjespan en bak de knoflook 1 min. op middelhoog vuur. Voeg de tomaat, tijm en tomatensaus toe. Breng aan de kook en stoof 15 min. op laag vuur met de deksel op de pan. Verwarm de oven voor op 190°C. Verwarm ondertussen de rest van de olie in de wok en roerbak de groente in 7 min. gaar. Voeg 3/4 van de geitenkaas en de helft van de pijnboompitten toe en verwarm 3 min. Neem een lasagneblad en schep een flinke lepel groente over de breedte. Rol op en leg in de ovenschaal. Herhaal met de rest van de lasagnebladeren. Schep de tomatensaus over de cannelloni, verdeel de rest van de geitenkaas erover en werk af met de rest van de pijnboompitten. Zet in de oven en bak in ca. 20 min. gaar.",
   "bron": null

@@ -2,7 +2,7 @@
 
 import pytest
 
-from boodschappenagent.models import Basis, Categorie, Ingredient, Recipe, Seizoen
+from boodschappenagent.models import Basis, Categorie, Ingredient, Recipe
 
 
 @pytest.fixture
@@ -24,7 +24,6 @@ def sample_recipe(sample_ingredients: list[Ingredient]) -> Recipe:
         naam="Spaghetti Bolognese",
         categorie=Categorie.VLEES,
         basis=Basis.PASTA,
-        seizoenen=[Seizoen.ALLE],
         basis_porties=2,
         ingredienten=sample_ingredients,
         tags=["italiaans"],
@@ -42,7 +41,6 @@ def sample_json_data() -> dict:
         "naam": "Pasta Carbonara",
         "categorie": "vlees",
         "basis": "pasta",
-        "seizoenen": ["alle"],
         "basis_porties": 2,
         "ingredienten": [
             {

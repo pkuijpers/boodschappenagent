@@ -3,22 +3,81 @@
   "naam": "Preitaart met rauwe ham, Parmezaanse kaas & rucola",
   "categorie": "vlees",
   "basis": "geen",
-  "seizoenen": ["alle"],
   "basis_porties": 4,
   "ingredienten": [
-    {"naam": "gesneden prei", "hoeveelheid": 800, "eenheid": "gram", "opmerking": null},
-    {"naam": "bladerdeeg", "hoeveelheid": 270, "eenheid": "gram", "opmerking": null},
-    {"naam": "coburgham", "hoeveelheid": 150, "eenheid": "gram", "opmerking": null},
-    {"naam": "gedroogde tijm", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null},
-    {"naam": "eieren", "hoeveelheid": 6, "eenheid": "stuks", "opmerking": null},
-    {"naam": "Parmigiano Reggiano", "hoeveelheid": 80, "eenheid": "gram", "opmerking": null},
-    {"naam": "ricotta", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
-    {"naam": "rucola", "hoeveelheid": 85, "eenheid": "gram", "opmerking": null},
-    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
-    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
-    {"naam": "arachideolie", "hoeveelheid": 0.5, "eenheid": "eetlepel", "opmerking": null}
+    {
+      "naam": "gesneden prei",
+      "hoeveelheid": 800,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "bladerdeeg",
+      "hoeveelheid": 270,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "coburgham",
+      "hoeveelheid": 150,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "gedroogde tijm",
+      "hoeveelheid": 2,
+      "eenheid": "eetlepel",
+      "opmerking": null
+    },
+    {
+      "naam": "eieren",
+      "hoeveelheid": 6,
+      "eenheid": "stuks",
+      "opmerking": null
+    },
+    {
+      "naam": "Parmigiano Reggiano",
+      "hoeveelheid": 80,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "ricotta",
+      "hoeveelheid": 250,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "rucola",
+      "hoeveelheid": 85,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "peper",
+      "hoeveelheid": 1,
+      "eenheid": "naar smaak",
+      "opmerking": null
+    },
+    {
+      "naam": "zout",
+      "hoeveelheid": 1,
+      "eenheid": "naar smaak",
+      "opmerking": null
+    },
+    {
+      "naam": "arachideolie",
+      "hoeveelheid": 0.5,
+      "eenheid": "eetlepel",
+      "opmerking": null
+    }
   ],
-  "tags": ["ei", "ham", "kaas", "rucola"],
+  "tags": [
+    "ei",
+    "ham",
+    "kaas",
+    "rucola"
+  ],
   "bereidingstijd_min": 55,
   "bereidingswijze": "Verwarm de oven voor op 200°C. Kook de prei 4 min. Giet af en laat goed uitlekken. Vet ondertussen de quichevorm in met de olie en bekleed met het bladerdeeg. Beleg de deegbodem met 2/3 van de ham en bestrooi met de tijm. Klop in een kom de eieren los. Meng de prei, kaas en ricotta erdoor. Breng op smaak met peper en eventueel zout. Verdeel het eiermengsel over de bodem van de quichevorm. Bak de taart in het midden van de oven in ca. 35 min. goudbruin en gaar. Laat 15 min. afkoelen op een rooster. Garneer met de rest van de ham en de rucola. Serveer de rest eventueel bij de borrel of als lunch.",
   "bron": "allerhande"

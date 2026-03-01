@@ -3,20 +3,70 @@
   "naam": "Pompoenchili met gehakt, zwarte bonen & Griekse yoghurt",
   "categorie": "vlees",
   "basis": "geen",
-  "seizoenen": ["herfst", "winter"],
   "basis_porties": 4,
   "ingredienten": [
-    {"naam": "al-andalus", "hoeveelheid": 2, "eenheid": "el", "opmerking": null},
-    {"naam": "gehakt", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
-    {"naam": "pompoenstukjes", "hoeveelheid": 800, "eenheid": "gram", "opmerking": null},
-    {"naam": "tomatenbokjes", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
-    {"naam": "zwarte bonen", "hoeveelheid": 800, "eenheid": "gram", "opmerking": null},
-    {"naam": "Griekse yoghurt", "hoeveelheid": 150, "eenheid": "gram", "opmerking": null},
-    {"naam": "peper", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
-    {"naam": "zout", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
-    {"naam": "zonnebloemolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null}
+    {
+      "naam": "al-andalus",
+      "hoeveelheid": 2,
+      "eenheid": "el",
+      "opmerking": null
+    },
+    {
+      "naam": "gehakt",
+      "hoeveelheid": 300,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "pompoenstukjes",
+      "hoeveelheid": 800,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "tomatenbokjes",
+      "hoeveelheid": 400,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "zwarte bonen",
+      "hoeveelheid": 800,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "Griekse yoghurt",
+      "hoeveelheid": 150,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "peper",
+      "hoeveelheid": 1,
+      "eenheid": "snuf",
+      "opmerking": null
+    },
+    {
+      "naam": "zout",
+      "hoeveelheid": 1,
+      "eenheid": "snuf",
+      "opmerking": null
+    },
+    {
+      "naam": "zonnebloemolie",
+      "hoeveelheid": 2,
+      "eenheid": "eetlepel",
+      "opmerking": null
+    }
   ],
-  "tags": ["chili", "pompoen", "gehakt", "zwarte bonen", "Griekse yoghurt"],
+  "tags": [
+    "chili",
+    "pompoen",
+    "gehakt",
+    "zwarte bonen",
+    "Griekse yoghurt"
+  ],
   "bereidingstijd_min": 45,
   "bereidingswijze": "1. Verhit de olie in de pan met dikke bodem en fruit de al-andalus 1 min. op laag vuur. Voeg het gehakt toe en bak 1 min. op middelhoog vuur. Voeg de pompoenstukjes, tomatenbokjes en 100 ml water toe en roer door. Breng aan de kook en stoof met de deksel op de pan in 30 min. op laag vuur gaar. Schep regelmatig om. 2. Spoel de zwarte bonen in een vergiet af onder koud stromend water. Voeg de laatste 5 min. van de stooftijd toe aan het pompoenmengsel. Breng op smaak met peper en eventueel zout. 3. Verdeel de pompoenchili over 4 borden en serveer met de Griekse yoghurt.",
   "bron": "allerhande"

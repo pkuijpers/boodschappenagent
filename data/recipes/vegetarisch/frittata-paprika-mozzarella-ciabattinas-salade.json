@@ -3,23 +3,85 @@
   "naam": "Frittata met paprika, mozzarella, ciabattina's & salade",
   "categorie": "vegetarisch",
   "basis": "brood",
-  "seizoenen": ["alle"],
   "basis_porties": 4,
   "ingredienten": [
-    {"naam": "rode puntpaprika", "hoeveelheid": 4, "eenheid": "stuks", "opmerking": null},
-    {"naam": "semi-zongedroogde tomaten", "hoeveelheid": 295, "eenheid": "gram", "opmerking": "1 potje"},
-    {"naam": "biologische buffelmozzarella", "hoeveelheid": 125, "eenheid": "gram", "opmerking": "1 bol"},
-    {"naam": "oregano", "hoeveelheid": 15, "eenheid": "gram", "opmerking": "bakje"},
-    {"naam": "eieren", "hoeveelheid": 6, "eenheid": "stuks", "opmerking": null},
-    {"naam": "kookzuivel", "hoeveelheid": 250, "eenheid": "ml", "opmerking": null},
-    {"naam": "ciabattina", "hoeveelheid": 4, "eenheid": "stuks", "opmerking": null},
-    {"naam": "rucolaslamelange", "hoeveelheid": 75, "eenheid": "gram", "opmerking": null},
-    {"naam": "saladepittenmix", "hoeveelheid": 40, "eenheid": "gram", "opmerking": null},
-    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
-    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
-    {"naam": "olijfolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null}
+    {
+      "naam": "rode puntpaprika",
+      "hoeveelheid": 4,
+      "eenheid": "stuks",
+      "opmerking": null
+    },
+    {
+      "naam": "semi-zongedroogde tomaten",
+      "hoeveelheid": 295,
+      "eenheid": "gram",
+      "opmerking": "1 potje"
+    },
+    {
+      "naam": "biologische buffelmozzarella",
+      "hoeveelheid": 125,
+      "eenheid": "gram",
+      "opmerking": "1 bol"
+    },
+    {
+      "naam": "oregano",
+      "hoeveelheid": 15,
+      "eenheid": "gram",
+      "opmerking": "bakje"
+    },
+    {
+      "naam": "eieren",
+      "hoeveelheid": 6,
+      "eenheid": "stuks",
+      "opmerking": null
+    },
+    {
+      "naam": "kookzuivel",
+      "hoeveelheid": 250,
+      "eenheid": "ml",
+      "opmerking": null
+    },
+    {
+      "naam": "ciabattina",
+      "hoeveelheid": 4,
+      "eenheid": "stuks",
+      "opmerking": null
+    },
+    {
+      "naam": "rucolaslamelange",
+      "hoeveelheid": 75,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "saladepittenmix",
+      "hoeveelheid": 40,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "peper",
+      "hoeveelheid": 1,
+      "eenheid": "naar smaak",
+      "opmerking": null
+    },
+    {
+      "naam": "zout",
+      "hoeveelheid": 1,
+      "eenheid": "naar smaak",
+      "opmerking": null
+    },
+    {
+      "naam": "olijfolie",
+      "hoeveelheid": 2,
+      "eenheid": "eetlepel",
+      "opmerking": null
+    }
   ],
-  "tags": ["italiaans", "oven"],
+  "tags": [
+    "italiaans",
+    "oven"
+  ],
   "bereidingstijd_min": 30,
   "bereidingswijze": "1. Verwarm de oven voor op 200 °C. Verwijder de steel en zaadlijsten van de paprika's en snijd het vruchtvlees in dunne repen. Verhit de helft van de olie in een koekenpan en bak de paprika 5 min.\n2. Snijd ondertussen de zongedroogde tomaten in kleine stukjes, de mozzarella in plakjes en de oregano fijn. Klop de eieren los met de kookzuivel, peper en eventueel zout.\n3. Vet de ovenschaal in. Meng de zongedroogde tomaten en oregano met de paprika en doe in de ovenschaal. Schenk het eimengsel erover en verdeel de mozzarella erover. Bak ca. 20 min. in de oven tot het ei gestold is. Leg ondertussen de ciabattina's op een rooster en bak de laatste 10 min. mee in de oven.\n4. Meng ondertussen de sla met de pittenmix, de rest van de olie, peper en eventueel zout. Serveer de frittata met de salade en ciabattina.\n\n* De aangegeven oventijden zijn bedoeld voor een elektrische oven. Het zijn indicaties, de exacte bereidingstijd varieert per oven.\n\nTIP: Plaats de ovenschaal onderin de oven. Zet de oven op onder+boven warmte.",
   "bron": "AH Allerhande Box"

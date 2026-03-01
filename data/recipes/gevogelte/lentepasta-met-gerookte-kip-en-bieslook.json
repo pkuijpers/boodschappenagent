@@ -3,21 +3,76 @@
   "naam": "Lentepasta met gerookte kip & bieslook",
   "categorie": "gevogelte",
   "basis": "pasta",
-  "seizoenen": ["alle"],
   "basis_porties": 4,
   "ingredienten": [
-    {"naam": "fusilli", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
-    {"naam": "Hollandse roerbakolie", "hoeveelheid": 800, "eenheid": "gram", "opmerking": null},
-    {"naam": "mediterrane kruiden", "hoeveelheid": 2, "eenheid": "tl", "opmerking": ""},
-    {"naam": "roomkaas bieslook", "hoeveelheid": 150, "eenheid": "gram", "opmerking": null},
-    {"naam": "bieslook", "hoeveelheid": 25, "eenheid": "gram", "opmerking": null},
-    {"naam": "citroen", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
-    {"naam": "gerookte kipreepjes", "hoeveelheid": 200, "eenheid": "gram", "opmerking": ""},
-    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
-    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
-    {"naam": "olijfolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null}
+    {
+      "naam": "fusilli",
+      "hoeveelheid": 300,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "Hollandse roerbakolie",
+      "hoeveelheid": 800,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "mediterrane kruiden",
+      "hoeveelheid": 2,
+      "eenheid": "tl",
+      "opmerking": ""
+    },
+    {
+      "naam": "roomkaas bieslook",
+      "hoeveelheid": 150,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "bieslook",
+      "hoeveelheid": 25,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "citroen",
+      "hoeveelheid": 1,
+      "eenheid": "stuks",
+      "opmerking": null
+    },
+    {
+      "naam": "gerookte kipreepjes",
+      "hoeveelheid": 200,
+      "eenheid": "gram",
+      "opmerking": ""
+    },
+    {
+      "naam": "peper",
+      "hoeveelheid": 1,
+      "eenheid": "naar smaak",
+      "opmerking": null
+    },
+    {
+      "naam": "zout",
+      "hoeveelheid": 1,
+      "eenheid": "naar smaak",
+      "opmerking": null
+    },
+    {
+      "naam": "olijfolie",
+      "hoeveelheid": 2,
+      "eenheid": "eetlepel",
+      "opmerking": null
+    }
   ],
-  "tags": ["pasta", "gevogelte", "lente", "gerookte kip", "bieslook"],
+  "tags": [
+    "pasta",
+    "gevogelte",
+    "lente",
+    "gerookte kip",
+    "bieslook"
+  ],
   "bereidingstijd_min": 15,
   "bereidingswijze": "1. Kook de fusilli in 10 min. beetgaar. Giet af. 2. Verhit ondertussen de olie in de hapjespan en roerbak de groente met de mediterrane kruiden 10 min. Roer de roomkaas door de groente en verwarm 1 min mee. 3. Snijd ondertussen de bieslook fijn. Boen de citroen schoon. Rasp de gele schil van de vrucht en pers uit. 4. Schep de pasta, gerookte-kipfileereepjes en bieslook door de groente. Breng op smaak met 1 tl citroensap, 2 el -sap, peper en eventueel zout. Verdeel de pasta over 4 borden.",
   "bron": "allerhande"

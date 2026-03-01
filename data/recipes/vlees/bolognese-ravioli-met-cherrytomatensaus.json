@@ -3,21 +3,76 @@
   "naam": "Bolognese Ravioli met Cherrytomatensaus",
   "categorie": "vlees",
   "basis": "pasta",
-  "seizoenen": ["alle"],
   "basis_porties": 4,
   "ingredienten": [
-    {"naam": "ui", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
-    {"naam": "knoflook", "hoeveelheid": 1, "eenheid": "teen", "opmerking": null},
-    {"naam": "courgettes", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
-    {"naam": "pomodorini di Collina", "hoeveelheid": 425, "eenheid": "ml", "opmerking": "blik"},
-    {"naam": "verse bolognese ravioli", "hoeveelheid": 500, "eenheid": "gram", "opmerking": "2 schalen verse"},
-    {"naam": "Parmigiano Reggiano vlokken", "hoeveelheid": 90, "eenheid": "gram", "opmerking": "1 bakje"},
-    {"naam": "pijnboompitten", "hoeveelheid": 50, "eenheid": "gram", "opmerking": "geroosterd"},
-    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
-    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
-    {"naam": "olijfolie", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null}
+    {
+      "naam": "ui",
+      "hoeveelheid": 1,
+      "eenheid": "stuks",
+      "opmerking": null
+    },
+    {
+      "naam": "knoflook",
+      "hoeveelheid": 1,
+      "eenheid": "teen",
+      "opmerking": null
+    },
+    {
+      "naam": "courgettes",
+      "hoeveelheid": 2,
+      "eenheid": "stuks",
+      "opmerking": null
+    },
+    {
+      "naam": "pomodorini di Collina",
+      "hoeveelheid": 425,
+      "eenheid": "ml",
+      "opmerking": "blik"
+    },
+    {
+      "naam": "verse bolognese ravioli",
+      "hoeveelheid": 500,
+      "eenheid": "gram",
+      "opmerking": "2 schalen verse"
+    },
+    {
+      "naam": "Parmigiano Reggiano vlokken",
+      "hoeveelheid": 90,
+      "eenheid": "gram",
+      "opmerking": "1 bakje"
+    },
+    {
+      "naam": "pijnboompitten",
+      "hoeveelheid": 50,
+      "eenheid": "gram",
+      "opmerking": "geroosterd"
+    },
+    {
+      "naam": "peper",
+      "hoeveelheid": 1,
+      "eenheid": "naar smaak",
+      "opmerking": null
+    },
+    {
+      "naam": "zout",
+      "hoeveelheid": 1,
+      "eenheid": "naar smaak",
+      "opmerking": null
+    },
+    {
+      "naam": "olijfolie",
+      "hoeveelheid": 1,
+      "eenheid": "eetlepel",
+      "opmerking": null
+    }
   ],
-  "tags": ["bolognese", "ravioli", "italiaans", "pasta", "cherrytomaten"],
+  "tags": [
+    "bolognese",
+    "ravioli",
+    "italiaans",
+    "pasta",
+    "cherrytomaten"
+  ],
   "bereidingstijd_min": 15,
   "bereidingswijze": "1. Breng een ruime pan water aan de kook. Maak de ui en de knoflook schoon en snipper fijn. Was de courgettes en snijd in blokjes van 1 cm. 2. Verhit de olie in de hapjespan en fruit de ui 1 min. op middelhoog vuur. Voeg de knoflook en courgette toe en bak nog 3 min. Voeg de pomodorini toe, breng aan de kook en laat op laag vuur 7 min. stoven met de deksel op de pan. Breng op smaak met peper en eventueel zout. 3. Voeg als het water kookt de ravioli en eventueel zout toe en kook in 4 min. beetgaar. Giet de pasta af en verdeel over diepe borden, schep de sous erover en bestrooi met de kaas en pijnboompitten.",
   "bron": "allerhandebox"

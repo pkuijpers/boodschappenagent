@@ -3,20 +3,69 @@
   "naam": "Kabeljauwburger vlaamse friet en coleslaw",
   "categorie": "vis",
   "basis": "aardappel",
-  "seizoenen": ["alle"],
   "basis_porties": 4,
   "ingredienten": [
-    {"naam": "Vlaamse friet", "hoeveelheid": 700, "eenheid": "gram", "opmerking": null},
-    {"naam": "kabeljauwburgers", "hoeveelheid": 4, "eenheid": "stuks", "opmerking": null},
-    {"naam": "kanzi appels", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
-    {"naam": "bieslook", "hoeveelheid": 25, "eenheid": "gram", "opmerking": null},
-    {"naam": "gesneden rodekool", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
-    {"naam": "gesneden spitskool", "hoeveelheid": 200, "eenheid": "gram", "opmerking": "gesneden"},
-    {"naam": "blanke rozijnen", "hoeveelheid": 50, "eenheid": "gram", "opmerking": null},
-    {"naam": "mayonaise", "hoeveelheid": 6, "eenheid": "eetlepel", "opmerking": null},
-    {"naam": "witte wijnazijn", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null}
+    {
+      "naam": "Vlaamse friet",
+      "hoeveelheid": 700,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "kabeljauwburgers",
+      "hoeveelheid": 4,
+      "eenheid": "stuks",
+      "opmerking": null
+    },
+    {
+      "naam": "kanzi appels",
+      "hoeveelheid": 2,
+      "eenheid": "stuks",
+      "opmerking": null
+    },
+    {
+      "naam": "bieslook",
+      "hoeveelheid": 25,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "gesneden rodekool",
+      "hoeveelheid": 300,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "gesneden spitskool",
+      "hoeveelheid": 200,
+      "eenheid": "gram",
+      "opmerking": "gesneden"
+    },
+    {
+      "naam": "blanke rozijnen",
+      "hoeveelheid": 50,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "mayonaise",
+      "hoeveelheid": 6,
+      "eenheid": "eetlepel",
+      "opmerking": null
+    },
+    {
+      "naam": "witte wijnazijn",
+      "hoeveelheid": 2,
+      "eenheid": "eetlepel",
+      "opmerking": null
+    }
   ],
-  "tags": ["friet", "burger", "coleslaw", "vis"],
+  "tags": [
+    "friet",
+    "burger",
+    "coleslaw",
+    "vis"
+  ],
   "bereidingstijd_min": 30,
   "bereidingswijze": "1. Verwarm de oven voor op 200°C. Verdeel de friet over een met bakpapier beklede bakplaat en bestrooi eventueel met zout. Bak in ca. 25 min. goudbruin en gaar. Verdeel de burgers over nog een met bakpapier beklede bakplaat. Neem na 10 min. de bakplaat uit de oven en schep de friet om. Bak de kabeljauwburgers onder de friet nog ca. 15 min. in de oven. 2. Was ondertussen de appels en snijd in kwarten, verwijder het klokhuis en snijd het vruchtvlees in dunne reepjes (julienne). Snijd de bieslook grof. 3. Maak een dressing van de mayonaise en azijn. Breng op smaak met peper en eventueel zout. Doe de rodekool, spitskool, appel, rozijnen, bieslook en dressing in een kom en schep door elkaar. Verdeel de friet, kabeljauwburgers en coleslaw over de borden.",
   "bron": "allerhande box"

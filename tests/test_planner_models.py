@@ -2,7 +2,7 @@
 
 import pytest
 
-from boodschappenagent.models import Basis, Categorie, Ingredient, Recipe, Seizoen
+from boodschappenagent.models import Basis, Categorie, Ingredient, Recipe
 from boodschappenagent.planner.models import DagInput, DagPlanning, WeekMenu
 
 
@@ -17,7 +17,6 @@ def _make_recipe(
         naam=recipe_id.replace("-", " ").title(),
         categorie=categorie,
         basis=basis,
-        seizoenen=[Seizoen.ALLE],
         basis_porties=4,
         ingredienten=[Ingredient(naam="iets", hoeveelheid=100, eenheid="gram")],
         bereidingstijd_min=30,

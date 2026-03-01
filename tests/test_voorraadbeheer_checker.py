@@ -26,7 +26,6 @@ def _make_recipe(
         naam=naam,
         categorie=Categorie.VEGETARISCH,
         basis=Basis.PASTA,
-        seizoenen=[Seizoen.WINTER],
         basis_porties=2,
         ingredienten=ingredienten
         or [

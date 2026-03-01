@@ -3,23 +3,87 @@
   "naam": "Thaise roerbak met kip en homemade satésaus",
   "categorie": "gevogelte",
   "basis": "rijst",
-  "seizoenen": ["alle"],
   "basis_porties": 4,
   "ingredienten": [
-    {"naam": "kokosmelk", "hoeveelheid": 200, "eenheid": "ml", "opmerking": null},
-    {"naam": "pindakaas naturel", "hoeveelheid": 100, "eenheid": "gram", "opmerking": null},
-    {"naam": "gemberstroop", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null},
-    {"naam": "gemarineerde Thaise kipfiletblokjes", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
-    {"naam": "knoflook", "hoeveelheid": 2, "eenheid": "teen", "opmerking": null},
-    {"naam": "Chinese wokgroente", "hoeveelheid": 800, "eenheid": "gram", "opmerking": "rouge & rode paprika"},
-    {"naam": "bloemkoolrijst", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
-    {"naam": "peper", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
-    {"naam": "zout", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
-    {"naam": "sambal oelek", "hoeveelheid": 1, "eenheid": "theelepel", "opmerking": null},
-    {"naam": "ketjap manis", "hoeveelheid": 4, "eenheid": "eetlepel", "opmerking": null},
-    {"naam": "arachideolie", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null}
+    {
+      "naam": "kokosmelk",
+      "hoeveelheid": 200,
+      "eenheid": "ml",
+      "opmerking": null
+    },
+    {
+      "naam": "pindakaas naturel",
+      "hoeveelheid": 100,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "gemberstroop",
+      "hoeveelheid": 1,
+      "eenheid": "eetlepel",
+      "opmerking": null
+    },
+    {
+      "naam": "gemarineerde Thaise kipfiletblokjes",
+      "hoeveelheid": 400,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "knoflook",
+      "hoeveelheid": 2,
+      "eenheid": "teen",
+      "opmerking": null
+    },
+    {
+      "naam": "Chinese wokgroente",
+      "hoeveelheid": 800,
+      "eenheid": "gram",
+      "opmerking": "rouge & rode paprika"
+    },
+    {
+      "naam": "bloemkoolrijst",
+      "hoeveelheid": 400,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "peper",
+      "hoeveelheid": 1,
+      "eenheid": "snuf",
+      "opmerking": null
+    },
+    {
+      "naam": "zout",
+      "hoeveelheid": 1,
+      "eenheid": "snuf",
+      "opmerking": null
+    },
+    {
+      "naam": "sambal oelek",
+      "hoeveelheid": 1,
+      "eenheid": "theelepel",
+      "opmerking": null
+    },
+    {
+      "naam": "ketjap manis",
+      "hoeveelheid": 4,
+      "eenheid": "eetlepel",
+      "opmerking": null
+    },
+    {
+      "naam": "arachideolie",
+      "hoeveelheid": 1,
+      "eenheid": "eetlepel",
+      "opmerking": null
+    }
   ],
-  "tags": ["Aziatisch", "roerbakken", "snel", "gevogelte"],
+  "tags": [
+    "Aziatisch",
+    "roerbakken",
+    "snel",
+    "gevogelte"
+  ],
   "bereidingstijd_min": 15,
   "bereidingswijze": "1. Doe voor de satésaus de kokosmelk, pindakaas, gemberstroop, sambal en ketjap in een steelpan en roerend op hoog vuur aan de kook. Zet het vuur laag en laat 10 min. zachtjes koken. Roer af en toe. Breng eventueel op smaak met zout. 2. Verhit ondertussen de olie in de wok en bak de kipfiletblokjes 5 min. Schep regelmatig om. Maak ondertussen de knoflook schoon en snijd fijn. Voeg de knoflook en wokgroente toe aan de kip en roerbak 3 min. mee. Voeg de bloemkoolrijst toe en roerbak 3 min. mee. Breng op smaak met peper en eventueel zout. 3. Verdeel de snelle roerbak over 4 diepe borden en serveer de satésaus erbij.",
   "bron": "allerhandigbox"

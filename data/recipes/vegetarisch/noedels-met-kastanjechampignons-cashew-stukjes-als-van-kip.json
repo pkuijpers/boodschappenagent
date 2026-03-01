@@ -3,20 +3,69 @@
   "naam": "Noedels met kastanjechampignons, cashew & stukjes als van kip",
   "categorie": "vegetarisch",
   "basis": "pasta",
-  "seizoenen": ["alle"],
   "basis_porties": 4,
   "ingredienten": [
-    {"naam": "biologische egg noodles", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
-    {"naam": "cashewnoten", "hoeveelheid": 75, "eenheid": "gram", "opmerking": null},
-    {"naam": "broccoli", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
-    {"naam": "biologische kastanjechampignons", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
-    {"naam": "stukjes als van kip", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
-    {"naam": "sojasaus", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null},
-    {"naam": "munt", "hoeveelheid": 0.5, "eenheid": "stuks", "opmerking": null},
-    {"naam": "limoen", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
-    {"naam": "arachideolie", "hoeveelheid": 3, "eenheid": "eetlepel", "opmerking": null}
+    {
+      "naam": "biologische egg noodles",
+      "hoeveelheid": 250,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "cashewnoten",
+      "hoeveelheid": 75,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "broccoli",
+      "hoeveelheid": 1,
+      "eenheid": "stuks",
+      "opmerking": null
+    },
+    {
+      "naam": "biologische kastanjechampignons",
+      "hoeveelheid": 250,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "stukjes als van kip",
+      "hoeveelheid": 2,
+      "eenheid": "stuks",
+      "opmerking": null
+    },
+    {
+      "naam": "sojasaus",
+      "hoeveelheid": 2,
+      "eenheid": "eetlepel",
+      "opmerking": null
+    },
+    {
+      "naam": "munt",
+      "hoeveelheid": 0.5,
+      "eenheid": "stuks",
+      "opmerking": null
+    },
+    {
+      "naam": "limoen",
+      "hoeveelheid": 1,
+      "eenheid": "stuks",
+      "opmerking": null
+    },
+    {
+      "naam": "arachideolie",
+      "hoeveelheid": 3,
+      "eenheid": "eetlepel",
+      "opmerking": null
+    }
   ],
-  "tags": ["vegetarisch", "noedels", "aziatisch", "champignons"],
+  "tags": [
+    "vegetarisch",
+    "noedels",
+    "aziatisch",
+    "champignons"
+  ],
   "bereidingstijd_min": 25,
   "bereidingswijze": "1 Kook de noedels in 5 min. beetgaar na giet af. Verhit ondertussen 6cm koekenopan zonder vet en rooster de cashewnoten voor goudbruin. Neem uit de pan en laat afkoelen op een bord. 2 Snijd de broccoli in kleine roosjes, schil de stronk en snijd in stukjes. Kook in 3 min. beetgaar. Giet de broccoli af en laat goed uitlekken. 3 Halveer ondertussen de champignons. Verhit de olie in de wok of hak de champignons en stukjes als van kip. Bak 3 min. op hoog vuur. Voeg de sojasaus, noedels en broccoli toe en bak al omscheppend 2 min. mee. 4 Snijd de blaadjes van de munt fijn en de limoen in partjes. Meng de munt door de noedels en verdeel over 4 diepe borden. Bestrooi met de cashewnoten en leg er een partje limoen bij.",
   "bron": null

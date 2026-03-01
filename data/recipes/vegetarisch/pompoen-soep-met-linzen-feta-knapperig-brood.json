@@ -3,25 +3,102 @@
   "naam": "Pompoen soep met linzen, feta & knapperig brood",
   "categorie": "vegetarisch",
   "basis": "brood",
-  "seizoenen": ["herfst", "winter"],
   "basis_porties": 4,
   "ingredienten": [
-    {"naam": "witte pavebroodjes", "hoeveelheid": 4, "eenheid": "stuks", "opmerking": ""},
-    {"naam": "biologische uien", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
-    {"naam": "knoflook", "hoeveelheid": 2, "eenheid": "tenen", "opmerking": null},
-    {"naam": "gemalen komijn", "hoeveelheid": 1, "eenheid": "theelepel", "opmerking": null},
-    {"naam": "zakken pompoenstukjes", "hoeveelheid": 800, "eenheid": "gram", "opmerking": null},
-    {"naam": "groentebouillontablet", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
-    {"naam": "linzen", "hoeveelheid": 800, "eenheid": "gram", "opmerking": null},
-    {"naam": "feta", "hoeveelheid": 150, "eenheid": "gram", "opmerking": null},
-    {"naam": "bieslook", "hoeveelheid": 12.5, "eenheid": "gram", "opmerking": null},
-    {"naam": "pompoenpitten", "hoeveelheid": 50, "eenheid": "gram", "opmerking": null},
-    {"naam": "boter", "hoeveelheid": 100, "eenheid": "gram", "opmerking": null},
-    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
-    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
-    {"naam": "olijfolie", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null}
+    {
+      "naam": "witte pavebroodjes",
+      "hoeveelheid": 4,
+      "eenheid": "stuks",
+      "opmerking": ""
+    },
+    {
+      "naam": "biologische uien",
+      "hoeveelheid": 2,
+      "eenheid": "stuks",
+      "opmerking": null
+    },
+    {
+      "naam": "knoflook",
+      "hoeveelheid": 2,
+      "eenheid": "tenen",
+      "opmerking": null
+    },
+    {
+      "naam": "gemalen komijn",
+      "hoeveelheid": 1,
+      "eenheid": "theelepel",
+      "opmerking": null
+    },
+    {
+      "naam": "zakken pompoenstukjes",
+      "hoeveelheid": 800,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "groentebouillontablet",
+      "hoeveelheid": 1,
+      "eenheid": "stuks",
+      "opmerking": null
+    },
+    {
+      "naam": "linzen",
+      "hoeveelheid": 800,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "feta",
+      "hoeveelheid": 150,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "bieslook",
+      "hoeveelheid": 12.5,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "pompoenpitten",
+      "hoeveelheid": 50,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "boter",
+      "hoeveelheid": 100,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "zout",
+      "hoeveelheid": 1,
+      "eenheid": "naar smaak",
+      "opmerking": null
+    },
+    {
+      "naam": "peper",
+      "hoeveelheid": 1,
+      "eenheid": "naar smaak",
+      "opmerking": null
+    },
+    {
+      "naam": "olijfolie",
+      "hoeveelheid": 1,
+      "eenheid": "eetlepel",
+      "opmerking": null
+    }
   ],
-  "tags": ["soep", "pompoen", "linzen", "feta", "herfst", "winter", "vegetarisch"],
+  "tags": [
+    "soep",
+    "pompoen",
+    "linzen",
+    "feta",
+    "herfst",
+    "winter",
+    "vegetarisch"
+  ],
   "bereidingstijd_min": 45,
   "bereidingswijze": "1 Verwarm de oven voor op 200°C. Bak de broodjes in het midden van de oven in ca. 10 min af. Neem uit de oven en laat afkoelen. 2 Snipperde uien tussen de uien en snijd de knoflook fijn. Verhit de olie in een soeppan en fruit de ui, knoflook en komijn 3 min. Voeg de pompoenstukjes, bouillontablet en 750 ml water toe. Breng de soep aan de kook en kook op middelhoog vuur in ca. 5 min. gaar. Pureer met de staafmixer en breng op smaak met peper en eventueel zout. 3 Laat de linzen uitlekken en voeg toe aan de soep. Verwarm 3 min mee. Verkruimel ondertussen de feta en snijd de bieslook fijn. Verdeel de soep over de kommen en garneer met feta, pompoenpitten en bieslook. Serveer het brood en zeezoutboter erbij.",
   "bron": "allerhande"

@@ -1,8 +1,11 @@
 """Tests voor RecipeSearch zoek- en filterfunctionaliteit."""
 
+import json
+
 import pytest
 
 from boodschappenagent.models import Basis, Categorie, Ingredient, Recipe, Seizoen
+from boodschappenagent.planner.seizoen_kalender import SeizoenKalender
 from boodschappenagent.repository.recipe_search import RecipeSearch
 
 
@@ -277,6 +280,89 @@ class TestCombinedFilters:
         assert "spaghetti-bolognese" in ids
         assert "erwtensoep" in ids
         assert "tomatensoep" in ids
+
+
+@pytest.fixture
+def co2_kalender(tmp_path):
+    """Minimale CO2-seizoenskalender voor RecipeSearch tests."""
+    alle = [
+        "jan",
+        "feb",
+        "mrt",
+        "apr",
+        "mei",
+        "jun",
+        "jul",
+        "aug",
+        "sep",
+        "okt",
+        "nov",
+        "dec",
+    ]
+    data = [
+        {
+            "nr": 1,
+            "groente": "Tomaat",
+            "lage_co2_maanden": ["jun", "jul", "aug", "sep", "okt"],
+        },
+        {"nr": 2, "groente": "Ui", "lage_co2_maanden": alle},
+        {
+            "nr": 3,
+            "groente": "Boerenkool",
+            "lage_co2_maanden": ["nov", "dec", "jan", "feb"],
+        },
+    ]
+    path = tmp_path / "kalender.json"
+    path.write_text(json.dumps(data))
+    return SeizoenKalender(path)
+
+
+class TestFilterByCo2Maand:
+    """Tests voor filteren op CO2-seizoenskalender per maand."""
+
+    def test_filter_februari(self, sample_recipes, co2_kalender):
+        """Februari: boerenkool ✅, tomaat ❌, ui ✅."""
+        search = RecipeSearch(sample_recipes)
+        results = search.filter_by_co2_maand(co2_kalender, "feb").results
+        ids = {r.id for r in results}
+
+        # stamppot-boerenkool: boerenkool ✅ → 1/1 = 100% ✅
+        assert "stamppot-boerenkool" in ids
+        # tomatensoep: tomaat ❌ → 0/1 = 0% ❌
+        assert "tomatensoep" not in ids
+        # spaghetti-bolognese: geen herkenbare groenten → altijd geschikt ✅
+        assert "spaghetti-bolognese" in ids
+        # pasta-pesto: geen herkenbare groenten → altijd geschikt ✅
+        assert "pasta-pesto" in ids
+
+    def test_filter_juli(self, sample_recipes, co2_kalender):
+        """Juli: tomaat ✅, boerenkool ❌, ui ✅."""
+        search = RecipeSearch(sample_recipes)
+        results = search.filter_by_co2_maand(co2_kalender, "jul").results
+        ids = {r.id for r in results}
+
+        # tomatensoep: tomaat ✅ → 1/1 = 100% ✅
+        assert "tomatensoep" in ids
+        # stamppot-boerenkool: boerenkool ❌ → 0/1 = 0% ❌
+        assert "stamppot-boerenkool" not in ids
+
+    def test_chaining_met_categorie(self, sample_recipes, co2_kalender):
+        """CO2-filter chainbaar met andere filters."""
+        search = RecipeSearch(sample_recipes)
+        results = (
+            search.filter_by_co2_maand(co2_kalender, "feb")
+            .filter_by_categorie(Categorie.VLEES)
+            .results
+        )
+        ids = {r.id for r in results}
+        assert "stamppot-boerenkool" in ids
+        assert "spaghetti-bolognese" in ids
+
+    def test_lege_lijst(self, co2_kalender):
+        """Lege receptenlijst retourneert lege lijst."""
+        search = RecipeSearch([])
+        results = search.filter_by_co2_maand(co2_kalender, "feb").results
+        assert results == []
 
 
 class TestEmptyRecipes:

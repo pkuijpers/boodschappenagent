@@ -2,7 +2,7 @@
 
 import pytest
 
-from boodschappenagent.models import Basis, Categorie, Ingredient, Recipe, Seizoen
+from boodschappenagent.models import Basis, Categorie, Ingredient, Recipe
 from boodschappenagent.utils import PortionCalculator
 
 
@@ -20,7 +20,6 @@ def sample_recipe() -> Recipe:
         naam="Test Recept",
         categorie=Categorie.VLEES,
         basis=Basis.PASTA,
-        seizoenen=[Seizoen.ALLE],
         basis_porties=2,
         ingredienten=[
             Ingredient(naam="spaghetti", hoeveelheid=200, eenheid="gram"),
@@ -207,7 +206,6 @@ class TestScaleRecipe:
         assert scaled.id == sample_recipe.id
         assert scaled.naam == sample_recipe.naam
         assert scaled.categorie == sample_recipe.categorie
-        assert scaled.seizoenen == sample_recipe.seizoenen
         assert scaled.tags == sample_recipe.tags
         assert scaled.bereidingstijd_min == sample_recipe.bereidingstijd_min
 
@@ -249,7 +247,6 @@ class TestEdgeCases:
             naam="Test",
             categorie=Categorie.VEGETARISCH,
             basis=Basis.GEEN,
-            seizoenen=[Seizoen.ALLE],
             basis_porties=4,
             ingredienten=[
                 Ingredient(naam="bloem", hoeveelheid=500, eenheid="gram"),

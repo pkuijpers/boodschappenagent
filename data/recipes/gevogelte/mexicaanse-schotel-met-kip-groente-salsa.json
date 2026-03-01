@@ -3,18 +3,57 @@
   "naam": "Mexicaanse schotel met kip, groente & salsa",
   "categorie": "gevogelte",
   "basis": "brood",
-  "seizoenen": ["alle"],
   "basis_porties": 4,
   "ingredienten": [
-    {"naam": "kipfilet", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
-    {"naam": "Mexicaanse tacokruiden", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null},
-    {"naam": "Mexicaanse roerbakgroente", "hoeveelheid": 800, "eenheid": "gram", "opmerking": null},
-    {"naam": "zwarte bonen in chilisaus", "hoeveelheid": 800, "eenheid": "gram", "opmerking": null},
-    {"naam": "witte kaas", "hoeveelheid": 100, "eenheid": "gram", "opmerking": null},
-    {"naam": "zilvervliesrijst", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
-    {"naam": "tortillachips", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null}
+    {
+      "naam": "kipfilet",
+      "hoeveelheid": 400,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "Mexicaanse tacokruiden",
+      "hoeveelheid": 2,
+      "eenheid": "eetlepel",
+      "opmerking": null
+    },
+    {
+      "naam": "Mexicaanse roerbakgroente",
+      "hoeveelheid": 800,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "zwarte bonen in chilisaus",
+      "hoeveelheid": 800,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "witte kaas",
+      "hoeveelheid": 100,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "zilvervliesrijst",
+      "hoeveelheid": 300,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "tortillachips",
+      "hoeveelheid": 1,
+      "eenheid": "stuks",
+      "opmerking": null
+    }
   ],
-  "tags": ["mexicaans", "ovenschotel", "kip", "rijst"],
+  "tags": [
+    "mexicaans",
+    "ovenschotel",
+    "kip",
+    "rijst"
+  ],
   "bereidingstijd_min": 35,
   "bereidingswijze": "1 Verwarm de oven voor op 180°C. Snijd de kipfilet in stukjes van 1 cm. Verhit de olie in de hapjespan en bak de kip en kookruiden 3 min. op middelhoog vuur. Voeg de roerbakgroente toe en bak 7 min. Neem de pan van het vuur en meng de bonen in chilisaus door het kipgroentenmengsel. 2 Verdeel het mengsel over de ovenschaal. Verkruimel de kaas erover en bak ca. 20 min. in het midden van de oven. 3 Breng ondertussen een ruime pan water met eventueel zout aan de kook. Voeg als het water kookt de rijst toe, breng opnieuw aan de kook en kook in 15 min. gaar. Giet de rijst af, doe terug in de pan en laat met de deksel op de pan staan tot gebruik. 4 Bestrooi de ovenschotel met de tortillachips en serveer met de rijst en salsa.",
   "bron": "allerhande"

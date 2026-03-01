@@ -3,21 +3,73 @@
   "naam": "Italiaanse bladerdeegtaartjes met worst & tomatensalsa",
   "categorie": "vlees",
   "basis": "brood",
-  "seizoenen": ["alle"],
   "basis_porties": 4,
   "ingredienten": [
-    {"naam": "varkensbraadworst", "hoeveelheid": 4, "eenheid": "stuks", "opmerking": null},
-    {"naam": "boerensoepgroente", "hoeveelheid": 350, "eenheid": "gram", "opmerking": null},
-    {"naam": "vers bladerdeeg", "hoeveelheid": 270, "eenheid": "gram", "opmerking": "1 rol"},
-    {"naam": "zoete-paprikapuree", "hoeveelheid": 200, "eenheid": "gram", "opmerking": "1 potje"},
-    {"naam": "sjalot", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
-    {"naam": "peterselie", "hoeveelheid": 15, "eenheid": "gram", "opmerking": null},
-    {"naam": "trostomaten", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": "schaal"},
-    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
-    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
-    {"naam": "olijfolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null}
+    {
+      "naam": "varkensbraadworst",
+      "hoeveelheid": 4,
+      "eenheid": "stuks",
+      "opmerking": null
+    },
+    {
+      "naam": "boerensoepgroente",
+      "hoeveelheid": 350,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "vers bladerdeeg",
+      "hoeveelheid": 270,
+      "eenheid": "gram",
+      "opmerking": "1 rol"
+    },
+    {
+      "naam": "zoete-paprikapuree",
+      "hoeveelheid": 200,
+      "eenheid": "gram",
+      "opmerking": "1 potje"
+    },
+    {
+      "naam": "sjalot",
+      "hoeveelheid": 1,
+      "eenheid": "stuks",
+      "opmerking": null
+    },
+    {
+      "naam": "peterselie",
+      "hoeveelheid": 15,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "trostomaten",
+      "hoeveelheid": 1,
+      "eenheid": "stuks",
+      "opmerking": "schaal"
+    },
+    {
+      "naam": "peper",
+      "hoeveelheid": 1,
+      "eenheid": "naar smaak",
+      "opmerking": null
+    },
+    {
+      "naam": "zout",
+      "hoeveelheid": 1,
+      "eenheid": "naar smaak",
+      "opmerking": null
+    },
+    {
+      "naam": "olijfolie",
+      "hoeveelheid": 2,
+      "eenheid": "eetlepel",
+      "opmerking": null
+    }
   ],
-  "tags": ["italiaans", "oven"],
+  "tags": [
+    "italiaans",
+    "oven"
+  ],
   "bereidingstijd_min": 30,
   "bereidingswijze": "1. Verwarm de oven voor op 180 °C. Haal het vel van de worsten. Verhit de olie in de hapjespan en bak het worstvlees 3 min. op hoog vuur. Druk het vlees met een houten lepel in stukjes. Voeg de boerensoepgroente toe en bak 3 min. op middelhoog vuur.\n2. Snijd het bladerdeeg in 4 gelijke rechthoekige stukken en rol deze een beetje uit in de breedte. Leg op een met bakpapier beklede bakplaat en vouw de randen om. Verdeel de paprikapuree en het gehaktmengsel erover. Bak ca. 20 min. in het midden van de oven.\n3. Snipper ondertussen de sjalot en snijd de peterselie fijn. Snijd de tomaten in kleine blokjes en meng met de sjalot en peterselie. Breng op smaak met peper en eventueel zout.\n4. Neem de taartjes uit de oven en verdeel een deel van de tomatensalsa erover. Serveer de rest erbij.\n\n* De aangegeven oventijden zijn bedoeld voor een elektrische oven. Het zijn indicaties, de exacte bereidingstijd varieert per oven.",
   "bron": "AH Allerhande Box"

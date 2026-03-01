@@ -3,23 +3,88 @@
   "naam": "Rijkgevulde Italiaanse omelet met groenten & cannellinibonen",
   "categorie": "vegetarisch",
   "basis": "geen",
-  "seizoenen": ["alle"],
   "basis_porties": 4,
   "ingredienten": [
-    {"naam": "cherrytomaten", "hoeveelheid": 500, "eenheid": "gram", "opmerking": null},
-    {"naam": "selderij", "hoeveelheid": 20, "eenheid": "gram", "opmerking": null},
-    {"naam": "eieren", "hoeveelheid": 8, "eenheid": "stuks", "opmerking": null},
-    {"naam": "halfvolle melk", "hoeveelheid": 50, "eenheid": "ml", "opmerking": null},
-    {"naam": "Italiaanse roerbakgroente champignons", "hoeveelheid": 400, "eenheid": "gram", "opmerking": "1 zak"},
-    {"naam": "cannellinibonen", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
-    {"naam": "Italiaanse kruiden", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null},
-    {"naam": "Parmigiano Reggiano", "hoeveelheid": 80, "eenheid": "gram", "opmerking": "1/2 stukje"},
-    {"naam": "balsamicoazijn", "hoeveelheid": 3, "eenheid": "eetlepel", "opmerking": null},
-    {"naam": "olijfolie", "hoeveelheid": 4, "eenheid": "eetlepel", "opmerking": null},
-    {"naam": "peper", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
-    {"naam": "zout", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null}
+    {
+      "naam": "cherrytomaten",
+      "hoeveelheid": 500,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "selderij",
+      "hoeveelheid": 20,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "eieren",
+      "hoeveelheid": 8,
+      "eenheid": "stuks",
+      "opmerking": null
+    },
+    {
+      "naam": "halfvolle melk",
+      "hoeveelheid": 50,
+      "eenheid": "ml",
+      "opmerking": null
+    },
+    {
+      "naam": "Italiaanse roerbakgroente champignons",
+      "hoeveelheid": 400,
+      "eenheid": "gram",
+      "opmerking": "1 zak"
+    },
+    {
+      "naam": "cannellinibonen",
+      "hoeveelheid": 400,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "Italiaanse kruiden",
+      "hoeveelheid": 1,
+      "eenheid": "eetlepel",
+      "opmerking": null
+    },
+    {
+      "naam": "Parmigiano Reggiano",
+      "hoeveelheid": 80,
+      "eenheid": "gram",
+      "opmerking": "1/2 stukje"
+    },
+    {
+      "naam": "balsamicoazijn",
+      "hoeveelheid": 3,
+      "eenheid": "eetlepel",
+      "opmerking": null
+    },
+    {
+      "naam": "olijfolie",
+      "hoeveelheid": 4,
+      "eenheid": "eetlepel",
+      "opmerking": null
+    },
+    {
+      "naam": "peper",
+      "hoeveelheid": 1,
+      "eenheid": "snuf",
+      "opmerking": null
+    },
+    {
+      "naam": "zout",
+      "hoeveelheid": 1,
+      "eenheid": "snuf",
+      "opmerking": null
+    }
   ],
-  "tags": ["italiaans", "omelet", "groenten", "cannellinibonen", "vegetarisch"],
+  "tags": [
+    "italiaans",
+    "omelet",
+    "groenten",
+    "cannellinibonen",
+    "vegetarisch"
+  ],
   "bereidingstijd_min": 20,
   "bereidingswijze": "1. Halveer de tomaten, doe met de balsamicoazijn in een grote steelpan en breng aan de kook. Zet het vuur op laag laat 8 min inkoken tot de balsamico stroperig is. 2. Snijd ondertussen de selderij fijn. Klop de eieren los met de melk en de helft van de selderij en breng op smaak met peper en eventueel zout. Verhit per omelet één 1/2 el olie in de koekenpan met antiaanbaklaag en bak achter elkaar van het eimengsel 4 omeletten. Houd warm op een bord onder een deksel. 3. Verhit ondertussen de rest van de olie in de wok en bak de roerbakgroente. Breng op smaak met de rest van de selderij en breng regelmatig om. Laat ondertussen de cannellinibonen uitlekken en voeg de laatste 2 min toe aan de wok. Breng op smaak met peper en eventueel zout. 4. Verdeel het groentenmengsel over de omeletten en klap dubbel. Varieer de tomaten-balsamicosaus erover en rasp de kaas daarover en serveer.",
   "bron": null

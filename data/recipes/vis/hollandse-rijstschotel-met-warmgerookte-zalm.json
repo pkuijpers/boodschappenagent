@@ -3,19 +3,63 @@
   "naam": "Hollandse rijstschotel met warmgerookte zalm",
   "categorie": "vis",
   "basis": "rijst",
-  "seizoenen": ["alle"],
   "basis_porties": 4,
   "ingredienten": [
-    {"naam": "gele rijst", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
-    {"naam": "eieren", "hoeveelheid": 4, "eenheid": "stuks", "opmerking": null},
-    {"naam": "boerensoepgroente", "hoeveelheid": 700, "eenheid": "gram", "opmerking": "2 zakken à 350g"},
-    {"naam": "gemalen komijn", "hoeveelheid": 1, "eenheid": "theelepel", "opmerking": null},
-    {"naam": "trostomaten", "hoeveelheid": 6, "eenheid": "stuks", "opmerking": null},
-    {"naam": "warmgerookte zalmstukken", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
-    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
-    {"naam": "boter", "hoeveelheid": 50, "eenheid": "gram", "opmerking": null}
+    {
+      "naam": "gele rijst",
+      "hoeveelheid": 300,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "eieren",
+      "hoeveelheid": 4,
+      "eenheid": "stuks",
+      "opmerking": null
+    },
+    {
+      "naam": "boerensoepgroente",
+      "hoeveelheid": 700,
+      "eenheid": "gram",
+      "opmerking": "2 zakken à 350g"
+    },
+    {
+      "naam": "gemalen komijn",
+      "hoeveelheid": 1,
+      "eenheid": "theelepel",
+      "opmerking": null
+    },
+    {
+      "naam": "trostomaten",
+      "hoeveelheid": 6,
+      "eenheid": "stuks",
+      "opmerking": null
+    },
+    {
+      "naam": "warmgerookte zalmstukken",
+      "hoeveelheid": 300,
+      "eenheid": "gram",
+      "opmerking": null
+    },
+    {
+      "naam": "zout",
+      "hoeveelheid": 1,
+      "eenheid": "naar smaak",
+      "opmerking": null
+    },
+    {
+      "naam": "boter",
+      "hoeveelheid": 50,
+      "eenheid": "gram",
+      "opmerking": null
+    }
   ],
-  "tags": ["nederlands", "rijstschotel", "zalm", "hoofdgerecht"],
+  "tags": [
+    "nederlands",
+    "rijstschotel",
+    "zalm",
+    "hoofdgerecht"
+  ],
   "bereidingstijd_min": 20,
   "bereidingswijze": "1 Breng een ruime pan water met eventueel zout aan de kook. Voeg als het water kookt de rijst toe. Breng opnieuw aan de kook en kook in 8 min. gaar. Draai het vuur uit. Giet de rijst af. Doe de rijst terug in de pan en laat met de deksel erop staan tot gebruik. 2 Breng ondertussen nog een ruime pan water aan de kook en kook de eieren 8 min. Laat de eieren schrikken onder koud stromend water, pel en prak ze fijn. 3 Verhit de boter in de hapjespan en bak de boerensoepgroente met de komijn en eventueel zout 5 min. op middelhoog vuur. 4 Was ondertussen de tomaten en snijd in partjes. Meng de rijst door de soepgroente en schep op een grote schaal. Schep de tomatenstukjes erdoor, breek de zalm in kleinere stukken en verdeel over de rijst. Strooi het eikruim erover.",
   "bron": "allerhande"

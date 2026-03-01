@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from boodschappenagent.models import Basis, Categorie, Ingredient, Recipe, Seizoen
+from boodschappenagent.models import Basis, Categorie, Ingredient, Recipe
 from boodschappenagent.planner.history import MenuHistory
 from boodschappenagent.planner.models import DagPlanning, WeekMenu
 
@@ -17,7 +17,6 @@ def _make_recipe(recipe_id: str = "test-recept") -> Recipe:
         naam=recipe_id.replace("-", " ").title(),
         categorie=Categorie.VLEES,
         basis=Basis.PASTA,
-        seizoenen=[Seizoen.ALLE],
         basis_porties=4,
         ingredienten=[Ingredient(naam="iets", hoeveelheid=100, eenheid="gram")],
         bereidingstijd_min=30,
