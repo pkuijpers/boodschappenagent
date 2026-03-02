@@ -24,10 +24,10 @@ from boodschappenagent.boodschappenlijst import (
     BoodschappenlijstGenerator,
     IngredientNormalizer,
 )
-from boodschappenagent.models import Seizoen
 from boodschappenagent.planner.history import MenuHistory
 from boodschappenagent.planner.menu_planner import MenuPlanner
 from boodschappenagent.planner.models import DagInput, DagPlanning, WeekMenu
+from boodschappenagent.planner.seizoen_kalender import SeizoenKalender
 from boodschappenagent.repository.recipe_repository import RecipeRepository
 from boodschappenagent.utils import PortionCalculator
 
@@ -42,25 +42,25 @@ DAG_NAMEN_LANG = {
     6: "zondag",
 }
 
-SEIZOEN_MAANDEN = {
-    12: Seizoen.WINTER,
-    1: Seizoen.WINTER,
-    2: Seizoen.WINTER,
-    3: Seizoen.LENTE,
-    4: Seizoen.LENTE,
-    5: Seizoen.LENTE,
-    6: Seizoen.ZOMER,
-    7: Seizoen.ZOMER,
-    8: Seizoen.ZOMER,
-    9: Seizoen.HERFST,
-    10: Seizoen.HERFST,
-    11: Seizoen.HERFST,
+MAAND_AFKORTINGEN = {
+    1: "jan",
+    2: "feb",
+    3: "mrt",
+    4: "apr",
+    5: "mei",
+    6: "jun",
+    7: "jul",
+    8: "aug",
+    9: "sep",
+    10: "okt",
+    11: "nov",
+    12: "dec",
 }
 
 
-def _detect_seizoen(d: date) -> Seizoen:
-    """Detecteer seizoen op basis van datum."""
-    return SEIZOEN_MAANDEN[d.month]
+def _detect_maand(d: date) -> str:
+    """Detecteer maandafkorting op basis van datum."""
+    return MAAND_AFKORTINGEN[d.month]
 
 
 def _parse_dag(dag_str: str) -> int:
@@ -130,7 +130,7 @@ def cmd_plan(args: argparse.Namespace) -> int:
 
     history = MenuHistory(Path(args.history))
 
-    seizoen = Seizoen(args.seizoen) if args.seizoen else _detect_seizoen(date.today())
+    maand = args.maand if args.maand else _detect_maand(date.today())
     week_start = args.week or _compute_week_start(date.today())
 
     # Personen per dag opbouwen
@@ -153,8 +153,9 @@ def cmd_plan(args: argparse.Namespace) -> int:
     week_input = [DagInput(dag=i, personen=p) for i, p in personen_per_dag.items()]
 
     # Plannen
-    planner = MenuPlanner(recipes, history)
-    menu = planner.plan_week(week_input, seizoen, week_start)
+    kalender = SeizoenKalender()
+    planner = MenuPlanner(recipes, history, kalender)
+    menu = planner.plan_week(week_input, maand, week_start)
 
     # Opslaan
     menu_path = Path(args.menu)
@@ -166,7 +167,7 @@ def cmd_plan(args: argparse.Namespace) -> int:
 
     _print_menu(menu)
     print(f"\nMenu opgeslagen: {menu_path}")
-    print(f"Seizoen: {seizoen.value}")
+    print(f"Maand: {maand}")
     return 0
 
 
@@ -202,8 +203,9 @@ def cmd_vervang(args: argparse.Namespace) -> int:
     menu = WeekMenu.from_dict(data, recipes_by_id)
 
     dag_nrs = [_parse_dag(d.strip()) for d in args.dag.split(",")]
-    seizoen = Seizoen(args.seizoen) if args.seizoen else _detect_seizoen(date.today())
-    planner = MenuPlanner(recipes, history)
+    maand = args.maand if args.maand else _detect_maand(date.today())
+    kalender = SeizoenKalender()
+    planner = MenuPlanner(recipes, history, kalender)
 
     for dag_nr in dag_nrs:
         dag_naam = DAG_NAMEN_LANG[dag_nr].capitalize()
@@ -214,7 +216,9 @@ def cmd_vervang(args: argparse.Namespace) -> int:
         elif args.personen is not None:
             target = _find_dag(menu, dag_nr)
             if target and target.recept is None:
-                menu = _activate_dag(menu, dag_nr, args.personen, planner, seizoen)
+                menu = _activate_dag(
+                    menu, dag_nr, args.personen, planner, kalender, maand
+                )
                 nieuw = _find_dag(menu, dag_nr)
                 print(f"{dag_naam}: {nieuw.recept.naam} ({args.personen} pers.)")
             else:
@@ -227,12 +231,14 @@ def cmd_vervang(args: argparse.Namespace) -> int:
             if oud and oud.recept is None:
                 # Vrije dag activeren met standaard personen
                 default_pers = _default_personen(menu)
-                menu = _activate_dag(menu, dag_nr, default_pers, planner, seizoen)
+                menu = _activate_dag(
+                    menu, dag_nr, default_pers, planner, kalender, maand
+                )
                 nieuw = _find_dag(menu, dag_nr)
                 print(f"{dag_naam}: vrij -> {nieuw.recept.naam} ({default_pers} pers.)")
             else:
                 oud_naam = oud.recept.naam if oud and oud.recept else None
-                menu = planner.vervang_recept(menu, dag_nr, seizoen)
+                menu = planner.vervang_recept(menu, dag_nr, maand)
                 nieuw = _find_dag(menu, dag_nr)
                 nieuw_naam = nieuw.recept.naam if nieuw and nieuw.recept else None
                 print(f"{dag_naam}: {oud_naam} -> {nieuw_naam}")
@@ -287,15 +293,15 @@ def _activate_dag(
     dag_nr: int,
     personen: int,
     planner: MenuPlanner,
-    seizoen: Seizoen,
+    kalender: SeizoenKalender,
+    maand: str,
 ) -> WeekMenu:
     """Activeer een vrije dag: plan een recept en zet personen."""
-    # Eerst een tijdelijk recept zetten zodat vervang_recept werkt
-    # We gebruiken plan_week logica niet direct, maar vervang_recept
-    # verwacht een dag met recept. We zetten eerst een placeholder.
     from boodschappenagent.repository.recipe_search import RecipeSearch
 
-    seasonal = RecipeSearch(planner._recipes).filter_by_seizoen(seizoen).results
+    seasonal = (
+        RecipeSearch(planner._recipes).filter_by_co2_maand(kalender, maand).results
+    )
     used_ids = {d.recept.id for d in menu.geplande_dagen if d.dag != dag_nr}
     candidates = [r for r in seasonal if r.id not in used_ids]
     if not candidates:
@@ -509,10 +515,10 @@ def main() -> int:
         help="Vrije dagen, komma-gescheiden (bijv. za,zo of 5,6)",
     )
     plan_parser.add_argument(
-        "--seizoen",
-        "-s",
-        choices=["lente", "zomer", "herfst", "winter", "alle"],
-        help="Seizoen override (standaard: auto-detect)",
+        "--maand",
+        "-m",
+        choices=list(MAAND_AFKORTINGEN.values()),
+        help="Maand override voor CO2-seizoensfiltering (standaard: auto-detect)",
     )
     plan_parser.add_argument(
         "--week",
@@ -541,10 +547,10 @@ def main() -> int:
         help="Weekdag (ma/di/wo/do/vr/za/zo of 0-6)",
     )
     vervang_parser.add_argument(
-        "--seizoen",
-        "-s",
-        choices=["lente", "zomer", "herfst", "winter", "alle"],
-        help="Seizoen override (standaard: auto-detect)",
+        "--maand",
+        "-m",
+        choices=list(MAAND_AFKORTINGEN.values()),
+        help="Maand override voor CO2-seizoensfiltering (standaard: auto-detect)",
     )
     vervang_parser.add_argument(
         "--personen",

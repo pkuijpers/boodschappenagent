@@ -9,7 +9,7 @@ from unittest.mock import patch
 
 import pytest
 
-from boodschappenagent.models import Basis, Categorie, Ingredient, Recipe, Seizoen
+from boodschappenagent.models import Basis, Categorie, Ingredient, Recipe
 
 
 def _make_recipe(
@@ -23,7 +23,7 @@ def _make_recipe(
         naam=recipe_id.replace("-", " ").title(),
         categorie=categorie,
         basis=basis,
-        seizoenen=[Seizoen.ALLE],
+        seizoenen=[],
         basis_porties=4,
         ingredienten=[Ingredient(naam="iets", hoeveelheid=100, eenheid="gram")],
         bereidingstijd_min=30,
@@ -54,38 +54,38 @@ def _setup_recipes_dir(base: Path) -> Path:
     return recipes_dir
 
 
-class TestDetectSeizoen:
-    """Tests voor seizoen auto-detectie."""
+class TestDetectMaand:
+    """Tests voor maand auto-detectie."""
 
-    def test_winter_januari(self) -> None:
-        from boodschappenagent.cli.menu import _detect_seizoen
+    def test_januari(self) -> None:
+        from boodschappenagent.cli.menu import _detect_maand
 
-        assert _detect_seizoen(date(2026, 1, 15)) == Seizoen.WINTER
+        assert _detect_maand(date(2026, 1, 15)) == "jan"
 
-    def test_winter_februari(self) -> None:
-        from boodschappenagent.cli.menu import _detect_seizoen
+    def test_februari(self) -> None:
+        from boodschappenagent.cli.menu import _detect_maand
 
-        assert _detect_seizoen(date(2026, 2, 13)) == Seizoen.WINTER
+        assert _detect_maand(date(2026, 2, 13)) == "feb"
 
-    def test_winter_december(self) -> None:
-        from boodschappenagent.cli.menu import _detect_seizoen
+    def test_maart(self) -> None:
+        from boodschappenagent.cli.menu import _detect_maand
 
-        assert _detect_seizoen(date(2026, 12, 1)) == Seizoen.WINTER
+        assert _detect_maand(date(2026, 3, 1)) == "mrt"
 
-    def test_lente(self) -> None:
-        from boodschappenagent.cli.menu import _detect_seizoen
+    def test_december(self) -> None:
+        from boodschappenagent.cli.menu import _detect_maand
 
-        assert _detect_seizoen(date(2026, 4, 15)) == Seizoen.LENTE
+        assert _detect_maand(date(2026, 12, 1)) == "dec"
 
-    def test_zomer(self) -> None:
-        from boodschappenagent.cli.menu import _detect_seizoen
+    def test_juni(self) -> None:
+        from boodschappenagent.cli.menu import _detect_maand
 
-        assert _detect_seizoen(date(2026, 7, 1)) == Seizoen.ZOMER
+        assert _detect_maand(date(2026, 6, 15)) == "jun"
 
-    def test_herfst(self) -> None:
-        from boodschappenagent.cli.menu import _detect_seizoen
+    def test_oktober(self) -> None:
+        from boodschappenagent.cli.menu import _detect_maand
 
-        assert _detect_seizoen(date(2026, 10, 20)) == Seizoen.HERFST
+        assert _detect_maand(date(2026, 10, 20)) == "okt"
 
 
 class TestDagNamen:
@@ -159,7 +159,7 @@ class TestCmdPlan:
             menu=str(menu_path),
             personen=2,
             vrij=None,
-            seizoen=None,
+            maand=None,
             week=None,
             dagen=None,
         )
@@ -188,7 +188,7 @@ class TestCmdPlan:
             menu=str(menu_path),
             personen=2,
             vrij="za,zo",
-            seizoen=None,
+            maand=None,
             week="2026-02-09",
             dagen=None,
         )
@@ -204,7 +204,7 @@ class TestCmdPlan:
         assert dagen_by_dag[6]["personen"] == 0
         assert dagen_by_dag[6]["recept_id"] is None
 
-    def test_plan_met_seizoen_override(self, tmp_path: Path) -> None:
+    def test_plan_met_maand_override(self, tmp_path: Path) -> None:
         from boodschappenagent.cli.menu import cmd_plan
 
         recipes_dir = _setup_recipes_dir(tmp_path)
@@ -217,7 +217,7 @@ class TestCmdPlan:
             menu=str(menu_path),
             personen=2,
             vrij=None,
-            seizoen="zomer",
+            maand="jun",
             week="2026-02-09",
             dagen=None,
         )
@@ -238,7 +238,7 @@ class TestCmdPlan:
             menu=str(menu_path),
             personen=2,
             vrij=None,
-            seizoen=None,
+            maand=None,
             week="2026-02-09",
             dagen="ma:4,vr:3",
         )
@@ -322,7 +322,7 @@ class TestCmdVervang:
             history=str(history_path),
             menu=str(menu_path),
             dag="ma",
-            seizoen=None,
+            maand=None,
             personen=None,
             vrij=False,
         )
@@ -355,7 +355,7 @@ class TestCmdVervang:
             history=str(tmp_path / "history.json"),
             menu=str(menu_path),
             dag="ma",
-            seizoen=None,
+            maand=None,
             personen=4,
             vrij=False,
         )
@@ -389,7 +389,7 @@ class TestCmdVervang:
             history=str(tmp_path / "history.json"),
             menu=str(menu_path),
             dag="ma",
-            seizoen=None,
+            maand=None,
             personen=None,
             vrij=True,
         )
@@ -423,7 +423,7 @@ class TestCmdVervang:
             history=str(tmp_path / "history.json"),
             menu=str(menu_path),
             dag="ma",
-            seizoen=None,
+            maand=None,
             personen=2,
             vrij=False,
         )
@@ -458,7 +458,7 @@ class TestCmdVervang:
             history=str(tmp_path / "history.json"),
             menu=str(menu_path),
             dag="za,zo",
-            seizoen=None,
+            maand=None,
             personen=None,
             vrij=True,
         )
@@ -494,7 +494,7 @@ class TestCmdVervang:
             history=str(tmp_path / "history.json"),
             menu=str(menu_path),
             dag="ma,vr",
-            seizoen=None,
+            maand=None,
             personen=4,
             vrij=False,
         )
@@ -531,7 +531,7 @@ class TestCmdVervang:
             history=str(tmp_path / "history.json"),
             menu=str(menu_path),
             dag="ma,di",
-            seizoen=None,
+            maand=None,
             personen=None,
             vrij=False,
         )
@@ -567,7 +567,7 @@ class TestCmdVervang:
             history=str(tmp_path / "history.json"),
             menu=str(menu_path),
             dag="di",
-            seizoen=None,
+            maand=None,
             personen=None,
             vrij=False,
         )
@@ -591,7 +591,7 @@ class TestCmdVervang:
             history=str(tmp_path / "history.json"),
             menu=str(menu_path),
             dag="ma",
-            seizoen=None,
+            maand=None,
             personen=None,
             vrij=False,
         )
@@ -697,7 +697,7 @@ def _setup_recipes_with_ingredients(base: Path) -> Path:
             naam="Pasta Pesto",
             categorie=Categorie.VEGETARISCH,
             basis=Basis.PASTA,
-            seizoenen=[Seizoen.ALLE],
+            seizoenen=[],
             basis_porties=4,
             ingredienten=[
                 Ingredient(naam="pasta", hoeveelheid=500, eenheid="gram"),
@@ -711,7 +711,7 @@ def _setup_recipes_with_ingredients(base: Path) -> Path:
             naam="Rijst Met Groenten",
             categorie=Categorie.VEGETARISCH,
             basis=Basis.RIJST,
-            seizoenen=[Seizoen.ALLE],
+            seizoenen=[],
             basis_porties=4,
             ingredienten=[
                 Ingredient(naam="rijst", hoeveelheid=400, eenheid="gram"),
