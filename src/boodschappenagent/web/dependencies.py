@@ -2,9 +2,19 @@
 
 from pathlib import Path
 
+from boodschappenagent.boodschappenlijst import (
+    BoodschappenlijstGenerator,
+    IngredientNormalizer,
+)
 from boodschappenagent.models import Recipe
 from boodschappenagent.planner import MenuHistory, MenuPlanner, SeizoenKalender
 from boodschappenagent.repository import RecipeRepository
+from boodschappenagent.utils import PortionCalculator
+from boodschappenagent.voorraadbeheer import (
+    BoodschappenlijstFilter,
+    VoorraadChecker,
+    VoorraadRepository,
+)
 
 DATA_DIR = Path(__file__).resolve().parents[3] / "data"
 RECIPE_DIRS = ["gevogelte", "vis", "vlees", "vegetarisch"]
@@ -38,3 +48,27 @@ def get_menu_planner() -> MenuPlanner:
         recipes.extend(repository.load_all(DATA_DIR / "recipes" / subdir))
     kalender = SeizoenKalender()
     return MenuPlanner(recipes=recipes, history=history, kalender=kalender)
+
+
+def get_voorraad_repository() -> VoorraadRepository:
+    """Geeft een VoorraadRepository terug met de standaard voorraad file."""
+    return VoorraadRepository(DATA_DIR / "voorraad.json")
+
+
+def get_boodschappenlijst_generator() -> BoodschappenlijstGenerator:
+    """Geeft een BoodschappenlijstGenerator terug met IngredientNormalizer."""
+    normalizer = IngredientNormalizer()
+    calculator = PortionCalculator()
+    return BoodschappenlijstGenerator(normalizer, calculator)
+
+
+def get_voorraad_checker() -> VoorraadChecker:
+    """Geeft een VoorraadChecker terug met VoorraadRepository."""
+    repository = get_voorraad_repository()
+    return VoorraadChecker(repository)
+
+
+def get_boodschappenlijst_filter() -> BoodschappenlijstFilter:
+    """Geeft een BoodschappenlijstFilter terug met VoorraadRepository."""
+    repository = get_voorraad_repository()
+    return BoodschappenlijstFilter(repository)

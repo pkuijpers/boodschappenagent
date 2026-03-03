@@ -5,6 +5,10 @@ from bs4 import BeautifulSoup
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
+from boodschappenagent.boodschappenlijst import (
+    BoodschappenlijstGenerator,
+    IngredientNormalizer,
+)
 from boodschappenagent.models import Basis, Categorie, Ingredient, Seizoen
 from boodschappenagent.models.recipe import Recipe
 from boodschappenagent.planner import (
@@ -15,6 +19,9 @@ from boodschappenagent.planner import (
     WeekMenu,
 )
 from boodschappenagent.repository import RecipeRepository
+from boodschappenagent.utils import PortionCalculator
+from boodschappenagent.voorraadbeheer import BoodschappenlijstFilter, VoorraadRepository
+from boodschappenagent.voorraadbeheer.models import VoorraadItem, VoorraadType
 from boodschappenagent.web.app import create_app
 from boodschappenagent.web.dependencies import (
     DATA_DIR,
@@ -22,6 +29,7 @@ from boodschappenagent.web.dependencies import (
     get_all_recipes,
     get_menu_history,
     get_menu_planner,
+    get_voorraad_repository,
 )
 
 WEEK_START = "2026-02-16"  # Week 8
@@ -166,3 +174,48 @@ def htmx_client(app_with_overrides) -> TestClient:
             "HX-Target": "week-content",
         },
     )
+
+
+# --- Voorraad fixtures ---
+
+
+@pytest.fixture
+def voorraad_repository(tmp_path) -> VoorraadRepository:
+    """VoorraadRepository op tmp_path (geen echte voorraad.json)."""
+    return VoorraadRepository(tmp_path / "voorraad.json")
+
+
+@pytest.fixture
+def voorraad_met_pasta(voorraad_repository) -> VoorraadRepository:
+    """VoorraadRepository met pasta op voorraad."""
+    item = VoorraadItem(
+        naam="pasta",
+        type=VoorraadType.HOUDBAAR,
+        op_voorraad=True,
+        laatst_gecheckt="2026-03-03",
+    )
+    voorraad_repository.update_item(item)
+    return voorraad_repository
+
+
+@pytest.fixture
+def boodschappenlijst_generator() -> BoodschappenlijstGenerator:
+    """Echte BoodschappenlijstGenerator met IngredientNormalizer."""
+    normalizer = IngredientNormalizer()
+    calculator = PortionCalculator()
+    return BoodschappenlijstGenerator(normalizer, calculator)
+
+
+@pytest.fixture
+def boodschappenlijst_filter(voorraad_repository) -> BoodschappenlijstFilter:
+    """BoodschappenlijstFilter met gemockte voorraad."""
+    return BoodschappenlijstFilter(voorraad_repository)
+
+
+@pytest.fixture
+def app_with_voorraad(app_with_overrides, voorraad_repository) -> FastAPI:
+    """App met dependency_overrides voor VoorraadRepository."""
+    app_with_overrides.dependency_overrides[get_voorraad_repository] = (
+        lambda: voorraad_repository
+    )
+    return app_with_overrides
