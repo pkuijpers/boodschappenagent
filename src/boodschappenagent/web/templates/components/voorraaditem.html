@@ -1,0 +1,28 @@
+{% set ja_actief = item.op_voorraad %}
+{% set nee_actief = not item.op_voorraad %}
+<div data-testid="voorraaditem"
+     data-item="{{ item.naam }}"
+     class="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
+    <div class="flex-1 min-w-0 mr-4">
+        <span class="font-medium capitalize {{ 'text-gray-400 line-through' if ja_actief else 'text-gray-800' }}">{{ item.naam }}</span>
+        {% if item.context %}
+        <span class="text-gray-400 text-sm ml-1">(voor {{ item.context }})</span>
+        {% endif %}
+    </div>
+    <div class="flex rounded-lg overflow-hidden border shrink-0
+                {{ 'border-green-300' if ja_actief else 'border-red-200' }}">
+        <button data-testid="status-ja"
+                data-actief="{{ 'true' if ja_actief else 'false' }}"
+                class="px-4 py-1.5 text-sm font-semibold transition-colors
+                       {{ 'bg-green-500 text-white' if ja_actief else 'bg-white text-gray-300 hover:bg-gray-50' }}">
+            {% if ja_actief %}✓ Ja{% else %}Ja{% endif %}
+        </button>
+        <button data-testid="status-nee"
+                data-actief="{{ 'true' if nee_actief else 'false' }}"
+                class="px-4 py-1.5 text-sm font-semibold border-l transition-colors
+                       {{ 'border-green-300' if ja_actief else 'border-red-200' }}
+                       {{ 'bg-white text-gray-300 hover:bg-gray-50' if ja_actief else 'bg-red-50 text-red-600' }}">
+            {% if nee_actief %}✗ Nee{% else %}Nee{% endif %}
+        </button>
+    </div>
+</div>
