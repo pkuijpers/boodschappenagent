@@ -11,7 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Testing
 
-- Always run the full test suite (`pytest` or equivalent) after any code changes before committing
+- **Always delegate test runs to the `test-reporter` subagent** — never run `uv run pytest` directly via Bash
 - Follow TDD workflow: write failing tests first (red), then implement (green), then refactor
 - When implementing test plan steps, use the exact naming conventions specified in the plan — do not invent alternative naming schemes
 
