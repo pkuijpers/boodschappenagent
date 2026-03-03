@@ -7,7 +7,13 @@ from fastapi.testclient import TestClient
 
 from boodschappenagent.models import Basis, Categorie, Ingredient, Seizoen
 from boodschappenagent.models.recipe import Recipe
-from boodschappenagent.planner import DagPlanning, MenuHistory, MenuPlanner, WeekMenu
+from boodschappenagent.planner import (
+    DagPlanning,
+    MenuHistory,
+    MenuPlanner,
+    SeizoenKalender,
+    WeekMenu,
+)
 from boodschappenagent.repository import RecipeRepository
 from boodschappenagent.web.app import create_app
 from boodschappenagent.web.dependencies import (
@@ -111,7 +117,13 @@ def menu_planner(recipe_repository, menu_history) -> MenuPlanner:
     recipes = []
     for subdir in RECIPE_DIRS:
         recipes.extend(recipe_repository.load_all(DATA_DIR / "recipes" / subdir))
-    return MenuPlanner(recipes=recipes, history=menu_history, random_seed=42)
+    kalender = SeizoenKalender()
+    return MenuPlanner(
+        recipes=recipes,
+        history=menu_history,
+        kalender=kalender,
+        random_seed=42,
+    )
 
 
 @pytest.fixture

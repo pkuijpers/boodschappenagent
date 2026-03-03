@@ -3,7 +3,7 @@
 from pathlib import Path
 
 from boodschappenagent.models import Recipe
-from boodschappenagent.planner import MenuHistory, MenuPlanner
+from boodschappenagent.planner import MenuHistory, MenuPlanner, SeizoenKalender
 from boodschappenagent.repository import RecipeRepository
 
 DATA_DIR = Path(__file__).resolve().parents[3] / "data"
@@ -36,4 +36,5 @@ def get_menu_planner() -> MenuPlanner:
     recipes = []
     for subdir in RECIPE_DIRS:
         recipes.extend(repository.load_all(DATA_DIR / "recipes" / subdir))
-    return MenuPlanner(recipes=recipes, history=history)
+    kalender = SeizoenKalender()
+    return MenuPlanner(recipes=recipes, history=history, kalender=kalender)

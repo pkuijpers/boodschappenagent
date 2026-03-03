@@ -6,7 +6,6 @@ vervangt het recept voor één dag, overige dagen blijven ongewijzigd.
 
 from fastapi.testclient import TestClient
 
-from boodschappenagent.models import Seizoen
 from boodschappenagent.planner import DagInput
 
 from .conftest import (
@@ -62,7 +61,7 @@ class TestShuffleRespecteertVariatie:
         dag_inputs = [DagInput(dag=i, personen=2) for i in range(7)]
         week_menu = menu_planner.plan_week(
             week_input=dag_inputs,
-            seizoen=Seizoen.ALLE,
+            maand="feb",
             week_start=WEEK_START,
         )
         set_week_menu(client, week_menu)

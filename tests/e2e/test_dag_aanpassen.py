@@ -281,6 +281,7 @@ class TestDagTypeWijzigenUI:
 
         # Sluit sheet via backdrop klik bovenaan (buiten het sheet-gebied)
         week_page.locator("#sheet-backdrop").click(position={"x": 10, "y": 10})
+
         week_page.wait_for_selector("#sheet-backdrop", state="hidden")
         week_page.locator("[data-testid='genereer-button']").click()
         week_page.wait_for_load_state("networkidle")

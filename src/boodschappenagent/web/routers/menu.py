@@ -6,7 +6,7 @@ from typing import Annotated, Literal
 from fastapi import APIRouter, Depends, Form, HTTPException, Path, Query, Request
 from fastapi.responses import RedirectResponse
 
-from boodschappenagent.models import Categorie, Recipe, Seizoen
+from boodschappenagent.models import Categorie, Recipe
 from boodschappenagent.planner import DagInput, DagPlanning, MenuPlanner, WeekMenu
 from boodschappenagent.planner.history import MenuHistory
 from boodschappenagent.repository import RecipeSearch
@@ -16,19 +16,19 @@ from boodschappenagent.web.dependencies import (
     get_menu_planner,
 )
 
-MAAND_NAAR_SEIZOEN = {
-    12: Seizoen.WINTER,
-    1: Seizoen.WINTER,
-    2: Seizoen.WINTER,
-    3: Seizoen.LENTE,
-    4: Seizoen.LENTE,
-    5: Seizoen.LENTE,
-    6: Seizoen.ZOMER,
-    7: Seizoen.ZOMER,
-    8: Seizoen.ZOMER,
-    9: Seizoen.HERFST,
-    10: Seizoen.HERFST,
-    11: Seizoen.HERFST,
+MAAND_AFKORTINGEN = {
+    1: "jan",
+    2: "feb",
+    3: "mrt",
+    4: "apr",
+    5: "mei",
+    6: "jun",
+    7: "jul",
+    8: "aug",
+    9: "sep",
+    10: "okt",
+    11: "nov",
+    12: "dec",
 }
 
 router = APIRouter()
@@ -97,15 +97,15 @@ def _generate_week_menu(request: Request, planner: MenuPlanner) -> None:
     """
     today = date.today()
     week_start = today - timedelta(days=today.weekday())
-    seizoen = MAAND_NAAR_SEIZOEN[today.month]
 
     bestaand = getattr(request.app.state, "week_menu", None)
     dag_personen = {d.dag: d.personen for d in bestaand.dagen} if bestaand else {}
 
+    maand = MAAND_AFKORTINGEN[today.month]
     dag_inputs = [DagInput(dag=i, personen=dag_personen.get(i, 2)) for i in range(7)]
     week_menu = planner.plan_week(
         week_input=dag_inputs,
-        seizoen=seizoen,
+        maand=maand,
         week_start=week_start.isoformat(),
     )
     request.app.state.week_menu = week_menu
@@ -151,8 +151,8 @@ async def shuffle(
     _get_recept_dag_or_422(request, dag)
     week_menu = request.app.state.week_menu
 
-    seizoen = MAAND_NAAR_SEIZOEN[date.today().month]
-    new_menu = planner.vervang_recept(week_menu, dag, seizoen)
+    maand = MAAND_AFKORTINGEN[date.today().month]
+    new_menu = planner.vervang_recept(week_menu, dag, maand)
     request.app.state.week_menu = new_menu
 
     dag_context = _build_dag_context(dag, request)
