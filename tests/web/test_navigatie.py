@@ -4,10 +4,12 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from boodschappenagent.voorraadbeheer import VoorraadRepository
-from boodschappenagent.web.dependencies import get_voorraad_repository
-
 from .conftest import make_full_week_menu, set_week_menu, soup
+
+
+@pytest.fixture
+def client_with_boodschappen(app_with_boodschappen: FastAPI) -> TestClient:
+    return TestClient(app_with_boodschappen)
 
 
 class TestWeekNaarVoorraad:
@@ -64,4 +66,26 @@ class TestVoorraadNaarBoodschappen:
         set_week_menu(client_with_voorraad, make_full_week_menu())
         s = soup(client_with_voorraad.get("/voorraad"))
         terug = s.select_one('a[href="/week"]')
+        assert terug is not None
+
+
+class TestBoodschappenNaarAH:
+    """S11.3 en S11.4: Boodschappenlijst navigatie."""
+
+    def test_s11_3_verstuur_naar_ah_button_aanwezig(
+        self, client_with_boodschappen: TestClient
+    ):
+        """S11.3: GET /boodschappen toont 'Verstuur naar AH' knop."""
+        set_week_menu(client_with_boodschappen, make_full_week_menu())
+        s = soup(client_with_boodschappen.get("/boodschappen"))
+        button = s.select_one('[data-testid="verstuur-naar-ah-button"]')
+        assert button is not None
+
+    def test_s11_4_terug_naar_voorraad_link_aanwezig(
+        self, client_with_boodschappen: TestClient
+    ):
+        """S11.4: GET /boodschappen heeft 'Terug' link naar /voorraad."""
+        set_week_menu(client_with_boodschappen, make_full_week_menu())
+        s = soup(client_with_boodschappen.get("/boodschappen"))
+        terug = s.select_one('a[href="/voorraad"]')
         assert terug is not None

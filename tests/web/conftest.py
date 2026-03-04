@@ -27,6 +27,8 @@ from boodschappenagent.web.dependencies import (
     DATA_DIR,
     RECIPE_DIRS,
     get_all_recipes,
+    get_boodschappenlijst_filter,
+    get_boodschappenlijst_generator,
     get_menu_history,
     get_menu_planner,
     get_voorraad_repository,
@@ -219,3 +221,19 @@ def app_with_voorraad(app_with_overrides, voorraad_repository) -> FastAPI:
         lambda: voorraad_repository
     )
     return app_with_overrides
+
+
+@pytest.fixture
+def app_with_boodschappen(
+    app_with_voorraad,
+    boodschappenlijst_generator,
+    boodschappenlijst_filter,
+) -> FastAPI:
+    """App met dependency_overrides voor BoodschappenlijstGenerator en -Filter."""
+    app_with_voorraad.dependency_overrides[get_boodschappenlijst_generator] = (
+        lambda: boodschappenlijst_generator
+    )
+    app_with_voorraad.dependency_overrides[get_boodschappenlijst_filter] = (
+        lambda: boodschappenlijst_filter
+    )
+    return app_with_voorraad

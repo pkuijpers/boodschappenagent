@@ -1,0 +1,24 @@
+<div data-testid="boodschapitem"
+     data-item="{{ item.naam }}"
+     data-checked="{{ 'true' if item.checked else 'false' }}"
+     id="boodschapitem-{{ item.id }}"
+     class="flex items-center py-3 border-b border-gray-100 last:border-0 gap-3">
+    <div class="w-5 h-5 rounded border-2 shrink-0
+                {{ 'bg-ah-blue border-ah-blue' if item.checked else 'border-gray-300' }}
+                flex items-center justify-center">
+        {% if item.checked %}
+        <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+        </svg>
+        {% endif %}
+    </div>
+    <div class="flex-1 min-w-0">
+        <span class="font-medium capitalize {{ 'text-gray-400 line-through' if item.checked else 'text-gray-800' }}">
+            {{ item.naam }}
+        </span>
+    </div>
+    <span data-testid="hoeveelheid"
+          class="text-sm text-gray-500 shrink-0">
+        {{ item.hoeveelheid|int if item.hoeveelheid == item.hoeveelheid|int else item.hoeveelheid }} {{ item.eenheid }}
+    </span>
+</div>
