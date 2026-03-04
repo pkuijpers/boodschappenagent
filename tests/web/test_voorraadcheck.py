@@ -1,4 +1,4 @@
-"""Integratietests voor voorraadcheck pagina (S6)."""
+"""Integratietests voor voorraadcheck pagina (S6, S7, S8)."""
 
 import pytest
 from fastapi import FastAPI
@@ -176,3 +176,107 @@ class TestVoorraadcheckOpVoorraad:
             '[data-testid="status-ja"][data-actief="true"]'
         )
         assert ja_button is not None
+
+
+class TestVoorraadToggle:
+    """S7: Voorraad status toggle (UI → VoorraadRepository → UI)."""
+
+    def test_s7_1_toggle_ja_actief(self, client_with_voorraad: TestClient):
+        """S7.1: POST /voorraad/pasta/status met op_voorraad=true → Ja actief."""
+        set_week_menu(client_with_voorraad, _make_week_menu_met_pasta())
+        response = client_with_voorraad.post(
+            "/voorraad/pasta/status",
+            data={"op_voorraad": "true"},
+        )
+        assert response.status_code == 200
+        s = soup(response)
+        pasta_item = s.select_one('[data-testid="voorraaditem"][data-item="pasta"]')
+        assert pasta_item is not None
+        ja_button = pasta_item.select_one('[data-testid="status-ja"][data-actief="true"]')
+        assert ja_button is not None
+
+    def test_s7_2_toggle_nee_actief(
+        self, client_met_pasta_op_voorraad: TestClient
+    ):
+        """S7.2: POST /voorraad/pasta/status met op_voorraad=false → Nee actief."""
+        set_week_menu(client_met_pasta_op_voorraad, _make_week_menu_met_pasta())
+        response = client_met_pasta_op_voorraad.post(
+            "/voorraad/pasta/status",
+            data={"op_voorraad": "false"},
+        )
+        assert response.status_code == 200
+        s = soup(response)
+        pasta_item = s.select_one('[data-testid="voorraaditem"][data-item="pasta"]')
+        assert pasta_item is not None
+        nee_button = pasta_item.select_one(
+            '[data-testid="status-nee"][data-actief="true"]'
+        )
+        assert nee_button is not None
+
+    def test_s7_3_htmx_swap_enkel_item(self, client_with_voorraad: TestClient):
+        """S7.3: Response bevat precies 1 voorraaditem (niet hele pagina)."""
+        set_week_menu(client_with_voorraad, _make_week_menu_met_pasta())
+        response = client_with_voorraad.post(
+            "/voorraad/pasta/status",
+            data={"op_voorraad": "true"},
+        )
+        assert response.status_code == 200
+        s = soup(response)
+        items = s.select('[data-testid="voorraaditem"]')
+        assert len(items) == 1
+
+    def test_s7_4_onbekend_item_404(self, client_with_voorraad: TestClient):
+        """S7.4: Onbekend item → HTTP 404."""
+        set_week_menu(client_with_voorraad, make_full_week_menu())
+        response = client_with_voorraad.post(
+            "/voorraad/onbekend-item/status",
+            data={"op_voorraad": "true"},
+        )
+        assert response.status_code == 404
+
+    def test_s7_5_zonder_weekmenu_404(self, client_with_voorraad: TestClient):
+        """S7.5: Zonder weekmenu → HTTP 404."""
+        client_with_voorraad.app.state.week_menu = None
+        response = client_with_voorraad.post(
+            "/voorraad/pasta/status",
+            data={"op_voorraad": "true"},
+        )
+        assert response.status_code == 404
+
+    def test_s7_1_repository_opgeslagen(self, client_with_voorraad: TestClient):
+        """S7.1: Na toggle Ja is pasta op_voorraad=True in repository."""
+        set_week_menu(client_with_voorraad, _make_week_menu_met_pasta())
+        client_with_voorraad.post(
+            "/voorraad/pasta/status",
+            data={"op_voorraad": "true"},
+        )
+        repo: VoorraadRepository = (
+            client_with_voorraad.app.dependency_overrides[get_voorraad_repository]()
+        )
+        assert "pasta" in repo.op_voorraad_namen()
+
+
+class TestVoorraadBevestig:
+    """S8: Voorraad bevestigen (batch update → redirect)."""
+
+    def test_s8_1_redirect_naar_boodschappen(
+        self, client_with_voorraad: TestClient
+    ):
+        """S8.1: POST /voorraad/bevestig → 303 redirect naar /boodschappen."""
+        set_week_menu(client_with_voorraad, make_full_week_menu())
+        response = client_with_voorraad.post(
+            "/voorraad/bevestig", follow_redirects=False
+        )
+        assert response.status_code in (301, 302, 303, 307, 308)
+        assert "/boodschappen" in response.headers["location"]
+
+    def test_s8_3_zonder_weekmenu_redirect_naar_week(
+        self, client_with_voorraad: TestClient
+    ):
+        """S8.3: Zonder weekmenu → redirect naar /week."""
+        client_with_voorraad.app.state.week_menu = None
+        response = client_with_voorraad.post(
+            "/voorraad/bevestig", follow_redirects=False
+        )
+        assert response.status_code in (301, 302, 303, 307, 308)
+        assert "/week" in response.headers["location"]
