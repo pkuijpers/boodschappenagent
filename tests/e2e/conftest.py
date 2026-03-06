@@ -14,7 +14,17 @@ from playwright.sync_api import Playwright
 
 from boodschappenagent.models import Basis, Categorie, Ingredient, Recipe, Seizoen
 from boodschappenagent.planner import DagPlanning, WeekMenu
+from boodschappenagent.voorraadbeheer import (
+    BoodschappenlijstFilter,
+    VoorraadChecker,
+    VoorraadRepository,
+)
 from boodschappenagent.web.app import create_app
+from boodschappenagent.web.dependencies import (
+    get_boodschappenlijst_filter,
+    get_voorraad_checker,
+    get_voorraad_repository,
+)
 
 
 def _find_free_port() -> int:
@@ -102,11 +112,27 @@ def browser_context_args(browser_context_args, playwright: Playwright):
 
 
 @pytest.fixture(scope="session")
-def app():
-    """FastAPI app met test-data op app.state."""
+def app(tmp_path_factory):
+    """FastAPI app met test-data op app.state en tijdelijke VoorraadRepository."""
+    tmp_dir = tmp_path_factory.mktemp("voorraad_e2e")
+    voorraad_path = tmp_dir / "voorraad.json"
+
     app = create_app()
     app.state.week_menu = TEST_WEEK_MENU
     app.state.hellofresh_dagen = TEST_HELLOFRESH_DAGEN
+    app.state._voorraad_path = voorraad_path
+
+    def _get_repo():
+        return VoorraadRepository(voorraad_path)
+
+    app.dependency_overrides[get_voorraad_repository] = _get_repo
+    app.dependency_overrides[get_voorraad_checker] = (
+        lambda: VoorraadChecker(_get_repo())
+    )
+    app.dependency_overrides[get_boodschappenlijst_filter] = (
+        lambda: BoodschappenlijstFilter(_get_repo())
+    )
+
     return app
 
 
@@ -145,5 +171,30 @@ def week_page(page, live_server_url, app):
     app.state.hellofresh_dagen = set(TEST_HELLOFRESH_DAGEN)
     app.state.recept_backup = {}
     page.goto(f"{live_server_url}/week")
+    page.wait_for_load_state("networkidle")
+    return page
+
+
+@pytest.fixture
+def voorraad_page(page, live_server_url, app):
+    """Navigeer naar /voorraad, herstel test-staat."""
+    app.state.week_menu = TEST_WEEK_MENU
+    app.state.hellofresh_dagen = set(TEST_HELLOFRESH_DAGEN)
+    # Reset voorraad naar schone staat (alle items standaard "Nee")
+    voorraad_path = app.state._voorraad_path
+    if voorraad_path.exists():
+        voorraad_path.unlink()
+    page.goto(f"{live_server_url}/voorraad")
+    page.wait_for_load_state("networkidle")
+    return page
+
+
+@pytest.fixture
+def boodschappen_page(page, live_server_url, app):
+    """Navigeer naar /boodschappen, herstel test-staat."""
+    app.state.week_menu = TEST_WEEK_MENU
+    app.state.hellofresh_dagen = set(TEST_HELLOFRESH_DAGEN)
+    app.state.boodschappenlijst = None
+    page.goto(f"{live_server_url}/boodschappen")
     page.wait_for_load_state("networkidle")
     return page
