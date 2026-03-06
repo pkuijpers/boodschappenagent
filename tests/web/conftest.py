@@ -288,6 +288,40 @@ def app_with_ah(app_with_overrides, mock_token_manager, mock_ah_integratie) -> F
     return app_with_overrides
 
 
+@pytest.fixture
+def setup_boodschappenlijst(app_with_ah):
+    """Zet een boodschappenlijst van 15 producten en weekmenu op app.state."""
+    from boodschappenagent.boodschappenlijst.models import (
+        Boodschappenlijst,
+        BoodschappenRegel,
+    )
+
+    week_menu = make_full_week_menu()
+    app_with_ah.state.week_menu = week_menu
+    regels = [
+        BoodschappenRegel(
+            naam=f"product-{i}",
+            hoeveelheid=1,
+            eenheid="stuk",
+            originele_namen=frozenset({f"product-{i}"}),
+        )
+        for i in range(15)
+    ]
+    app_with_ah.state.boodschappenlijst_model = Boodschappenlijst(
+        week_start=week_menu.week_start, regels=regels,
+    )
+    app_with_ah.state.boodschappenlijst = [
+        {
+            "id": f"item-{i}",
+            "naam": f"product-{i}",
+            "hoeveelheid": 1,
+            "eenheid": "stuk",
+            "checked": False,
+        }
+        for i in range(15)
+    ]
+
+
 def _make_product_match(naam: str, gevonden: bool, product_id: int = 1) -> ProductMatch:
     """Helper om een ProductMatch te maken."""
     from boodschappenagent.ah.models import Product

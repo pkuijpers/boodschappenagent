@@ -152,3 +152,75 @@ class TestE18VerstuurNaarAHSucces:
         ah_link = page.locator('[data-testid="ah-open-link"]')
         assert ah_link.is_visible()
         assert "ah.nl" in ah_link.get_attribute("href")
+
+
+@pytest.mark.e2e
+class TestE19NietGevondenProducten:
+    """E19: Niet-gevonden producten — verstuur met 2 onvindbare producten."""
+
+    def test_niet_gevonden_sectie_zichtbaar(
+        self,
+        page,
+        live_server_url,
+        app,
+        mock_ah_token_manager,
+        mock_ah_integratie,
+    ):
+        """Verstuur met 2 niet-gevonden producten -> niet-gevonden sectie zichtbaar."""
+        mock_ah_token_manager.is_authenticated.return_value = True
+
+        # 3 gevonden + 2 niet gevonden
+        gevonden_matches = [
+            ProductMatch(
+                regel=type("Regel", (), {"naam": f"product-{i}"})(),
+                product=Product(
+                    id=i, title=f"AH Product {i}", brand="AH",
+                    size="1 stuk", price=2.99, category="", is_orderable=True,
+                ),
+                bron="zoekopdracht",
+            )
+            for i in range(3)
+        ]
+        niet_gevonden_matches = [
+            ProductMatch(
+                regel=type("Regel", (), {"naam": naam})(),
+                product=None,
+                bron="niet_gevonden",
+            )
+            for naam in ["verse basilicum", "za'atar kruiden"]
+        ]
+        mock_ah_integratie.sync_naar_lijst.return_value = SyncResultaat(
+            lijst_id="e2e-list-456",
+            lijst_naam="Boodschappen 2026-02-16",
+            matches=gevonden_matches + niet_gevonden_matches,
+        )
+
+        app.state.boodschappenlijst = None
+
+        page.goto(f"{live_server_url}/boodschappen")
+        page.wait_for_load_state("networkidle")
+
+        # Verstuur via JS form submit
+        page.evaluate("""() => {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/boodschappen/verstuur-naar-ah';
+            document.body.appendChild(form);
+            form.submit();
+        }""")
+        page.wait_for_load_state("networkidle")
+
+        # Bevestigingsscherm zichtbaar
+        page.locator('[data-testid="ah-bevestiging"]').wait_for(
+            state="visible", timeout=5000
+        )
+
+        # Niet-gevonden sectie zichtbaar
+        niet_gevonden = page.locator('[data-testid="ah-niet-gevonden"]')
+        assert niet_gevonden.is_visible()
+
+        # Beide niet-gevonden productnamen zichtbaar
+        items = page.locator('[data-testid="ah-niet-gevonden-item"]')
+        assert items.count() == 2
+        teksten = [items.nth(i).text_content() for i in range(2)]
+        assert any("verse basilicum" in t for t in teksten)

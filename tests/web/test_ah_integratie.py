@@ -164,109 +164,91 @@ class TestVerstuurNaarAHSucces:
     """S15: Verstuur naar AH (succes flow)."""
 
     @pytest.fixture
-    def _setup_boodschappenlijst(self, app_with_ah):
-        """Zet een boodschappenlijst en weekmenu op app.state."""
-        from boodschappenagent.boodschappenlijst.models import (
-            Boodschappenlijst,
-            BoodschappenRegel,
-        )
-
-        from .conftest import make_full_week_menu
-
-        week_menu = make_full_week_menu()
-        app_with_ah.state.week_menu = week_menu
-        regels = [
-            BoodschappenRegel(
-                naam=f"product-{i}",
-                hoeveelheid=1,
-                eenheid="stuk",
-                originele_namen=frozenset({f"product-{i}"}),
-            )
-            for i in range(15)
-        ]
-        app_with_ah.state.boodschappenlijst_model = Boodschappenlijst(
-            week_start=week_menu.week_start, regels=regels,
-        )
-        app_with_ah.state.boodschappenlijst = [
-            {
-                "id": f"item-{i}",
-                "naam": f"product-{i}",
-                "hoeveelheid": 1,
-                "eenheid": "stuk",
-                "checked": False,
-            }
-            for i in range(15)
-        ]
-
-    def test_s15_1_verstuur_toont_bevestiging(
+    def _bevestiging_succes(
         self, app_with_ah, mock_token_manager, mock_ah_integratie,
-        sync_resultaat_succes, _setup_boodschappenlijst,
+        sync_resultaat_succes, setup_boodschappenlijst,
     ):
-        """S15.1: Bevestigingsscherm met groen vinkje."""
+        """POST /boodschappen/verstuur-naar-ah met volledig succes resultaat."""
         mock_token_manager.is_authenticated.return_value = True
         mock_ah_integratie.sync_naar_lijst.return_value = sync_resultaat_succes
         client = TestClient(app_with_ah)
         response = client.post("/boodschappen/verstuur-naar-ah")
-
         assert response.status_code == 200
-        html = soup(response)
-        assert html.select_one('[data-testid="ah-bevestiging"]') is not None
+        return soup(response)
 
-    def test_s15_2_bevestiging_toont_aantal_producten(
-        self, app_with_ah, mock_token_manager, mock_ah_integratie,
-        sync_resultaat_succes, _setup_boodschappenlijst,
-    ):
+    def test_s15_1_verstuur_toont_bevestiging(self, _bevestiging_succes):
+        """S15.1: Bevestigingsscherm met groen vinkje."""
+        assert _bevestiging_succes.select_one('[data-testid="ah-bevestiging"]') is not None
+
+    def test_s15_2_bevestiging_toont_aantal_producten(self, _bevestiging_succes):
         """S15.2: Bevestiging toont "15 producten in je mandje"."""
-        mock_token_manager.is_authenticated.return_value = True
-        mock_ah_integratie.sync_naar_lijst.return_value = sync_resultaat_succes
-        client = TestClient(app_with_ah)
-        response = client.post("/boodschappen/verstuur-naar-ah")
-
-        html = soup(response)
-        aantal_el = html.select_one('[data-testid="ah-aantal-producten"]')
+        aantal_el = _bevestiging_succes.select_one('[data-testid="ah-aantal-producten"]')
         assert aantal_el is not None
         assert "15" in aantal_el.get_text()
 
-    def test_s15_3_bevestiging_toont_lijst_naam(
-        self, app_with_ah, mock_token_manager, mock_ah_integratie,
-        sync_resultaat_succes, _setup_boodschappenlijst,
-    ):
+    def test_s15_3_bevestiging_toont_lijst_naam(self, _bevestiging_succes):
         """S15.3: Bevestiging toont de lijst naam."""
-        mock_token_manager.is_authenticated.return_value = True
-        mock_ah_integratie.sync_naar_lijst.return_value = sync_resultaat_succes
-        client = TestClient(app_with_ah)
-        response = client.post("/boodschappen/verstuur-naar-ah")
-
-        html = soup(response)
-        naam_el = html.select_one('[data-testid="ah-lijst-naam"]')
+        naam_el = _bevestiging_succes.select_one('[data-testid="ah-lijst-naam"]')
         assert naam_el is not None
         assert "Boodschappen 2026-03-02" in naam_el.get_text()
 
-    def test_s15_4_open_albert_heijn_link(
-        self, app_with_ah, mock_token_manager, mock_ah_integratie,
-        sync_resultaat_succes, _setup_boodschappenlijst,
-    ):
+    def test_s15_4_open_albert_heijn_link(self, _bevestiging_succes):
         """S15.4: "Open Albert Heijn" link zichtbaar."""
-        mock_token_manager.is_authenticated.return_value = True
-        mock_ah_integratie.sync_naar_lijst.return_value = sync_resultaat_succes
-        client = TestClient(app_with_ah)
-        response = client.post("/boodschappen/verstuur-naar-ah")
-
-        html = soup(response)
-        link = html.select_one('[data-testid="ah-open-link"]')
+        link = _bevestiging_succes.select_one('[data-testid="ah-open-link"]')
         assert link is not None
         assert "ah.nl" in link.get("href", "")
 
-    def test_s15_5_terug_naar_home_link(
-        self, app_with_ah, mock_token_manager, mock_ah_integratie,
-        sync_resultaat_succes, _setup_boodschappenlijst,
-    ):
+    def test_s15_5_terug_naar_home_link(self, _bevestiging_succes):
         """S15.5: "Terug naar home" link naar /week."""
+        assert _bevestiging_succes.select_one('a[href="/week"]') is not None
+
+
+class TestVerstuurNaarAHNietGevonden:
+    """S16: Verstuur naar AH (niet-gevonden producten)."""
+
+    @pytest.fixture
+    def _bevestiging_deels(
+        self, app_with_ah, mock_token_manager, mock_ah_integratie,
+        sync_resultaat_deels, setup_boodschappenlijst,
+    ):
+        """POST /boodschappen/verstuur-naar-ah met deels-gevonden resultaat."""
+        mock_token_manager.is_authenticated.return_value = True
+        mock_ah_integratie.sync_naar_lijst.return_value = sync_resultaat_deels
+        client = TestClient(app_with_ah)
+        response = client.post("/boodschappen/verstuur-naar-ah")
+        assert response.status_code == 200
+        return soup(response)
+
+    def test_s16_1_niet_gevonden_sectie_zichtbaar(self, _bevestiging_deels):
+        """S16.1: Niet-gevonden sectie zichtbaar bij 2 van 15 niet gevonden."""
+        sectie = _bevestiging_deels.select_one('[data-testid="ah-niet-gevonden"]')
+        assert sectie is not None
+        items = _bevestiging_deels.select('[data-testid="ah-niet-gevonden-item"]')
+        assert len(items) == 2
+
+    def test_s16_2_niet_gevonden_items_tonen_naam(self, _bevestiging_deels):
+        """S16.2: Niet-gevonden items tonen productnaam."""
+        items = _bevestiging_deels.select('[data-testid="ah-niet-gevonden-item"]')
+        namen = [item.get_text(strip=True) for item in items]
+        assert "verse basilicum" in namen
+
+    def test_s16_3_geen_niet_gevonden_sectie_als_alles_gevonden(
+        self, app_with_ah, mock_token_manager, mock_ah_integratie,
+        sync_resultaat_succes, setup_boodschappenlijst,
+    ):
+        """S16.3: Geen niet-gevonden sectie als alle producten gevonden zijn."""
         mock_token_manager.is_authenticated.return_value = True
         mock_ah_integratie.sync_naar_lijst.return_value = sync_resultaat_succes
         client = TestClient(app_with_ah)
         response = client.post("/boodschappen/verstuur-naar-ah")
 
         html = soup(response)
-        link = html.select_one('a[href="/week"]')
-        assert link is not None
+        assert html.select_one('[data-testid="ah-niet-gevonden"]') is None
+
+    def test_s16_4_samenvatting_in_header(self, _bevestiging_deels):
+        """S16.4: Samenvatting "13 van 15 producten gevonden" zichtbaar."""
+        samenvatting = _bevestiging_deels.select_one('[data-testid="ah-samenvatting"]')
+        assert samenvatting is not None
+        tekst = samenvatting.get_text(strip=True)
+        assert "13" in tekst
+        assert "15" in tekst
