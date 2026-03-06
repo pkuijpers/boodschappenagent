@@ -98,3 +98,63 @@ class TestAHLoginVerwerken:
 
         assert response.status_code == 303
         assert response.headers["location"] == "/boodschappen/verstuur-naar-ah"
+
+
+class TestAHStatusCheck:
+    """S14: AH Status check."""
+
+    def test_s14_1_ingelogd_status_ok(self, app_with_ah, mock_token_manager):
+        """S14.1: Ingelogd -> JSON {"authenticated": true}."""
+        mock_token_manager.is_authenticated.return_value = True
+        client = TestClient(app_with_ah)
+        response = client.get("/ah/status")
+
+        assert response.status_code == 200
+        assert response.json() == {"authenticated": True}
+
+    def test_s14_2_niet_ingelogd_status_not_ok(self, app_with_ah, mock_token_manager):
+        """S14.2: Niet ingelogd -> JSON {"authenticated": false}."""
+        mock_token_manager.is_authenticated.return_value = False
+        client = TestClient(app_with_ah)
+        response = client.get("/ah/status")
+
+        assert response.status_code == 200
+        assert response.json() == {"authenticated": False}
+
+    def test_s14_3_verlopen_tokens_refresh_lukt(self, app_with_ah, mock_token_manager):
+        """S14.3: Access token verlopen maar refresh lukt -> authenticated true."""
+        # Eerste keer is_authenticated: False (verlopen), maar na refresh: True
+        mock_token_manager.is_authenticated.return_value = False
+        mock_token_manager.refresh.return_value = None
+        # Na refresh wordt is_authenticated True
+        mock_token_manager.is_authenticated.side_effect = [False, True]
+        mock_token_manager.refresh.side_effect = None
+
+        client = TestClient(app_with_ah)
+        response = client.get("/ah/status")
+
+        assert response.status_code == 200
+        assert response.json() == {"authenticated": True}
+        mock_token_manager.refresh.assert_called_once()
+
+
+class TestAHLogout:
+    """S18: AH Logout."""
+
+    def test_s18_1_logout_verwijdert_tokens(self, app_with_ah, mock_token_manager):
+        """S18.1: POST /ah/logout -> redirect naar /ah/login, tokens verwijderd."""
+        mock_token_manager.is_authenticated.return_value = True
+        client = TestClient(app_with_ah, follow_redirects=False)
+        response = client.post("/ah/logout")
+
+        assert response.status_code == 303
+        assert response.headers["location"] == "/ah/login"
+
+    def test_s18_2_logout_als_niet_ingelogd(self, app_with_ah, mock_token_manager):
+        """S18.2: POST /ah/logout als niet ingelogd -> redirect zonder error."""
+        mock_token_manager.is_authenticated.return_value = False
+        client = TestClient(app_with_ah, follow_redirects=False)
+        response = client.post("/ah/logout")
+
+        assert response.status_code == 303
+        assert response.headers["location"] == "/ah/login"

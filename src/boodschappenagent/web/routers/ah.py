@@ -3,7 +3,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Form, Query, Request
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 
 from boodschappenagent.ah import AHTokenManager
 from boodschappenagent.web.dependencies import get_ah_token_manager
@@ -48,3 +48,30 @@ async def login_verwerken(
     except Exception:
         return _render_login(request, error="Ongeldige code. Probeer opnieuw.")
     return RedirectResponse(url=next, status_code=303)
+
+
+@router.get("/status")
+async def status_check(
+    token_manager: Annotated[AHTokenManager, Depends(get_ah_token_manager)],
+):
+    """Check of AH-tokens geldig zijn."""
+    authenticated = token_manager.is_authenticated()
+    if not authenticated:
+        # Probeer te refreshen als er een refresh token is
+        try:
+            token_manager.refresh()
+            authenticated = token_manager.is_authenticated()
+        except Exception:
+            pass
+    return JSONResponse({"authenticated": authenticated})
+
+
+@router.post("/logout")
+async def logout(
+    token_manager: Annotated[AHTokenManager, Depends(get_ah_token_manager)],
+):
+    """Verwijder tokens en redirect naar login pagina."""
+    # Verwijder token bestand als het bestaat
+    if hasattr(token_manager, "_token_path") and token_manager._token_path.exists():
+        token_manager._token_path.unlink()
+    return RedirectResponse(url="/ah/login", status_code=303)
