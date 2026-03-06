@@ -1,5 +1,7 @@
 """FastAPI TestClient fixtures voor web integratietests."""
 
+from unittest.mock import MagicMock
+
 import pytest
 from bs4 import BeautifulSoup
 from fastapi import FastAPI
@@ -26,6 +28,8 @@ from boodschappenagent.web.app import create_app
 from boodschappenagent.web.dependencies import (
     DATA_DIR,
     RECIPE_DIRS,
+    get_ah_integratie,
+    get_ah_token_manager,
     get_all_recipes,
     get_boodschappenlijst_filter,
     get_boodschappenlijst_generator,
@@ -237,3 +241,47 @@ def app_with_boodschappen(
         lambda: boodschappenlijst_filter
     )
     return app_with_voorraad
+
+
+# --- AH integratie fixtures ---
+
+
+@pytest.fixture
+def mock_token_manager() -> MagicMock:
+    """Gemockte AHTokenManager (geen echte tokens/API calls)."""
+    mock = MagicMock()
+    mock.is_authenticated.return_value = False
+    mock.login.return_value = None
+    return mock
+
+
+@pytest.fixture
+def mock_token_manager_authenticated(mock_token_manager) -> MagicMock:
+    """AHTokenManager die is_authenticated() = True retourneert."""
+    mock_token_manager.is_authenticated.return_value = True
+    return mock_token_manager
+
+
+@pytest.fixture
+def mock_token_manager_unauthenticated(mock_token_manager) -> MagicMock:
+    """AHTokenManager die is_authenticated() = False retourneert."""
+    mock_token_manager.is_authenticated.return_value = False
+    return mock_token_manager
+
+
+@pytest.fixture
+def mock_ah_integratie() -> MagicMock:
+    """Gemockte AHIntegratie (geen echte AH API calls)."""
+    return MagicMock()
+
+
+@pytest.fixture
+def app_with_ah(app_with_overrides, mock_token_manager, mock_ah_integratie) -> FastAPI:
+    """App met dependency_overrides voor AH token manager en integratie."""
+    app_with_overrides.dependency_overrides[get_ah_token_manager] = (
+        lambda: mock_token_manager
+    )
+    app_with_overrides.dependency_overrides[get_ah_integratie] = (
+        lambda: mock_ah_integratie
+    )
+    return app_with_overrides

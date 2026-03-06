@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+from boodschappenagent.ah import AHClient, AHIntegratie, AHTokenManager
 from boodschappenagent.boodschappenlijst import (
     BoodschappenlijstGenerator,
     IngredientNormalizer,
@@ -72,3 +73,20 @@ def get_boodschappenlijst_filter() -> BoodschappenlijstFilter:
     """Geeft een BoodschappenlijstFilter terug met VoorraadRepository."""
     repository = get_voorraad_repository()
     return BoodschappenlijstFilter(repository)
+
+
+def get_ah_token_manager() -> AHTokenManager:
+    """AHTokenManager met standaard token path."""
+    return AHTokenManager()
+
+
+def get_ah_client() -> AHClient:
+    """AHClient met AHTokenManager."""
+    token_manager = get_ah_token_manager()
+    return AHClient(token_manager)
+
+
+def get_ah_integratie() -> AHIntegratie:
+    """AHIntegratie met AHClient."""
+    client = get_ah_client()
+    return AHIntegratie(client)
