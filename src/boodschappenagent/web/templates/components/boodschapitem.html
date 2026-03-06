@@ -1,4 +1,17 @@
 {% set next_checked = 'false' if item.checked else 'true' %}
+{% set hoeveelheid_display = item.hoeveelheid|int if item.hoeveelheid == item.hoeveelheid|int else item.hoeveelheid %}
+{% if item.eenheid in ['gram', 'ml'] %}
+    {% set stap_minus = 100 if item.hoeveelheid > 500 else 25 %}
+    {% set stap_plus = 100 if item.hoeveelheid >= 500 else 25 %}
+{% elif 'lepel' in item.eenheid %}
+    {% set stap_minus = 0.5 %}
+    {% set stap_plus = 0.5 %}
+{% else %}
+    {% set stap_minus = 1 %}
+    {% set stap_plus = 1 %}
+{% endif %}
+{% set hoeveelheid_minus = item.hoeveelheid - stap_minus if item.hoeveelheid > stap_minus else stap_minus %}
+{% set hoeveelheid_plus = item.hoeveelheid + stap_plus %}
 <div data-testid="boodschapitem"
      data-item="{{ item.naam }}"
      data-checked="{{ 'true' if item.checked else 'false' }}"
@@ -10,36 +23,48 @@
             hx-vals='{"checked": "{{ next_checked }}"}'
             hx-target="#boodschapitem-{{ item.id }}"
             hx-swap="outerHTML"
-            class="w-5 h-5 rounded border-2 shrink-0 cursor-pointer
+            class="w-6 h-6 rounded border-2 shrink-0 cursor-pointer
                    {{ 'bg-ah-blue border-ah-blue' if item.checked else 'border-gray-300' }}
-                   flex items-center justify-center">
+                   flex items-center justify-center touch-manipulation">
         {% if item.checked %}
-        <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
         </svg>
         {% endif %}
     </button>
 
     <div class="flex-1 min-w-0">
-        <span class="font-medium capitalize {{ 'text-gray-400 line-through' if item.checked else 'text-gray-800' }}">
+        <span class="font-medium capitalize leading-snug {{ 'text-gray-400 line-through' if item.checked else 'text-gray-800' }}">
             {{ item.naam }}
         </span>
     </div>
 
-    <span class="text-sm text-gray-500 shrink-0 flex items-center gap-1">
-        <input type="number"
-               name="hoeveelheid"
-               value="{{ item.hoeveelheid|int if item.hoeveelheid == item.hoeveelheid|int else item.hoeveelheid }}"
-               min="0.5"
-               step="0.5"
-               data-testid="hoeveelheid"
-               hx-patch="/boodschappen/{{ item.id }}/hoeveelheid"
-               hx-target="#boodschapitem-{{ item.id }}"
-               hx-swap="outerHTML"
-               hx-trigger="change"
-               class="w-12 text-right bg-transparent border-b border-transparent
-                      hover:border-gray-300 focus:border-ah-blue focus:outline-none
-                      text-sm text-gray-500"/>
-        {{ item.eenheid }}
-    </span>
+    <div class="flex items-center shrink-0 gap-1.5">
+        <button type="button"
+                hx-patch="/boodschappen/{{ item.id }}/hoeveelheid"
+                hx-vals='{"hoeveelheid": "{{ hoeveelheid_minus }}"}'
+                hx-target="#boodschapitem-{{ item.id }}"
+                hx-swap="outerHTML"
+                {% if item.hoeveelheid <= stap_minus %}disabled{% endif %}
+                class="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center
+                       text-gray-500 text-xl leading-none shrink-0 touch-manipulation
+                       active:bg-gray-200 disabled:opacity-30">
+            &minus;
+        </button>
+        <span data-testid="hoeveelheid"
+              value="{{ hoeveelheid_display }}"
+              class="text-sm text-gray-600 text-center tabular-nums min-w-[4.5rem]">
+            {{ hoeveelheid_display }}&nbsp;{{ item.eenheid }}
+        </span>
+        <button type="button"
+                hx-patch="/boodschappen/{{ item.id }}/hoeveelheid"
+                hx-vals='{"hoeveelheid": "{{ hoeveelheid_plus }}"}'
+                hx-target="#boodschapitem-{{ item.id }}"
+                hx-swap="outerHTML"
+                class="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center
+                       text-gray-500 text-xl leading-none shrink-0 touch-manipulation
+                       active:bg-gray-200">
+            +
+        </button>
+    </div>
 </div>
