@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Verstuurd naar AH — Albert{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto pt-6" data-testid="ah-bevestiging">
+    <header class="flex items-center mb-6 px-4">
+        <a href="/boodschappen" hx-boost="false" class="p-2 -ml-2 rounded-full hover:bg-gray-100 transition-colors mr-2" aria-label="Terug naar boodschappenlijst">
+            <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+        </a>
+        <h1 class="text-2xl font-semibold text-gray-800">Verstuurd</h1>
+    </header>
+
+    <div class="px-4 space-y-6">
+        <!-- Groen vinkje -->
+        <div class="flex flex-col items-center py-6">
+            <div class="w-16 h-16 bg-ah-green rounded-full flex items-center justify-center mb-4">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                </svg>
+            </div>
+            <p class="text-lg font-medium text-gray-800" data-testid="ah-aantal-producten">
+                {{ resultaat.gevonden | length }} producten in je mandje
+            </p>
+            <p class="text-sm text-gray-500 mt-1" data-testid="ah-lijst-naam">
+                {{ resultaat.lijst_naam }}
+            </p>
+        </div>
+
+        {% if resultaat.niet_gevonden %}
+        <div data-testid="ah-niet-gevonden" class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+            <p class="font-medium text-amber-800 mb-2" data-testid="ah-samenvatting">
+                {{ resultaat.gevonden | length }} van {{ resultaat.matches | length }} producten gevonden
+            </p>
+            <p class="text-sm text-amber-700 mb-3">Deze producten zijn niet gevonden:</p>
+            <ul class="space-y-1">
+                {% for match in resultaat.niet_gevonden %}
+                <li class="text-sm text-amber-800" data-testid="ah-niet-gevonden-item">{{ match.regel.naam }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <!-- Links -->
+        <div class="space-y-3">
+            <a href="https://www.ah.nl/mijnlijstjes" data-testid="ah-open-link"
+               class="block w-full text-center bg-ah-blue text-white font-medium py-3 rounded-xl hover:bg-ah-blue-dark transition-colors">
+                Open Albert Heijn
+            </a>
+            <a href="/week"
+               class="block w-full text-center bg-gray-100 text-gray-700 font-medium py-3 rounded-xl hover:bg-gray-200 transition-colors">
+                Terug naar home
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

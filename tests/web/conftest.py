@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
+from boodschappenagent.ah import ProductMatch, SyncResultaat
 from boodschappenagent.boodschappenlijst import (
     BoodschappenlijstGenerator,
     IngredientNormalizer,
@@ -285,3 +286,50 @@ def app_with_ah(app_with_overrides, mock_token_manager, mock_ah_integratie) -> F
         lambda: mock_ah_integratie
     )
     return app_with_overrides
+
+
+def _make_product_match(naam: str, gevonden: bool, product_id: int = 1) -> ProductMatch:
+    """Helper om een ProductMatch te maken."""
+    from boodschappenagent.ah.models import Product
+
+    product = (
+        Product(
+            id=product_id, title=naam, brand="", size="", price=2.99,
+            category="", is_orderable=True,
+        )
+        if gevonden
+        else None
+    )
+    bron = "zoekopdracht" if gevonden else "niet_gevonden"
+    regel = type("Regel", (), {"naam": naam})()
+    return ProductMatch(regel=regel, product=product, bron=bron)
+
+
+@pytest.fixture
+def sync_resultaat_succes() -> SyncResultaat:
+    """SyncResultaat met 15 gevonden producten, 0 niet gevonden."""
+    matches = [
+        _make_product_match(f"product-{i}", gevonden=True, product_id=i)
+        for i in range(15)
+    ]
+    return SyncResultaat(
+        lijst_id="list-123",
+        lijst_naam="Boodschappen 2026-03-02",
+        matches=matches,
+    )
+
+
+@pytest.fixture
+def sync_resultaat_deels() -> SyncResultaat:
+    """SyncResultaat met 13 gevonden producten, 2 niet gevonden."""
+    matches = [
+        _make_product_match(f"product-{i}", gevonden=True, product_id=i)
+        for i in range(13)
+    ]
+    matches.append(_make_product_match("verse basilicum", gevonden=False))
+    matches.append(_make_product_match("za'atar kruiden", gevonden=False))
+    return SyncResultaat(
+        lijst_id="list-456",
+        lijst_naam="Boodschappen 2026-03-02",
+        matches=matches,
+    )

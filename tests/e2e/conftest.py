@@ -13,6 +13,8 @@ import pytest
 import uvicorn
 from playwright.sync_api import Playwright
 
+from boodschappenagent.ah import ProductMatch, SyncResultaat
+from boodschappenagent.ah.models import Product
 from boodschappenagent.models import Basis, Categorie, Ingredient, Recipe, Seizoen
 from boodschappenagent.planner import DagPlanning, WeekMenu
 from boodschappenagent.voorraadbeheer import (
@@ -22,6 +24,7 @@ from boodschappenagent.voorraadbeheer import (
 )
 from boodschappenagent.web.app import create_app
 from boodschappenagent.web.dependencies import (
+    get_ah_integratie,
     get_ah_token_manager,
     get_boodschappenlijst_filter,
     get_voorraad_checker,
@@ -123,7 +126,31 @@ def mock_ah_token_manager():
 
 
 @pytest.fixture(scope="session")
-def app(tmp_path_factory, mock_ah_token_manager):
+def mock_ah_integratie():
+    """Gemockte AHIntegratie voor E2E tests (session-scoped)."""
+    mock = MagicMock()
+    # Default: 5 producten gevonden, 0 niet gevonden
+    matches = [
+        ProductMatch(
+            regel=type("Regel", (), {"naam": f"product-{i}"})(),
+            product=Product(
+                id=i, title=f"AH Product {i}", brand="AH",
+                size="1 stuk", price=2.99, category="", is_orderable=True,
+            ),
+            bron="zoekopdracht",
+        )
+        for i in range(5)
+    ]
+    mock.sync_naar_lijst.return_value = SyncResultaat(
+        lijst_id="e2e-list-123",
+        lijst_naam="Boodschappen 2026-02-16",
+        matches=matches,
+    )
+    return mock
+
+
+@pytest.fixture(scope="session")
+def app(tmp_path_factory, mock_ah_token_manager, mock_ah_integratie):
     """FastAPI app met test-data op app.state en tijdelijke VoorraadRepository."""
     tmp_dir = tmp_path_factory.mktemp("voorraad_e2e")
     voorraad_path = tmp_dir / "voorraad.json"
@@ -144,6 +171,7 @@ def app(tmp_path_factory, mock_ah_token_manager):
         lambda: BoodschappenlijstFilter(_get_repo())
     )
     app.dependency_overrides[get_ah_token_manager] = lambda: mock_ah_token_manager
+    app.dependency_overrides[get_ah_integratie] = lambda: mock_ah_integratie
 
     return app
 

@@ -7,9 +7,13 @@ from uuid import uuid4
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 
+from boodschappenagent.ah import AHIntegratie, AHTokenManager
 from boodschappenagent.boodschappenlijst import BoodschappenlijstGenerator
+from boodschappenagent.boodschappenlijst.models import Boodschappenlijst
 from boodschappenagent.voorraadbeheer import BoodschappenlijstFilter
 from boodschappenagent.web.dependencies import (
+    get_ah_integratie,
+    get_ah_token_manager,
     get_boodschappenlijst_filter,
     get_boodschappenlijst_generator,
 )
@@ -19,6 +23,16 @@ router = APIRouter()
 
 def _get_week_menu(request: Request):
     return getattr(request.app.state, "week_menu", None)
+
+
+def _get_boodschappenlijst(request: Request) -> Boodschappenlijst | None:
+    """Haal de boodschappenlijst op uit app.state."""
+    return getattr(request.app.state, "boodschappenlijst_model", None)
+
+
+def _get_items(request: Request) -> list[dict]:
+    """Haal de boodschappenlijst items (dicts) op uit app.state."""
+    return getattr(request.app.state, "boodschappenlijst", None) or []
 
 
 def _week_nummer(week_start: str) -> int:
@@ -35,6 +49,9 @@ def _build_boodschappenlijst_state(
     week_menu = _get_week_menu(request)
     lijst = generator.genereer(week_menu)
     gefilterd = lijst_filter.filter_op_voorraad(lijst)
+
+    # Bewaar het model voor AH-integratie
+    request.app.state.boodschappenlijst_model = gefilterd
 
     items = [
         {
@@ -86,7 +103,7 @@ async def boodschappen(
 
 def _get_item(request: Request, item_id: str) -> dict:
     """Zoek item op id in app state, gooi 404 als niet gevonden."""
-    items = getattr(request.app.state, "boodschappenlijst", None) or []
+    items = _get_items(request)
     item = next((i for i in items if i["id"] == item_id), None)
     if item is None:
         raise HTTPException(status_code=404, detail="Item niet gevonden")
@@ -96,7 +113,7 @@ def _get_item(request: Request, item_id: str) -> dict:
 def _header_context(request: Request) -> dict:
     """Geeft week_nr en totaal voor de OOB header."""
     week_menu = _get_week_menu(request)
-    items = getattr(request.app.state, "boodschappenlijst", None) or []
+    items = _get_items(request)
     week_nr = _week_nummer(week_menu.week_start) if week_menu else 0
     return {"week_nr": week_nr, "totaal": len(items)}
 
@@ -156,10 +173,9 @@ async def handmatig_toevoegen(
     if not naam or not naam.strip():
         raise HTTPException(status_code=422, detail="Naam is verplicht")
 
-    items = getattr(request.app.state, "boodschappenlijst", None)
-    if items is None:
-        items = []
-        request.app.state.boodschappenlijst = items
+    if getattr(request.app.state, "boodschappenlijst", None) is None:
+        request.app.state.boodschappenlijst = []
+    items = request.app.state.boodschappenlijst
 
     item = {
         "id": str(uuid4()),
@@ -179,3 +195,30 @@ async def handmatig_toevoegen(
         "fragments/boodschappen_header_oob.html"
     ).render({**_header_context(request), "request": request})
     return HTMLResponse(content=item_html + header_html)
+
+
+@router.post("/boodschappen/verstuur-naar-ah")
+async def verstuur_naar_ah(
+    request: Request,
+    token_manager: Annotated[AHTokenManager, Depends(get_ah_token_manager)],
+    ah_integratie: Annotated[AHIntegratie, Depends(get_ah_integratie)],
+):
+    """Verstuur boodschappenlijst naar Albert Heijn."""
+    # Check of gebruiker ingelogd is
+    if not token_manager.is_authenticated():
+        return RedirectResponse(url="/ah/login", status_code=303)
+
+    # Check of er een boodschappenlijst is
+    lijst = _get_boodschappenlijst(request)
+    if lijst is None:
+        return RedirectResponse(url="/week", status_code=303)
+
+    # Sync naar AH
+    resultaat = ah_integratie.sync_naar_lijst(lijst)
+
+    templates = request.app.state.templates
+    return templates.TemplateResponse(
+        request=request,
+        name="pages/ah_bevestiging.html",
+        context={"resultaat": resultaat},
+    )

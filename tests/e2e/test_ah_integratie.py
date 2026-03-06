@@ -2,6 +2,9 @@
 
 import pytest
 
+from boodschappenagent.ah import ProductMatch, SyncResultaat
+from boodschappenagent.ah.models import Product
+
 
 @pytest.mark.e2e
 class TestE15LoginPaginaLaden:
@@ -85,3 +88,67 @@ class TestE17LoginFlowFout:
         # Code-veld nog steeds aanwezig
         code_input = page.locator('input[name="code"]')
         assert code_input.is_visible()
+
+
+@pytest.mark.e2e
+class TestE18VerstuurNaarAHSucces:
+    """E18: Verstuur naar AH (succes)."""
+
+    def test_verstuur_naar_ah_toont_bevestiging(
+        self,
+        page,
+        live_server_url,
+        app,
+        mock_ah_token_manager,
+        mock_ah_integratie,
+    ):
+        """Verstuur -> bevestigingsscherm."""
+        # Setup: authenticeer en zet sync resultaat
+        mock_ah_token_manager.is_authenticated.return_value = True
+
+        matches = [
+            ProductMatch(
+                regel=type("Regel", (), {"naam": f"product-{i}"})(),
+                product=Product(
+                    id=i, title=f"AH Product {i}", brand="AH",
+                    size="1 stuk", price=2.99, category="", is_orderable=True,
+                ),
+                bron="zoekopdracht",
+            )
+            for i in range(5)
+        ]
+        mock_ah_integratie.sync_naar_lijst.return_value = SyncResultaat(
+            lijst_id="e2e-list-123",
+            lijst_naam="Boodschappen 2026-02-16",
+            matches=matches,
+        )
+
+        # Reset app state voor boodschappenlijst
+        app.state.boodschappenlijst = None
+
+        page.goto(f"{live_server_url}/boodschappen")
+        page.wait_for_load_state("networkidle")
+
+        # Verstuur naar AH via formulier POST (de knop komt in stap 7)
+        page.evaluate("""() => {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/boodschappen/verstuur-naar-ah';
+            document.body.appendChild(form);
+            form.submit();
+        }""")
+        page.wait_for_load_state("networkidle")
+
+        # Bevestigingsscherm zichtbaar
+        bevestiging = page.locator('[data-testid="ah-bevestiging"]')
+        bevestiging.wait_for(state="visible", timeout=5000)
+
+        # Aantal producten
+        aantal = page.locator('[data-testid="ah-aantal-producten"]')
+        assert aantal.is_visible()
+        assert "5" in aantal.text_content()
+
+        # "Open Albert Heijn" link
+        ah_link = page.locator('[data-testid="ah-open-link"]')
+        assert ah_link.is_visible()
+        assert "ah.nl" in ah_link.get_attribute("href")
