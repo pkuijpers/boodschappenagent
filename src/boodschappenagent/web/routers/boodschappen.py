@@ -4,8 +4,8 @@ from datetime import date
 from typing import Annotated
 from uuid import uuid4
 
-from fastapi import APIRouter, Depends, Request
-from fastapi.responses import RedirectResponse
+from fastapi import APIRouter, Depends, Form, HTTPException, Request
+from fastapi.responses import HTMLResponse, RedirectResponse
 
 from boodschappenagent.boodschappenlijst import BoodschappenlijstGenerator
 from boodschappenagent.voorraadbeheer import BoodschappenlijstFilter
@@ -82,3 +82,100 @@ async def boodschappen(
     return templates.TemplateResponse(
         request=request, name=template_name, context=context
     )
+
+
+def _get_item(request: Request, item_id: str) -> dict:
+    """Zoek item op id in app state, gooi 404 als niet gevonden."""
+    items = getattr(request.app.state, "boodschappenlijst", None) or []
+    item = next((i for i in items if i["id"] == item_id), None)
+    if item is None:
+        raise HTTPException(status_code=404, detail="Item niet gevonden")
+    return item
+
+
+def _header_context(request: Request) -> dict:
+    """Geeft week_nr en totaal voor de OOB header."""
+    week_menu = _get_week_menu(request)
+    items = getattr(request.app.state, "boodschappenlijst", None) or []
+    week_nr = _week_nummer(week_menu.week_start) if week_menu else 0
+    return {"week_nr": week_nr, "totaal": len(items)}
+
+
+@router.patch("/boodschappen/{item_id}/hoeveelheid")
+async def update_hoeveelheid(
+    item_id: str,
+    request: Request,
+    hoeveelheid: Annotated[float, Form()],
+):
+    """Hoeveelheid aanpassen van een boodschapitem."""
+    item = _get_item(request, item_id)
+    item["hoeveelheid"] = hoeveelheid
+    templates = request.app.state.templates
+    return templates.TemplateResponse(
+        request=request, name="components/boodschapitem.html", context={"item": item}
+    )
+
+
+@router.patch("/boodschappen/{item_id}")
+async def toggle_checked(
+    item_id: str,
+    request: Request,
+    checked: Annotated[str, Form()],
+):
+    """Toggle checked status van een boodschapitem."""
+    item = _get_item(request, item_id)
+    item["checked"] = checked.lower() == "true"
+    templates = request.app.state.templates
+    return templates.TemplateResponse(
+        request=request, name="components/boodschapitem.html", context={"item": item}
+    )
+
+
+@router.delete("/boodschappen/{item_id}")
+async def verwijder_item(item_id: str, request: Request):
+    """Verwijder een boodschapitem en stuur OOB header update."""
+    item = _get_item(request, item_id)
+    items = request.app.state.boodschappenlijst
+    items.remove(item)
+    templates = request.app.state.templates
+    return templates.TemplateResponse(
+        request=request,
+        name="fragments/boodschappen_header_oob.html",
+        context=_header_context(request),
+    )
+
+
+@router.post("/boodschappen/toevoegen")
+async def handmatig_toevoegen(
+    request: Request,
+    naam: Annotated[str, Form()],
+    hoeveelheid: Annotated[float, Form()] = 1.0,
+    eenheid: Annotated[str, Form()] = "stuks",
+):
+    """Handmatig een product toevoegen aan de boodschappenlijst."""
+    if not naam or not naam.strip():
+        raise HTTPException(status_code=422, detail="Naam is verplicht")
+
+    items = getattr(request.app.state, "boodschappenlijst", None)
+    if items is None:
+        items = []
+        request.app.state.boodschappenlijst = items
+
+    item = {
+        "id": str(uuid4()),
+        "naam": naam.strip(),
+        "hoeveelheid": hoeveelheid,
+        "eenheid": eenheid,
+        "checked": False,
+        "handmatig": True,
+    }
+    items.append(item)
+
+    templates = request.app.state.templates
+    item_html = templates.get_template("components/boodschapitem.html").render(
+        {"item": item, "request": request}
+    )
+    header_html = templates.get_template(
+        "fragments/boodschappen_header_oob.html"
+    ).render({**_header_context(request), "request": request})
+    return HTMLResponse(content=item_html + header_html)
