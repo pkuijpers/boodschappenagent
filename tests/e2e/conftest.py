@@ -7,6 +7,7 @@ Gebruikt pytest-playwright voor browser-fixtures (page, browser, context).
 import socket
 import threading
 import time
+from unittest.mock import MagicMock
 
 import pytest
 import uvicorn
@@ -21,6 +22,7 @@ from boodschappenagent.voorraadbeheer import (
 )
 from boodschappenagent.web.app import create_app
 from boodschappenagent.web.dependencies import (
+    get_ah_token_manager,
     get_boodschappenlijst_filter,
     get_voorraad_checker,
     get_voorraad_repository,
@@ -112,7 +114,16 @@ def browser_context_args(browser_context_args, playwright: Playwright):
 
 
 @pytest.fixture(scope="session")
-def app(tmp_path_factory):
+def mock_ah_token_manager():
+    """Gemockte AHTokenManager voor E2E tests (session-scoped)."""
+    mock = MagicMock()
+    mock.is_authenticated.return_value = False
+    mock.login.return_value = None
+    return mock
+
+
+@pytest.fixture(scope="session")
+def app(tmp_path_factory, mock_ah_token_manager):
     """FastAPI app met test-data op app.state en tijdelijke VoorraadRepository."""
     tmp_dir = tmp_path_factory.mktemp("voorraad_e2e")
     voorraad_path = tmp_dir / "voorraad.json"
@@ -126,12 +137,13 @@ def app(tmp_path_factory):
         return VoorraadRepository(voorraad_path)
 
     app.dependency_overrides[get_voorraad_repository] = _get_repo
-    app.dependency_overrides[get_voorraad_checker] = (
-        lambda: VoorraadChecker(_get_repo())
+    app.dependency_overrides[get_voorraad_checker] = lambda: VoorraadChecker(
+        _get_repo()
     )
     app.dependency_overrides[get_boodschappenlijst_filter] = (
         lambda: BoodschappenlijstFilter(_get_repo())
     )
+    app.dependency_overrides[get_ah_token_manager] = lambda: mock_ah_token_manager
 
     return app
 

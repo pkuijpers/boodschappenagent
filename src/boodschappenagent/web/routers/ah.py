@@ -1,7 +1,12 @@
 """Albert Heijn integratie routes."""
 
-from fastapi import APIRouter, Request
-from fastapi.responses import HTMLResponse
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, Form, Query, Request
+from fastapi.responses import HTMLResponse, RedirectResponse
+
+from boodschappenagent.ah import AHTokenManager
+from boodschappenagent.web.dependencies import get_ah_token_manager
 
 router = APIRouter(prefix="/ah", tags=["ah"])
 
@@ -11,9 +16,8 @@ AH_LOGIN_URL = (
 )
 
 
-@router.get("/login", response_class=HTMLResponse)
-async def login_pagina(request: Request):
-    """Toon de AH login pagina met instructies en code-invoerveld."""
+def _render_login(request: Request, error: str | None = None):
+    """Render de login pagina (full page of HTMX fragment)."""
     templates = request.app.state.templates
     is_htmx = request.headers.get("HX-Request") == "true"
     template_name = (
@@ -21,5 +25,26 @@ async def login_pagina(request: Request):
     )
     return templates.TemplateResponse(
         template_name,
-        {"request": request, "login_url": AH_LOGIN_URL},
+        {"request": request, "login_url": AH_LOGIN_URL, "error": error},
     )
+
+
+@router.get("/login", response_class=HTMLResponse)
+async def login_pagina(request: Request):
+    """Toon de AH login pagina met instructies en code-invoerveld."""
+    return _render_login(request)
+
+
+@router.post("/login")
+async def login_verwerken(
+    request: Request,
+    token_manager: Annotated[AHTokenManager, Depends(get_ah_token_manager)],
+    code: str = Form(..., min_length=1),
+    next: str = Query(default="/boodschappen"),
+):
+    """Verwerk authorization code en sla tokens op."""
+    try:
+        token_manager.login(code)
+    except Exception:
+        return _render_login(request, error="Ongeldige code. Probeer opnieuw.")
+    return RedirectResponse(url=next, status_code=303)
