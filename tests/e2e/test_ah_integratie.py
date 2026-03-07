@@ -224,3 +224,31 @@ class TestE19NietGevondenProducten:
         assert items.count() == 2
         teksten = [items.nth(i).text_content() for i in range(2)]
         assert any("verse basilicum" in t for t in teksten)
+
+
+@pytest.mark.e2e
+class TestE20VerstuurZonderLogin:
+    """E20: Verstuur zonder login -> redirect naar /ah/login."""
+
+    def test_verstuur_zonder_login_redirect(
+        self, page, live_server_url, mock_ah_token_manager
+    ):
+        """Verstuur naar AH zonder login -> login pagina verschijnt."""
+        mock_ah_token_manager.is_authenticated.return_value = False
+
+        page.goto(f"{live_server_url}/boodschappen")
+        page.wait_for_load_state("networkidle")
+
+        # Verstuur via JS form submit
+        page.evaluate("""() => {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/boodschappen/verstuur-naar-ah';
+            document.body.appendChild(form);
+            form.submit();
+        }""")
+
+        # Wacht tot de login pagina verschijnt (HTMX swap of volledige redirect)
+        login_form = page.locator('[data-testid="ah-login-form"]')
+        login_form.wait_for(state="visible", timeout=5000)
+        assert login_form.is_visible()

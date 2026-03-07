@@ -252,3 +252,71 @@ class TestVerstuurNaarAHNietGevonden:
         tekst = samenvatting.get_text(strip=True)
         assert "13" in tekst
         assert "15" in tekst
+
+
+class TestVerstuurNaarAHErrors:
+    """S17: Verstuur naar AH (error scenarios)."""
+
+    def test_s17_1_niet_ingelogd_redirect_login(self, app_with_ah, mock_token_manager):
+        """S17.1: Niet ingelogd -> redirect (303) naar /ah/login."""
+        mock_token_manager.is_authenticated.return_value = False
+        client = TestClient(app_with_ah, follow_redirects=False)
+        response = client.post("/boodschappen/verstuur-naar-ah")
+
+        assert response.status_code == 303
+        assert response.headers["location"] == "/ah/login"
+
+    def test_s17_2_geen_boodschappenlijst_redirect_week(
+        self, app_with_ah, mock_token_manager
+    ):
+        """S17.2: Geen boodschappenlijst in state -> redirect (303) naar /week."""
+        mock_token_manager.is_authenticated.return_value = True
+        app_with_ah.state.boodschappenlijst_model = None
+        client = TestClient(app_with_ah, follow_redirects=False)
+        response = client.post("/boodschappen/verstuur-naar-ah")
+
+        assert response.status_code == 303
+        assert response.headers["location"] == "/week"
+
+    def test_s17_3_lege_boodschappenlijst_foutmelding(
+        self, app_with_ah, mock_token_manager
+    ):
+        """S17.3: Lege boodschappenlijst -> foutmelding."""
+        from boodschappenagent.boodschappenlijst.models import Boodschappenlijst
+
+        mock_token_manager.is_authenticated.return_value = True
+        app_with_ah.state.boodschappenlijst_model = Boodschappenlijst(
+            week_start="2026-02-16", regels=[]
+        )
+        client = TestClient(app_with_ah)
+        response = client.post("/boodschappen/verstuur-naar-ah")
+
+        assert response.status_code == 200
+        html = soup(response)
+        assert html.select_one('[data-testid="ah-lege-lijst"]') is not None
+
+    def test_s17_4_ah_api_fout_foutmelding(
+        self,
+        app_with_ah,
+        mock_token_manager,
+        mock_ah_integratie,
+        setup_boodschappenlijst,
+    ):
+        """S17.4: AH API fout -> foutmelding."""
+        mock_token_manager.is_authenticated.return_value = True
+        mock_ah_integratie.sync_naar_lijst.side_effect = Exception("AH API error")
+        client = TestClient(app_with_ah)
+        response = client.post("/boodschappen/verstuur-naar-ah")
+
+        assert response.status_code == 200
+        html = soup(response)
+        assert html.select_one('[data-testid="ah-api-error"]') is not None
+
+    def test_s17_5_token_verlopen_redirect_login(self, app_with_ah, mock_token_manager):
+        """S17.5: Token verlopen bij versturen -> redirect (303) naar /ah/login."""
+        mock_token_manager.is_authenticated.side_effect = Exception("Token expired")
+        client = TestClient(app_with_ah, follow_redirects=False)
+        response = client.post("/boodschappen/verstuur-naar-ah")
+
+        assert response.status_code == 303
+        assert response.headers["location"] == "/ah/login"

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Fout — Albert{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto pt-6">
+    <header class="flex items-center mb-6 px-4">
+        <a href="/boodschappen" hx-boost="false" class="p-2 -ml-2 rounded-full hover:bg-gray-100 transition-colors mr-2" aria-label="Terug naar boodschappenlijst">
+            <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+        </a>
+        <h1 class="text-2xl font-semibold text-gray-800">Fout</h1>
+    </header>
+
+    <div class="px-4 space-y-4">
+        {% if error_type == "lege_lijst" %}
+        <div data-testid="ah-lege-lijst" class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+            <p class="font-medium text-amber-800">Geen producten om te versturen</p>
+            <p class="text-sm text-amber-700 mt-1">De boodschappenlijst is leeg. Ga terug en voeg producten toe.</p>
+        </div>
+        {% elif error_type == "api_error" %}
+        <div data-testid="ah-api-error" class="bg-red-50 border border-red-200 rounded-xl p-4">
+            <p class="font-medium text-red-800">Kon niet verbinden met Albert Heijn</p>
+            <p class="text-sm text-red-700 mt-1">Er is een fout opgetreden. Probeer het later opnieuw of log opnieuw in bij AH.</p>
+        </div>
+        {% endif %}
+
+        <a href="/boodschappen"
+           class="block w-full text-center bg-gray-100 text-gray-700 font-medium py-3 rounded-xl hover:bg-gray-200 transition-colors">
+            Terug naar boodschappenlijst
+        </a>
+    </div>
+</div>
+{% endblock %}

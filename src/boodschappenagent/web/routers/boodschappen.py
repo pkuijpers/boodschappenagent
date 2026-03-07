@@ -204,8 +204,15 @@ async def verstuur_naar_ah(
     ah_integratie: Annotated[AHIntegratie, Depends(get_ah_integratie)],
 ):
     """Verstuur boodschappenlijst naar Albert Heijn."""
-    # Check of gebruiker ingelogd is
-    if not token_manager.is_authenticated():
+    templates = request.app.state.templates
+
+    # Check of gebruiker ingelogd is (kan een exception gooien bij verlopen tokens)
+    try:
+        authenticated = token_manager.is_authenticated()
+    except Exception:
+        return RedirectResponse(url="/ah/login", status_code=303)
+
+    if not authenticated:
         return RedirectResponse(url="/ah/login", status_code=303)
 
     # Check of er een boodschappenlijst is
@@ -213,10 +220,24 @@ async def verstuur_naar_ah(
     if lijst is None:
         return RedirectResponse(url="/week", status_code=303)
 
-    # Sync naar AH
-    resultaat = ah_integratie.sync_naar_lijst(lijst)
+    # Check op lege lijst
+    if len(lijst.regels) == 0:
+        return templates.TemplateResponse(
+            request=request,
+            name="pages/ah_error.html",
+            context={"error_type": "lege_lijst"},
+        )
 
-    templates = request.app.state.templates
+    # Sync naar AH
+    try:
+        resultaat = ah_integratie.sync_naar_lijst(lijst)
+    except Exception:
+        return templates.TemplateResponse(
+            request=request,
+            name="pages/ah_error.html",
+            context={"error_type": "api_error"},
+        )
+
     return templates.TemplateResponse(
         request=request,
         name="pages/ah_bevestiging.html",
