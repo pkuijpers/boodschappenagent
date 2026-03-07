@@ -252,3 +252,44 @@ class TestE20VerstuurZonderLogin:
         login_form = page.locator('[data-testid="ah-login-form"]')
         login_form.wait_for(state="visible", timeout=5000)
         assert login_form.is_visible()
+
+
+@pytest.mark.e2e
+class TestE21VolleFlow:
+    """E21: Volledige flow: Boodschappen -> AH -> Bevestiging -> Terug naar home."""
+
+    def test_volledige_flow_boodschappen_naar_week(
+        self,
+        page,
+        live_server_url,
+        app,
+        mock_ah_token_manager,
+    ):
+        """Hele flow werkt: boodschappen -> verstuur -> bevestiging -> /week."""
+        mock_ah_token_manager.is_authenticated.return_value = True
+        mock_ah_token_manager.is_authenticated.side_effect = None
+
+        app.state.boodschappenlijst = None
+
+        page.goto(f"{live_server_url}/boodschappen")
+        page.wait_for_load_state("networkidle")
+
+        # Klik "Verstuur naar AH" knop (nu een form submit)
+        verstuur_knop = page.locator('[data-testid="verstuur-naar-ah-button"]')
+        verstuur_knop.wait_for(state="visible")
+        verstuur_knop.click()
+        page.wait_for_load_state("networkidle")
+
+        # Bevestigingsscherm zichtbaar
+        bevestiging = page.locator('[data-testid="ah-bevestiging"]')
+        bevestiging.wait_for(state="visible", timeout=5000)
+        assert bevestiging.is_visible()
+
+        # Klik "Terug naar home"
+        terug_link = page.get_by_role("link", name="Terug naar home")
+        terug_link.wait_for(state="visible")
+        terug_link.click()
+        page.wait_for_url("**/week**", timeout=5000)
+
+        # Eindig op /week
+        assert "/week" in page.url

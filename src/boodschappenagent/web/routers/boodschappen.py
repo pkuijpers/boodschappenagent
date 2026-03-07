@@ -77,6 +77,7 @@ async def boodschappen(
     lijst_filter: Annotated[
         BoodschappenlijstFilter, Depends(get_boodschappenlijst_filter)
     ],
+    token_manager: Annotated[AHTokenManager, Depends(get_ah_token_manager)],
 ):
     """Boodschappenlijst pagina — gefilterd op weekmenu + voorraad."""
     week_menu = _get_week_menu(request)
@@ -86,10 +87,16 @@ async def boodschappen(
     items = _build_boodschappenlijst_state(request, generator, lijst_filter)
     week_nr = _week_nummer(week_menu.week_start)
 
+    try:
+        ah_authenticated = token_manager.is_authenticated()
+    except Exception:
+        ah_authenticated = False
+
     context = {
         "week_nr": week_nr,
         "items": items,
         "totaal": len(items),
+        "ah_authenticated": ah_authenticated,
     }
     templates = request.app.state.templates
     is_htmx = request.headers.get("HX-Request") == "true"

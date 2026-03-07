@@ -289,6 +289,20 @@ def app_with_ah(app_with_overrides, mock_token_manager, mock_ah_integratie) -> F
 
 
 @pytest.fixture
+def app_with_boodschappen_and_ah(
+    app_with_boodschappen, mock_token_manager, mock_ah_integratie
+) -> FastAPI:
+    """App met boodschappen en AH dependencies."""
+    app_with_boodschappen.dependency_overrides[get_ah_token_manager] = (
+        lambda: mock_token_manager
+    )
+    app_with_boodschappen.dependency_overrides[get_ah_integratie] = (
+        lambda: mock_ah_integratie
+    )
+    return app_with_boodschappen
+
+
+@pytest.fixture
 def setup_boodschappenlijst(app_with_ah):
     """Zet een boodschappenlijst van 15 producten en weekmenu op app.state."""
     from boodschappenagent.boodschappenlijst.models import (
