@@ -193,10 +193,11 @@ class TestVerstuurNaarAHSucces:
         assert "Boodschappen 2026-03-02" in naam_el.get_text()
 
     def test_s15_4_open_albert_heijn_link(self, _bevestiging_succes):
-        """S15.4: "Open Albert Heijn" link zichtbaar."""
+        """S15.4: "Open Albert Heijn" link wijst naar de specifieke lijst-URL."""
         link = _bevestiging_succes.select_one('[data-testid="ah-open-link"]')
         assert link is not None
-        assert "ah.nl" in link.get("href", "")
+        href = link.get("href", "")
+        assert "ah.nl/favorieten/lijst/list-123" in href
 
     def test_s15_5_terug_naar_home_link(self, _bevestiging_succes):
         """S15.5: "Terug naar home" link naar /week."""
