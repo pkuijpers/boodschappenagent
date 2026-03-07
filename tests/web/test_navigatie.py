@@ -10,7 +10,7 @@ from boodschappenagent.boodschappenlijst.models import (
     Boodschappenlijst,
     BoodschappenRegel,
 )
-from boodschappenagent.web.dependencies import get_ah_integratie, get_ah_token_manager
+from boodschappenagent.web.dependencies import get_ah_integratie
 
 from .conftest import make_full_week_menu, set_week_menu, soup
 
@@ -106,24 +106,18 @@ class TestAHKnopNavigatie:
     def client_authenticated(
         self,
         app_with_boodschappen_and_ah: FastAPI,
-        mock_token_manager_authenticated: MagicMock,
+        mock_token_manager_authenticated: MagicMock,  # noqa: ARG002 — configureert de gedeelde mock
     ) -> TestClient:
         """Client met geauthenticeerde AH token manager."""
-        app_with_boodschappen_and_ah.dependency_overrides[get_ah_token_manager] = (
-            lambda: mock_token_manager_authenticated
-        )
         return TestClient(app_with_boodschappen_and_ah)
 
     @pytest.fixture
     def client_unauthenticated(
         self,
         app_with_boodschappen_and_ah: FastAPI,
-        mock_token_manager_unauthenticated: MagicMock,
+        mock_token_manager_unauthenticated: MagicMock,  # noqa: ARG002 — configureert de gedeelde mock
     ) -> TestClient:
         """Client met niet-geauthenticeerde AH token manager."""
-        app_with_boodschappen_and_ah.dependency_overrides[get_ah_token_manager] = (
-            lambda: mock_token_manager_unauthenticated
-        )
         return TestClient(app_with_boodschappen_and_ah)
 
     def test_s19_1_verstuur_knop_wijst_naar_post(

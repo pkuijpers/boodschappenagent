@@ -35,6 +35,18 @@
 
     <!-- HTMX -->
     <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+
+    <style>
+        @keyframes verstuur-shimmer {
+            0%   { transform: translateX(-100%) skewX(-12deg); }
+            100% { transform: translateX(250%) skewX(-12deg); }
+        }
+        .verstuur-btn.is-loading .verstuur-shimmer {
+            opacity: 1;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.18) 50%, transparent 100%);
+            animation: verstuur-shimmer 1.6s ease-in-out infinite;
+        }
+    </style>
 </head>
 <body class="bg-white text-gray-800 min-h-screen flex flex-col" hx-boost="true">
 

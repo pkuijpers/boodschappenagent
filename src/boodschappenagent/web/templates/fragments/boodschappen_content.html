@@ -87,32 +87,23 @@
     </form>
 </div>
 
-<style>
-    @keyframes verstuur-shimmer {
-        0%   { transform: translateX(-100%) skewX(-12deg); }
-        100% { transform: translateX(250%) skewX(-12deg); }
-    }
-    .verstuur-btn.is-loading {
-        background-color: #0077B3;
-        cursor: not-allowed;
-    }
-    .verstuur-btn.is-loading .verstuur-shimmer {
-        opacity: 1;
-        background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.18) 50%, transparent 100%);
-        animation: verstuur-shimmer 1.6s ease-in-out infinite;
-    }
-</style>
-
 <script>
-    document.getElementById('verstuur-form').addEventListener('submit', function() {
-        var btn = this.querySelector('.verstuur-btn');
-        if (btn.classList.contains('is-loading')) return;
-        btn.classList.add('is-loading');
-        btn.disabled = true;
-        btn.querySelector('.verstuur-idle').classList.add('hidden');
-        btn.querySelector('.verstuur-loading').classList.remove('hidden');
-        btn.querySelector('.verstuur-loading').classList.add('flex');
-    });
+    (function() {
+        var form = document.getElementById('verstuur-form');
+        if (!form || form.dataset.verstuurListener) return;
+        form.dataset.verstuurListener = '1';
+        form.addEventListener('submit', function() {
+            var btn = this.querySelector('.verstuur-btn');
+            if (btn.classList.contains('is-loading')) return;
+            btn.classList.add('is-loading');
+            btn.disabled = true;
+            btn.classList.remove('bg-ah-blue');
+            btn.classList.add('bg-ah-blue-dark', 'cursor-not-allowed');
+            btn.querySelector('.verstuur-idle').classList.add('hidden');
+            btn.querySelector('.verstuur-loading').classList.remove('hidden');
+            btn.querySelector('.verstuur-loading').classList.add('flex');
+        });
+    })();
 </script>
 {% else %}
 <div class="px-4 mb-8 space-y-2">

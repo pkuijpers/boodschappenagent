@@ -276,16 +276,21 @@ def mock_ah_integratie() -> MagicMock:
     return MagicMock()
 
 
+def _apply_ah_overrides(
+    app: FastAPI, mock_token_manager: MagicMock, mock_ah_integratie: MagicMock
+) -> FastAPI:
+    """Installeer AH dependency overrides op een app."""
+    app.dependency_overrides[get_ah_token_manager] = lambda: mock_token_manager
+    app.dependency_overrides[get_ah_integratie] = lambda: mock_ah_integratie
+    return app
+
+
 @pytest.fixture
 def app_with_ah(app_with_overrides, mock_token_manager, mock_ah_integratie) -> FastAPI:
     """App met dependency_overrides voor AH token manager en integratie."""
-    app_with_overrides.dependency_overrides[get_ah_token_manager] = (
-        lambda: mock_token_manager
+    return _apply_ah_overrides(
+        app_with_overrides, mock_token_manager, mock_ah_integratie
     )
-    app_with_overrides.dependency_overrides[get_ah_integratie] = (
-        lambda: mock_ah_integratie
-    )
-    return app_with_overrides
 
 
 @pytest.fixture
@@ -293,13 +298,9 @@ def app_with_boodschappen_and_ah(
     app_with_boodschappen, mock_token_manager, mock_ah_integratie
 ) -> FastAPI:
     """App met boodschappen en AH dependencies."""
-    app_with_boodschappen.dependency_overrides[get_ah_token_manager] = (
-        lambda: mock_token_manager
+    return _apply_ah_overrides(
+        app_with_boodschappen, mock_token_manager, mock_ah_integratie
     )
-    app_with_boodschappen.dependency_overrides[get_ah_integratie] = (
-        lambda: mock_ah_integratie
-    )
-    return app_with_boodschappen
 
 
 @pytest.fixture

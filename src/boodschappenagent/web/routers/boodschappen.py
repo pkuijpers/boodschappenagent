@@ -87,10 +87,7 @@ async def boodschappen(
     items = _build_boodschappenlijst_state(request, generator, lijst_filter)
     week_nr = _week_nummer(week_menu.week_start)
 
-    try:
-        ah_authenticated = token_manager.is_authenticated()
-    except Exception:
-        ah_authenticated = False
+    ah_authenticated = _is_ah_authenticated(token_manager)
 
     context = {
         "week_nr": week_nr,
@@ -115,6 +112,14 @@ def _get_item(request: Request, item_id: str) -> dict:
     if item is None:
         raise HTTPException(status_code=404, detail="Item niet gevonden")
     return item
+
+
+def _is_ah_authenticated(token_manager: AHTokenManager) -> bool:
+    """Check AH auth status; geeft False bij elke fout."""
+    try:
+        return token_manager.is_authenticated()
+    except Exception:
+        return False
 
 
 def _header_context(request: Request) -> dict:
@@ -213,13 +218,7 @@ async def verstuur_naar_ah(
     """Verstuur boodschappenlijst naar Albert Heijn."""
     templates = request.app.state.templates
 
-    # Check of gebruiker ingelogd is (kan een exception gooien bij verlopen tokens)
-    try:
-        authenticated = token_manager.is_authenticated()
-    except Exception:
-        return RedirectResponse(url="/ah/login", status_code=303)
-
-    if not authenticated:
+    if not _is_ah_authenticated(token_manager):
         return RedirectResponse(url="/ah/login", status_code=303)
 
     # Check of er een boodschappenlijst is
