@@ -1,0 +1,26 @@
+{
+  "id": "plaattaart-met-zoete-aardappel-en-geitenkaas",
+  "naam": "Plaattaart met zoete aardappel & geitenkaas",
+  "categorie": "vegetarisch",
+  "basis": "brood",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "pomodori al forno", "hoeveelheid": 285, "eenheid": "gram", "opmerking": null},
+    {"naam": "zoete aardappelen", "hoeveelheid": 800, "eenheid": "gram", "opmerking": null},
+    {"naam": "gemalen koriander", "hoeveelheid": 2, "eenheid": "theelepel", "opmerking": null},
+    {"naam": "gedroogde oregano", "hoeveelheid": 2, "eenheid": "theelepel", "opmerking": null},
+    {"naam": "vers bladerdeeg", "hoeveelheid": 270, "eenheid": "gram", "opmerking": null},
+    {"naam": "geitenkaas", "hoeveelheid": 200, "eenheid": "gram", "opmerking": null},
+    {"naam": "ei", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "jalapeñopeper", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "platte peterselie", "hoeveelheid": 15, "eenheid": "gram", "opmerking": "vers"},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["plaattaart", "zoete aardappel", "geitenkaas", "vegetarisch", "bladerdeeg"],
+  "bereidingstijd_min": 45,
+  "bereidingswijze": "1. Verwarm de oven voor op 200°C. Laat de tomaten uitlekken en vang 2 el olie op. Schil de zoete aardappel en snijd in plakjes van een ½ cm. Doe ze in een kom en schep om met de olie, gevangeolie, de gemalen koriander, oregano, peper en eventueel zout. 2. Rol het bladerdeeg met het bakpapier uit over een bakplaat. Verdeel de aardappelplakjes dakpansgewijs over het bladerdeeg. Verdeel de geitenkaas en tomaten erover. Klop het ei los en smeer de randen ermee in. 3. Bak de plaattaart ca. 15 min. onder in de oven. Halveer ondertussen de jalapeñopeper in de lengte en verwijder de zaadlijsten. Snijd het vruchtlees in dunne reepjes en snijd de koriander grof. Bestrooi de plaattaart ermee en serveer.",
+  "bron": "allerhande"
+}

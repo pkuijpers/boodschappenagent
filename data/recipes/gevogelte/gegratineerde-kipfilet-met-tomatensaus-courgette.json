@@ -1,0 +1,25 @@
+{
+  "id": "gegratineerde-kipfilet-met-tomatensaus-courgette",
+  "naam": "Gegratineerde kipfilet met tomatensaus & courgette",
+  "categorie": "gevogelte",
+  "basis": "geen",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "kipfilet", "hoeveelheid": 300, "eenheid": "gram", "opmerking": ""},
+    {"naam": "knoflook", "hoeveelheid": 2, "eenheid": "teen", "opmerking": null},
+    {"naam": "ui", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": "biologische"},
+    {"naam": "venkelzaad", "hoeveelheid": 2, "eenheid": "tl", "opmerking": null},
+    {"naam": "passata", "hoeveelheid": 500, "eenheid": "gram", "opmerking": null},
+    {"naam": "spinazie", "hoeveelheid": 200, "eenheid": "gram", "opmerking": null},
+    {"naam": "cherrytomaten", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "kalamata olijven", "hoeveelheid": 120, "eenheid": "gram", "opmerking": ""},
+    {"naam": "kaas voor ovengratin", "hoeveelheid": 100, "eenheid": "gram", "opmerking": null},
+    {"naam": "amandelstiften", "hoeveelheid": 2, "eenheid": "el", "opmerking": null},
+    {"naam": "courgette", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null}
+  ],
+  "tags": ["ovenschotel", "mediterranean", "gezond"],
+  "bereidingstijd_min": 40,
+  "bereidingswijze": "1. Verwarm de oven voor op 200°C. Halveer de kipfilets in de lengte. Leg op de plastic-folie en sla plat met de deegroller of koekenpan tot een dikte van ca. 1 cm. Verdeel over beide kanten de filets 4 min. op middelhoog vuur goudbruin. Keer halverwege. 2. Snijd ondertussen de tenen knoflook in snipper de ui. Voeg de laatste 2 min. de knoflook ui en het varkenszaad toe. Haal de kip uit de pan en leg in de ovenschaal. 3. Schink de passata in de koekenpan. Voeg de spinazie delen toe en laat al omscheppend slinken op middelhoog vuur. Halveer ondertussen de cherrytomaten en voeg samen met de olijven toe aan de koekenpan. Breng op smaak met peper. 4. Verdeel de saus over de kip. Verdeel de kaas en amandelslijften erover. Bak ca. 15 min in het midden van de oven tot de kaas gesmolten is en de amandelslijften goudbruin zijn. 5. Schaaf met de kaaschaal de courgette in de lengte in linten. Verhit de rest van de olie in de hapjespan, voeg de courgette toe en bak 1 min. op middelhoog vuur. Breng op smaak.",
+  "bron": "AllerhBox"
+}

@@ -1,0 +1,25 @@
+{
+  "id": "kalkoen-met-ovenaardappeltjes-sperziebonen-yoghurtmayo",
+  "naam": "Kalkoen met ovenaardappeltjes, sperziebonen & yoghurtmayo",
+  "categorie": "gevogelte",
+  "basis": "aardappel",
+  "seizoenen": ["alle"],
+  "basis_porties": 2,
+  "ingredienten": [
+    {"naam": "aardappelpartjes", "hoeveelheid": 900, "eenheid": "gram", "opmerking": ""},
+    {"naam": "gedroogde rozemarijn", "hoeveelheid": 2, "eenheid": "tl", "opmerking": "2 sachets"},
+    {"naam": "rode uien", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "ontbijtspek", "hoeveelheid": 80, "eenheid": "gram", "opmerking": "1 pakje"},
+    {"naam": "sperziebonen", "hoeveelheid": 800, "eenheid": "gram", "opmerking": "2 zakken"},
+    {"naam": "yoghurt Griekse stijl", "hoeveelheid": 150, "eenheid": "gram", "opmerking": "1 bakje"},
+    {"naam": "kalkoenschnitzel", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "mayonaise", "hoeveelheid": 4, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["kalkoen", "aardappeltjes", "sperziebonen", "yoghurtmayo", "oven", "grillpan"],
+  "bereidingstijd_min": 55,
+  "bereidingswijze": "Verwarm de oven voor op 200°C. Schep de aardappelpootjes om met 1 el olie, de rozemarijn en eventueel zout. Verdeel over met bakpapier beklede bakplaat en bak ca. 30 min in de oven. Schep halverwege om. Snijd ondertussen de uien in dunne halve ringen en hef spek reepjes. Verhit de wok zonder olie of boter en roerbak de ui en spekreepjes 2 min op middelhoog vuur. Voeg de sperziebonen toe en bak 15 min. Schep regelmatig om. Meng ondertussen de yoghurt met de mayonaise. Verhit de grillpan. Bestrijk de kalkoen met de rest van de olie, bestrooi met peper en eventueel zout en gril in 5 min. gaar. Keer regelmatig. Verdeel de schnitzels met de boontjes en aardappelpootjes over 4 borden. Serveer de yoghurtmayo erbij.",
+  "bron": "allerhande box"
+}

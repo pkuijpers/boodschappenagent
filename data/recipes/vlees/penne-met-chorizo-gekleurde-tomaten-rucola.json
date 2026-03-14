@@ -1,0 +1,23 @@
+{
+  "id": "penne-met-chorizo-gekleurde-tomaten-rucola",
+  "naam": "Penne met chorizo, gekleurde tomaten & rucola",
+  "categorie": "vlees",
+  "basis": "pasta",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "penne rigate", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
+    {"naam": "chorizo", "hoeveelheid": 225, "eenheid": "gram", "opmerking": null},
+    {"naam": "rode uien", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": "snoepgroene tomatenmix"},
+    {"naam": "snoepgroente tomatenmix", "hoeveelheid": 500, "eenheid": "gram", "opmerking": null},
+    {"naam": "kookzuivel", "hoeveelheid": 250, "eenheid": "ml", "opmerking": null},
+    {"naam": "rucola", "hoeveelheid": 75, "eenheid": "gram", "opmerking": null},
+    {"naam": "Regato kaas 40+", "hoeveelheid": 40, "eenheid": "gram", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null}
+  ],
+  "tags": ["italiaans", "chorizo", "pasta", "tomaten", "rucola"],
+  "bereidingstijd_min": 20,
+  "bereidingswijze": "1. Breng een ruime pan water aan de kook. Voeg als het water kookt de pasta en eventueel zout toe en kook in 11 min. beetgaar. 2. Verwijder ondertussen het vel van de chorizo, snijd de worst in de lengte in vieren en snijd in stukjes. Verhit de hapjespan zonder olie of boter en bak de chorizo in 5 min. uit. 3. Maak ondertussen de uien schoon en snijd in halve ringen. Was en halveer de tomaten. Neem de chorizo met de schuimspaan uit de pan en laat uitlekken op keukenpapier. Laat ca. 2 el bakvet in de pan en bak hierin de ui 2 min. Voeg de tomaat toe en bak nog 2 min. Schenk de kookzuivel erbij en verwarm 3 min. op middelhoog vuur. 4. Giet de pasta af en schep met de chorizo door de roomsaus. Breng op smaak met peper. Schep de rucola erdoor, verdeel over 4 diepe borden en bestrooi met de kaas.",
+  "bron": "allerhande box"
+}

@@ -1,0 +1,24 @@
+{
+  "id": "noedels-met-kip-en-mango",
+  "naam": "Noedels met kip en mango",
+  "categorie": "gevogelte",
+  "basis": "pasta",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "eiermie", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "rode paprika", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "mango", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "munt", "hoeveelheid": 15, "eenheid": "gram", "opmerking": null},
+    {"naam": "kipdijfiletreepjes", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
+    {"naam": "zoete chilisaus", "hoeveelheid": 60, "eenheid": "ml", "opmerking": null},
+    {"naam": "vissaus", "hoeveelheid": 30, "eenheid": "ml", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "arachideolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["aziatisch", "wok", "mango", "kip", "noedels"],
+  "bereidingstijd_min": 20,
+  "bereidingswijze": "1. Breng een ruime pan water aan de kook. Voeg de noedels en eventueel zout toe en kook in 5 min. begaar. Giet af en spoel met koud stromend water. 2. Was ondertussen de paprika's, halveer ze en verwijder de steel en zaadlijsten. Snijd het vruchtvlees in dunne reepjes. Schil de mango's, snijd het vruchtvlees van de pit en snijd in reepjes. Snijd de muntblaadjes in dunne reepjes. 3. Verhit de olie in de wok en roerbak de kip in 2 min. rondom bruin. Voeg de paprika toe en roerbak nog 2 min. Voeg de noedels, chilisaus en vissaus toe en roerbak nog 1 min. Breng op smaak met peper. 4. Neem de wok van het vuur en schep de mango en 2/3 van de munt erdoor. Verdeel over 4 diepe borden en garneer met de rest van de munt.",
+  "bron": "allerhande"
+}

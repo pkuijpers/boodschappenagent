@@ -1,0 +1,23 @@
+{
+  "id": "pompoen-uit-de-oven-met-runderballetjes-en-penne",
+  "naam": "Pompoen uit de oven met runderballetjes en penne",
+  "categorie": "vlees",
+  "basis": "pasta",
+  "seizoenen": ["herfst", "winter"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "penne", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
+    {"naam": "pompoenblokjes", "hoeveelheid": 800, "eenheid": "gram", "opmerking": "2 zakken"},
+    {"naam": "knoflook", "hoeveelheid": 2, "eenheid": "teen", "opmerking": null},
+    {"naam": "rundersoepballetjes", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
+    {"naam": "biologische tomatenblokjes", "hoeveelheid": 800, "eenheid": "gram", "opmerking": "2 blikken"},
+    {"naam": "gedroogde oregano", "hoeveelheid": 2, "eenheid": "tl", "opmerking": null},
+    {"naam": "witte kaas", "hoeveelheid": 200, "eenheid": "gram", "opmerking": "1 pakje"},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null}
+  ],
+  "tags": ["oven", "pasta", "vlees", "pompoen"],
+  "bereidingstijd_min": 45,
+  "bereidingswijze": "1. Verwarm de oven voor op 200°C. Breng een ruime pan water aan de kook. Voeg als het water kookt de penne toe en kook in 8 min. beetgaar. Voeg de laatste 4 min. de pompoenblokjes toe. 2. Maak de knoflook schoon en snijd fijn. Meng de pasta en pompoenblokjes met de knoflook, runderballetjes, tomatenblokjes en oregano. Breng op smaak met peper en eventueel zout. 3. Verdeel over de ovenschaal en bak ca. 30 min. in het midden van de oven goudbruin. Schep halverwege om en verkruimel de kaas erover.",
+  "bron": "allerhande"
+}

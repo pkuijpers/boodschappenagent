@@ -1,0 +1,23 @@
+{
+  "id": "kipschnitzel-met-courgettespaghetti",
+  "naam": "Kipschnitzel met courgettespaghetti",
+  "categorie": "gevogelte",
+  "basis": "geen",
+  "seizoenen": ["zomer", "herfst"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "krokante kipfiletschnitzel", "hoeveelheid": 4, "eenheid": "stuks", "opmerking": "krokant"},
+    {"naam": "mozzarella", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "tomatenblokjes met basilicum", "hoeveelheid": 400, "eenheid": "gram", "opmerking": "1 blik"},
+    {"naam": "cherrytomaten", "hoeveelheid": 250, "eenheid": "gram", "opmerking": "1 schaal"},
+    {"naam": "courgettespaghetti", "hoeveelheid": 800, "eenheid": "gram", "opmerking": "2 schalen"},
+    {"naam": "biologische tuinkers", "hoeveelheid": 0.5, "eenheid": "stuks", "opmerking": "bakje"},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 3, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["koolhydraatarm", "gezond", "glutenvrij"],
+  "bereidingstijd_min": 20,
+  "bereidingswijze": "1. Verhit 2 el olie in de koekenpan met antiaanbaklaag. Bak de gepaneerde kipfiletschnitzels in 6 min. op laag vuur goudbruin en gaar. Keer halverwege. 2. Zet ondertussen de grill van de oven aan. Laat de mozzarella uitlekken en snijd in stukjes. 3. Verwarm de tomatenblokjes in een steelpan op laag vuur. Roer af en toe. Was en halveer de cherrytomaten. 4. Neem de schnitzels uit de pan en leg ze naast elkaar op een met bakpapier beklede bakplaat. Verdeel de mozzarella erover en bestrooi met peper. Zet ca. 5 min. onder de grill of tot de mozzarella gesmolten is. 5. Verhit ondertussen de rest van de olie in de hapjespan en bak de courgettespaghetti met eventueel zout al omscheppend 3 min. Laat goed uitlekken in een vergiet en druk met de achterkant van een lepel het overtollige vocht eruit. 6. Verdeel de courgettespaghetti over 4 diepe borden en schep de pastasaus erover. Verdeel de tomaten erover en leg de kip erop. Garneer met de tuinkers.",
+  "bron": "Allerhande"
+}

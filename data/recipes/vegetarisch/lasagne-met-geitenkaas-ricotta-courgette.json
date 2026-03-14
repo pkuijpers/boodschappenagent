@@ -1,0 +1,24 @@
+{
+  "id": "lasagne-met-geitenkaas-ricotta-courgette",
+  "naam": "Lasagne met geitenkaas, ricotta & courgette",
+  "categorie": "vegetarisch",
+  "basis": "pasta",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "boerensoepgroente", "hoeveelheid": 350, "eenheid": "gram", "opmerking": null},
+    {"naam": "courgettes", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "ricotta", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "geraspte geitenkaas", "hoeveelheid": 150, "eenheid": "gram", "opmerking": null},
+    {"naam": "verse pastasaus napoletana", "hoeveelheid": 450, "eenheid": "gram", "opmerking": null},
+    {"naam": "lasagnebladen all'uovo", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "juanita-cherrytomaten", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["oven", "vegetarisch", "lasagne", "courgette", "geitenkaas", "ricotta"],
+  "bereidingstijd_min": 45,
+  "bereidingswijze": "1. Verwarm de oven voor op 190°C. Verhit de olie in een koekenpan en bak de soepgroente 5 min. op middelhoog vuur. Schep regelmatig om. Breng op smaak met peper en eventueel zout. 2. Rasp ondertussen de courgettes grof. Meng met de ricotta en de helft van de geitenkaas, peper en eventueel zout. 3. Maak in de ovenschaal achtereenvolgens lagen met 1/4 van de saus, de helft van de soepgroente, de helft van het courgettemengsel en 4 lasagnevellen. Maak zo nog een laag. Eindig met 4 lasagnevellen en schenkde rest van de saus erover. Verdeel de cherrytomaten erover en bestrooi met de rest van de kaas. 4. Bak de lasagne in het midden van de oven in ca. 30 min. gaar.",
+  "bron": "allerhandebox"
+}

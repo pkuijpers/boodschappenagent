@@ -1,0 +1,26 @@
+{
+  "id": "couscous-van-broccolirijst-met-gebakken-witte-kaas",
+  "naam": "Couscous van broccolirijst, met gebakken witte kaas",
+  "categorie": "vegetarisch",
+  "basis": "geen",
+  "seizoenen": ["alle"],
+  "basis_porties": 2,
+  "ingredienten": [
+    {"naam": "broccolirijst", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "peterselie", "hoeveelheid": 10, "eenheid": "gram", "opmerking": null},
+    {"naam": "citroen", "hoeveelheid": 0.5, "eenheid": "stuks", "opmerking": null},
+    {"naam": "komkommer", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "pistachenoten", "hoeveelheid": 20, "eenheid": "gram", "opmerking": null},
+    {"naam": "cherrytomaten", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "witte kaas", "hoeveelheid": 75, "eenheid": "gram", "opmerking": null},
+    {"naam": "ei", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "panko", "hoeveelheid": 100, "eenheid": "gram", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "sambal oelek", "hoeveelheid": 1, "eenheid": "theelepel", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 1.5, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["koolhydraatbewust", "vegetarisch", "gezond"],
+  "bereidingstijd_min": 25,
+  "bereidingswijze": "1. Doe de broccolirijst in een vergiet en giet er kokend water over. Laat uitlekken. Snijd de peterselie fijn. Boen de citroen schoon, rasp de gele schil van de halve citroen en pers die helft uit. Snijd de komkommer in blokjes van een 1/2 cm. Meng de broccolirijst met de peterselie, 1 tl citroensap, een 1/2 el olijfolie en de komkommerblokjes. Breng op smaak met peper. 2. Hak de pistachenoten grof. Verhit een koekenpan zonder olie of vet en rooster de noten hierin 3 min. goudbruin. Laat afkoelen op een bord. Halveer ondertussen de cherrytomaten. Verhit in dezelfde koekenpan een 1/2 el olijfolie en bak de tomaten 5 min. op middelhoog vuur. 3. Snijd ondertussen het halve pakje witte kaas in blokjes van 2 cm. Klop in een diep bord het ei los met de sambal. Verdeel over een ander bord de halve zakje panko. Wentel de kaasblokjes eerst door het eimengsel en vervolgens door de panko. Verhit de rest van de olijfolie in een tweede koekenpan en bak de gepaneerde kaas in 5 min. goudbruin. Keer regelmatig. 4. Meng de broccolicouscous met de tomaten en verdeel over 2 borden. Verdeel de gebakken kaas erop en garneer met de pistachenoten.",
+  "bron": "allerhande box"
+}

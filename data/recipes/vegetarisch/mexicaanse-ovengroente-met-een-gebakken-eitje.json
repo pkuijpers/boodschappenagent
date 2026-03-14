@@ -1,0 +1,22 @@
+{
+  "id": "mexicaanse-ovengroente-met-een-gebakken-eitje",
+  "naam": "Mexicaanse ovengroente met een gebakken eitje",
+  "categorie": "vegetarisch",
+  "basis": "geen",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "rode ui", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "ovengroente zoete aardappel, rode paprika en broccoli", "hoeveelheid": 1200, "eenheid": "gram", "opmerking": "rode paprika en broccoli à 600 g"},
+    {"naam": "picadillo", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "eieren", "hoeveelheid": 4, "eenheid": "stuks", "opmerking": null},
+    {"naam": "platte peterselie", "hoeveelheid": 15, "eenheid": "gram", "opmerking": "1 bakje"},
+    {"naam": "crème fraîche light paprika-chili", "hoeveelheid": 200, "eenheid": "ml", "opmerking": "1 bakje"},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["mexicaans", "oven", "vegetarisch", "eieren"],
+  "bereidingstijd_min": 40,
+  "bereidingswijze": "Verwarm de oven voor op 180°C. Snijd de uien in parten en meng met de ovengroente, picadillo, olie en eventueel zout. Verdeel over een met bakpapier beklede bakplaat en bak ca. 20 min. in het midden van de oven. Schep halverwege om. Verhit ondertussen de rest van de olie in een koekenpan en bak de eieren. Snijd de koriander fijn. Verdeel de groente over de borden en leg op elk bord een gebakken ei. Serveer met wat crème fraîche ernaast en bestrooi met de koriander.",
+  "bron": "allerhande"
+}

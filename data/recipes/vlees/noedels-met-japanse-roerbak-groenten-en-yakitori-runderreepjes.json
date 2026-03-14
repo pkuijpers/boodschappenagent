@@ -1,0 +1,25 @@
+{
+  "id": "noedels-met-japanse-roerbak-groenten-en-yakitori-runderreepjes",
+  "naam": "Noedels met Japanse roerbakgroenten & yakitori runderreepjes",
+  "categorie": "vlees",
+  "basis": "pasta",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "eiernoedels", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "knoflook", "hoeveelheid": 1, "eenheid": "teen", "opmerking": null},
+    {"naam": "gember", "hoeveelheid": 0.5, "eenheid": "stuks", "opmerking": "ca. 4 cm"},
+    {"naam": "Japanse wakgroente kastanjechampignons peutjies", "hoeveelheid": 800, "eenheid": "gram", "opmerking": null},
+    {"naam": "runderreepjes", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "yakitori saus", "hoeveelheid": 2, "eenheid": "el", "opmerking": null},
+    {"naam": "sesamzaad", "hoeveelheid": 1, "eenheid": "el", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "arachideolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "ketjap manis", "hoeveelheid": 3, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["japans", "roerbak", "noedels", "yakitori", "rund"],
+  "bereidingstijd_min": 15,
+  "bereidingswijze": "1. Kook de noedels in 5 min. beetgaar. Snijd de knoflook fijn. Schil en rasp de gember. Verhit de helft van de olie in de wok en bak de roerbakgroente knoflook, gember en ketjap 3 min. 2. Schep ondertussen op hoog vuur. Giet de noedels af en meng met de groente. Verwarm nog 2 min. 2. Verhit ondertussen de rest van de olie in de hapjespan en bak het vlees al omscheppend 1 min. op hoog vuur. Voeg de yakitori saus toe en bak al omscheppend 1 min. mee. 3. Rooster ondertussen het sesamzaad in een koekenpan zonder olie of boter in 3 min. goudbruin. Verdeel de noedels over 4 diepe borden en verdeel het vlees erover. Bestrooi met het sesamzaad.",
+  "bron": "allerhande box"
+}

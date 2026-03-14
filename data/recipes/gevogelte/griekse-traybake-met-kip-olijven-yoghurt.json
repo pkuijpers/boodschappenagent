@@ -1,0 +1,25 @@
+{
+  "id": "griekse-traybake-met-kip-olijven-yoghurt",
+  "naam": "Griekse traybake met kip, olijven & yoghurt",
+  "categorie": "gevogelte",
+  "basis": "aardappel",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "rode uien", "hoeveelheid": 4, "eenheid": "stuks", "opmerking": null},
+    {"naam": "broccoli", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "rode paprika's", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "rivolo-cherrytomaten", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "kipfiletblokjes", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
+    {"naam": "zoete-aardappelblokjes", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "mediterrane kruiden", "hoeveelheid": 2, "eenheid": "theelepel", "opmerking": null},
+    {"naam": "groene olijven met citroen", "hoeveelheid": 200, "eenheid": "gram", "opmerking": null},
+    {"naam": "Griekse yoghurt", "hoeveelheid": 150, "eenheid": "gram", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 3, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["traybake", "griekse keuken", "ovengerecht", "koolhydraatbewust"],
+  "bereidingstijd_min": 40,
+  "bereidingswijze": "Verwarm de oven voor op 200°C. Snijd de uien in parten. Snijd de broccoli in roosjes, schil de stronk en snijd in stukjes. Halveer de paprika's, verwijder de steelanzet en zaadlijsten en snijd het vruchtlees in stukken van 2 cm. Schep de gesneden groenten met de cherrytomaten, kipblokjes, zoete aardappel, mediterrane kruiden en peper. Verdeel over een met bakpapier beklede bakplaat. Rooster ca 25 min in het midden van de oven gaar. Schep halverwege om. Giet de olijven af en schep door de groenten en kip en verdeel over 4 borden. Serveer de yoghurt erbij.",
+  "bron": "Allerhande Box"
+}

@@ -1,0 +1,26 @@
+{
+  "id": "mexicaans-gevulde-courgette-met-avocadosalsa",
+  "naam": "Mexicaans gevulde courgette met avocadosalsa",
+  "categorie": "vegetarisch",
+  "basis": "geen",
+  "seizoenen": ["zomer", "herfst"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "courgettes", "hoeveelheid": 4, "eenheid": "stuks", "opmerking": null},
+    {"naam": "rode ui", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "tasty tom tomaten", "hoeveelheid": 380, "eenheid": "gram", "opmerking": null},
+    {"naam": "zwarte bonen", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "kidneybonen", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "picadillo", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "avocado", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "limoen", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "cottage cheese", "hoeveelheid": 200, "eenheid": "gram", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["mexicaans", "gevuld", "avocado", "bonen", "vegetarisch"],
+  "bereidingstijd_min": 55,
+  "bereidingswijze": "Verwarm de oven voor op 200°C. Snijd de courgettes in de lengte doormidden. Schraap met een lepel de zaadlijsten eruit en hol de courgettehelften met de sijkant naar boven op een met bakpapier beklede bakplaat. Bestrooi met de helft van de olie en bestrooi met peper. Bak de courgette 20 min. in het midden van de oven gaar. Snijd ondertussen de zaadlijsten van de courgettes fijn. Snipper de rode uien en snijd de tomaten in kleine blokjes. Doe de bonen in een vergiet, spoel onder koud stromend water en laat uitlekken. Verhit de rest van de olie in de hapjespan en fruit 2/3 van de rode ui 3 min. op middelhoog vuur. Voeg de zaadlijsten (incl. het vocht), de helft van de tomaat, alle bonen en de picadillo toe en bak 5 min. mee. Zet het vuur uit en roer de rest van de tomaat erdoor. Breng op smaak met peper en eventueel zout. Snijd ondertussen de avocado's overlang doormidden. Verwijder de pit, schep het vruchtvlees met een lepel uit de schil en snijd in blokjes van een ½ cm. Boen de limoen schoon, rasp de groene schil en pers de vrucht uit. Meng de avocado met de rest van de rode ui, het limoensap en 1 tl limonenrasp. Breng op smaak met peper en eventueel zout. Haal de courgette uit de oven en vul met het bonenmengsel. Serveer met de cottagekaas en avocadosalsa.",
+  "bron": "Allerhande"
+}

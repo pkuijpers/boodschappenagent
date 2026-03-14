@@ -1,0 +1,24 @@
+{
+  "id": "gnocchi-met-rucola-romige-aubergine-al-formaggio",
+  "naam": "Gnocchi met rucola & romige aubergine al formaggio",
+  "categorie": "vegetarisch",
+  "basis": "aardappel",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "mozzarella", "hoeveelheid": 125, "eenheid": "gram", "opmerking": null},
+    {"naam": "aubergines", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": ""},
+    {"naam": "passata", "hoeveelheid": 690, "eenheid": "gram", "opmerking": ""},
+    {"naam": "geraspte kaas", "hoeveelheid": 100, "eenheid": "gram", "opmerking": "voor overgrain"},
+    {"naam": "gnocchi", "hoeveelheid": 1000, "eenheid": "gram", "opmerking": null},
+    {"naam": "rucola", "hoeveelheid": 85, "eenheid": "gram", "opmerking": null},
+    {"naam": "peterselie", "hoeveelheid": 20, "eenheid": "gram", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 7, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["italiaans", "ovenschotel", "vegetarisch", "kaas"],
+  "bereidingstijd_min": 60,
+  "bereidingswijze": "Verwarm de oven voor op 180°C. Snijd de mozzarella in blokjes en de aubergine in plakken van een ½ cm breed. Verhit 2 el olie in de 2 grote koekenpannen en bak de aubergine in porties op hoog vuur in 4 min. goudgeel. Keer halverwege. Doe tussentijd ruim 2 el olie in de pannen. Laat de aubergine uitlekken op een bord bedekt met keukenpapier. Verdeel ondertussen ⅔ van de tomatensaus over de bodem van de ovenschaal. Leg de helft van de aubergine erover en bestrooi met peper en eventueel zout. Verdeel de helft van de mozzarella en vervolgens ⅓ van de tomatensaus erover. Schep de rest van de aubergine erop en bestrooi met peper en eventueel zout. Verdeel de rest van de mozzarella en vervolgens de rest van de saus erover. Bestrooi met de geraspte kaas. Bak ca. 30 min. in de oven. Verhit ondertussen de rest van de olie in de koekenpannen en bak de gnocchi in 2 min. goudgeel. Schep regelmatig om en breng op smaak met peper. Schep om met de rucola. Snijd de peterselie fijn en bestrooi de aubergine al formaggio ermee. Serveer met de gnocchi.",
+  "bron": null
+}

@@ -1,0 +1,26 @@
+{
+  "id": "kaasschnitzel-met-knoflookrieltjes-en-salade-van-witlof-en-mandarijn",
+  "naam": "Kaasschnitzel met knoflookrieltjes en salade van witlof & mandarijn",
+  "categorie": "vegetarisch",
+  "basis": "geen",
+  "seizoenen": ["herfst", "winter"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "krieltjes", "hoeveelheid": 1000, "eenheid": "gram", "opmerking": null},
+    {"naam": "knoflook", "hoeveelheid": 2, "eenheid": "teen", "opmerking": null},
+    {"naam": "platte peterselie", "hoeveelheid": 7, "eenheid": "gram", "opmerking": "bakje 75g"},
+    {"naam": "mandarijnen", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "witlof", "hoeveelheid": 3, "eenheid": "stuks", "opmerking": null},
+    {"naam": "blanke rozijnen", "hoeveelheid": 40, "eenheid": "gram", "opmerking": "sachet"},
+    {"naam": "romige sladressing", "hoeveelheid": 50, "eenheid": "gram", "opmerking": "cupje"},
+    {"naam": "gesneden spitskool", "hoeveelheid": 400, "eenheid": "gram", "opmerking": "zak 200g"},
+    {"naam": "gerookte amandelen", "hoeveelheid": 60, "eenheid": "gram", "opmerking": "sachets"},
+    {"naam": "kaasschnitzel", "hoeveelheid": 4, "eenheid": "stuks", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 4, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["kaas", "vegetarisch", "salade", "winterkost", "mandarijn", "witlof"],
+  "bereidingstijd_min": 55,
+  "bereidingswijze": "Verwarm de oven voor op 220°C. Halveer de knoflookrieltjes, snijd de tenen knoflook en de peterselie fijn. Schep de knoflookrieltjes om met 2 el olie, de knoflook en de helft van de peterselie. Breng op smaak met peper en rooste ca. 25 min. Pel de mandarijnen, haal de partjes los en halveer deze. Verwijder de onderkant van de witlof, halveer in de lengte, verwijder de harde kern en snijd in 2 cm mogelijk breedte repen. Meng 2 el mandarijnenschijfjes de partjes mandarijn, het witlof, de rest van de peterselie, de rozijnen en romige dressing. Hak de amandelen grof en strooi over de salade. Verhit ondertussen een koekenpan met de rest van de olie en bak de kaasschnitzel in 8 min op middelhoog vuur goudbruin.",
+  "bron": null
+}

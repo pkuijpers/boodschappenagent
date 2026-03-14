@@ -1,0 +1,22 @@
+{
+  "id": "mediterrane-aardappeltjes-met-kaasschnitzel",
+  "naam": "Mediterrane aardappeltjes met kaasschnitzel",
+  "categorie": "vegetarisch",
+  "basis": "aardappel",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "aardappelpartjes", "hoeveelheid": 900, "eenheid": "gram", "opmerking": null},
+    {"naam": "Provençaalse kruiden", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "rode uien", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": "biologisch"},
+    {"naam": "kaasschnitzel", "hoeveelheid": 4, "eenheid": "stuks", "opmerking": "Milner Gouda, à 2 stuks, Veless"},
+    {"naam": "snijbonen", "hoeveelheid": 600, "eenheid": "gram", "opmerking": null},
+    {"naam": "zongedroogde tomaatjes", "hoeveelheid": 120, "eenheid": "gram", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 5, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "azijn", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": "0.5 el azijn"}
+  ],
+  "tags": ["mediterraans", "vegetarisch"],
+  "bereidingstijd_min": 20,
+  "bereidingswijze": "1. Verhit 2 el olie in de hapjespan en bak de aardappeltjes met de Provençaalse kruiden en eventueel zout in 15 min. op middelhoog vuur goudbruin en gaar. Schep regelmatig om. 2. Breng ondertussen een ruime pan water aan de kook. Maak de uien schoon en snijd in halve ringen. Verhit 1 el olie in de grote koekenpan en bak de ui 7 min. op laag vuur. Neem uit de pan. 3. Verhit in dezelfde pan de rest van de olie en bak de kaasschnitzels 4 min. op middelhoog vuur. Keer regelmatig. 4. Voeg als het water kookt de sojbonen toe aan de pan en kook in 6-7 min. beetgaar. Halveer de zongedroogde tomaatjes. 5. Giet de sojbonen af en meng met de gebakken ui, zongedroogde tomaatjes en de azijn. Breng op smaak met peper en eventueel zout. Serveer de groente met de aardappeltjes en de schnitzels.",
+  "bron": "AllerhalldeBox"
+}

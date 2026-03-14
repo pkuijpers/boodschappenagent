@@ -1,0 +1,25 @@
+{
+  "id": "kippakketjes-met-pesto-courgette-couscous",
+  "naam": "Kippakketjes met pesto, courgette & couscous",
+  "categorie": "gevogelte",
+  "basis": "rijst",
+  "seizoenen": ["alle"],
+  "basis_porties": 2,
+  "ingredienten": [
+    {"naam": "courgette", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "knoflook", "hoeveelheid": 1, "eenheid": "teen", "opmerking": null},
+    {"naam": "kipfilethaasjes", "hoeveelheid": 200, "eenheid": "gram", "opmerking": null},
+    {"naam": "basilicumpesto", "hoeveelheid": 50, "eenheid": "gram", "opmerking": null},
+    {"naam": "couscous", "hoeveelheid": 150, "eenheid": "gram", "opmerking": null},
+    {"naam": "platte peterselie", "hoeveelheid": 10, "eenheid": "gram", "opmerking": null},
+    {"naam": "bieslook", "hoeveelheid": 5, "eenheid": "gram", "opmerking": null},
+    {"naam": "komkommer", "hoeveelheid": 0.5, "eenheid": "stuks", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["kip", "pesto", "courgette", "couscous", "oven"],
+  "bereidingstijd_min": 25,
+  "bereidingswijze": "1. Verwarm de oven voor op 200°C. Snijd de courgette in de lengte in vieren, verwijder de zaadlijsten en snijd het vruchtlees in blokjes van 4 cm. Snijd de knoflook fijn. Meng de courgette, knoflook en pesto door elkaar. Verdeel het mengsel over 2 stukken bakpapier en bestrooikel elk pakketje met 1 el water. Vouw het papier losjes maar goed dicht en papillotte). Leg de pakketjes op een bakplaat en bok in het midden van de oven in ca. 20 min. gaar. 2. Doe ondertussen de couscous in een kom en schenk er 150 ml kokend water over. Laat 10 min. afgedekt staan. Roer los met een vork. Snijd de peterselie en bieslook fijn. Halveer de komkommer in de lengte en verwijder met een theelepel de zaadlijsten. Snijd in stukken van een 1⁄2 cm. Meng de couscous, 3⁄4 van de kruiden, de komkommer en olie door elkaar en breng op smaak met peper en eventueel zout. 3. Neem de pakketjes uit de oven en vouw voorzichtig open. Verdeel de couscous over 2 diepe borden en verdeel de inhoud van de pakketjes (inclusief bakkocht) erover. Garneer met de rest van de verse kruiden.",
+  "bron": null
+}

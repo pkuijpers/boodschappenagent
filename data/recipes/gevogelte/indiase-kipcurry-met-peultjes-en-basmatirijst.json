@@ -1,0 +1,23 @@
+{
+  "id": "indiase-kipcurry-met-peultjes-en-basmatirijst",
+  "naam": "Indiase kipcurry met peultjes & basmatirijst",
+  "categorie": "gevogelte",
+  "basis": "rijst",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "basmatirijst", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
+    {"naam": "worteltjes en peultjes", "hoeveelheid": 800, "eenheid": "gram", "opmerking": "zakken"},
+    {"naam": "kipfiletblokjes", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
+    {"naam": "tomaten", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "kokosmelk", "hoeveelheid": 400, "eenheid": "ml", "opmerking": "blik"},
+    {"naam": "korma currypasta", "hoeveelheid": 160, "eenheid": "gram", "opmerking": "zakken"},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["indiaas", "curry", "kokosmelk", "kip", "rijst"],
+  "bereidingstijd_min": 25,
+  "bereidingswijze": "1. Kook de rijst met eventueel zout in 8 min. gaar. Giet af en laat afgedekt staan tot gebruik. 2. Halveer ondertussen de worteltjes in de lengte. Bestrooi de kipfiletblokjes met peper en eventueel zout. Verhit de olie in de hapjespan en bak de kip al omscheppend 3 min. 3. Snijd de tomaten in partjes. Voeg de wortel, tomaat, kokosmelk en currypasta toe aan de kip en breng al roerend aan de kook. Laat ca. 15 min. zonder deksel op de pan op laag vuur garen. Roer af en toe. Voeg de laatste 2 min. de peultjes toe. Breng op smaak met peper. 4. Schep de rijst en de curry in 4 diepe borden en serveer.",
+  "bron": "aller hande box"
+}

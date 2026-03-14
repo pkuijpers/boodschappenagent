@@ -1,0 +1,23 @@
+{
+  "id": "andijvie-stamppot-met-veluwse-rookworst",
+  "naam": "Andijvie stamppot met Veluwse rookworst",
+  "categorie": "vlees",
+  "basis": "aardappel",
+  "seizoenen": ["herfst", "winter"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "rookworst", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "kruimige aardappelen", "hoeveelheid": 1200, "eenheid": "gram", "opmerking": null},
+    {"naam": "rode uien", "hoeveelheid": 3, "eenheid": "stuks", "opmerking": null},
+    {"naam": "magere spekblokjes", "hoeveelheid": 125, "eenheid": "gram", "opmerking": null},
+    {"naam": "fijngesneden andijvie", "hoeveelheid": 500, "eenheid": "gram", "opmerking": "fijngesneden"},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "mosterd", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "boter", "hoeveelheid": 25, "eenheid": "gram", "opmerking": null}
+  ],
+  "tags": ["stamppot", "traditioneel", "comfort food", "nederlands"],
+  "bereidingstijd_min": 30,
+  "bereidingswijze": "1. Verwarm de rookworst 20 min. in heet water. Breng een ruime pan water aan de kook. Schil de aardappelen en snijd in gelijke stukken. Voeg, als het water kookt, aan de pan en kook ze in 20 min. gaar. 2. Maak ondertussen de uien schoon en snijd fijn. Verhit een koekenpan zonder olie of boter en bak de spekblokjes in 8 min. knapperig. Voeg de laatste 2 min. de ui toe. Schep de ui en het spek uit de pan en laat uitlekken op keukenpapier. 3. Voeg in de laatste minuut de andijvie toe aan de kokende aardappelen. Giet af en laat goed uitlekken. Doe terug in de pan en voeg de mosterd en boter toe. Stamp met de pureetstamper tot een puree. Schep de ui en het spek door de stamppot en breng op smaak met peper en eventueel zout. Serveer met de rookworst.",
+  "bron": "allerhande"
+}

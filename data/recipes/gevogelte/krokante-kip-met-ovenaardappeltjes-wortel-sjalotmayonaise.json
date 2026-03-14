@@ -1,0 +1,26 @@
+{
+  "id": "krokante-kip-met-ovenaardappeltjes-wortel-sjalotmayonaise",
+  "naam": "Krokante kip met ovenaardappeltjes, wortel & sjalotmayonaise",
+  "categorie": "gevogelte",
+  "basis": "aardappel",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "vastkokende aardappelen", "hoeveelheid": 1000, "eenheid": "gram", "opmerking": null},
+    {"naam": "sjalotten", "hoeveelheid": 4, "eenheid": "stuks", "opmerking": null},
+    {"naam": "ei", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "panko", "hoeveelheid": 100, "eenheid": "gram", "opmerking": null},
+    {"naam": "Provençaalse kruiden", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "kipfilet", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "winterpeen", "hoeveelheid": 1000, "eenheid": "gram", "opmerking": null},
+    {"naam": "platte peterselie", "hoeveelheid": 15, "eenheid": "gram", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 6, "eenheid": "gram", "opmerking": null},
+    {"naam": "arachideolie", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "mayonaise", "hoeveelheid": 4, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["oven", "panko", "krokant", "comfort food"],
+  "bereidingstijd_min": 65,
+  "bereidingswijze": "1. Verwarm de oven voor op 200°C. Boen de aardappelen schoon en snijd ze ongepeld in 8 parten. Schep om met 2 el olie, peper en zout en verdeel over een met bakpapier beklede bakplaat. Schuif de aardappelen iets op en leg de ongeschelde wortel erbij op de bakplaat. Bak in 30 min. in het midden van de oven gaar. Schep halverwege om. Haal de groenten na 20 min. uit de oven. 2. Klop ondertussen het ei los in een diepe bord. Meng in één ander diep bord de panko met de Provençaalse kruiden. Snijd de kipfilet in de lengte in repen van 2 cm dik en bestrooi met peper en eventueel zout. Haal de kiprepen door eerst het ei en dan door het panko-kruidenmengsel, druk goed aan. 3. Verhit 2 el olie in een koekenpan en bak de kip op middelhoog vuur in 6 min. rondom bruin en gaar. Keer halverwege en voeg de rest van de olie toe. 4. Halveer de winterpenen in de lengte en snijd vervolgens de halve peen schuin door het midden. Kook in 5 min. gaar. 5. Pel ondertussen de geroosterde sjalotten en roer door de mayonaise.",
+  "bron": "allerhande"
+}

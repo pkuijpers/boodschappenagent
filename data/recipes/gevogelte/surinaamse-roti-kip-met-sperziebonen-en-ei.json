@@ -1,0 +1,24 @@
+{
+  "id": "surinaamse-roti-kip-met-sperziebonen-en-ei",
+  "naam": "Surinaamse roti kip met sperziebonen & ei",
+  "categorie": "gevogelte",
+  "basis": "brood",
+  "seizoenen": ["alle"],
+  "basis_porties": 2,
+  "ingredienten": [
+    {"naam": "aardappelen", "hoeveelheid": 250, "eenheid": "gram", "opmerking": "1 netje iets kruimige"},
+    {"naam": "ui", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "knoflook", "hoeveelheid": 2, "eenheid": "teen", "opmerking": null},
+    {"naam": "kipdijfilet", "hoeveelheid": 200, "eenheid": "gram", "opmerking": null},
+    {"naam": "curry madras", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "tomaten", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "rode peper", "hoeveelheid": 0.5, "eenheid": "stuks", "opmerking": null},
+    {"naam": "sperziebonen", "hoeveelheid": 200, "eenheid": "gram", "opmerking": null},
+    {"naam": "eieren", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "Surinaamse rotivellen", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null}
+  ],
+  "tags": ["surinaams", "roti", "kip", "sperziebonen", "ei", "pittig"],
+  "bereidingstijd_min": 45,
+  "bereidingswijze": "Schil de aardappelen en snijd in stukken van 2 cm. Maak de ui en tenen knoflook schoon en snijd fijn. Snijd de kip in blokjes van 2 cm. Verhit de olie in de pan met dikke bodem. Fruit de ui en knoflook toe en bak 3 min op middelhoog vuur. Voeg de kip toe en bak 3 min roerend aan. Schep de pijpmaling om. Voeg de aardappelen en 50 ml water toe en breng aan de kook. Was ondertussen de tomaten en snijd het steeltje eruit af. Was de rode peper, snijd het steeltje eruit af een scherpmes je za zaadlijstjes. Voeg de tomaat samen met de peper toe aan de kip en laat op laag vuur 15 min. zachtjes koken met de deksel op de pan. Proef na 10 min, hoe pittig het gerecht is en verwijder desgewenst de peper. Breng eventueel op smaak met zout. Breng ondertussen een ruime pan met water aan de kook, voeg de sperziebonen toe en kook in 8 min. beetgaar. Voeg na 2 min. de eieren toe. Giet het water af, laat de boontjes in de pan. Spoel de eieren met koud water en pel ze. Verwarm ondertussen de rotivelletjes 20 sec. per kant in een koekenpan (of verwarm ze op een).",
+  "bron": "allerhande"
+}

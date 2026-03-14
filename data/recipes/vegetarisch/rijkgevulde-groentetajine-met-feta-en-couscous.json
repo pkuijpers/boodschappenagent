@@ -1,0 +1,23 @@
+{
+  "id": "rijkgevulde-groentetajine-met-feta-en-couscous",
+  "naam": "Rijkgevulde groentetajine met feta & couscous",
+  "categorie": "vegetarisch",
+  "basis": "rijst",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "courgette", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "aubergine", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "rode uien", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "tomaten", "hoeveelheid": 3, "eenheid": "stuks", "opmerking": null},
+    {"naam": "knoflook", "hoeveelheid": 2, "eenheid": "teen", "opmerking": null},
+    {"naam": "ras el hanout", "hoeveelheid": 2, "eenheid": "theelepel", "opmerking": null},
+    {"naam": "rozijnen", "hoeveelheid": 80, "eenheid": "gram", "opmerking": null},
+    {"naam": "couscous", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
+    {"naam": "feta", "hoeveelheid": 150, "eenheid": "gram", "opmerking": null}
+  ],
+  "tags": ["Marokkaans", "tajine", "couscous", "feta", "groenten", "vegetarisch"],
+  "bereidingstijd_min": 45,
+  "bereidingswijze": "1. Snijd de courgette in de lengte in vieren en vervolgens in stukken van 2 cm. Snijd de aubergines in blokjes van 1 cm. Snijd de uien en tomaten in parten. Snijd de tenen knoflook fijn. 2. Verhit 2 el olie in de hapjespan en bak de aubergine 5 min op middelhoog vuur. Voeg de rest van de groenten behalve de tomaat en knoflook toe en breng op smaak met ras el hanout en peper. Bak 3 min. Voeg 300 ml kokend water aan de rozijnen toe en laat ca. 20 min stoven. Roer af en toe. Breng op smaak met peper en eventueel zout. 3. Doe ondertussen de couscous in een kom en schenk er 350 ml kokend water over. Dek af en laat 10 min afgedekt staan. Roer de couscous los met een vork en meng de rest van de olie erdoor. Breng op smaak met peper en eventueel zout. 4. Verdeel de groentetoof over 4 borden en verkruimel de feta erover.",
+  "bron": null
+}

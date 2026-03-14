@@ -1,0 +1,28 @@
+{
+  "id": "lasagne-met-kip-spinazie-en-courgette",
+  "naam": "Lasagne met kip, spinazie en courgette",
+  "categorie": "gevogelte",
+  "basis": "pasta",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "halfvolle melk", "hoeveelheid": 400, "eenheid": "ml", "opmerking": "voor de saus"},
+    {"naam": "spinazie", "hoeveelheid": 200, "eenheid": "gram", "opmerking": null},
+    {"naam": "nootmuskaat", "hoeveelheid": 1, "eenheid": "tl", "opmerking": null},
+    {"naam": "courgettes", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "lasagne all'uovo", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "kipfilet vleeswaar", "hoeveelheid": 220, "eenheid": "gram", "opmerking": "à 30 g"},
+    {"naam": "mozzarella", "hoeveelheid": 250, "eenheid": "gram", "opmerking": "à 125 g"},
+    {"naam": "knoflook", "hoeveelheid": 1, "eenheid": "teen", "opmerking": null},
+    {"naam": "panko", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "roomboter", "hoeveelheid": 50, "eenheid": "gram", "opmerking": null},
+    {"naam": "bloem", "hoeveelheid": 50, "eenheid": "gram", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["lasagne", "kip", "spinazie", "courgette", "ovenschotel"],
+  "bereidingstijd_min": 50,
+  "bereidingswijze": "1. Verwarm de oven voor op 180°C. 2. Smelt de boter in een pan. Voeg de bloem toe en roer glad met de garde. Laat 3 min. garen op laag vuur en voeg dan al roerend de melk toe. Breng aan de kook, voeg de spinazie toe en laat 5 min. koken. Neem de pan van het vuur en pureer met de staafmixer tot een egale saus. 3. Schaal de courgettes met de kaasstaal in ronde plakjes. 4. Bedek de bodem van de ovenschaal met een beetje béchamelsaus. Leg daarop 1⁄4 van de lasagnevelletn, 1⁄3 van de courgetteplakjes, 1⁄3 van de kiptlet en 1⁄4 van de rest van de béchamelsaus. Herhaal nog 2 keer. 5. Snijd de bollen mozzarella in plakjes en verdeel over de lasagne. Bak in ca. 45 min. gaar. Dek eventueel af met aluminiumfolie als de lasagne te donker wordt. 6. Maak ondertussen de pangrattato. Snijd de knoflook fijn. Verhit de olie in een koekenpan en bak de panko in 5 min. goudbruin en krokant. Voeg de knoflook toe en bak nog 2 min. mee. 7. Neem de pan van het vuur en laat afkoelen. Bestrooi de lasagne met de pangrattato en serveer.",
+  "bron": "aller hande box"
+}

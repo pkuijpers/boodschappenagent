@@ -1,0 +1,25 @@
+{
+  "id": "biefstuk-met-noedels-mango-en-sugarsnaps",
+  "naam": "Biefstuk met noedels, mango & sugarsnaps",
+  "categorie": "vlees",
+  "basis": "pasta",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "eiermie-noedels", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "sugarsnaps", "hoeveelheid": 400, "eenheid": "gram", "opmerking": "à 200 g"},
+    {"naam": "biefstuk", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
+    {"naam": "mango", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "gezouten pindas", "hoeveelheid": 50, "eenheid": "gram", "opmerking": null},
+    {"naam": "bosuitjes", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "chilisaus", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "sojasaus", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["aziatisch", "snel", "mango", "biefstuk", "noedels"],
+  "bereidingstijd_min": 25,
+  "bereidingswijze": "1. Kook de noedels in 5 min. gaar. Voeg de laatste 2 min. de sugarsnaps toe. Giet af of spoel onder koud stromend water en laat goed uitlekken. 2. Verhit de grillpan zonder vet. Dep de biefstukken droog en bestrooi met peper en eventueel zout. Wrijf in met de olie en grill in 6 min. medium gaar. Keer halverwege. Laat afgedekt onder aluminiumfolie 10 min. rusten. 3. Schil en snijd de mango in blokjes van 1 cm. Pak de pindas. Snijd de bosuitjes in dunne ringen. 4. Schep de chilisaus, sojasaus en de bosui door de noedels. Snijd het vlees in plakjes. Verdeel de noedels over 4 diepe kommen en verdeel daar de biefstuk, mango en sugarsnaps over. Bestrooi met de pindas.",
+  "bron": null
+}

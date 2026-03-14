@@ -1,0 +1,25 @@
+{
+  "id": "groente-meergranenwrap-met-tonijn",
+  "naam": "Groente-meergranenwrap met tonijn",
+  "categorie": "vis",
+  "basis": "brood",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "spinazie", "hoeveelheid": 200, "eenheid": "gram", "opmerking": null},
+    {"naam": "peterselie", "hoeveelheid": 15, "eenheid": "gram", "opmerking": null},
+    {"naam": "zuivelspread", "hoeveelheid": 200, "eenheid": "gram", "opmerking": null},
+    {"naam": "tonijn in olie", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": "blik 160 gram"},
+    {"naam": "witte kaas", "hoeveelheid": 200, "eenheid": "gram", "opmerking": null},
+    {"naam": "zongedroogde tomaat", "hoeveelheid": 120, "eenheid": "gram", "opmerking": null},
+    {"naam": "courgettes", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "meergranenwraps", "hoeveelheid": 8, "eenheid": "stuks", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["wrap", "tonijn", "groente", "lunch", "gezond"],
+  "bereidingstijd_min": 30,
+  "bereidingswijze": "1. Verhit een ½ el olie in een koekenpan met antiaanbaklaag en voeg de spinazie in delen toe. Laat samenvallend slinken. Doe de spinazie in een vergiet en laat uitlekken. Snijd de peterselie grof en doe met de spinazie, zuivelspread, peper en eventueel zout in een hoge beker. Pureer met de staafmixer tot een spread. 2. Laat ondertussen de tonijn uitlekken en verkruimel de witte kaas. Snijd de zongedroogde tomaat fijn en meng met de tonijn. Breng op smaak met peper. 3. Was de courgettes en snijd ze in plakken van een ½ cm dik. Verhit de rest van de olie in de andere koekenpan en bak de courgette in 4-5 min. goudbruin. 4. Verhit ondertussen de koekenpan met antiaanbaklaag en verwarm de wraps 30 sec., keer halverwege of verwarm de wraps 1 min. in de magnetron. 5. Verdeel de spinaziespreed over ⅔ van de wraps en beleg vervolgens met de courgetteplakken, het tonijnmengsel en de witte kaas. Rol op en snijd schuín door. Serveer direct.",
+  "bron": "Allerhande"
+}

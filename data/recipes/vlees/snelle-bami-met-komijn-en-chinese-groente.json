@@ -1,0 +1,24 @@
+{
+  "id": "snelle-bami-met-komijn-en-chinese-groente",
+  "naam": "Snelle bami met komijn en chinese groente",
+  "categorie": "vlees",
+  "basis": "pasta",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "eiermie", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "knoflook", "hoeveelheid": 2, "eenheid": "teen", "opmerking": null},
+    {"naam": "rode peper", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "nasi-bamivlees", "hoeveelheid": 1, "eenheid": "schaal", "opmerking": null},
+    {"naam": "gemalen komijn", "hoeveelheid": 1, "eenheid": "theelepel", "opmerking": null},
+    {"naam": "Chinese wokgroente", "hoeveelheid": 800, "eenheid": "gram", "opmerking": "voel & sugarsnaps"},
+    {"naam": "salade-uitjes", "hoeveelheid": 3, "eenheid": "stuks", "opmerking": null},
+    {"naam": "seroendeng", "hoeveelheid": 150, "eenheid": "gram", "opmerking": null},
+    {"naam": "zonnebloemolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "ketjap", "hoeveelheid": 6, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["snel", "wok", "aziatisch"],
+  "bereidingstijd_min": 15,
+  "bereidingswijze": "1 Breng een ruime pan water aan de kook. Voeg als het water kookt de noedels toe en kook in 5 min. beetgaar. 2 Maak ondertussen de knoflook schoon en snijd fijn. Snijd het steeltje van de rode peper. Halveer de peper in de lengte en verwijder met een scherp mesje de zaadlijsten. Snijd het vruchtvlees fijn. 3 Verhit de olie in de wok en roerbak het nasi-bamivlees met de knoflook, rode peper, komijn en ketjap 2 min. op hoog vuur. Voeg de wokgroente toe en roerbak nog 3 min. Snijd ondertussen de salade-uitjes in ringetjes. 4 Meng de mie door het vlees-groentemengsel. Verdeel de bami over komme en bestrooi met de salade-ui en seroendeng.",
+  "bron": "allerhande box"
+}
