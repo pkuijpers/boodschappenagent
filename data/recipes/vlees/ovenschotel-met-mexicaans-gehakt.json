@@ -1,0 +1,24 @@
+{
+  "id": "ovenschotel-met-mexicaans-gehakt",
+  "naam": "Ovenschotel met mexicaans gehakt",
+  "categorie": "vlees",
+  "basis": "geen",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "rundergehakt", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "mexicaanse tacokruiden", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "tomatenblokjes", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "maiskorrels", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
+    {"naam": "chilbonen", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "geraspte kaas voor ovengratijn", "hoeveelheid": 150, "eenheid": "gram", "opmerking": null},
+    {"naam": "tortillachips naturel", "hoeveelheid": 150, "eenheid": "gram", "opmerking": null},
+    {"naam": "puntpaprika", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null}
+  ],
+  "tags": ["ovenschotel", "mexicaans", "gehakt", "mais", "bonen"],
+  "bereidingstijd_min": 35,
+  "bereidingswijze": "1. Verwarm de oven voor op 180°C. Verhit een koekenpan zonder boter of olie en bak het gehakt in 6 min. rul op middelhoog vuur. Voeg de tacokruiden en tomatenblokjes toe en warm nog 2 min. door. Schep het mengsel in de ovenschaal. 2. Laat de maiskorrels uitlekken en verdeel over het gehaktmengsel. Verdeel de chilbonen over de laag mais. Strooi de helft van de kaas over de chilbonen en bedek met de helft van de tortillachips. Strooi de rest van de kaas erover. 3. Was de paprika, verwijder de steeltjes en zaadlijsten en snijd het vruchtlees in ringen. Verdeel de paprika over de kaas. 4. Bak de ovenschotel in ca. 20 min. goudbruin in het midden van de oven. Serveer de rest van de tortillachips erbij.",
+  "bron": "allerhande"
+}

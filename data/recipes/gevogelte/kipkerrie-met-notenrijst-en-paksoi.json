@@ -1,0 +1,25 @@
+{
+  "id": "kipkerrie-met-notenrijst-en-paksoi",
+  "naam": "Kipkerrie met notenrijst & paksoi",
+  "categorie": "gevogelte",
+  "basis": "rijst",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "notenrijst", "hoeveelheid": 275, "eenheid": "gram", "opmerking": null},
+    {"naam": "uien", "hoeveelheid": 3, "eenheid": "stuks", "opmerking": null},
+    {"naam": "kipfilet", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "kerriepoeder", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "kokosmelk", "hoeveelheid": 200, "eenheid": "ml", "opmerking": null},
+    {"naam": "kippenbouillontablet", "hoeveelheid": 0.5, "eenheid": "stuks", "opmerking": null},
+    {"naam": "Shanghai paksoi", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "sesamzaad", "hoeveelheid": 1, "eenheid": "theelepel", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "zonnebloemolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "bloem", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["kerrie", "aziatisch", "kokos", "paksoi"],
+  "bereidingstijd_min": 30,
+  "bereidingswijze": "1. Breng een ruime pan water met eventueel zout aan de kook. Voeg als het water kookt de rijst toe, breng opnieuw aan de kook en kook in 8 min. gaar. Giet af en laat met deksel op de pan staan tot gebruik. 2. Maak de uien schoon en snijd in halve ringen. Snijd de kip in schuine repen van ca. 1½ cm. Verhit de helft van de olie in de braadpan en bok hierin de kipreepjes al omscheppend op hoog vuur in 2-3 min. rondom bruin. 3. Zet het vuur laag en voeg de ui toe. Laat 2 min. meefruiten en voeg dan de bloem en kerrie toe. Roer goed en laat op laag vuur 3 min. garen. 4. Voeg al roerend de kokosmelk, de halve bouillontablet en 200 ml water toe en breng aan de kook. Zet het vuur laag en laat zonder deksel 10 min. zachtjes koken. 5. Was ondertussen de paksoi en snijd in repen van 2 cm. Verhit een koekenpan zonder olie of boter en rooster het sesamzaad in 3 min. goudbruin. 6. Verhit de rest van de olie in de wok en roerbak de paksoi 2 min. Breng eventueel op smaak met zout. Verdeel de rijst, kipkerrie en de paksoi over 4 borden en bestrooi de paksoi met het sesamzaad.",
+  "bron": "allerhande"
+}

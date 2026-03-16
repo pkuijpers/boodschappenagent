@@ -1,0 +1,23 @@
+{
+  "id": "verse-tagliatelle-met-zalm-en-spinazie",
+  "naam": "Verse tagliatelle met zalm en spinazie",
+  "categorie": "vis",
+  "basis": "pasta",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "cherrytomaten", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "uien", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "spinazie", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "verse tagliatelle", "hoeveelheid": 500, "eenheid": "gram", "opmerking": null},
+    {"naam": "roomkaas met bieslook", "hoeveelheid": 150, "eenheid": "gram", "opmerking": null},
+    {"naam": "gerookte zalmsnippers", "hoeveelheid": 200, "eenheid": "gram", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["vis", "pasta", "spinazie", "zalm", "snel"],
+  "bereidingstijd_min": 15,
+  "bereidingswijze": "1. Breng een ruime pan water aan de kook. Snijd ondertussen de tomaten in kwarten. Maak de uien schoon en snipper ze. Verhit de olie in een grote koekenpan en bak de ui 4 min. Voeg de spinazie toe en laat al omscheppend in 2 min. slinken. 2. Kook de tagliatelle met eventueel zout in 4 min. beetgaar. 3. Voeg de roomkaas toe aan de spinazie en laat op middelhoog vuur in 3 min. smelten. Voeg de laatste minuut de zalm toe. Breng op smaak met peper. 4. Giet de tagliatelle af en meng door het zalm-spinaziemengsel. Verdeel over diepe borden en garneer met de tomaatjes. Serveer direct.",
+  "bron": null
+}

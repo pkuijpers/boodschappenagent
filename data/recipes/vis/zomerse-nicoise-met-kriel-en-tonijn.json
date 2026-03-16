@@ -1,0 +1,25 @@
+{
+  "id": "zomerse-nicoise-met-kriel-en-tonijn",
+  "naam": "Zomerse niçoise met kriel en tonijn",
+  "categorie": "vis",
+  "basis": "aardappel",
+  "seizoenen": ["zomer"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "krieltjes", "hoeveelheid": 1000, "eenheid": "gram", "opmerking": null},
+    {"naam": "eieren", "hoeveelheid": 4, "eenheid": "stuks", "opmerking": null},
+    {"naam": "sperziebonen", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "radijs", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": "bos"},
+    {"naam": "cherrytomaten", "hoeveelheid": 250, "eenheid": "gram", "opmerking": "schaal"},
+    {"naam": "komkommer", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "kappertjes", "hoeveelheid": 100, "eenheid": "gram", "opmerking": "potje"},
+    {"naam": "tonijn in zonnebloemolie", "hoeveelheid": 370, "eenheid": "gram", "opmerking": "blikjes"},
+    {"naam": "yoghurt", "hoeveelheid": 150, "eenheid": "gram", "opmerking": "bakje"},
+    {"naam": "salademix", "hoeveelheid": 300, "eenheid": "gram", "opmerking": "zak"},
+    {"naam": "mayonaise", "hoeveelheid": 3, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["salade", "zomer", "gezond", "maaltijdsalade"],
+  "bereidingstijd_min": 25,
+  "bereidingswijze": "1. Breng 2 ruime pannen water aan de kook. Was ondertussen de krieltjes en halveer ze in de lengte. Voeg ze toe als het water kookt de ongeschilde krieltjes met eventueel zout toe aan 1 pan en kook ze in 14 min. gaar. Giet af en laat iets afkoelen. Kook in de andere pan de eieren in 8 min. hard. Voeg na 3 min. de sperziebonen toe. Giet af en spoel af onder koud stromend water. Pel de eieren en snijd in parten. 2. Maak de radijs schoon en snijd in kwarten. Was de tomaten en halveer ze. Was de ongeschilde komkommer en schaf met de dunschiller in de lengte in linten, laat de kappertjes uitlekken en vang 1 el vocht op. 3. Laat de tonijn uitlekken. Meng de yoghurt met de mayonaise, kappertjesvocht. Breng op smaak met peper en eventueel zout. 4. Verdeel de krieltjes, sla, radijs, tomaat, komkommer, sperziebonen en eipartjes over een platte schaal. Verdeel de kappertjes erover en serveer de dressing erbij.",
+  "bron": "Allerhande"
+}

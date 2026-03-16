@@ -1,0 +1,23 @@
+{
+  "id": "pasta-pesto-met-groene-groenten-en-ham",
+  "naam": "Pasta Pesto met Groene Groenten en Ham",
+  "categorie": "vlees",
+  "basis": "pasta",
+  "seizoenen": ["lente", "zomer"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "sperziebonen", "hoeveelheid": 600, "eenheid": "gram", "opmerking": null},
+    {"naam": "verse tagliatelle", "hoeveelheid": 500, "eenheid": "gram", "opmerking": null},
+    {"naam": "aspergebroccoli", "hoeveelheid": 200, "eenheid": "gram", "opmerking": null},
+    {"naam": "hamreepjes", "hoeveelheid": 200, "eenheid": "gram", "opmerking": null},
+    {"naam": "pestospread", "hoeveelheid": 90, "eenheid": "gram", "opmerking": null},
+    {"naam": "Parmigiano Reggiano", "hoeveelheid": 90, "eenheid": "gram", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 4, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["pasta", "ham", "groenten", "pesto", "online favoriet"],
+  "bereidingstijd_min": 25,
+  "bereidingswijze": "1. Breng een ruime pan water aan de kook. Verwijder ondertussen de steelganzet van de sperziebonen, laat het puntje zitten. Voeg als het water kookt de sperziebonen eventueel wat zout toe en kook in 9 min. beetgaar. Kook de tagliatelle de laatste 4 min. mee. Halveer ondertussen de aspergebroccoli en kook de laatste 2 min. mee. Giet de sperziebonen, pasta en aspergebroccoli af. 2. Verhit 2 el olie in een koekenpan en bak de hamreepjes 5 min. Schep regelmatig om. 3. Zet het vuur uit en meng de sperziebonen, pasta, aspergebroccoli, pestospread en de rest van de olie door de ham. Verdeel over diepe borden. Bestrooi met de helft van de kaas en breng op smaak met peper. Serveer de rest van de kaas erbij.",
+  "bron": "AllerhadeBox"
+}

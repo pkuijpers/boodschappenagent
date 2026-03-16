@@ -1,0 +1,22 @@
+{
+  "id": "andijviestamppot-met-zoete-aardappel-en-kalkoen",
+  "naam": "Andijviestamppot met zoete aardappel & kalkoen",
+  "categorie": "gevogelte",
+  "basis": "aardappel",
+  "seizoenen": ["herfst", "winter"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "zoete aardappelen", "hoeveelheid": 1000, "eenheid": "gram", "opmerking": null},
+    {"naam": "pijnboompitten", "hoeveelheid": 65, "eenheid": "gram", "opmerking": null},
+    {"naam": "kalkoenfilet à la minute", "hoeveelheid": 4, "eenheid": "stuks", "opmerking": null},
+    {"naam": "rode paprika", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "andijvie", "hoeveelheid": 500, "eenheid": "gram", "opmerking": "fijngesneden"},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["stamppot", "gezond", "kalkoen", "zoete aardappel", "andijvie"],
+  "bereidingstijd_min": 25,
+  "bereidingswijze": "1. Breng een ruime pan water aan de kook. Schil de aardappelen en snijd in gelijke stukken. Voeg, als het water kookt, met eventueel wat zout toe. Kook in 10 min. gaar. 2. Rooster ondertussen de pijnboompitten in een koekenpan zonder olie of boter in 3 min. op middelhoog vuur goudbruin. Neem uit de pan en laat afkoelen op een bord. 3. Verhit ondertussen de grillpan. Bestrijk de kalkoenschijf met de olie, peper en eventueel zout. Gril de kalkoen in 3-5 min. gaar op hoog vuur. Keer regelmatig. 4. Giet de aardappelen af en stamp met de pureestamper tot een grove puree. Was de paprika's, verwijder de steelstukken en de zaadlijsten en snijd in kleine blokjes. Schep de paprika en andijvie door de puree en verwarm al omscheppend 3 min. op laag vuur. Breng op smaak met peper. 5. Verdeel de stamppot over 4 borden en leg de kalkoenschijf erbij. Bestrooi met de geroosterde pijnboompitten.",
+  "bron": null
+}

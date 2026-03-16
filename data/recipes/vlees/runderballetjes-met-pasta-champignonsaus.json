@@ -1,0 +1,25 @@
+{
+  "id": "runderballetjes-met-pasta-champignonsaus",
+  "naam": "Runderballetjes met pasta & champignonsaus",
+  "categorie": "vlees",
+  "basis": "pasta",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "uien", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "knoflook", "hoeveelheid": 2, "eenheid": "teen", "opmerking": null},
+    {"naam": "champignons", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "rundergehaktballetjes", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "tomato frito", "hoeveelheid": 350, "eenheid": "ml", "opmerking": null},
+    {"naam": "kookzuivel", "hoeveelheid": 250, "eenheid": "ml", "opmerking": null},
+    {"naam": "verse pappardelle", "hoeveelheid": 500, "eenheid": "gram", "opmerking": null},
+    {"naam": "boerenkool", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["rund", "pasta", "champignons", "boerenkool"],
+  "bereidingstijd_min": 25,
+  "bereidingswijze": "1. Breng een ruime pan water aan de kook. Maak de uien schoon en snijd in halve ringen, maak de knoflook schoon en snijd fijn. Maak de champignons voorzichtig schoon met keukenpapier en snijd in kwarten. Verhit de olie in de hapjespan en bak de ui en champignons 5 min. op hoog vuur. 2. Voeg de gehaktballetjes en knoflook toe en bak 3 min. mee. Voeg de tomato frito en kookzuivel toe, doe de deksel op de pan en laat 10 min. op laag vuur stoven. Breng op smaak met peper en eventueel zout. 3. Kook ondertussen de pasta in 4 min. beetgaar. Voeg halverwege de kooktijd de boerenkool toe. Giet de pasta en boerenkool af, verdeel over diepe borden en verdeel de sous erover.",
+  "bron": "Allerhande Box"
+}

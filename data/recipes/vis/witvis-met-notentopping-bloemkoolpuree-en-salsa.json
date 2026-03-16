@@ -1,0 +1,28 @@
+{
+  "id": "witvis-met-notentopping-bloemkoolpuree-en-salsa",
+  "naam": "Witvis met notentopping, bloemkoolpuree & salsa",
+  "categorie": "vis",
+  "basis": "aardappel",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "aardappelen", "hoeveelheid": 600, "eenheid": "gram", "opmerking": null},
+    {"naam": "bloemkoolroosjes", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "hazelnoten", "hoeveelheid": 50, "eenheid": "gram", "opmerking": null},
+    {"naam": "panko", "hoeveelheid": 25, "eenheid": "gram", "opmerking": null},
+    {"naam": "pangasiusfilet", "hoeveelheid": 700, "eenheid": "gram", "opmerking": null},
+    {"naam": "cherrytomaten", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "peterselie", "hoeveelheid": 15, "eenheid": "gram", "opmerking": null},
+    {"naam": "komkommerrauwkost", "hoeveelheid": 150, "eenheid": "gram", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "boter", "hoeveelheid": 50, "eenheid": "gram", "opmerking": null},
+    {"naam": "mosterd", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "melk", "hoeveelheid": 75, "eenheid": "ml", "opmerking": null}
+  ],
+  "tags": ["vis", "bloemkool", "gezond", "noten"],
+  "bereidingstijd_min": 40,
+  "bereidingswijze": "1. Verwarm de oven voor op 200°C. Zet de aardappelen in een ruime pan water op het vuur. Kook ze, zodat het water kookt, in 15 min. gaar. Snijd de bloemkoolroosjes in kwarten en voeg de laatste 5 min. toe. 2. Doe ondertussen de hazelnoten in een hoge beker en maal fijn met de staafmixer. Meng samen met de panko, de helft van de boter, peper en eventueel zout tot een kruimig mengsel. Leg de pangasiusfilets op een met bakpapier beklede bakplaat en bestrijk rondom met de mosterd. Verdeel het panko-notenmengsel erover en druk goed aan. Bak ca. 15 min. in de oven. 3. Snijd ondertussen voor de salsa de cherrytomaten in kwarten en snijd de peterselie fijn. Schep de tomaten om met de olie, peterselie en wat peper. 4. Verwarm de melk in een steelpan of in de magnetron. Giet de aardappelen en bloemkool af en vang 100 ml kookvocht op. Voeg de melk, de rest van de boter en het kookvocht toe en stamp met de pureestamper tot een smeuïge puree. Schep om met de komkommerrauwkost. Breng op smaak met peper en eventueel zout. 5. Verdeel de bloemkoolpuree en pangasiusfilets over de borden en serveer de tomatensalsa erbij.",
+  "bron": null
+}

@@ -1,0 +1,24 @@
+{
+  "id": "spinazie-stamppot-met-gehaktballetjes",
+  "naam": "Spinazie stamppot met gehaktballetjes",
+  "categorie": "vlees",
+  "basis": "aardappel",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "kruimige aardappelen", "hoeveelheid": 1000, "eenheid": "gram", "opmerking": null},
+    {"naam": "Hollandse runderhaktballetjes", "hoeveelheid": 400, "eenheid": "gram", "opmerking": "schaal"},
+    {"naam": "spinazie", "hoeveelheid": 600, "eenheid": "gram", "opmerking": "zak"},
+    {"naam": "zoetzure zilveruitjes", "hoeveelheid": 320, "eenheid": "gram", "opmerking": "potje"},
+    {"naam": "appelsiroop", "hoeveelheid": 3, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "rauwkost komkommer", "hoeveelheid": 150, "eenheid": "gram", "opmerking": "zak"},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "boter", "hoeveelheid": 50, "eenheid": "gram", "opmerking": null},
+    {"naam": "grove mosterd", "hoeveelheid": 1.5, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "melk", "hoeveelheid": 75, "eenheid": "ml", "opmerking": null}
+  ],
+  "tags": ["stamppot", "gehaktballetjes", "spinazie", "nederlands", "comfort food"],
+  "bereidingstijd_min": 30,
+  "bereidingswijze": "1. Breng een ruime pan water met eventueel zout aan de kook. Schil de aardappelen, snijd ze in gelijke stukken en kook ze in 20 min. gaar. 2. Verhit de helft van de boter in de hapjespan en bak de gehaktballetjes in 10 min. op middelhoog vuur goudbruin en gaar. Keer regelmatig. 3. Verhit ondertussen de wok of grote koekenpan zonder olie of boter en laat de spinazie in delen al omscheppend slinken. Laat uitlekken in een vergiet. 4. Neem de balletjes uit de pan, maar laat het bakvet erin zitten. Laat de zilveruitjes uitlekken en vang het vocht op. Doe de zilveruitjes, 50 ml uiteenvocht, 50 ml water, de siroop en een ½ el mosterd in de hapjespan en breng aan de kook. Laat het vleeswig op hoog vuur 2 min. koken. 5. Giet ondertussen de aardappelen af en vang 100 ml kookvocht op. Voeg de melk, de rest van de boter en het kookvocht toe en stamp met de pureestamper tot een smeuïge puree. 6. Meng de spinazie met de rest van de mosterd en de rauwkost door de puree en verdeel over de 4 borden. Schep de balletjes en de vleeswig erovef.",
+  "bron": "allerhande box"
+}

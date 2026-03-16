@@ -1,0 +1,24 @@
+{
+  "id": "spaghetti-met-gegratineerde-gehaktballetjes",
+  "naam": "Spaghetti met gegratineerde gehaktballetjes",
+  "categorie": "vlees",
+  "basis": "pasta",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "knoflook", "hoeveelheid": 2, "eenheid": "teen", "opmerking": null},
+    {"naam": "sjalotten", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "Hollandse gehaktballetjes", "hoeveelheid": 400, "eenheid": "gram", "opmerking": "schaal"},
+    {"naam": "cherrytomaten", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "tomatenstukjes", "hoeveelheid": 850, "eenheid": "ml", "opmerking": "blikken"},
+    {"naam": "geraspte kaas voor ovegratin", "hoeveelheid": 150, "eenheid": "gram", "opmerking": "zak"},
+    {"naam": "verse spaghetti all'uovo", "hoeveelheid": 500, "eenheid": "gram", "opmerking": "zak"},
+    {"naam": "komkommer", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "gemengde sla", "hoeveelheid": 150, "eenheid": "gram", "opmerking": "zak"},
+    {"naam": "pestovinaigrette", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": "sachet"}
+  ],
+  "tags": ["italiaans", "ovenschotel", "gehakt", "pasta"],
+  "bereidingstijd_min": 30,
+  "bereidingswijze": "1. Verwarm de oven voor op 200°C. Maak de knoflook schoon en snijd fijn. Maak de sjalotten schoon en snijd. Verhit de olie in de hapjesspan en fruit de knoflook en sjalot 3 min. op middelhoog vuur. Voeg de gehaktballetjes toe en bak ze in 3 min. rondom goudbruin. 2. Was ondertussen de cherrytomaten en halveer ze. Voeg samen met de tomatenstukjes toe aan de gehaktballetjes en breng aan de kook. Breng op smaak met peper en eventueel zout. Doe de balletjes in tomatensaus in de ovenschaal en verdeel de kaas erover. Bak ca. 20 min. in het midden van de oven goudbruin en gaar. 3. Breng ondertussen een ruime pan water aan de kook. Voeg als het water kookt de spaghetti en eventueel zout toe en kook in 4 min. beetgaar. Giet af. 4. Was ondertussen de komkommer en halveer in de lengte. Verwijder de zaadlijsten met een theelepel en snijd het vruchtvlees in boogjies. Meng de komkommer in een schaal met de sla en pestovinaigrette. Breng op smaak met peper. 5. Verdeel de spaghetti over diepe borden en verdeel de tomatensaus met gehaktballetjes erover. Serveer de salade erbij.",
+  "bron": null
+}
