@@ -132,16 +132,17 @@ class TestMeerderheidsRegelKeten:
     """
 
     def test_meerderheid_in_seizoen_is_geschikt(self):
-        """S4.4: Recept met 3 groenten, 2 in seizoen (feb) → geschikt (2/3 > 50%).
+        """S4.4: Recept met 3 seizoensgroenten, 2 in seizoen (feb) → geschikt.
 
-        Februari: prei ✅, wortel ✅, tomaat ❌ = 2/3 > 50%.
+        Februari: boerenkool ✅ (nov-feb), pompoen ✅ (sep-mrt), tomaat ❌ = 2/3.
+        Jaar-rond groenten (prei, wortel) tellen niet mee.
         """
         kalender = SeizoenKalender()
         recept = _make_recipe(
             "test-feb-geschikt",
             [
-                Ingredient(naam="prei", hoeveelheid=2, eenheid="stuks"),
-                Ingredient(naam="wortel", hoeveelheid=3, eenheid="stuks"),
+                Ingredient(naam="boerenkool", hoeveelheid=200, eenheid="gram"),
+                Ingredient(naam="pompoen", hoeveelheid=300, eenheid="gram"),
                 Ingredient(naam="tomaat", hoeveelheid=2, eenheid="stuks"),
             ],
         )

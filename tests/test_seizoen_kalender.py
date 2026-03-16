@@ -42,6 +42,8 @@ def kalender_data(tmp_path):
         _groente(8, "Bloemkool", ["mei"] + ZOMER + ["nov"]),
         _groente(9, "Aubergine", ZOMER),
         _groente(10, "Sperziebonen", ZOMER[:4]),
+        _groente(11, "Peultjes", ["jun", "jul", "aug"]),
+        _groente(12, "Pompoen", ["sep", "okt", "nov", "dec", "jan", "feb", "mrt"]),
     ]
     path = tmp_path / "kalender.json"
     path.write_text(json.dumps(data))
@@ -70,7 +72,7 @@ class TestSeizoenKalenderLaden:
     """Tests voor het laden van de seizoenskalender."""
 
     def test_laadt_kalender_uit_json(self, kalender):
-        assert len(kalender._groenten) == 10
+        assert len(kalender._groenten) == 12
 
     def test_default_pad_laadt_productie_kalender(self):
         kalender = SeizoenKalender()
@@ -140,6 +142,26 @@ class TestMatchIngredient:
     def test_biologische_rode_ui(self, kalender):
         assert kalender.match_ingredient("biologische rode ui") == "ui"
 
+    def test_ui_matcht_niet_op_kruimige_aardappelen(self, kalender):
+        """Bug fix: 'ui' is substring van 'kr-ui-mige' maar geen woordgrens."""
+        assert kalender.match_ingredient("kruimige aardappelen") is None
+
+    def test_ui_matcht_wel_op_rode_uien(self, kalender):
+        """'uien' bevat stam 'ui' op woordgrens."""
+        assert kalender.match_ingredient("rode uien") == "ui"
+
+    def test_peulen_matcht_peultjes(self, kalender):
+        """Bug fix: bidirectionele stemming — 'peulen' moet matchen op 'peultjes'."""
+        assert kalender.match_ingredient("peulen") == "peultjes"
+
+    def test_wokgroente_met_peulen_matcht_peultjes(self, kalender):
+        """Samengesteld ingrediënt met 'peulen' moet peultjes herkennen."""
+        ingredientnaam = "japanse wokgroente champignons en peulen"
+        assert kalender.match_ingredient(ingredientnaam) in (
+            "champignon",
+            "peultjes",
+        )
+
 
 class TestReceptIsSeizoengeschikt:
     """Tests voor de meerderheidsregel (>50% groenten lage CO2)."""
@@ -157,17 +179,18 @@ class TestReceptIsSeizoengeschikt:
         assert kalender.recept_is_seizoensgeschikt(recept, "feb") is True
 
     def test_meerderheid_in_seizoen(self, kalender):
-        """Recept met 3 groenten, 2 in seizoen: 2/3 > 50%."""
+        """Recept met 3 seizoensgroenten, 2 in seizoen: 2/3 > 50%."""
         recept = _make_recipe(
             "gemengd",
             [
-                Ingredient(naam="ui", hoeveelheid=1, eenheid="stuks"),
-                Ingredient(naam="champignon", hoeveelheid=200, eenheid="gram"),
+                Ingredient(naam="boerenkool", hoeveelheid=200, eenheid="gram"),
+                Ingredient(naam="pompoen", hoeveelheid=300, eenheid="gram"),
                 Ingredient(
                     naam="tomaat", hoeveelheid=2, eenheid="stuks"
                 ),  # niet in feb
             ],
         )
+        # feb: boerenkool ✅ (nov-feb), pompoen ✅ (sep-mrt), tomaat ❌ = 2/3
         assert kalender.recept_is_seizoensgeschikt(recept, "feb") is True
 
     def test_minderheid_in_seizoen(self, kalender):
@@ -210,6 +233,35 @@ class TestReceptIsSeizoengeschikt:
                 Ingredient(naam="spaghetti", hoeveelheid=200, eenheid="gram"),
                 Ingredient(naam="spek", hoeveelheid=150, eenheid="gram"),
                 Ingredient(naam="ei", hoeveelheid=2, eenheid="stuks"),
+            ],
+        )
+        assert kalender.recept_is_seizoensgeschikt(recept, "feb") is True
+
+    def test_jaar_rond_groenten_tellen_niet_mee(self, kalender):
+        """Bug fix: ui + champignon (jaar-rond) overstemmen pompoen niet meer."""
+        recept = _make_recipe(
+            "pompoenquiche",
+            [
+                Ingredient(naam="uien", hoeveelheid=2, eenheid="stuks"),
+                Ingredient(naam="kastanjechampignons", hoeveelheid=400, eenheid="gram"),
+                Ingredient(naam="pompoenstukjes", hoeveelheid=400, eenheid="gram"),
+                Ingredient(naam="eieren", hoeveelheid=3, eenheid="stuks"),
+            ],
+        )
+        # jul: pompoen ❌ (sep-mrt), ui en champignon zijn jaar-rond → tellen niet mee
+        # alleen pompoen telt → 0/1 = 0%
+        assert kalender.recept_is_seizoensgeschikt(recept, "jul") is False
+        # okt: pompoen ✅ → 1/1 = 100%
+        assert kalender.recept_is_seizoensgeschikt(recept, "okt") is True
+
+    def test_alleen_jaar_rond_groenten_is_geschikt(self, kalender):
+        """Recept met alleen jaar-rond groenten is altijd geschikt."""
+        recept = _make_recipe(
+            "champignon-ui",
+            [
+                Ingredient(naam="ui", hoeveelheid=1, eenheid="stuks"),
+                Ingredient(naam="champignon", hoeveelheid=200, eenheid="gram"),
+                Ingredient(naam="pasta", hoeveelheid=300, eenheid="gram"),
             ],
         )
         assert kalender.recept_is_seizoensgeschikt(recept, "feb") is True

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -31,6 +32,10 @@ GELDIGE_MAANDEN = {
     "nov",
     "dec",
 }
+
+# Korte groente-namen (≤3 tekens) vereisen een woordgrens aan het begin
+# om false positives te voorkomen (bijv. "ui" in "kruimige").
+_KORTE_NAAM_DREMPEL = 3
 
 
 class SeizoenKalender:
@@ -73,6 +78,11 @@ class SeizoenKalender:
             reverse=True,
         )
 
+        # Jaar-rond groenten (alle 12 maanden beschikbaar)
+        self._jaar_rond: set[str] = {
+            naam for naam, maanden in self._groenten.items() if len(maanden) == 12
+        }
+
     def groenten_in_seizoen(self, maand: str) -> set[str]:
         """Retourneer set van groenten met lage CO2 voor de gegeven maand.
 
@@ -92,16 +102,21 @@ class SeizoenKalender:
 
         return {naam for naam, maanden in self._groenten.items() if maand in maanden}
 
+    def _bevat_groente(self, zoekterm: str, ingredientnaam: str) -> bool:
+        """Controleer of een zoekterm voorkomt in de ingrediëntnaam.
+
+        Voor korte zoektermen (≤3 tekens) wordt een woordgrens vereist aan
+        het begin om false positives te voorkomen (bijv. "ui" in "kruimige").
+        """
+        if len(zoekterm) <= _KORTE_NAAM_DREMPEL:
+            return bool(re.search(rf"\b{re.escape(zoekterm)}", ingredientnaam))
+        return zoekterm in ingredientnaam
+
     def match_ingredient(self, ingredientnaam: str) -> str | None:
         """Match een ingrediëntnaam tegen de seizoenskalender.
 
-        Gebruikt substring matching: de kalender-groente (of stam) moet een
-        substring zijn van de ingrediëntnaam. Langste match wint om te
-        voorkomen dat bijv. "ui" matcht op "aubergine".
-
-        Stamming: voor groenten langer dan 3 tekens wordt ook de stam
-        geprobeerd (laatste teken verwijderd), zodat bijv. "tomaat" →
-        "tomat" matcht op "cherrytomaten".
+        Retourneert de eerste (langste) match. Zie ``match_alle_groenten``
+        voor het vinden van alle groenten in een samengesteld ingrediënt.
 
         Args:
             ingredientnaam: Naam van het ingrediënt uit een recept.
@@ -109,28 +124,66 @@ class SeizoenKalender:
         Returns:
             De kalender-groente (lowercase) of None als geen match.
         """
+        matches = self.match_alle_groenten(ingredientnaam)
+        return matches[0] if matches else None
+
+    def match_alle_groenten(self, ingredientnaam: str) -> list[str]:
+        """Vind alle kalender-groenten in een ingrediëntnaam.
+
+        Gebruikt substring matching met langste-match-eerst strategie.
+        Stamming is bidirectioneel:
+        - Kalender→ingrediënt: "tomaat" → "toma" matcht op "cherrytomaten"
+        - Ingrediënt→kalender: "peulen" → "peul" matcht op "peultjes"
+
+        Voor korte groente-namen (≤3 tekens) wordt een woordgrens vereist
+        om false positives te voorkomen (bijv. "ui" in "kruimige").
+
+        Args:
+            ingredientnaam: Naam van het ingrediënt uit een recept.
+
+        Returns:
+            Lijst van gematchte kalender-groenten (lowercase), kan leeg zijn.
+        """
         naam_lower = ingredientnaam.lower()
+        gevonden: list[str] = []
 
         for groente in self._groenten_namen_sorted:
-            if groente in naam_lower:
-                return groente
-            # Stam-matching voor Nederlandse meervoudsvormen:
+            if groente in gevonden:
+                continue
+            if self._bevat_groente(groente, naam_lower):
+                gevonden.append(groente)
+                continue
+            # Stam-matching kalender→ingrediënt:
             # "tomaat" → "toma" matcht op "cherrytomaten"
-            # Probeer 1 en 2 tekens verwijderen, stam moet ≥4 tekens zijn
             for trim in (1, 2):
                 stam = groente[:-trim]
                 if len(stam) >= 4 and stam in naam_lower:
-                    return groente
+                    gevonden.append(groente)
+                    break
 
-        return None
+        # Bidirectionele stam-matching ingrediënt→kalender:
+        # "peulen" → stam "peul" matcht op "peultjes"
+        # Alleen voor enkelvoudige kalendergroenten om false positives
+        # met bijvoeglijke naamwoorden te voorkomen
+        for woord in naam_lower.split():
+            for groente in self._groenten_namen_sorted:
+                if groente in gevonden or " " in groente:
+                    continue
+                for trim in (1, 2):
+                    stam = woord[:-trim] if len(woord) > trim else ""
+                    if len(stam) >= 4 and stam in groente:
+                        gevonden.append(groente)
+                        break
+
+        return gevonden
 
     def recept_is_seizoensgeschikt(self, recipe: Recipe, maand: str) -> bool:
         """Bepaal of een recept seizoensgeschikt is voor de gegeven maand.
 
         Een recept is geschikt als de meerderheid (>50%) van de herkenbare
-        groenten lage CO2 heeft voor de maand. Ingrediënten die niet in de
-        kalender voorkomen worden genegeerd. Recepten zonder herkenbare
-        groenten zijn altijd geschikt.
+        seizoensgroenten lage CO2 heeft voor de maand. Jaar-rond groenten
+        (alle 12 maanden beschikbaar) worden uitgesloten van de telling.
+        Recepten zonder herkenbare seizoensgroenten zijn altijd geschikt.
 
         Args:
             recipe: Het recept om te beoordelen.
@@ -145,13 +198,13 @@ class SeizoenKalender:
         in_seizoen = 0
 
         for ingredient in recipe.ingredienten:
-            groente = self.match_ingredient(ingredient.naam)
-            if groente is not None:
-                herkend += 1
-                if groente in seizoens_groenten:
-                    in_seizoen += 1
+            for groente in self.match_alle_groenten(ingredient.naam):
+                if groente not in self._jaar_rond:
+                    herkend += 1
+                    if groente in seizoens_groenten:
+                        in_seizoen += 1
 
-        # Geen herkenbare groenten → altijd geschikt
+        # Geen herkenbare seizoensgroenten → altijd geschikt
         if herkend == 0:
             return True
 
