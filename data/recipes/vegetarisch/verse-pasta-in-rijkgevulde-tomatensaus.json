@@ -1,0 +1,22 @@
+{
+  "id": "verse-pasta-in-rijkgevulde-tomatensaus",
+  "naam": "Verse pasta in rijkgevulde tomatensaus",
+  "categorie": "vegetarisch",
+  "basis": "pasta",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "cherrytomaten", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "peultjes", "hoeveelheid": 200, "eenheid": "gram", "opmerking": null},
+    {"naam": "Italiaanse roerbakgroente courgette", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "groentesaus tomaat-wortel", "hoeveelheid": 480, "eenheid": "gram", "opmerking": null},
+    {"naam": "verse perle con basilico pasta", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "Parmigiano Reggiano", "hoeveelheid": 40, "eenheid": "gram", "opmerking": null},
+    {"naam": "pijnboompitten", "hoeveelheid": 30, "eenheid": "gram", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["vegetarisch", "pasta", "tomaten", "verse pasta"],
+  "bereidingstijd_min": 15,
+  "bereidingswijze": "Breng een ruime pan water aan de kook. Halveer de cherrytomaten en maak de peultjes schoon. Verhit de olie in een wok of hapjespan en bak de cherrytomaten, peultjes en roerbakgroente 5 min. op middelhoog vuur. Voeg de saus toe en verwarm 3 min. Roer regelmatig. Kook ondertussen de pasta in 6 min. beetgaar. Giet de pasta af in een vergiet en laat uitlekken. Schep de pasta door de saus en verdeel over 4 borden. Bestrooi met de kaas en pijnboompitten.",
+  "bron": null
+}

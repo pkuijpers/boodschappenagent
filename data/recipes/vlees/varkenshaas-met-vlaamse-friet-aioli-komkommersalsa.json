@@ -1,0 +1,27 @@
+{
+  "id": "varkenshaas-met-vlaamse-friet-aioli-komkommersalsa",
+  "naam": "Varkenshaas met Vlaamse friet, aioli & komkommersalsa",
+  "categorie": "vlees",
+  "basis": "aardappel",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "Vlaamse friet", "hoeveelheid": 700, "eenheid": "gram", "opmerking": null},
+    {"naam": "gerookte paprikapoeder", "hoeveelheid": 1, "eenheid": "theelepel", "opmerking": null},
+    {"naam": "sjalotten", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "snoepgroente tomatenmix", "hoeveelheid": 250, "eenheid": "gram", "opmerking": "½ emmertje"},
+    {"naam": "komkommer", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "gegrilde rode paprika", "hoeveelheid": 295, "eenheid": "gram", "opmerking": "1 potje"},
+    {"naam": "varkenshaas", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "al-andalus", "hoeveelheid": 1, "eenheid": "theelepel", "opmerking": null},
+    {"naam": "knoflook", "hoeveelheid": 1, "eenheid": "teen", "opmerking": null},
+    {"naam": "mayonaise", "hoeveelheid": 4, "eenheid": "eetlepel", "opmerking": "4 el"},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["vlees", "friet", "aioli", "komkommersalsa", "varkenshaas"],
+  "bereidingstijd_min": 55,
+  "bereidingswijze": "1. Verwarm de oven voor op 200°C. Verdeel de friet over een met bakpapier beklede ovenplaat of bak in ca. 25 min. goudgeel en gaar. Neem uit de oven en schep de friet om met de paprikapoeder en bestrooi eventueel met zout. 2. Snijd de sjalotten fijn. Snijd de tomaten in kwarten. Halveer de komkommers in de lengte en schraap met een theelepel de zaadlijsten eruit. Snijd het vruchtlees in blokjes van 1 cm. Laat de gegrilde paprika's uitlekken, maar vang 1 el vocht op. Snijd de paprika's in blokjes van 1 cm. 3. Doe alle gesneden groente in een schaal en meng met het opgevangen vocht van de paprika's. Breng op smaak met peper en eventueel zout. 4. Snijd ondertussen de varkenshaas in de lengte doormidden. Meng de olie met de al-andalus en wat zout en bestrijk de varkenshaas rondom met het mengsel. Verhit de grillpan zonder olie of boter en steek de varkenshaas in ca. 10 min. op middelhoog vuur goudbruin en gaar. Keer regelmatig. 5. Maak ondertussen aioli: pers de knoflook boven de mayonaise en roer er een ½ el water door om het smeuïg te maken.",
+  "bron": "allerhandebox"
+}

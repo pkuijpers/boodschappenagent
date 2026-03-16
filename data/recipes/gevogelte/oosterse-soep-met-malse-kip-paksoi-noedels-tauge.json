@@ -1,0 +1,24 @@
+{
+  "id": "oosterse-soep-met-malse-kip-paksoi-noedels-tauge",
+  "naam": "Oosterse soep met malse kip, paksoi, noedels & taugé",
+  "categorie": "gevogelte",
+  "basis": "pasta",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "kippenbouillontablet", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "ketjap", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "pindakaas", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "kipdijfilet", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "udon-noedels", "hoeveelheid": 180, "eenheid": "gram", "opmerking": null},
+    {"naam": "sperziebonen", "hoeveelheid": 400, "eenheid": "gram", "opmerking": "gebroken"},
+    {"naam": "Shanghai paksoi", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "taugé", "hoeveelheid": 125, "eenheid": "gram", "opmerking": null},
+    {"naam": "gebakken uitjes", "hoeveelheid": 60, "eenheid": "gram", "opmerking": "gebakken"},
+    {"naam": "sambal oelek", "hoeveelheid": 0.5, "eenheid": "theelepel", "opmerking": null}
+  ],
+  "tags": ["oosters", "soep", "noedels", "gezond"],
+  "bereidingstijd_min": 25,
+  "bereidingswijze": "1. Doe 1/2 liter water, de bouillontablet, ketjap, sambal en pindakaas in een soeppan en breng al roerend aan de kook. 2. Snijd ondertussen de kipfilet in dunne repen. Voeg samen met de noedels toe. Kook 10 min. Voeg na 4 min de sperziebonen toe. Breng de soep op smaak met peper en eventueel zout. 3. Snijd de paksoi in dunne repen. Verdeel met de taugé over 4 kommen en schep de soep erop. Bestrooi met de gebakken uitjes.",
+  "bron": "aller hande box"
+}

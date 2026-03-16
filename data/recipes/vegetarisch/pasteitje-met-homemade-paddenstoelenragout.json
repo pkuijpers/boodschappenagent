@@ -1,0 +1,26 @@
+{
+  "id": "pasteitje-met-homemade-paddenstoelenragout",
+  "naam": "Pasteitje met homemade paddenstoelenragout",
+  "categorie": "vegetarisch",
+  "basis": "brood",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "kastanjechampignons", "hoeveelheid": 650, "eenheid": "gram", "opmerking": null},
+    {"naam": "gedroogde dragon", "hoeveelheid": 2, "eenheid": "theelepel", "opmerking": null},
+    {"naam": "paddenstoelenbouillontablet", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "kookzuivel", "hoeveelheid": 250, "eenheid": "ml", "opmerking": null},
+    {"naam": "roomboterpasteitjes", "hoeveelheid": 4, "eenheid": "stuks", "opmerking": null},
+    {"naam": "tastytom-tomaten", "hoeveelheid": 380, "eenheid": "gram", "opmerking": null},
+    {"naam": "walnoten", "hoeveelheid": 30, "eenheid": "gram", "opmerking": null},
+    {"naam": "balsamicovinaigrette", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "Regato-kaasflakes", "hoeveelheid": 60, "eenheid": "gram", "opmerking": null},
+    {"naam": "gemengde salade", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null}
+  ],
+  "tags": ["pasteitje", "champignons", "ragout", "vegetarisch"],
+  "bereidingstijd_min": 30,
+  "bereidingswijze": "Verwarm de oven voor op 165°C. Snijd de champignons in kwarten. Verhit de boter in de hapjespan en bak de champignons, dragon, peper en eventueel zout 5 min. op hoog vuur. Voeg de bloem toe en bak ca. 1 min. op middelhoog vuur. Voeg de bouillontablet, kookzuivel en 300 ml heet water toe en breng al roerend aan de kook. Laat 10 min. op laag vuur koken. Roer af en toe. Snijd de kapjes uit de pasteitjes en verwarm ze samen met de pasteibakjes ca. 10 min. op een met bakpapier beklede bakplaat in het midden van de oven. Maak ondertussen de salade. Snijd de tomaten in parten en hak de noten grof. Schep de tomaten om met de vinaigrette, walnoten, kaasflakes en sla. Bestrooi met (versgemalen) peper. Leg op elk bord een pasteibakje en schep de ragout erin. Leg de kapjes erop en serveer met de salade. Tip: Uut de ragout al 1 dag van tevoren maken. Bewaar afgedekt in de koelkast en verwarm op laag vuur.",
+  "bron": null
+}

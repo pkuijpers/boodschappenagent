@@ -1,0 +1,25 @@
+{
+  "id": "gratin-van-knolselderij-met-appel-brie-en-walnoten",
+  "naam": "Gratin van knolselderij met appel, brie & walnoten",
+  "categorie": "vegetarisch",
+  "basis": "aardappel",
+  "seizoenen": ["herfst", "winter"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "aardappelen", "hoeveelheid": 1000, "eenheid": "gram", "opmerking": "kruimig"},
+    {"naam": "knolselderij", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "bosuitjes", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "jazz-appels", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "boerenbrie", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "tijm", "hoeveelheid": 7.5, "eenheid": "gram", "opmerking": "zakje"},
+    {"naam": "crème fraîche", "hoeveelheid": 125, "eenheid": "gram", "opmerking": "bekertje"},
+    {"naam": "grove mosterd", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": "topje 180g"},
+    {"naam": "ongezouten walnoten", "hoeveelheid": 55, "eenheid": "gram", "opmerking": "½ bakje"},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null}
+  ],
+  "tags": ["gratin", "vegetarisch", "knolselderij", "appel", "brie", "walnoten", "oven"],
+  "bereidingstijd_min": 60,
+  "bereidingswijze": "1 Verwarm de oven voor op 200°C. Schil de aardappelen en de knolselderij en snijd in stukken van 2 cm. Kook de aardappelen in een ruime pan in ca. 20 min. gaar. Voeg de laatste 10 min. de knolselderij toe. 2 Snijd ondertussen de bosuïtjes in ringen, de appels met schil en klokhuis (zonder pitjes) in dunne plakken en de brie in de lengte in dunne plakken. Ris de blaadjes van de takjes tijm. 3 Giet de aardappel en knolselderij af en vang een kopje kookvocht op. Voeg de crème fraîche, mosterd en eventueel wat kookvocht toe tot een gladde puree. Schep de helft van de bosuï en de helft van de tijm erdoor. Breng op smaak met peper en eventueel zout. 4 Verdeel de helft van de puree en de helft van de appel over de ovenschaal. Verdeel de rest van de puree en appel erover. Dek af met de brie en strooi de rest van de tijm en walnoten. Bak in ca. 20 min. in het midden van de oven goudbruin. Bestrooi met de rest van de bosuï.",
+  "bron": "allerhande"
+}

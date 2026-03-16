@@ -1,0 +1,24 @@
+{
+  "id": "krokante-zalmburger-met-rozemarijn-aardappeltjes",
+  "naam": "Krokante Zalmburger met Rozemarijnaardappeltjes",
+  "categorie": "vis",
+  "basis": "aardappel",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "aardappelschijfjes", "hoeveelheid": 900, "eenheid": "gram", "opmerking": null},
+    {"naam": "rozemarijn-zeezout", "hoeveelheid": 7, "eenheid": "gram", "opmerking": null},
+    {"naam": "hazelnoten", "hoeveelheid": 80, "eenheid": "gram", "opmerking": null},
+    {"naam": "gepaneerde zalmburgers", "hoeveelheid": 4, "eenheid": "stuks", "opmerking": null},
+    {"naam": "broccoli", "hoeveelheid": 800, "eenheid": "gram", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 6, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "azijn", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "mosterd", "hoeveelheid": 1, "eenheid": "theelepel", "opmerking": null}
+  ],
+  "tags": ["zalmburger", "aardappeltjes", "rozemarijn", "broccoli", "krokant"],
+  "bereidingstijd_min": 20,
+  "bereidingswijze": "1. Breng een ruime pan water aan de kook. Verhit ondertussen 2 el olie in 1 grote of 2 gewone koekenpannen en bak de aardappelschijfjes met het rozemarijn-zeezout en wat peper in ca. 20 min. op middelhoog vuur goudbruin en gaar. Schep regelmatig om. 2. Verhit ondertussen de hapjespan zonder olie of boter en rooster de hazelnoten 4 min. op middelhoog vuur. Neem uit de pan en laat afkoelen op een bord. 3. Verhit in dezelfde hapjespan 2 el olie en bak de zalmburgers in 8 min. op matig vuur goudbruin en gaar. Keer halverwege. 4. Was ondertussen de broccoli en snijd in kleine roosjes, schil de stronk en snijd in kleine stukjes. Voeg als het water kookt de broccoli en eventueel zout toe en kook in 5 min. beetgaar. 5. Maak een dressing van de rest van de olie, azijn en mosterd. Hak de geroosterde hazelnoten grof. Giet de broccoli af en schep om met de dressing en de hazelnoten. Verdeel de zalmburgers, broccoli en aardappeltjes over de borden.",
+  "bron": null
+}

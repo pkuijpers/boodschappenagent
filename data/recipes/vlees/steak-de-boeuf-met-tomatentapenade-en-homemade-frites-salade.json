@@ -1,0 +1,26 @@
+{
+  "id": "steak-de-boeuf-met-tomatentapenade-en-homemade-frites-salade",
+  "naam": "Steak de boeuf met tomatentapenade en homemade frites & salade",
+  "categorie": "vlees",
+  "basis": "aardappel",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "zoete aardappelen", "hoeveelheid": 500, "eenheid": "gram", "opmerking": null},
+    {"naam": "roodschillige aardappelen", "hoeveelheid": 500, "eenheid": "gram", "opmerking": null},
+    {"naam": "komkommer", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "babyromaine sla", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "Hollandse rauwkost", "hoeveelheid": 150, "eenheid": "gram", "opmerking": null},
+    {"naam": "semi-gedroogde cherrytomaten", "hoeveelheid": 200, "eenheid": "gram", "opmerking": null},
+    {"naam": "rundersteak de boeuf", "hoeveelheid": 4, "eenheid": "stuks", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 5, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "mayonaise", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "grove mosterd", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["steak", "frites", "salade", "tapenade", "rundvlees"],
+  "bereidingstijd_min": 30,
+  "bereidingswijze": "1. Verwarm de oven voor op 220°C. Boen beide soorten aardappelen schoon en snijd in de lengte in frietes. Verdeel ze over twee bakplaten bekleed met bakpapier en besprenkel met 1 el olie, peper en eventueel zout. Rooster in het midden van de oven in ca. 25 min. goudbruin en gaar. Schep halverwege om. 2. Was ondertussen de maïskolven, halveer in de lengte en schraap met een theelepel de zaadlijsten eruit. Snijd het vruchtVlees grof van een ½ cm (brunoise). Snijd de babyromain-sla grof en meng door de rauwkost. 3. Doe de tomaatjes met 2 el olie in het bakje van de staafmixer en pureer tot een grove tapenade. 4. Verhit de rest van de olie in een koekenpan en bak de steaks de boeuf in ca. 8-10 min. gaar. Keer halverwege. 5. Klop een dressing van de mayonaise, mosterd en 2 el olie. Breng op smaak met peper en eventueel zout. Meng de dressing door de salade. 6. Serveer de steaks de boeuf met de frites en de salade. Verdeel de tapenade over de steaks de boeuf.",
+  "bron": "allerhande box"
+}

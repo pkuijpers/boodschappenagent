@@ -1,0 +1,27 @@
+{
+  "id": "pasta-alla-pizzaiola-met-kipgehakt",
+  "naam": "Pasta alla pizzaiola met kipgehakt",
+  "categorie": "gevogelte",
+  "basis": "pasta",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "kipgehakt", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "macaroni grande", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
+    {"naam": "ui", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "knoflook", "hoeveelheid": 2, "eenheid": "teen", "opmerking": null},
+    {"naam": "champignons", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "zwarte olijven zonder pit", "hoeveelheid": 120, "eenheid": "gram", "opmerking": null},
+    {"naam": "tomato frito", "hoeveelheid": 350, "eenheid": "ml", "opmerking": null},
+    {"naam": "oregano", "hoeveelheid": 1, "eenheid": "theelepel", "opmerking": null},
+    {"naam": "spinazie", "hoeveelheid": 200, "eenheid": "gram", "opmerking": null},
+    {"naam": "mozzarella", "hoeveelheid": 125, "eenheid": "gram", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": "naar smaak"},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": "naar smaak"},
+    {"naam": "arachideolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["italiaans", "pasta", "kipgehakt", "pizzaiola", "mozzarella"],
+  "bereidingstijd_min": 20,
+  "bereidingswijze": "1. Breng een ruime pan water aan de kook. Draai ondertussen met vochtige handen van het kipgehakt balletjes 7 min. op middelhoog vuur rondom goudbruin. 2. Voeg ondertussen als het water kookt de macaroni toe aan de pan en kook in 10 min. beetgaar. Giet af. 3. Maak ondertussen de uien en knoflook schoon en snijd fijn. Veeg de champignons schoon met keukenpapier en snijd in partjes. Voeg de ui, knoflook en champignons toe aan de balletjes en bak nog 3 min. 4. Halveer ondertussen de olijven. Voeg de tomato frito en oregano toe aan de balletjes en groente in de hapjespan en breng aan de kook. Draai het vuur laag en schep de spinazie en olijven erdoor. 5. Verdeel de macaroni over diepe borden en schep de saus erop. Scheur de mozzarella in stukjes en verdeel erover.",
+  "bron": null
+}

@@ -1,0 +1,24 @@
+{
+  "id": "kipstoof-met-wortel-spek-krieltjes-kastanjechampignons",
+  "naam": "Kipstoof met wortel, spek, krieltjes & kastanjechampignons",
+  "categorie": "gevogelte",
+  "basis": "aardappel",
+  "seizoenen": ["herfst", "winter"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "sjalotten", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "kastanjechampignons", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "spekreepjes", "hoeveelheid": 200, "eenheid": "gram", "opmerking": null},
+    {"naam": "winterpenen", "hoeveelheid": 500, "eenheid": "gram", "opmerking": "fijn gesneden"},
+    {"naam": "kippenbouillontablet", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "krieltjes", "hoeveelheid": 1000, "eenheid": "gram", "opmerking": null},
+    {"naam": "crème fraîche", "hoeveelheid": 125, "eenheid": "gram", "opmerking": null},
+    {"naam": "platte peterselie", "hoeveelheid": 15, "eenheid": "gram", "opmerking": null},
+    {"naam": "boter", "hoeveelheid": 20, "eenheid": "gram", "opmerking": null},
+    {"naam": "bloem", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["comfort food", "stoofpot", "winter", "kastanje", "champignons"],
+  "bereidingstijd_min": 70,
+  "bereidingswijze": "1. Snipper de sjalotten en veeg de champignons voorzichtig schoon met keukenpapier. Verhit boter in een braadpan en bak alle kastanjechampignons en spekreepjes 5 min op middelhoog vuur. Snijd ondertussen de kip-dijfilets in 4 stukken en de wortels in stukken van 4 cm. 2. Voeg de rest van de boter, de kip en de wortels toe aan het spek-champignonmengsel en bak 3 min. Doe de bloem erbij en laat 2 min op laag vuur gaar worden. 3. Breng ondertussen een pan met 400 ml water aan de kook, voeg de bouillontablet toe en zet het vuur laag. Voeg de krieltjes en voeg genoeg de hete bouillon, crème fraîche en krieltjes toe aan het kippenmengsel. Breng aan de kook en houd alles met deksel op de pan in 20 min gaar. Snijd ondertussen de peterselie fijn. Schep door de kipstoof en serveer.",
+  "bron": null
+}

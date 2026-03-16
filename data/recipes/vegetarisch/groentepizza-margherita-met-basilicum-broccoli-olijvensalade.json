@@ -1,0 +1,26 @@
+{
+  "id": "groentepizza-margherita-met-basilicum-broccoli-olijvensalade",
+  "naam": "Groentepizza margherita met basilicum & broccoli-olijvensalade",
+  "categorie": "vegetarisch",
+  "basis": "brood",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "tomaten", "hoeveelheid": 4, "eenheid": "stuks", "opmerking": null},
+    {"naam": "mozzarella", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "pizzabodem courgette", "hoeveelheid": 4, "eenheid": "stuks", "opmerking": null},
+    {"naam": "tomatenpuree", "hoeveelheid": 140, "eenheid": "gram", "opmerking": null},
+    {"naam": "gedroogde tijm", "hoeveelheid": 2, "eenheid": "theelepel", "opmerking": null},
+    {"naam": "broccoli", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "kalamata-olijven", "hoeveelheid": 100, "eenheid": "gram", "opmerking": null},
+    {"naam": "basilicum", "hoeveelheid": 15, "eenheid": "gram", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "balsamicoazijn", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["pizza", "vegetarisch", "salade", "basilicum", "broccoli"],
+  "bereidingstijd_min": 25,
+  "bereidingswijze": "1. Verwarm de oven voor op 220°C. Snijd de tomaten en bollen mozzarella in plakken. Leg de pizzabodems op 2 met bakpapier beklede bakplaten. Besmeer de pizzabodems met de tomatenpuree en verdeel de tomaten en mozzarella erover. Bestrooi met de tijm, peper en eventueel zout. Bak de pizza's ca 15 min in de oven. Wissel de bakplaten halverwege. 2. Snijd ondertussen de broccoli in roosjes, schil de stronk en snijd in stukjes. Kook de broccoli in weinig beetgaar. Giet af, spoel kort onder koud stromend water en laat uitlekken. Halveer de olijven en scheur de blaadjes van het basilicum grof. 3. Schep de broccoli om met de olijven, de helft van het basilicum, de olijfolie en balsamicoazijn. Breng op smaak met peper en eventueel zout. 4. Bestrooi de pizza's met de rest van het basilicum en serveer met de broccolisalade.",
+  "bron": "allerhande box"
+}

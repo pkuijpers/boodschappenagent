@@ -1,0 +1,25 @@
+{
+  "id": "krieltjes-in-de-schil-met-steak-de-boeuf-en-sperziebonen",
+  "naam": "Krieltjes in de schil met steak de boeuf & sperziebonen",
+  "categorie": "vlees",
+  "basis": "aardappel",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "krieltjes", "hoeveelheid": 1000, "eenheid": "gram", "opmerking": null},
+    {"naam": "steak de boeuf", "hoeveelheid": 4, "eenheid": "stuks", "opmerking": null},
+    {"naam": "Provençaalse kruiden", "hoeveelheid": 2, "eenheid": "theelepel", "opmerking": "zakjes"},
+    {"naam": "sperziebonen", "hoeveelheid": 600, "eenheid": "gram", "opmerking": null},
+    {"naam": "komkommers", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "bieslook", "hoeveelheid": 25, "eenheid": "gram", "opmerking": null},
+    {"naam": "crème fraîche", "hoeveelheid": 125, "eenheid": "ml", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "boter", "hoeveelheid": 40, "eenheid": "gram", "opmerking": null},
+    {"naam": "azijn", "hoeveelheid": 0.5, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["steak", "krieltjes", "sperziebonen", "grill", "nederlands"],
+  "bereidingstijd_min": 25,
+  "bereidingswijze": "1. Halveer de grotere krieltjes, kook ze in 20 min. gaar en giet af. Bestrooi de steaks de boeuf aan beide kanten met de Provençaalse kruiden. Verhit ondertussen de boter in een koekenpan en bak de steaks de boeuf in 8-10 min goudbruin en gaar. Keer halverwege. Breng op smaak met peper en eventueel zout. 2. Verwijder de steeltjes en het puntje van de sperziebonen en kook de bonen in 5 min. beetgaar. Schaaf de komkommers in de lengte in dunne linten of snijd in schuine dunne plakken. Schep om met de azijn en breng op smaak met peper en eventueel zout. Snijd de bieslook fijn en roer door de crème fraîche. 3. Verdeel de krieltjes, steaks de boeuf en sperziebonen over 4 borden. Serveer met de komkommersalade en de bieslook-crème-fraîche.",
+  "bron": "AllerhAnde Box"
+}

@@ -1,0 +1,25 @@
+{
+  "id": "spaghetti-met-boerenkoolpesto-en-cherrytomaten",
+  "naam": "Spaghetti met boerenkoolpesto & cherrytomaten",
+  "categorie": "vegetarisch",
+  "basis": "pasta",
+  "seizoenen": ["herfst", "winter"],
+  "basis_porties": 2,
+  "ingredienten": [
+    {"naam": "rode ui", "hoeveelheid": 0.5, "eenheid": "stuks", "opmerking": null},
+    {"naam": "Amsterdamse uien", "hoeveelheid": 80, "eenheid": "gram", "opmerking": null},
+    {"naam": "cherrytomaten", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "veldsla", "hoeveelheid": 42, "eenheid": "gram", "opmerking": null},
+    {"naam": "boerenkool", "hoeveelheid": 75, "eenheid": "gram", "opmerking": null},
+    {"naam": "spaghetti all'uovo", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "walnoten", "hoeveelheid": 50, "eenheid": "gram", "opmerking": null},
+    {"naam": "Parmigiano Reggiano vlokken", "hoeveelheid": 45, "eenheid": "gram", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 4, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null}
+  ],
+  "tags": ["pesto", "italiaans", "gezond", "boerenkool"],
+  "bereidingstijd_min": 30,
+  "bereidingswijze": "1. Snijd de halve rode ui in fijnerdunne halve ringen. Doe in een kom, schenk er kokend water over en laat 10 min staan. 2. Snijd ondertussen de Amsterdamse uien in stukjes en halveer de tomaten. Meng de Amsterdamse ui en tomaat met de veldsla en 1 el olie. Breng op smaak met peper. 3. Kook de boerenkool 2 min, giet af en spoel in de bolzeef onder koud stromend water. Druk met de achterkant van een lepel het vocht uit de boerenkool. Kook de spaghetti in 4 min beetgaar. 4. Hak ondertussen de walnoten grof. Doe 2/3 van de kaas en 2/3 van de walnoten met de boerenkool en de rest van de olie in een hoge beker en pureer met de staafmixer tot pesto. 5. Giet de spaghetti af en vang het kookvocht op. Voeg 100 ml kookvocht toe aan de pesto en meng op smaak met peper en eventueel zout. 6. Meng de pesto door de spaghetti. Bestrooi met de rest van de kaas en de rest van de walnoten. Giet de uiringen af en schep deze door de salade. Serveer met de pasta.",
+  "bron": null
+}

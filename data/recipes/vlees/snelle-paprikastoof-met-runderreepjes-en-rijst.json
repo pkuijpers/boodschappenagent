@@ -1,0 +1,24 @@
+{
+  "id": "snelle-paprikastoof-met-runderreepjes-en-rijst",
+  "naam": "Snelle Paprikastoof met Runderreepjes en Rijst",
+  "categorie": "vlees",
+  "basis": "rijst",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "basmatirijst", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
+    {"naam": "ui", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "knoflook", "hoeveelheid": 1, "eenheid": "teen", "opmerking": null},
+    {"naam": "gerookte paprikapoeder", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "paprika", "hoeveelheid": 3, "eenheid": "stuks", "opmerking": null},
+    {"naam": "runderreepjes", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "basis groentesaus paprika", "hoeveelheid": 480, "eenheid": "gram", "opmerking": null},
+    {"naam": "selderij", "hoeveelheid": 20, "eenheid": "gram", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "arachideolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["snel", "hoofdgerecht", "weekmenu"],
+  "bereidingstijd_min": 25,
+  "bereidingswijze": "1. Breng een ruime pan water met eventueel zout aan de kook. Voeg als het water kookt de rijst toe, breng opnieuw aan de kook en kook in 8 min. gaar. Neem de pan van het vuur, giet de rijst af, doe terug in de pan en laat met de deksel op de pan staan tot gebruik. 2. Maak ondertussen de ui en knoflook schoon. Snijd de ui in halve ringen en de knoflook fijn. Verhit de olie in de hapjespan en fruit de ui en het paprikapoeder 3 min. op middelhoog vuur. 3. Was ondertussen de paprika's, verwijder de zaadlijsten en snijd het vruchtlvees in reepjes. Voeg de runderreepjes en knoflook toe aan de pan en bak 2 min. op hoog vuur mee. 4. Voeg de paprika toe en bak 5 min. mee. Voeg de groentesaus en 100 ml heet water toe en stoof met de deksel op de pan 5 min. 5. Snijd ondertussen de selderij fijn. Bestrooi de stoof met de selderij en serveer met de rijst.",
+  "bron": "Allerhande"
+}

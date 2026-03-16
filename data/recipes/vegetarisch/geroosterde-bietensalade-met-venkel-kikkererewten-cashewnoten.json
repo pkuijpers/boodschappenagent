@@ -1,0 +1,26 @@
+{
+  "id": "geroosterde-bietensalade-met-venkel-kikkererewten-cashewnoten",
+  "naam": "Geroosterde bietensalade met venkel, kikkererewten & cashewnoten",
+  "categorie": "vegetarisch",
+  "basis": "geen",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "cashewnoten", "hoeveelheid": 85, "eenheid": "gram", "opmerking": "½ bakje"},
+    {"naam": "venkelknol", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "gekookte rode bieten", "hoeveelheid": 500, "eenheid": "gram", "opmerking": "1 pakje"},
+    {"naam": "gemalen komijn", "hoeveelheid": 2, "eenheid": "theelepel", "opmerking": null},
+    {"naam": "kikkererwten", "hoeveelheid": 400, "eenheid": "gram", "opmerking": "1 blik"},
+    {"naam": "knoflook", "hoeveelheid": 2, "eenheid": "teen", "opmerking": null},
+    {"naam": "sinaasappels", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "bieslook", "hoeveelheid": 10, "eenheid": "gram", "opmerking": "1 zakje"},
+    {"naam": "crème fraîche light", "hoeveelheid": 125, "eenheid": "gram", "opmerking": "1 bakje"},
+    {"naam": "spinazie", "hoeveelheid": 200, "eenheid": "gram", "opmerking": "1 zak"},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 3, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["salade", "vegetarisch", "gezond", "geroosterde groenten", "oven"],
+  "bereidingstijd_min": 25,
+  "bereidingswijze": "Verwarm de oven voor op 200°C. Verhit een koekenpan zonder olie of boter en rooster de cashewnoten in 3 min goudgeel. Laat afkoelen op een bord en hak grof. Snijd de onderkant en de stelen van de venkelknol. fnollen, halveer en verwijder de harde kern. Snijd de venkelin dunne parten van een ½ cm en de bieten in parten. Verdeel de groenten over een met bakpapier beklede bakplaat. Besprenkel met 2 el olie en bestrooi met de komijn en peper. Rooster ca. 15 min in het midden van de oven. Doe ondertussen de kikkererewten in een vergiet, spoel af onder koud stromend water en laat goed uitlekken. Verhit de koekenpan zonder olie of boter en bak de kikkererewten in 5 min krokant. Snijd de tenen knoflook fijn. Voeg de laatste minuut de knoflook met de rest van de olie toe en bak 1 min. mee. Breng op smaak met peper. Snijd ondertussen de oranje en witte schil van de sinaasappels. Snijd de sinaasappelpartken tussen de vliezen uit en vang het vocht op. Snijd de bieslook fijn en meng samen met 2 el sinaasappelsap door de crème fraîche. Haal de groenten uit de oven en schep om met de spinazie en sinaasappelpartjes. Verdeel over 4 borden en verdeel de kikkererewten erover. Besprenkel met de crème fraîche en garneer met de cashewnoten.",
+  "bron": null
+}

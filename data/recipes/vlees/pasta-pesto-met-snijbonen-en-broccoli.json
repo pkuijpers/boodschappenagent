@@ -1,0 +1,22 @@
+{
+  "id": "pasta-pesto-met-snijbonen-en-broccoli",
+  "naam": "Pasta Pesto met Snijbonen & Broccoli",
+  "categorie": "vlees",
+  "basis": "pasta",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "mezzi rigatoni pasta", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
+    {"naam": "ontbijtspek", "hoeveelheid": 100, "eenheid": "gram", "opmerking": "pakje, 2 plakken"},
+    {"naam": "snijbonen", "hoeveelheid": 400, "eenheid": "gram", "opmerking": "uiteinden afgesneden"},
+    {"naam": "broccoli", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "amandelen", "hoeveelheid": 50, "eenheid": "gram", "opmerking": "à 100 g"},
+    {"naam": "pestospread", "hoeveelheid": 90, "eenheid": "gram", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null}
+  ],
+  "tags": ["pesto", "broccoli", "snijbonen", "pasta", "amandelen"],
+  "bereidingstijd_min": 20,
+  "bereidingswijze": "1. Breng 2 ruime pannen water aan de kook. Voeg, als het water kookt, de pasta toe aan één pan en kook in 12 min. beetgaar. 2. Verhit een koekenpan zonder olie of boter en bak het ontbijtspek in 5 min. krokant. Keer halverwege. Neem uit de pan en laat uitlekken op keukenpapier. 3. Verwijder ondertussen de steelaanzet van de snijbonen en snijd de bonen in schuine stukken van 2 cm. Voeg deze, als het water kookt, toe aan de andere pan en kook in 6 min. beetgaar. 4. Was ondertussen de broccoli en snijd in roosjes. Schil de steel en snijd in stukjes van 1 cm. Kook alle delen van de broccoli de laatste 3 min. met de snijbonen mee. 5. Hak de amandelen grof. Giet de pasta en groenten af. Meng de pasta met de pestospread en groenten en breng op smaak met peper en eventueel zout. Verdeel over 4 borden. Verkruimel het ontbijtspek erbovenop en bestrooi met de amandelen.",
+  "bron": "Allerhande"
+}

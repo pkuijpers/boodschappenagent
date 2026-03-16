@@ -1,0 +1,23 @@
+{
+  "id": "farfalle-met-snijbonen-en-tonijnsaus",
+  "naam": "Farfalle met snijbonen & tonijnsaus",
+  "categorie": "vis",
+  "basis": "pasta",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "farfalle pasta", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
+    {"naam": "snijbonen", "hoeveelheid": 600, "eenheid": "gram", "opmerking": null},
+    {"naam": "rode uien", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "zongedroogde tomaten", "hoeveelheid": 295, "eenheid": "gram", "opmerking": "op olie"},
+    {"naam": "citroen", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "tonijnstukken in olie", "hoeveelheid": 320, "eenheid": "gram", "opmerking": "2 blikjes"},
+    {"naam": "cottage cheese", "hoeveelheid": 400, "eenheid": "gram", "opmerking": "2 bakjes"},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null}
+  ],
+  "tags": ["hoofdgerecht", "pasta", "tonijn", "snijbonen", "gezond"],
+  "bereidingstijd_min": 15,
+  "bereidingswijze": "1. Breng 2 ruime pannen water aan de kook. Voeg als het water kookt de pasta toe aan 1 pan en kook in 11 min. Kook in de andere pan de snijbonen in 5 min beetgaar. Giet de pasta en snijbonen af, spoel af met koud water en laat uitlekken. 2. Maak ondertussen de rode ui schoon, snijd in dunne halve ringen, doe in een schaaltje en giet er kokend water over. Laat 2 min. staan en giet af. Giet de zongedroogde tomaten af en snijd in dunne reepjes. 3. Boen de citroen schoon, halveer de vrucht en pers 1 helft uit en snijd de rest in parten. Laat de tonijn uitlekken en vang 4 el van de olie op. Doe de tonijn, cottagecheese, de opgevangen olie, het citroensap en 5 el water in een hoge beker en pureer met de staafmixer tot een gladde saus. Breng op smaak met peper. 4. Meng de tonijnsaus met de pasta. Schep voorzichtig de ui, snijbonen en de helft van de tomaatjes erdoor en breng op smaak met peper en eventueel zout. Garneer met de rest van de tomaatjes en serveer met de citroenpartjes.",
+  "bron": "AllerhhandeMijnBox"
+}

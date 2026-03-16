@@ -1,0 +1,22 @@
+{
+  "id": "gehaktballetjes-met-bloemkoolrijst-linzen-pompoenhummus",
+  "naam": "Gehaktballetjes met bloemkoolrijst, linzen & pompoenhummus",
+  "categorie": "vlees",
+  "basis": "geen",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "rundergehaktballetjes", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "ras el hanout", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "bloemkoolrijst", "hoeveelheid": 800, "eenheid": "gram", "opmerking": null},
+    {"naam": "linzen", "hoeveelheid": 1, "eenheid": "blik", "opmerking": null},
+    {"naam": "komkommer", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": "midi"},
+    {"naam": "zoete pompoenhummus", "hoeveelheid": 200, "eenheid": "gram", "opmerking": null},
+    {"naam": "koriander", "hoeveelheid": 15, "eenheid": "gram", "opmerking": null},
+    {"naam": "salade pittenmix", "hoeveelheid": 40, "eenheid": "gram", "opmerking": null}
+  ],
+  "tags": ["gezond", "linzen", "hummus", "bloemkoolrijst"],
+  "bereidingstijd_min": 15,
+  "bereidingswijze": "1. Verhit de koekenpan met antiaanbaklaag zonder olie of boter en draai de rundergehaktballetjes in 12 min. goudbruin en gaar. Voeg na 10 min. de ras el hanout en 150 ml water toe. 2. Verhit ondertussen de olie in de wok en roerbak de bloemkoolrijst 1 min. Spoel ondertussen de linzen onder koud stromend water, voeg toe aan de bloemkoolrijst en verwarm nog 2 min. Breng op smaak met peper. Snijd de komkommers in plakjes. 3. Verdeel de bloemkoolrijst met linzen, de balletjes, komkommer en pompoenhummus over 4 borden. Snijd de koriander grof en strooi met de pittenmix over het gerecht.",
+  "bron": "allerhande"
+}

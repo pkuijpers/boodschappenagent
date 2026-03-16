@@ -1,0 +1,26 @@
+{
+  "id": "penne-tomatensaus-tonijn-boerenkool",
+  "naam": "Penne in tomatensaus met tonijn & boerenkool",
+  "categorie": "vis",
+  "basis": "pasta",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "uien", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "knoflook", "hoeveelheid": 2, "eenheid": "teen", "opmerking": null},
+    {"naam": "tonijnstukken in olijfolie", "hoeveelheid": 290, "eenheid": "gram", "opmerking": "145g per stuk"},
+    {"naam": "cherrytomaten", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "penne", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
+    {"naam": "tomatenpuree", "hoeveelheid": 70, "eenheid": "gram", "opmerking": null},
+    {"naam": "crème fraîche light", "hoeveelheid": 125, "eenheid": "ml", "opmerking": null},
+    {"naam": "boerenkool", "hoeveelheid": 300, "eenheid": "gram", "opmerking": "gesneden"},
+    {"naam": "chilivlokken", "hoeveelheid": 1, "eenheid": "theelepel", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["pasta", "tonijn", "boerenkool", "tomaat", "gezond"],
+  "bereidingstijd_min": 25,
+  "bereidingswijze": "Snipper de uien en snijd de tenen knoflook fijn. Laat de blikjes tonijn uitlekken maar vang 2 el olie op. Halveer de cherrytomaten. Kook de pasta al dente volgens de verpakking. Verhit ondertussen de tonijnolie in de hapjespan en bak de ui. Bak knoflook en tomaten 3 min. op middelhoog vuur. Voeg de crème fraîche, 300 ml heet water en cherrytomaten toe. Breng aan de kook en laat 5 min. koken. Verhit ondertussen de olie in de grote koekenpan en bak de boerenkool met de chilipoeder en eventueel zout 5 min. op middelhoog vuur. Giet de pasta af, vang een kopje kookvocht op en meng de pasta door de saus. Voeg eventueel wat kookvocht toe. Breng op smaak met peper en eventueel zout. Schep de boerenkool erdoor, schep in 4 diepe borden en verdeel de tonijn erover.",
+  "bron": null
+}

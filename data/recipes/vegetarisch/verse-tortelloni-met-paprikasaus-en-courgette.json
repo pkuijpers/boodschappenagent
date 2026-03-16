@@ -1,0 +1,21 @@
+{
+  "id": "verse-tortelloni-met-paprikasaus-en-courgette",
+  "naam": "Verse Tortelloni met Paprikasaus & Courgette",
+  "categorie": "vegetarisch",
+  "basis": "pasta",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "sjalotten", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "courgettes", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "gedroogde oregano", "hoeveelheid": 1, "eenheid": "theelepel", "opmerking": null},
+    {"naam": "cocktailtomaten", "hoeveelheid": 500, "eenheid": "gram", "opmerking": "schaal"},
+    {"naam": "magere spekreepjes", "hoeveelheid": 250, "eenheid": "gram", "opmerking": "duoschaal"},
+    {"naam": "basis groentesaus paprika", "hoeveelheid": 480, "eenheid": "gram", "opmerking": "fles"},
+    {"naam": "verse tortelloni alla verdure", "hoeveelheid": 500, "eenheid": "gram", "opmerking": "schalen"}
+  ],
+  "tags": ["pasta", "paprika", "courgette", "snel", "weekdiner"],
+  "bereidingstijd_min": 35,
+  "bereidingswijze": "1. Verwarm de oven voor op 200°C. Maak de sjalotten schoon en snijd in de lengte in dunne parten. Was de courgettes, halveer in de lengte en snijd in plakjes van 1 cm. Schep de sjalet en courgette om met de oregano, peper en eventueel zout. Verdeel over een met bakpapier beklede bakplaat en leg de tomaten erbij. Besprenkel de groenten met de olie en rooster ca. 15 min. in het midden van de oven. 2. Breng ondertussen een ruime pan water aan de kook. Verhit een koekenpan zonder olie of boter en bak het spek in 8 min. op laag vuur goudbruin en krokant. Laat uitlekken op keukenpapier. 3. Verwarm de groentesaus 5 min. op laag vuur. Roer af en toe. Voeg als het water kookt de tortelloni en eventueel zout toe en kook de pasta in 5 min. beetgaar. Giet af en meng door de saus. 4. Verdeel de pasta over 4 diepe borden en schep de geroosterde groenten en het spek erop.",
+  "bron": "Allerhande"
+}

@@ -1,0 +1,26 @@
+{
+  "id": "kiphaasjes-in-pindasaus-met-paprika-linzen-bloemkoolrijst",
+  "naam": "Kiphaasjes in pindasaus met paprika, linzen & bloemkoolrijst",
+  "categorie": "gevogelte",
+  "basis": "geen",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "rode puntpaprika", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "gele puntpaprika", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "knoflook", "hoeveelheid": 2, "eenheid": "teen", "opmerking": null},
+    {"naam": "kipfilehaasjes", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
+    {"naam": "bloemkoolrijst", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "linzen", "hoeveelheid": 310, "eenheid": "gram", "opmerking": null},
+    {"naam": "pindakaas", "hoeveelheid": 4, "eenheid": "eetlepel", "opmerking": "pot 350 g"},
+    {"naam": "vissaus", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "koriander", "hoeveelheid": 15, "eenheid": "gram", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "arachideolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": "arachideolie"},
+    {"naam": "sambal manis", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["aziatisch", "pindakaas", "kip", "paprika", "linzen", "bloemkoolrijst"],
+  "bereidingstijd_min": 60,
+  "bereidingswijze": "1. Halveer de paprika's in de lengte, verwijder de zaadlijsten en snijd ze in flinterdunne reepjes. Snijd de tenen knoflook fijn. Verhit de helft van de olie in de hapjespan en bak de kiphaasjes in 2 min. op hoog vuur rondom goudbruin en gaar. Voeg de paprika en knoflook toe en bak 5 min. op middelhoog vuur mee. Breng op smaak met peper. 2. Verhit ondertussen de rest van de olie in de wok en roerbak de bloemkoolrijst 2 min. Doe de linzen in een vergiet, spoel af onder koud stromend water en laat uitlekken. Voeg aan de rijst toe en warm 3 min. mee. Breng op smaak met peper. 3. Doe de pindakaas, vissaus, sambal en 150 ml water in een steelpan. Breng aan de kook en laat 2 min. op laag vuur koken tot een gladde saus. Roer door de kip en paprika. Snijd de koriander fijn. Verdeel de linzen-en paprika-mix over 4 diepe borden. Verdeel de kip met saus erover. Bestrooi met de koriander. TIP: Met de overige pindakaas kun je eventueel een dressing maken. Meng 4 el pindakaas met 1 el sambal, 1 el honing en 200 ml water. Lekker bij een groene salade met bijvoorbeeld paprika, tomaat en/of komkommer.",
+  "bron": "allerhande"
+}

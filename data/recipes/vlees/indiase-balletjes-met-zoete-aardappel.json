@@ -1,0 +1,25 @@
+{
+  "id": "indiase-balletjes-met-zoete-aardappel",
+  "naam": "Indiase balletjes met zoete aardappel",
+  "categorie": "vlees",
+  "basis": "aardappel",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "uien", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "knoflook", "hoeveelheid": 2, "eenheid": "teen", "opmerking": null},
+    {"naam": "zoete aardappel", "hoeveelheid": 800, "eenheid": "gram", "opmerking": null},
+    {"naam": "rundergehakt", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "kerriepoeder", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "kokosmelk light", "hoeveelheid": 400, "eenheid": "ml", "opmerking": null},
+    {"naam": "kippenbouillontablet", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "broccoli", "hoeveelheid": 700, "eenheid": "gram", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "arachideolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["indiaas", "balletjes", "kokosmelk", "kerrie"],
+  "bereidingstijd_min": 53,
+  "bereidingswijze": "1. Snipper de uien en snijd de tenen knoflook fijn. Schil de zoete aardappelen en snijd in blokjes van 1 cm. 2. Meng het gehakt met de helft van de kerriepoeder, peper en eventueel zout. Vorm er 20 balletjes van. Verhit het olie in een koekenpan en bak de balletjes op middelhoog vuur in ca. 9 min. goudbruin en gaar. 3. Verhit ondertussen de rest van de olie in een hapjespan en bak de knoflook met de ui en de rest van de kerriepoeder 1 min. op middelhoog vuur. Voeg de zoete aardappel, kokosmelk en de bouillontablet toe. Breng aan de kook en laat op laag vuur ca. 8 min. met de deksel op de pan stoven. 4. Verdeel ondertussen de broccoli in roosjes, schil de stronk en snijd in plakjes. Kook de broccoli 5 min. en giet af. 5. Voeg de gehaktballetjes toe aan de saus en verdeel over 4 diepe borden. Serveer met de broccoli.",
+  "bron": "allerhande"
+}

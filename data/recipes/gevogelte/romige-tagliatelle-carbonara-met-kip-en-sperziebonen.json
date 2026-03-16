@@ -1,0 +1,20 @@
+{
+  "id": "romige-tagliatelle-carbonara-met-kip-en-sperziebonen",
+  "naam": "Romige tagliatelle carbonara met kip & sperziebonen",
+  "categorie": "gevogelte",
+  "basis": "pasta",
+  "seizoenen": ["alle"],
+  "basis_porties": 2,
+  "ingredienten": [
+    {"naam": "sperziebonen", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
+    {"naam": "ui", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "kipfiletreepjes", "hoeveelheid": 150, "eenheid": "gram", "opmerking": null},
+    {"naam": "gedroogde oregano", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "verse pastasaus carbonara", "hoeveelheid": 225, "eenheid": "gram", "opmerking": null},
+    {"naam": "tagliatelle all uovo", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null}
+  ],
+  "tags": ["pasta", "kip", "romig", "sperziebonen", "carbonara"],
+  "bereidingstijd_min": 20,
+  "bereidingswijze": "1. Verwijder de steeltjes van de sperziebonen, laat het puntje zitten en kook de bonen 5 min. Giet af. 2. Snipper ondertussen de sjalot. Verhit de olie in een koekenpan en bak de ui om middelhoog vuur. Voeg de kipfiletreepjes en oregano toe en bak in 3 min. gaar. Voeg de pastasaus carbonara toe en verwarm 2 min mee. 3. Kook ondertussen de tagliatelle in 4 min. beetgaar. Giet af, maar vang een kopje kookvocht op. 4. Meng de pasta en sperziebonen met de saus. Voeg eventueel wat kookvocht toe om het wat smeuïger te maken. Breng op smaak met peper en eventueel zout. Verdeel de pasta op 2 borden. TIP: Bak de rest van de kipfiletreepjes in 5 min. op middelhoog vuur, haal uit de pan en meng met 2 el mayonaise 1 el yoghurt, peper, zout. Lekker op een toastje bij de borrel of op een broodje als lunch.",
+  "bron": null
+}

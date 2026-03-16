@@ -1,0 +1,23 @@
+{
+  "id": "runderballetjes-zoetzure-saus-bloemkoolrijst-amandelen",
+  "naam": "Runderballetjes in zoetzure saus met bloemkoolrijst & amandelen",
+  "categorie": "vlees",
+  "basis": "geen",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "Hollandse rundergehaktballetjes", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "Shanghai-paksoi", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "peen julienne", "hoeveelheid": 300, "eenheid": "gram", "opmerking": "à 150 g"},
+    {"naam": "passata di pomodoro", "hoeveelheid": 500, "eenheid": "ml", "opmerking": "500 ml"},
+    {"naam": "bloemkoolrijst", "hoeveelheid": 800, "eenheid": "gram", "opmerking": "à 400 g"},
+    {"naam": "gerookte amandelen", "hoeveelheid": 50, "eenheid": "gram", "opmerking": null},
+    {"naam": "zonnebloemolie", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "azijn", "hoeveelheid": 3, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "suiker", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["rund", "bloemkoolrijst", "zoetzuur", "amandelen", "koolhydraatbewust"],
+  "bereidingstijd_min": 30,
+  "bereidingswijze": "1 Verhit tel olie in een koekenpan en bak de rundergehaktballetjes met deksel op middelhoogvuur in 10 min. goudbruin en gaar. Schep gehaktballetjes regelmatig om. 2 Snijd de paksoi in repen van 2 cm. Verhit de rest van de olie in de ingenieus of wok en bak de paksoi 2 min. op hoog vuur. Voeg de laatste minuut de peen julienne toe. Schep uit de pan en bewaar tot gebruik. 3 Schenk de passata in dezelfde wok, breng aan de kook en breng op smaak met de azijn, suiker en peper. Voeg de gehaktballetjes toe, zet het vuur laag en warm 2 min. mee. 4 Doe ondertussen de bloemkoolrijst in een vergiet, schenk er kokend water over en laat goed uitlekken. Hak de amandelen grof en meng door de bloemkoolrijst. Verdeel de rijst over 4 diepe borden en verdeel de gehaktballetjes in saus met de groenten erover.",
+  "bron": null
+}

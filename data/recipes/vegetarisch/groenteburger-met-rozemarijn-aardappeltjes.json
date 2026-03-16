@@ -1,0 +1,27 @@
+{
+  "id": "groenteburger-met-rozemarijn-aardappeltjes",
+  "naam": "Groenteburger met rozemarijn aardappeltjes",
+  "categorie": "vegetarisch",
+  "basis": "aardappel",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "Cyprus aardappelen", "hoeveelheid": 1000, "eenheid": "gram", "opmerking": null},
+    {"naam": "rozemarijn zeezout", "hoeveelheid": 1, "eenheid": "tl", "opmerking": null},
+    {"naam": "hamburgerbroodjes", "hoeveelheid": 4, "eenheid": "stuks", "opmerking": "volkoren"},
+    {"naam": "rode paprika", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "tomaten", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "salademix", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
+    {"naam": "frisse kruidige dressing", "hoeveelheid": 30, "eenheid": "ml", "opmerking": null},
+    {"naam": "augurkenblokjes", "hoeveelheid": 2, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "groenteburgers", "hoeveelheid": 4, "eenheid": "stuks", "opmerking": "2 stuks"},
+    {"naam": "cheddar kaas", "hoeveelheid": 120, "eenheid": "gram", "opmerking": "4 plakjes"},
+    {"naam": "arachide olie", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "ketchup", "hoeveelheid": 3, "eenheid": "eetlepel", "opmerking": null},
+    {"naam": "mayonaise", "hoeveelheid": 1, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["vegetarisch", "oven", "burger"],
+  "bereidingstijd_min": 65,
+  "bereidingswijze": "1. Verwarm de oven voor op 220°C. Boen de aardappelen schoon en snijd in dunne partjes. Schep om met ¾ van het rozemarijnzeezout en de olie. Verdeel de aardappelpartjes over een met bakpapier beklede bakplaat en rooster ca. 30 min. in het midden van de oven. Schep halverwege om. Snijd de hamburgerbroodjes open en rooster de laatste 3 min. op een rooster onder de aardappelpartjes. 2. Was ondertussen de paprika's, verwijder de steel en zaadlijsten en snijd het vruchtlvlees in kleine blokjes. Was de tomaten en snijd in plakjes. Meng ⅔ van de salademix met de paprikablokjes en besprenkel met de dressing. 3. Meng de augurkenblokjes met de rest van het rozemarijnzeezout, de ketchup en de mayonaise tot een saus. 4. Verhit de koekenpan met antiaanbaklaag zonder olie of boter en bak de burgers 3 min. op middelhoog vuur. Keer halverwege en leg op elke burger een plakje kaas. 5. Neem de aardappelpartjes en broodjes uit de oven. Beleg de onderste helffen van de broodjes achtereenvolgens met de saus, de apart gehouden salademix, een burger en tomatenplakjes. Dek af met de bovenkant van de broodjes en serveer met de aardappelpartjes en salade.",
+  "bron": "AllerhAnde Box"
+}

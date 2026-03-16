@@ -1,0 +1,25 @@
+{
+  "id": "boeren-kaasfondue-met-groenten-krieltjes-brood",
+  "naam": "Boeren-kaasfondue met groenten, krieltjes & brood",
+  "categorie": "vegetarisch",
+  "basis": "aardappel",
+  "seizoenen": ["herfst", "winter"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "krieltjes", "hoeveelheid": 500, "eenheid": "gram", "opmerking": null},
+    {"naam": "kastanjechampignons", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "bloemkool- en broccoliroosjes", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null},
+    {"naam": "kampioentjes", "hoeveelheid": 4, "eenheid": "stuks", "opmerking": "afgebakbroodjes"},
+    {"naam": "groentebuillontablet", "hoeveelheid": 0.5, "eenheid": "stuks", "opmerking": null},
+    {"naam": "knoflook", "hoeveelheid": 2, "eenheid": "tenen", "opmerking": null},
+    {"naam": "boerenkaasfondue", "hoeveelheid": 600, "eenheid": "gram", "opmerking": null},
+    {"naam": "cherrytomaatjes", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "peper", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "naar smaak", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 5, "eenheid": "eetlepel", "opmerking": null}
+  ],
+  "tags": ["fondue", "kaas", "vegetarisch", "gezellig", "winter"],
+  "bereidingstijd_min": 30,
+  "bereidingswijze": "1. Verwarm de oven voor op 220°C. Boen de krieltjes schoon, halveer ze en schep met 2 el olijf olie, peper en eventueel zout. Verdeel over een met bakpapier beklede bakplaat en rooster in het midden van de oven in ca. 20 min goudgaar. 2. Snijd ondertussen de champignons in vieren en snijd de bloemkool- en broccoliroosjes in gelijke stukken. 3. Haal na 12 min. de krieltjes uit de oven. Schep om en schuif ze aan één kant. Leg de champignons en bloemkool- en broccoliroosjes ernaast. Besprenkei met 1 el olie, wat peper en eventueel zout. Zet de bakplaat onder in de oven terug en leg de kampioentjes op een rooster erboven. Bak nog ca 8 min. 4. Snijd ondertussen de knoflook fijn. Verhit de rest van de olie in de pan met dikke bodem. Voeg de knoflook toe en fruit 3 min op laag vuur. Voeg 400 ml water en de halve bouillontablet toe. Breng aan de kook en zet het vuur laag. Voeg de kaas in delen toe en laat al roerend smelten. Breng op smaak met peper. 5. Snijd het brood in stukjes en serveer samen met de geroosterde krieltjes, champignons, bloemkool- en broccoliroosjes bij de kaasfondue.",
+  "bron": "allerhande"
+}
