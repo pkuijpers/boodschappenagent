@@ -1,5 +1,6 @@
 """Dependency injection voor de web module."""
 
+import json
 from pathlib import Path
 
 from boodschappenagent.ah import AHClient, AHIntegratie, AHTokenManager
@@ -8,7 +9,12 @@ from boodschappenagent.boodschappenlijst import (
     IngredientNormalizer,
 )
 from boodschappenagent.models import Recipe
-from boodschappenagent.planner import MenuHistory, MenuPlanner, SeizoenKalender
+from boodschappenagent.planner import (
+    MenuHistory,
+    MenuPlanner,
+    SeizoenKalender,
+    WeekMenu,
+)
 from boodschappenagent.repository import RecipeRepository
 from boodschappenagent.utils import PortionCalculator
 from boodschappenagent.voorraadbeheer import (
@@ -73,6 +79,41 @@ def get_boodschappenlijst_filter() -> BoodschappenlijstFilter:
     """Geeft een BoodschappenlijstFilter terug met VoorraadRepository."""
     repository = get_voorraad_repository()
     return BoodschappenlijstFilter(repository)
+
+
+WEEK_MENU_PATH = DATA_DIR / "current_menu.json"
+
+
+def save_week_menu(
+    week_menu: WeekMenu,
+    hellofresh_dagen: set[int] | None = None,
+) -> None:
+    """Sla het weekmenu op naar disk."""
+
+    data: dict[str, object] = week_menu.to_dict()
+    if hellofresh_dagen:
+        data["hellofresh_dagen"] = sorted(hellofresh_dagen)
+    WEEK_MENU_PATH.parent.mkdir(parents=True, exist_ok=True)
+    WEEK_MENU_PATH.write_text(
+        json.dumps(data, indent=2, ensure_ascii=False),
+        encoding="utf-8",
+    )
+
+
+def load_week_menu() -> tuple[WeekMenu, set[int]] | None:
+    """Laad het weekmenu van disk. Retourneert None als het niet bestaat."""
+    if not WEEK_MENU_PATH.exists():
+        return None
+
+    data = json.loads(WEEK_MENU_PATH.read_text(encoding="utf-8"))
+    recipes = get_all_recipes()
+    recipe_lookup = {r.id: r for r in recipes}
+    try:
+        week_menu = WeekMenu.from_dict(data, recipe_lookup)
+    except (ValueError, KeyError):
+        return None
+    hellofresh_dagen = set(data.get("hellofresh_dagen", []))
+    return week_menu, hellofresh_dagen
 
 
 def get_ah_token_manager() -> AHTokenManager:

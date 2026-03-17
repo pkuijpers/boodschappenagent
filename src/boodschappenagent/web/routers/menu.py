@@ -14,6 +14,8 @@ from boodschappenagent.web.dependencies import (
     get_all_recipes,
     get_menu_history,
     get_menu_planner,
+    load_week_menu,
+    save_week_menu,
 )
 
 MAAND_AFKORTINGEN = {
@@ -88,8 +90,30 @@ def _render_week(request: Request, context: dict):
     )
 
 
-def _generate_week_menu(request: Request, planner: MenuPlanner) -> None:
-    """Genereer een weekmenu en sla op in app.state.
+def _save_state(request: Request) -> None:
+    """Sla het huidige weekmenu op naar disk."""
+    week_menu = getattr(request.app.state, "week_menu", None)
+    if week_menu is None:
+        return
+    hellofresh_dagen = getattr(request.app.state, "hellofresh_dagen", set())
+    save_week_menu(week_menu, hellofresh_dagen)
+
+
+def _load_state(request: Request) -> bool:
+    """Laad het weekmenu van disk naar app.state. Retourneert True als geladen."""
+    result = load_week_menu()
+    if result is None:
+        return False
+    week_menu, hellofresh_dagen = result
+    request.app.state.week_menu = week_menu
+    request.app.state.hellofresh_dagen = hellofresh_dagen
+    return True
+
+
+def _generate_week_menu(
+    request: Request, planner: MenuPlanner, history: MenuHistory
+) -> None:
+    """Genereer een weekmenu en sla op in app.state en op disk.
 
     Bewaart het aantal personen per dag uit het huidige weekmenu, inclusief:
     - Niet-thuis dagen (personen=0): blijven niet-thuis
@@ -109,16 +133,20 @@ def _generate_week_menu(request: Request, planner: MenuPlanner) -> None:
         week_start=week_start.isoformat(),
     )
     request.app.state.week_menu = week_menu
+    history.add_week(week_menu)
+    _save_state(request)
 
 
 @router.get("/week")
 async def week(
     request: Request,
     planner: Annotated[MenuPlanner, Depends(get_menu_planner)],
+    history: Annotated[MenuHistory, Depends(get_menu_history)],
 ):
     """Weekoverzicht pagina met dagkaarten."""
     if getattr(request.app.state, "week_menu", None) is None:
-        _generate_week_menu(request, planner)
+        if not _load_state(request):
+            _generate_week_menu(request, planner, history)
     context = _build_week_context(request)
     return _render_week(request, context)
 
@@ -127,9 +155,10 @@ async def week(
 async def genereer(
     request: Request,
     planner: Annotated[MenuPlanner, Depends(get_menu_planner)],
+    history: Annotated[MenuHistory, Depends(get_menu_history)],
 ):
     """Genereer een volledig nieuw weekmenu."""
-    _generate_week_menu(request, planner)
+    _generate_week_menu(request, planner, history)
     context = _build_week_context(request)
     return _render_week(request, context)
 
@@ -154,6 +183,7 @@ async def shuffle(
     maand = MAAND_AFKORTINGEN[date.today().month]
     new_menu = planner.vervang_recept(week_menu, dag, maand)
     request.app.state.week_menu = new_menu
+    _save_state(request)
 
     dag_context = _build_dag_context(dag, request)
     templates = request.app.state.templates
@@ -241,6 +271,7 @@ async def stel_type_in(
     )
     request.app.state.hellofresh_dagen = hellofresh_dagen
     request.app.state.recept_backup = recept_backup
+    _save_state(request)
 
     dag_context = _build_dag_context(dag, request)
     templates = request.app.state.templates
@@ -274,6 +305,7 @@ async def stel_personen_in(
     request.app.state.week_menu = WeekMenu(
         week_start=week_menu.week_start, dagen=nieuwe_dagen
     )
+    _save_state(request)
 
     dag_context = _build_dag_context(dag, request)
     templates = request.app.state.templates
@@ -516,6 +548,7 @@ async def bevestig(
 
     new_menu = WeekMenu(week_start=week_menu.week_start, dagen=nieuwe_dagen)
     request.app.state.week_menu = new_menu
+    _save_state(request)
 
     # Render alleen de geüpdatete dagkaart
     dag_context = _build_dag_context(dag, request)
