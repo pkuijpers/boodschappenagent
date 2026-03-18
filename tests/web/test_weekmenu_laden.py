@@ -4,6 +4,7 @@ S1 uit het testplan: de volledige keten van HTTP request → route →
 template rendering → HTML response met BeautifulSoup asserties.
 """
 
+
 from fastapi.testclient import TestClient
 
 from boodschappenagent.planner import DagInput
@@ -181,6 +182,57 @@ class TestAutoGenereerMenu:
         assert getattr(client.app.state, "week_menu", None) is None
         client.get("/week")
         assert client.app.state.week_menu is not None
+
+
+class TestVerouderdMenuOpDisk:
+    """GET /week met een oud menu op disk → nieuw menu genereren."""
+
+    def test_oud_menu_wordt_niet_geladen(self, client: TestClient):
+        """Een current_menu.json van vorige week wordt genegeerd."""
+        from datetime import date, timedelta
+        from unittest.mock import patch
+
+        client.app.state.week_menu = None
+        old_menu = make_full_week_menu()  # week_start = "2026-02-16" (oud)
+
+        with patch(
+            "boodschappenagent.web.routers.menu.load_week_menu"
+        ) as mock_load:
+            mock_load.return_value = (old_menu, set())
+            client.get("/week")
+
+        week_menu = client.app.state.week_menu
+        assert week_menu is not None
+        today = date.today()
+        current_week_start = today - timedelta(days=today.weekday())
+        assert week_menu.week_start == current_week_start.isoformat()
+
+    def test_huidig_menu_wordt_wel_geladen(self, client: TestClient):
+        """Een current_menu.json van deze week wordt wél geladen."""
+        from datetime import date, timedelta
+        from unittest.mock import patch
+
+        client.app.state.week_menu = None
+        today = date.today()
+        current_week_start = today - timedelta(days=today.weekday())
+
+        from boodschappenagent.planner import DagPlanning, WeekMenu
+
+        dagen = [
+            DagPlanning(dag=i, recept=RECEPTEN[i], personen=2) for i in range(7)
+        ]
+        current_menu = WeekMenu(
+            week_start=current_week_start.isoformat(), dagen=dagen
+        )
+
+        with patch(
+            "boodschappenagent.web.routers.menu.load_week_menu"
+        ) as mock_load:
+            mock_load.return_value = (current_menu, set())
+            client.get("/week")
+
+        week_menu = client.app.state.week_menu
+        assert week_menu.week_start == current_week_start.isoformat()
 
 
 class TestFullPageResponse:

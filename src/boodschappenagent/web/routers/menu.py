@@ -100,11 +100,18 @@ def _save_state(request: Request) -> None:
 
 
 def _load_state(request: Request) -> bool:
-    """Laad het weekmenu van disk naar app.state. Retourneert True als geladen."""
+    """Laad het weekmenu van disk naar app.state. Retourneert True als geladen.
+
+    Negeert opgeslagen menu's van een vorige week — alleen de huidige week telt.
+    """
     result = load_week_menu()
     if result is None:
         return False
     week_menu, hellofresh_dagen = result
+    today = date.today()
+    current_week_start = today - timedelta(days=today.weekday())
+    if week_menu.week_start != current_week_start.isoformat():
+        return False
     request.app.state.week_menu = week_menu
     request.app.state.hellofresh_dagen = hellofresh_dagen
     return True
