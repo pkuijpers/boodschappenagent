@@ -76,6 +76,41 @@ class MenuHistory:
 
         self.save(entries)
 
+    def sync_week(self, week_menu: WeekMenu) -> None:
+        """Synchroniseer een weekmenu met de geschiedenis.
+
+        Vervangt bestaande entries voor de datums van deze week,
+        zodat de history altijd de definitieve keuzes bevat.
+        Idempotent: meerdere aanroepen met hetzelfde menu geven hetzelfde resultaat.
+
+        Args:
+            week_menu: Het weekmenu om te synchroniseren.
+        """
+        entries = self.load()
+        week_start = date.fromisoformat(week_menu.week_start)
+
+        # Bereken alle datums van deze week
+        week_datums = {
+            (week_start + timedelta(days=d.dag)).isoformat()
+            for d in week_menu.dagen
+        }
+
+        # Verwijder bestaande entries voor deze week
+        entries = [e for e in entries if e["datum"] not in week_datums]
+
+        # Voeg nieuwe entries toe (skip niet-thuis)
+        for dag_planning in week_menu.geplande_dagen:
+            datum = week_start + timedelta(days=dag_planning.dag)
+            entries.append(
+                {
+                    "datum": datum.isoformat(),
+                    "recept_id": dag_planning.recept.id,
+                    "personen": dag_planning.personen,
+                }
+            )
+
+        self.save(entries)
+
     def recent_recipe_ids(self, weken: int = 3) -> set[str]:
         """Geef recept-IDs die in de afgelopen X weken gegeten zijn.
 

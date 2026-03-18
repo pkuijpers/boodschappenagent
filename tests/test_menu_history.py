@@ -151,6 +151,99 @@ class TestMenuHistoryAddWeek:
         assert len(entries) == 1
 
 
+class TestMenuHistorySyncWeek:
+    """Tests voor sync_week: vervangt entries voor dezelfde week."""
+
+    def test_sync_week_voegt_entries_toe_bij_lege_history(self, tmp_path: Path) -> None:
+        path = tmp_path / "history.json"
+        history = MenuHistory(path)
+        week = WeekMenu(
+            week_start="2026-02-09",
+            dagen=[
+                DagPlanning(dag=0, recept=_make_recipe("pasta"), personen=4),
+                DagPlanning(dag=1, recept=_make_recipe("kip"), personen=2),
+            ],
+        )
+        history.sync_week(week)
+        entries = history.load()
+        assert len(entries) == 2
+        assert entries[0]["recept_id"] == "pasta"
+        assert entries[1]["recept_id"] == "kip"
+
+    def test_sync_week_vervangt_entries_voor_dezelfde_week(
+        self, tmp_path: Path
+    ) -> None:
+        path = tmp_path / "history.json"
+        history = MenuHistory(path)
+        # Eerste keer: oud menu
+        history.save([
+            {"datum": "2026-02-09", "recept_id": "oud-recept", "personen": 4},
+            {"datum": "2026-02-10", "recept_id": "oud-recept-2", "personen": 2},
+        ])
+        # Sync met nieuw menu voor dezelfde week
+        week = WeekMenu(
+            week_start="2026-02-09",
+            dagen=[
+                DagPlanning(dag=0, recept=_make_recipe("nieuw-recept"), personen=4),
+                DagPlanning(dag=1, recept=_make_recipe("nieuw-recept-2"), personen=2),
+            ],
+        )
+        history.sync_week(week)
+        entries = history.load()
+        assert len(entries) == 2
+        ids = {e["recept_id"] for e in entries}
+        assert ids == {"nieuw-recept", "nieuw-recept-2"}
+
+    def test_sync_week_behoudt_andere_weken(self, tmp_path: Path) -> None:
+        path = tmp_path / "history.json"
+        history = MenuHistory(path)
+        history.save([
+            {"datum": "2026-02-02", "recept_id": "vorige-week", "personen": 2},
+            {"datum": "2026-02-09", "recept_id": "deze-week-oud", "personen": 4},
+        ])
+        week = WeekMenu(
+            week_start="2026-02-09",
+            dagen=[
+                DagPlanning(dag=0, recept=_make_recipe("deze-week-nieuw"), personen=4),
+            ],
+        )
+        history.sync_week(week)
+        entries = history.load()
+        assert len(entries) == 2
+        assert entries[0]["recept_id"] == "vorige-week"
+        assert entries[1]["recept_id"] == "deze-week-nieuw"
+
+    def test_sync_week_skipt_niet_thuis(self, tmp_path: Path) -> None:
+        path = tmp_path / "history.json"
+        history = MenuHistory(path)
+        week = WeekMenu(
+            week_start="2026-02-09",
+            dagen=[
+                DagPlanning(dag=0, recept=_make_recipe("pasta"), personen=4),
+                DagPlanning(dag=1, recept=None, personen=0),
+            ],
+        )
+        history.sync_week(week)
+        entries = history.load()
+        assert len(entries) == 1
+        assert entries[0]["recept_id"] == "pasta"
+
+    def test_sync_week_idempotent(self, tmp_path: Path) -> None:
+        """Twee keer sync_week met hetzelfde menu geeft dezelfde entries."""
+        path = tmp_path / "history.json"
+        history = MenuHistory(path)
+        week = WeekMenu(
+            week_start="2026-02-09",
+            dagen=[
+                DagPlanning(dag=0, recept=_make_recipe("pasta"), personen=4),
+            ],
+        )
+        history.sync_week(week)
+        history.sync_week(week)
+        entries = history.load()
+        assert len(entries) == 1
+
+
 class TestMenuHistoryRecentIds:
     """Tests voor recent_recipe_ids."""
 

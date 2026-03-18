@@ -118,13 +118,16 @@ def _load_state(request: Request) -> bool:
 
 
 def _generate_week_menu(
-    request: Request, planner: MenuPlanner, history: MenuHistory
+    request: Request, planner: MenuPlanner
 ) -> None:
     """Genereer een weekmenu en sla op in app.state en op disk.
 
     Bewaart het aantal personen per dag uit het huidige weekmenu, inclusief:
     - Niet-thuis dagen (personen=0): blijven niet-thuis
     - Aangepaste personen-aantallen (bijv. 3 of 4): worden overgenomen
+
+    History wordt NIET bijgewerkt — dat gebeurt pas bij bevestiging
+    (POST /week/bevestig) zodat de history altijd de definitieve keuzes bevat.
     """
     today = date.today()
     week_start = today - timedelta(days=today.weekday())
@@ -140,7 +143,6 @@ def _generate_week_menu(
         week_start=week_start.isoformat(),
     )
     request.app.state.week_menu = week_menu
-    history.add_week(week_menu)
     _save_state(request)
 
 
@@ -148,12 +150,11 @@ def _generate_week_menu(
 async def week(
     request: Request,
     planner: Annotated[MenuPlanner, Depends(get_menu_planner)],
-    history: Annotated[MenuHistory, Depends(get_menu_history)],
 ):
     """Weekoverzicht pagina met dagkaarten."""
     if getattr(request.app.state, "week_menu", None) is None:
         if not _load_state(request):
-            _generate_week_menu(request, planner, history)
+            _generate_week_menu(request, planner)
     context = _build_week_context(request)
     return _render_week(request, context)
 
@@ -162,12 +163,28 @@ async def week(
 async def genereer(
     request: Request,
     planner: Annotated[MenuPlanner, Depends(get_menu_planner)],
-    history: Annotated[MenuHistory, Depends(get_menu_history)],
 ):
     """Genereer een volledig nieuw weekmenu."""
-    _generate_week_menu(request, planner, history)
+    _generate_week_menu(request, planner)
     context = _build_week_context(request)
     return _render_week(request, context)
+
+
+@router.post("/week/bevestig")
+async def bevestig_week(
+    request: Request,
+    history: Annotated[MenuHistory, Depends(get_menu_history)],
+):
+    """Bevestig het weekmenu en synchroniseer naar history.
+
+    Wordt aangeroepen bij 'Verder naar boodschappen'. Synct het definitieve
+    weekmenu naar history.json zodat de planner recente recepten kan vermijden.
+    """
+    week_menu = getattr(request.app.state, "week_menu", None)
+    if week_menu is None:
+        return RedirectResponse(url="/week", status_code=303)
+    history.sync_week(week_menu)
+    return RedirectResponse(url="/voorraad", status_code=303)
 
 
 @router.post("/week/shuffle")

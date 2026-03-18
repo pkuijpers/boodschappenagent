@@ -181,16 +181,18 @@ class TestNavigatieElementen:
     def test_verder_naar_boodschappen_knop(self, week_page: Page):
         """'Verder naar boodschappen' knop is zichtbaar onderaan."""
         btn = week_page.get_by_role(
-            "link", name=re.compile(r"verder naar boodschappen", re.IGNORECASE)
+            "button", name=re.compile(r"verder naar boodschappen", re.IGNORECASE)
         )
         expect(btn).to_be_visible()
 
-    def test_verder_naar_boodschappen_linkt_naar_voorraad(self, week_page: Page):
-        """'Verder naar boodschappen' knop linkt naar /voorraad."""
-        btn = week_page.get_by_role(
-            "link", name=re.compile(r"verder naar boodschappen", re.IGNORECASE)
+    def test_verder_naar_boodschappen_post_naar_bevestig(self, week_page: Page):
+        """'Verder naar boodschappen' zit in form die POST naar /week/bevestig."""
+        form = week_page.locator('form[action="/week/bevestig"]')
+        expect(form).to_be_visible()
+        btn = form.get_by_role(
+            "button", name=re.compile(r"verder naar boodschappen", re.IGNORECASE)
         )
-        expect(btn).to_have_attribute("href", "/voorraad")
+        expect(btn).to_be_visible()
 
     def test_tab_bar_week_is_actief(self, week_page: Page):
         """Tab bar markeert 'Week' als actieve tab (AH-blauw)."""

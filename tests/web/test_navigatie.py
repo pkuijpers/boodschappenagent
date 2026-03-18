@@ -29,12 +29,14 @@ class TestWeekNaarVoorraad:
         verder = s.select_one('[data-testid="verder-button"]')
         assert verder is not None
 
-    def test_verder_button_href_naar_voorraad(self, client: TestClient):
+    def test_verder_button_post_naar_bevestig(self, client: TestClient):
         set_week_menu(client, make_full_week_menu())
         s = soup(client.get("/week"))
-        verder = s.select_one('[data-testid="verder-button"]')
+        form = s.select_one('form[action="/week/bevestig"]')
+        assert form is not None
+        assert form.get("method") == "post"
+        verder = form.select_one('[data-testid="verder-button"]')
         assert verder is not None
-        assert verder.get("href") == "/voorraad"
 
     def test_verder_button_tekst_bevat_boodschappen(self, client: TestClient):
         set_week_menu(client, make_full_week_menu())

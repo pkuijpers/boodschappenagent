@@ -16,7 +16,7 @@ from playwright.sync_api import Playwright
 from boodschappenagent.ah import ProductMatch, SyncResultaat
 from boodschappenagent.ah.models import Product
 from boodschappenagent.models import Basis, Categorie, Ingredient, Recipe, Seizoen
-from boodschappenagent.planner import DagPlanning, WeekMenu
+from boodschappenagent.planner import DagPlanning, MenuHistory, WeekMenu
 from boodschappenagent.voorraadbeheer import (
     BoodschappenlijstFilter,
     VoorraadChecker,
@@ -27,6 +27,7 @@ from boodschappenagent.web.dependencies import (
     get_ah_integratie,
     get_ah_token_manager,
     get_boodschappenlijst_filter,
+    get_menu_history,
     get_voorraad_checker,
     get_voorraad_repository,
 )
@@ -154,6 +155,7 @@ def app(tmp_path_factory, mock_ah_token_manager, mock_ah_integratie):
     """FastAPI app met test-data op app.state en tijdelijke VoorraadRepository."""
     tmp_dir = tmp_path_factory.mktemp("voorraad_e2e")
     voorraad_path = tmp_dir / "voorraad.json"
+    history_path = tmp_dir / "history.json"
 
     app = create_app()
     app.state.week_menu = TEST_WEEK_MENU
@@ -172,6 +174,7 @@ def app(tmp_path_factory, mock_ah_token_manager, mock_ah_integratie):
     )
     app.dependency_overrides[get_ah_token_manager] = lambda: mock_ah_token_manager
     app.dependency_overrides[get_ah_integratie] = lambda: mock_ah_integratie
+    app.dependency_overrides[get_menu_history] = lambda: MenuHistory(history_path)
 
     return app
 

@@ -35,12 +35,13 @@
 
     {% if dagen %}
     <div class="mt-6 mb-8 px-4">
-        <a href="/voorraad"
-           data-testid="verder-button"
-           hx-boost="false"
-           class="block w-full text-center py-3 px-4 bg-ah-blue text-white font-semibold rounded-lg hover:bg-ah-blue-dark transition-colors">
-            Verder naar boodschappen
-        </a>
+        <form method="post" action="/week/bevestig" hx-boost="false">
+            <button type="submit"
+                    data-testid="verder-button"
+                    class="block w-full text-center py-3 px-4 bg-ah-blue text-white font-semibold rounded-lg hover:bg-ah-blue-dark transition-colors">
+                Verder naar boodschappen
+            </button>
+        </form>
     </div>
     {% endif %}
 </div>
