@@ -111,14 +111,26 @@ history.add_week(menu)
 
 ### AH-integratie
 
-OAuth2 mobile API (`api.ah.nl`) voor favorieten en producten.
+OAuth2 mobile API (`api.ah.nl`) voor favorieten en producten. Tokens worden per worktree opgeslagen in `data/ah_tokens.json` (staat in `.gitignore`).
+
+**Eenmalige login:**
+
+1. Open deze URL in je browser:
+   ```
+   https://login.ah.nl/secure/oauth/authorize?client_id=appie&redirect_uri=appie://login-exit&response_type=code
+   ```
+2. Log in met je AH-account. De browser probeert daarna te redirecten naar `appie://login-exit?code=XXXX` — dat mislukt, maar de `code` staat in de adresbalk.
+3. Wissel de code in:
+   ```bash
+   python -c "from boodschappenagent.ah.auth import AHTokenManager; AHTokenManager().login('JOUW_CODE_HIER')"
+   ```
+
+Daarna werkt `bestel` automatisch en worden tokens ververst als ze verlopen.
 
 ```python
 from boodschappenagent import AHClient, AHTokenManager
 
-token_manager = AHTokenManager("data/tokens.json")
-token_manager.login(auth_code)  # eenmalig na OAuth2 flow
-
+token_manager = AHTokenManager()  # laadt tokens uit data/ah_tokens.json
 client = AHClient(token_manager)
 lists = client.get_lists()
 results = client.search_products("spaghetti")

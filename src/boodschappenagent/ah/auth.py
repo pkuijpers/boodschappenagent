@@ -6,7 +6,7 @@ from pathlib import Path
 
 import requests
 
-DEFAULT_TOKEN_PATH = Path.home() / ".config" / "boodschappenagent" / "tokens.json"
+DEFAULT_TOKEN_PATH = Path(__file__).parents[3] / "data" / "ah_tokens.json"
 
 AUTH_HEADERS = {
     "Content-Type": "application/json",
