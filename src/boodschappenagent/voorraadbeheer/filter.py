@@ -16,6 +16,7 @@ class BoodschappenlijstFilter:
 
     - Verwijdert items die op voorraad zijn
     - Voegt verse basisproducten toe die niet op voorraad zijn
+    - Voegt houdbare producten toe die niet op voorraad zijn
     """
 
     def __init__(self, repository: VoorraadRepository) -> None:
@@ -27,7 +28,9 @@ class BoodschappenlijstFilter:
         1. Verwijder regels waarvan de naam op voorraad is.
         2. Voeg verse basics toe die niet op voorraad zijn
            en nog niet in de lijst staan.
-        3. Sorteer alfabetisch.
+        3. Voeg houdbare producten toe die niet op voorraad zijn
+           en nog niet in de lijst staan.
+        4. Sorteer alfabetisch.
 
         Args:
             lijst: De originele boodschappenlijst.
@@ -61,7 +64,26 @@ class BoodschappenlijstFilter:
                 )
                 bestaande_namen.add(naam)
 
-        # Stap 3: sorteer alfabetisch
+        # Stap 3: voeg houdbare producten toe die niet op voorraad zijn
+        houdbaar_niet_op_voorraad = [
+            i
+            for i in items
+            if i.type is VoorraadType.HOUDBAAR
+            and not i.op_voorraad
+            and i.naam not in bestaande_namen
+        ]
+        for item in houdbaar_niet_op_voorraad:
+            regels.append(
+                BoodschappenRegel(
+                    naam=item.naam,
+                    hoeveelheid=1,
+                    eenheid="stuks",
+                    originele_namen=frozenset({item.naam}),
+                )
+            )
+            bestaande_namen.add(item.naam)
+
+        # Stap 4: sorteer alfabetisch
         regels.sort(key=lambda r: r.naam)
 
         return Boodschappenlijst(week_start=lijst.week_start, regels=regels)
