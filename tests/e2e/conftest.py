@@ -16,7 +16,11 @@ from playwright.sync_api import Playwright
 from boodschappenagent.ah import ProductMatch, SyncResultaat
 from boodschappenagent.ah.models import Product
 from boodschappenagent.models import Basis, Categorie, Ingredient, Recipe, Seizoen
-from boodschappenagent.planner import DagPlanning, MenuHistory, WeekMenu
+from boodschappenagent.planner import (
+    DagPlanning,
+    MenuHistory,
+    WeekMenu,
+)
 from boodschappenagent.voorraadbeheer import (
     BoodschappenlijstFilter,
     VoorraadChecker,
@@ -89,6 +93,12 @@ TEST_RECIPES = [
         "Biefstuk met Friet",
         Categorie.VLEES,
         Basis.AARDAPPEL,
+    ),
+    _make_recipe(
+        "pad-thai",
+        "Pad Thai",
+        Categorie.VEGETARISCH,
+        Basis.BROOD,
     ),
 ]
 
@@ -180,6 +190,15 @@ def app(tmp_path_factory, mock_ah_token_manager, mock_ah_integratie):
     app.dependency_overrides[get_ah_token_manager] = lambda: mock_ah_token_manager
     app.dependency_overrides[get_ah_integratie] = lambda: mock_ah_integratie
     app.dependency_overrides[get_menu_history] = lambda: MenuHistory(history_path)
+
+    from boodschappenagent.planner import MenuPlanner, SeizoenKalender
+    from boodschappenagent.web.dependencies import get_menu_planner
+
+    menu_history = MenuHistory(history_path)
+    kalender = SeizoenKalender()
+    app.dependency_overrides[get_menu_planner] = lambda: MenuPlanner(
+        recipes=TEST_RECIPES, history=menu_history, kalender=kalender
+    )
 
     return app
 

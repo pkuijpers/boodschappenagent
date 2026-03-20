@@ -1,11 +1,18 @@
 # Test Reporter Memory
 
+## Flaky Test Found (2026-03-20)
+
+**FLAKY**: `tests/e2e/test_dag_aanpassen.py::TestDagTypeWijzigenUI::test_ander_recept_via_sheet[chromium]`
+- Fails on every run (100% failure rate in 3 runs)
+- Root cause: `MenuPlanner.vervang_recept()` fallback logic can select the same recipe when recipe pool is exhausted
+- See `flaky-tests.md` for full analysis
+
 ## Project Test Suite Status
 
-- **Total tests**: 768 (includes 768 E2E tests, unit tests pass with E2E included)
+- **Total tests**: 933 unit + E2E tests
 - **Test command**: `uv run pytest -v` (excludes E2E by default per pyproject.toml)
 - **Test framework**: pytest with pytest-playwright for E2E
-- **Coverage**: Tests span: planner, repository, models, CLI, web routes, HTMX fragments, E2E UI
+- **E2E test count**: 72 tests (11 selected in most recent runs)
 
 ## Key Test Paths
 
@@ -16,14 +23,10 @@
 ## Test Configuration
 
 - `pyproject.toml` configures pytest to exclude E2E by default
-- `tests/e2e/conftest.py` provides: live server fixture, test data (`TEST_WEEK_MENU`), iPhone 13 emulation
+- `tests/e2e/conftest.py` provides: live server fixture, test data (`TEST_WEEK_MENU` with 5 recipes), iPhone 13 emulation
 - Run with `uv run pytest` for unit tests only
 - Run with `uv run pytest -m e2e` for E2E tests only
 
-## Recent Run (2026-03-02)
+## Known Issues
 
-**768 passed, 2 warnings in 47.05s**
-
-- All tests passing
-- 2 deprecation warnings from websockets and uvicorn (non-critical, related to Playwright infrastructure)
-- No failures or errors
+1. **Flaky E2E Test**: Recipe shuffle can return same recipe due to limited test recipes (see flaky-tests.md)
