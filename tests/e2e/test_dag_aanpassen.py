@@ -217,8 +217,8 @@ class TestDagTypeWijzigenUI:
             week_page.locator("#sheet [data-testid='ander-recept-button']")
         ).to_have_count(0)
 
-    def test_niet_thuis_terug_naar_recept_dagtype_knoppen_blijven(self, week_page: Page):
-        """E6: Niet-thuis → Recept (422) → dagkaart blijft niet-thuis, sheet toont dagtype knoppen."""
+    def test_niet_thuis_terug_naar_recept_knoppen(self, week_page: Page):
+        """E6: Niet-thuis → Recept (422) → dagkaart blijft."""
         # Zet dag 4 op niet-thuis
         week_page.locator("[data-testid='dagkaart'][data-dag='4']").click()
         week_page.wait_for_selector("#sheet [data-testid='dag-aanpassen']")
@@ -325,9 +325,7 @@ class TestDagTypeWijzigenUI:
         """E3: Klik genereer-knop → alle dagkaarten worden vervangen."""
         # Lees huidige receptnamen
         dagkaarten_voor = [
-            week_page.locator(
-                f"[data-testid='dagkaart'][data-dag='{i}']"
-            ).inner_text()
+            week_page.locator(f"[data-testid='dagkaart'][data-dag='{i}']").inner_text()
             for i in [0, 1, 3, 4, 6]  # alleen recept-dagen (dag 2=HF, dag 5=niet-thuis)
         ]
 
@@ -339,9 +337,7 @@ class TestDagTypeWijzigenUI:
 
         # Receptnamen zijn veranderd (nieuw weekmenu)
         dagkaarten_na = [
-            week_page.locator(
-                f"[data-testid='dagkaart'][data-dag='{i}']"
-            ).inner_text()
+            week_page.locator(f"[data-testid='dagkaart'][data-dag='{i}']").inner_text()
             for i in [0, 1, 3, 4, 6]
         ]
         assert dagkaarten_voor != dagkaarten_na, (

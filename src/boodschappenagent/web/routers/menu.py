@@ -117,9 +117,7 @@ def _load_state(request: Request) -> bool:
     return True
 
 
-def _generate_week_menu(
-    request: Request, planner: MenuPlanner
-) -> None:
+def _generate_week_menu(request: Request, planner: MenuPlanner) -> None:
     """Genereer een weekmenu en sla op in app.state en op disk.
 
     Bewaart het aantal personen per dag uit het huidige weekmenu, inclusief:

@@ -334,7 +334,8 @@ def setup_boodschappenlijst(app_with_ah):
         for i in range(15)
     ]
     app_with_ah.state.boodschappenlijst_model = Boodschappenlijst(
-        week_start=week_menu.week_start, regels=regels,
+        week_start=week_menu.week_start,
+        regels=regels,
     )
     app_with_ah.state.boodschappenlijst = [
         {
@@ -354,8 +355,13 @@ def _make_product_match(naam: str, gevonden: bool, product_id: int = 1) -> Produ
 
     product = (
         Product(
-            id=product_id, title=naam, brand="", size="", price=2.99,
-            category="", is_orderable=True,
+            id=product_id,
+            title=naam,
+            brand="",
+            size="",
+            price=2.99,
+            category="",
+            is_orderable=True,
         )
         if gevonden
         else None

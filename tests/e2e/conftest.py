@@ -135,8 +135,13 @@ def mock_ah_integratie():
         ProductMatch(
             regel=type("Regel", (), {"naam": f"product-{i}"})(),
             product=Product(
-                id=i, title=f"AH Product {i}", brand="AH",
-                size="1 stuk", price=2.99, category="", is_orderable=True,
+                id=i,
+                title=f"AH Product {i}",
+                brand="AH",
+                size="1 stuk",
+                price=2.99,
+                category="",
+                is_orderable=True,
             ),
             bron="zoekopdracht",
         )

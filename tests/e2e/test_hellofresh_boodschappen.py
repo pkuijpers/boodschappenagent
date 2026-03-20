@@ -15,7 +15,7 @@ class TestHelloFreshGeenBoodschappen:
     def test_hellofresh_dag_uitgesloten_van_boodschappenlijst(
         self, week_page: Page, live_server_url: str, app
     ):
-        """Dag op hellofresh zetten → geplande_dagen telt 1 minder → boodschappenlijst OK.
+        """Dag op hellofresh → geplande_dagen -1 → boodschappenlijst OK.
 
         TEST_WEEK_MENU: 5 receptdagen, 1 hellofresh (dag 2), 1 niet-thuis (dag 5).
         Na dag 0 op hellofresh: 4 receptdagen, 2 hellofresh, 1 niet-thuis.
@@ -40,6 +40,4 @@ class TestHelloFreshGeenBoodschappen:
         expect(week_page.locator("h1")).to_contain_text("Boodschappenlijst")
 
         # Boodschappenlijst heeft items (van de 4 receptdagen)
-        expect(
-            week_page.locator("[data-testid='boodschapitem']").first
-        ).to_be_visible()
+        expect(week_page.locator("[data-testid='boodschapitem']").first).to_be_visible()

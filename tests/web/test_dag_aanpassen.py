@@ -206,8 +206,8 @@ class TestDagTypeSelector:
         assert dag.recept is None
         assert dag.personen == 0
 
-    def test_hellofresh_terug_naar_recept_zonder_backup_geeft_422(self, client: TestClient):
-        """Na hellofresh → recept geeft 422 als er geen recept meer is."""
+    def test_hellofresh_terug_naar_recept_geeft_422(self, client: TestClient):
+        """Na hellofresh → recept geeft 422 zonder recept."""
         set_week_menu(client, make_week_menu_met_hellofresh(), hellofresh_dagen={2})
         response = client.post("/week/dag/2/stel-type-in", data={"type": "recept"})
         assert response.status_code == 422
@@ -239,8 +239,8 @@ class TestDagTypeSelector:
         response = client.post("/week/dag/0/stel-type-in", data={"type": "geen_menu"})
         assert response.status_code == 404
 
-    def test_geen_menu_terug_naar_recept_zonder_backup_geeft_422(self, client: TestClient):
-        """Na geen_menu → recept geeft 422 als er geen recept meer is."""
+    def test_geen_menu_terug_naar_recept_geeft_422(self, client: TestClient):
+        """Na geen_menu → recept geeft 422 zonder recept."""
         set_week_menu(client, make_full_week_menu())
         client.post("/week/dag/0/stel-type-in", data={"type": "geen_menu"})
         response = client.post("/week/dag/0/stel-type-in", data={"type": "recept"})
