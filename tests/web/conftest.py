@@ -93,6 +93,17 @@ def make_week_menu_met_niet_thuis(niet_thuis_dag: int = 5) -> WeekMenu:
     return WeekMenu(week_start=WEEK_START, dagen=dagen)
 
 
+def make_week_menu_met_hellofresh(hellofresh_dag: int = 2) -> WeekMenu:
+    """Maak een weekmenu met één hellofresh dag (recept=None, personen=0)."""
+    dagen = []
+    for i in range(7):
+        if i == hellofresh_dag:
+            dagen.append(DagPlanning(dag=i, recept=None, personen=0))
+        else:
+            dagen.append(DagPlanning(dag=i, recept=RECEPTEN[i], personen=2))
+    return WeekMenu(week_start=WEEK_START, dagen=dagen)
+
+
 # --- TestClient helpers ---
 
 

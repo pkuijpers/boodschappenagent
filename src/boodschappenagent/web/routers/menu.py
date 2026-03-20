@@ -261,19 +261,14 @@ async def stel_type_in(
     """
     week_menu = _get_week_menu_or_404(request)
     hellofresh_dagen = set(getattr(request.app.state, "hellofresh_dagen", set()))
-    recept_backup = dict(getattr(request.app.state, "recept_backup", {}))
 
     nieuwe_dagen = []
     for d in week_menu.dagen:
         if d.dag == dag:
-            if dagtype == "geen_menu":
-                if d.recept is not None:
-                    recept_backup[dag] = d.recept
+            if dagtype in ("geen_menu", "hellofresh"):
                 nieuwe_dagen.append(DagPlanning(dag=dag, recept=None, personen=0))
-            elif dagtype == "hellofresh":
-                nieuwe_dagen.append(d)
             else:  # recept
-                recept = d.recept or recept_backup.get(dag)
+                recept = d.recept
                 if recept is None:
                     raise HTTPException(
                         status_code=422, detail="Geen recept beschikbaar"
@@ -294,7 +289,6 @@ async def stel_type_in(
         week_start=week_menu.week_start, dagen=nieuwe_dagen
     )
     request.app.state.hellofresh_dagen = hellofresh_dagen
-    request.app.state.recept_backup = recept_backup
     _save_state(request)
 
     dag_context = _build_dag_context(dag, request)
