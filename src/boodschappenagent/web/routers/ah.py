@@ -24,8 +24,9 @@ def _render_login(request: Request, error: str | None = None):
         "fragments/ah_login_content.html" if is_htmx else "pages/ah_login.html"
     )
     return templates.TemplateResponse(
-        template_name,
-        {"request": request, "login_url": AH_LOGIN_URL, "error": error},
+        request=request,
+        name=template_name,
+        context={"login_url": AH_LOGIN_URL, "error": error},
     )
 
 

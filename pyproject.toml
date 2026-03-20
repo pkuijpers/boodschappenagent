@@ -10,7 +10,7 @@ dependencies = [
     "anthropic>=0.45.0",
     "pillow>=11.0.0",
     "fastapi>=0.115.0",
-    "uvicorn[standard]>=0.34.0",
+    "uvicorn[standard]>=0.42.0",
     "jinja2>=3.1.0",
     "python-multipart>=0.0.20",
 ]
@@ -56,6 +56,11 @@ python_functions = ["test_*"]
 addopts = "-v --tb=short"
 markers = [
     "e2e: End-to-end tests met Playwright (require browser)",
+]
+filterwarnings = [
+    "error",
+    "ignore:websockets.legacy is deprecated:DeprecationWarning:websockets",
+    "ignore:websockets.server.WebSocketServerProtocol is deprecated:DeprecationWarning:uvicorn",
 ]
 
 [build-system]
