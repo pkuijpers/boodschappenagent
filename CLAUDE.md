@@ -97,6 +97,7 @@ E2E tests use Playwright and are marked with `@pytest.mark.e2e`. They run a live
 ```bash
 uv run playwright install     # Install browsers (one-time setup)
 uv run pytest -m e2e          # Run E2E tests only
+uv run pytest -m e2e -n auto  # Run E2E tests parallel (pytest-xdist, ~3x sneller)
 uv run pytest -m e2e --headed # Run E2E tests with visible browser
 ```
 
@@ -111,7 +112,8 @@ uv sync              # Install dependencies
 uv add <package>     # Add a dependency
 uv run python ...    # Run Python scripts
 uv run pytest        # Run tests (excludes E2E)
-uv run pytest -m e2e # Run E2E tests (Playwright)
+uv run pytest -m e2e          # Run E2E tests (Playwright)
+uv run pytest -m e2e -n auto  # Run E2E tests parallel (~3x sneller)
 uv run ruff check .  # Lint code
 uv run ruff format . # Format code
 uv run uvicorn boodschappenagent.web.app:create_app --factory --reload  # Start dev server

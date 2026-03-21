@@ -237,7 +237,7 @@ def week_page(page, live_server_url, app):
     app.state.week_menu = TEST_WEEK_MENU
     app.state.hellofresh_dagen = set(TEST_HELLOFRESH_DAGEN)
     page.goto(f"{live_server_url}/week")
-    page.wait_for_load_state("networkidle")
+    page.wait_for_selector("[data-testid='dagkaart']")
     return page
 
 
@@ -251,7 +251,7 @@ def voorraad_page(page, live_server_url, app):
     if voorraad_path.exists():
         voorraad_path.unlink()
     page.goto(f"{live_server_url}/voorraad")
-    page.wait_for_load_state("networkidle")
+    page.wait_for_selector("[data-testid='sectie-houdbaar']")
     return page
 
 
@@ -262,5 +262,5 @@ def boodschappen_page(page, live_server_url, app):
     app.state.hellofresh_dagen = set(TEST_HELLOFRESH_DAGEN)
     app.state.boodschappenlijst = None
     page.goto(f"{live_server_url}/boodschappen")
-    page.wait_for_load_state("networkidle")
+    page.wait_for_selector("[data-testid='boodschappen-header']")
     return page

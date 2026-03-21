@@ -25,6 +25,7 @@ dev = [
     "playwright>=1.50.0",
     "pytest-playwright>=0.7.2",
     "beautifulsoup4>=4.14.3",
+    "pytest-xdist>=3.8.0",
 ]
 
 [tool.ruff]

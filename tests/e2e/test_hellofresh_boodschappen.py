@@ -36,7 +36,7 @@ class TestHelloFreshGeenBoodschappen:
 
         # Navigeer naar boodschappenlijst — deze moet laden zonder error
         week_page.goto(f"{live_server_url}/boodschappen")
-        week_page.wait_for_load_state("networkidle")
+        week_page.wait_for_selector("[data-testid='boodschappen-header']")
         expect(week_page.locator("h1")).to_contain_text("Boodschappenlijst")
 
         # Boodschappenlijst heeft items (van de 4 receptdagen)

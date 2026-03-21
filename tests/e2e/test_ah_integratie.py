@@ -13,7 +13,7 @@ class TestE15LoginPaginaLaden:
     def test_login_pagina_instructies_zichtbaar(self, page, live_server_url):
         """Instructies, code-invoerveld, login URL en submit knop zichtbaar."""
         page.goto(f"{live_server_url}/ah/login")
-        page.wait_for_load_state("networkidle")
+        page.wait_for_selector("[data-testid='ah-login-form']")
 
         # Login formulier zichtbaar
         form = page.locator('[data-testid="ah-login-form"]')
@@ -44,7 +44,7 @@ class TestE16LoginFlowSucces:
         mock_ah_token_manager.login.side_effect = None
 
         page.goto(f"{live_server_url}/ah/login")
-        page.wait_for_load_state("networkidle")
+        page.wait_for_selector("[data-testid='ah-login-form']")
 
         # Vul code in
         page.fill('input[name="code"]', "valid-test-code")
@@ -70,12 +70,12 @@ class TestE17LoginFlowFout:
         mock_ah_token_manager.login.side_effect = Exception("Invalid code")
 
         page.goto(f"{live_server_url}/ah/login")
-        page.wait_for_load_state("networkidle")
+        page.wait_for_selector("[data-testid='ah-login-form']")
 
         # Vul code in en submit
         page.fill('input[name="code"]', "invalid-code")
         page.click('[data-testid="ah-login-submit"]')
-        page.wait_for_load_state("networkidle")
+        page.wait_for_selector("[data-testid='ah-login-error']")
 
         # Foutmelding zichtbaar
         error = page.locator('[data-testid="ah-login-error"]')
@@ -127,7 +127,7 @@ class TestE18VerstuurNaarAHSucces:
         app.state.boodschappenlijst = None
 
         page.goto(f"{live_server_url}/boodschappen")
-        page.wait_for_load_state("networkidle")
+        page.wait_for_selector("[data-testid='boodschappen-header']")
 
         # Verstuur naar AH via formulier POST (de knop komt in stap 7)
         page.evaluate("""() => {
@@ -137,7 +137,6 @@ class TestE18VerstuurNaarAHSucces:
             document.body.appendChild(form);
             form.submit();
         }""")
-        page.wait_for_load_state("networkidle")
 
         # Bevestigingsscherm zichtbaar
         bevestiging = page.locator('[data-testid="ah-bevestiging"]')
@@ -198,7 +197,7 @@ class TestE19NietGevondenProducten:
         app.state.boodschappenlijst = None
 
         page.goto(f"{live_server_url}/boodschappen")
-        page.wait_for_load_state("networkidle")
+        page.wait_for_selector("[data-testid='boodschappen-header']")
 
         # Verstuur via JS form submit
         page.evaluate("""() => {
@@ -208,7 +207,6 @@ class TestE19NietGevondenProducten:
             document.body.appendChild(form);
             form.submit();
         }""")
-        page.wait_for_load_state("networkidle")
 
         # Bevestigingsscherm zichtbaar
         page.locator('[data-testid="ah-bevestiging"]').wait_for(
@@ -237,7 +235,7 @@ class TestE20VerstuurZonderLogin:
         mock_ah_token_manager.is_authenticated.return_value = False
 
         page.goto(f"{live_server_url}/boodschappen")
-        page.wait_for_load_state("networkidle")
+        page.wait_for_selector("[data-testid='boodschappen-header']")
 
         # Verstuur via JS form submit
         page.evaluate("""() => {
@@ -272,13 +270,12 @@ class TestE21VolleFlow:
         app.state.boodschappenlijst = None
 
         page.goto(f"{live_server_url}/boodschappen")
-        page.wait_for_load_state("networkidle")
+        page.wait_for_selector("[data-testid='boodschappen-header']")
 
         # Klik "Verstuur naar AH" knop (nu een form submit)
         verstuur_knop = page.locator('[data-testid="verstuur-naar-ah-button"]')
         verstuur_knop.wait_for(state="visible")
         verstuur_knop.click()
-        page.wait_for_load_state("networkidle")
 
         # Bevestigingsscherm zichtbaar
         bevestiging = page.locator('[data-testid="ah-bevestiging"]')

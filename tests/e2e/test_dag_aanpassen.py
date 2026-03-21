@@ -284,7 +284,7 @@ class TestDagTypeWijzigenUI:
 
         week_page.wait_for_selector("#sheet-backdrop", state="hidden")
         week_page.locator("[data-testid='genereer-button']").click()
-        week_page.wait_for_load_state("networkidle")
+        week_page.wait_for_selector("[data-testid='dagkaart']")
 
         # Dag 4 moet nog steeds niet-thuis zijn
         expect(
@@ -330,7 +330,7 @@ class TestDagTypeWijzigenUI:
         ]
 
         week_page.locator("[data-testid='genereer-button']").click()
-        week_page.wait_for_load_state("networkidle")
+        week_page.wait_for_selector("[data-testid='dagkaart']")
 
         # Alle 7 dagkaarten zijn aanwezig
         expect(week_page.locator("[data-testid='dagkaart']")).to_have_count(7)
