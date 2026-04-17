@@ -61,6 +61,8 @@ def _build_boodschappenlijst_state(
             "eenheid": regel.eenheid,
             "checked": False,
             "handmatig": False,
+            "eerste_recept": regel.recepten[0] if regel.recepten else None,
+            "extra_aantal": max(0, len(regel.recepten) - 1),
         }
         for regel in gefilterd.regels
     ]
@@ -196,6 +198,8 @@ async def handmatig_toevoegen(
         "eenheid": eenheid,
         "checked": False,
         "handmatig": True,
+        "eerste_recept": None,
+        "extra_aantal": 0,
     }
     items.append(item)
 

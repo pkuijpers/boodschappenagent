@@ -344,3 +344,36 @@ class TestBoodschapHoeveelheidAanpassen:
             data={"hoeveelheid": "8"},
         )
         assert response.status_code == 404
+
+
+class TestRecepteContextItemDict:
+    """Item-dict velden voor recept-context (eerste_recept + extra_aantal)."""
+
+    def test_gegenereerd_item_heeft_eerste_recept(
+        self, client_with_boodschappen: TestClient
+    ):
+        """Gegenereerd item heeft eerste_recept uit BoodschappenRegel.recepten."""
+        set_week_menu(client_with_boodschappen, make_full_week_menu())
+        client_with_boodschappen.get("/boodschappen")
+        items = client_with_boodschappen.app.state.boodschappenlijst
+        assert len(items) >= 1
+        # 7 recepten met identieke ingredient "test" → 1 regel met 7 recepten,
+        # eerste = "Kip curry" (RECEPTEN[0]), extra = 6
+        item = items[0]
+        assert item["eerste_recept"] == "Kip curry"
+        assert item["extra_aantal"] == 6
+
+    def test_handmatig_item_heeft_geen_eerste_recept(
+        self, client_with_boodschappen: TestClient
+    ):
+        """Handmatig toegevoegd item heeft eerste_recept=None, extra_aantal=0."""
+        set_week_menu(client_with_boodschappen, make_full_week_menu())
+        client_with_boodschappen.get("/boodschappen")
+        client_with_boodschappen.post(
+            "/boodschappen/toevoegen",
+            data={"naam": "bananen", "hoeveelheid": "6", "eenheid": "stuks"},
+        )
+        items = client_with_boodschappen.app.state.boodschappenlijst
+        handmatig = next(i for i in items if i["naam"] == "bananen")
+        assert handmatig["eerste_recept"] is None
+        assert handmatig["extra_aantal"] == 0
