@@ -37,6 +37,12 @@
         <span class="font-medium capitalize leading-snug {{ 'text-gray-400 line-through' if item.checked else 'text-gray-800' }}">
             {{ item.naam }}
         </span>
+        {% if item.eerste_recept %}
+        <span data-testid="recept-context"
+              class="block text-xs text-gray-400 leading-tight mt-0.5">
+            voor {{ item.eerste_recept }}{% if item.extra_aantal %} +{{ item.extra_aantal }}{% endif %}
+        </span>
+        {% endif %}
     </div>
 
     <div class="flex items-center shrink-0 gap-1.5">

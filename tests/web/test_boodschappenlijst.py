@@ -4,10 +4,11 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
+from boodschappenagent.planner.models import DagPlanning, WeekMenu
 from boodschappenagent.voorraadbeheer import VoorraadRepository
 from boodschappenagent.voorraadbeheer.models import VoorraadItem, VoorraadType
 
-from .conftest import make_full_week_menu, set_week_menu, soup
+from .conftest import WEEK_START, make_full_week_menu, set_week_menu, soup
 
 
 @pytest.fixture
@@ -377,3 +378,61 @@ class TestRecepteContextItemDict:
         handmatig = next(i for i in items if i["naam"] == "bananen")
         assert handmatig["eerste_recept"] is None
         assert handmatig["extra_aantal"] == 0
+
+
+class TestRecepteContextRendering:
+    """Recept-context regel wordt onder de productnaam gerenderd."""
+
+    def test_gegenereerd_item_rendert_recept_context(
+        self, client_with_boodschappen: TestClient
+    ):
+        """GET /boodschappen rendert recept-context met 'voor <recept>'."""
+        set_week_menu(client_with_boodschappen, make_full_week_menu())
+        s = soup(client_with_boodschappen.get("/boodschappen"))
+        context = s.select_one('[data-testid="recept-context"]')
+        assert context is not None
+        text = context.get_text(strip=True)
+        # 7 recepten met identieke ingredient → eerste = "Kip curry", +6
+        assert text.startswith("voor Kip curry")
+
+    def test_meerdere_recepten_toont_plus_n(self, client_with_boodschappen: TestClient):
+        """Item uit 7 recepten toont '+6' achter de eerste receptnaam."""
+        set_week_menu(client_with_boodschappen, make_full_week_menu())
+        s = soup(client_with_boodschappen.get("/boodschappen"))
+        context = s.select_one('[data-testid="recept-context"]')
+        assert context is not None
+        text = context.get_text(strip=True)
+        assert "+6" in text
+
+    def test_een_recept_toont_geen_plus_n(self, client_with_boodschappen: TestClient):
+        """Weekmenu met 1 dag → recept-context bevat geen '+'-suffix."""
+        from .conftest import RECEPTEN
+
+        menu = WeekMenu(
+            week_start=WEEK_START,
+            dagen=[DagPlanning(dag=0, recept=RECEPTEN[0], personen=2)],
+        )
+        set_week_menu(client_with_boodschappen, menu)
+        s = soup(client_with_boodschappen.get("/boodschappen"))
+        context = s.select_one('[data-testid="recept-context"]')
+        assert context is not None
+        text = context.get_text(strip=True)
+        assert text == "voor Kip curry"
+        assert "+" not in text
+
+    def test_handmatig_item_rendert_geen_recept_context(
+        self, client_with_boodschappen: TestClient
+    ):
+        """Response van POST /boodschappen/toevoegen bevat geen recept-context."""
+        set_week_menu(client_with_boodschappen, make_full_week_menu())
+        client_with_boodschappen.get("/boodschappen")
+        response = client_with_boodschappen.post(
+            "/boodschappen/toevoegen",
+            data={"naam": "bananen", "hoeveelheid": "6", "eenheid": "stuks"},
+        )
+        s = soup(response)
+        # Het toegevoegde item is bananen — zoek dat item op en check geen context erin
+        item = s.select_one('[data-testid="boodschapitem"][data-item="bananen"]')
+        assert item is not None
+        context = item.select_one('[data-testid="recept-context"]')
+        assert context is None
