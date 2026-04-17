@@ -347,7 +347,7 @@ class TestBoodschapHoeveelheidAanpassen:
         assert response.status_code == 404
 
 
-class TestRecepteContextItemDict:
+class TestReceptContextItemDict:
     """Item-dict velden voor recept-context (eerste_recept + extra_aantal)."""
 
     def test_gegenereerd_item_heeft_eerste_recept(
@@ -380,7 +380,7 @@ class TestRecepteContextItemDict:
         assert handmatig["extra_aantal"] == 0
 
 
-class TestRecepteContextRendering:
+class TestReceptContextRendering:
     """Recept-context regel wordt onder de productnaam gerenderd."""
 
     def test_gegenereerd_item_rendert_recept_context(

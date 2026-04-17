@@ -344,6 +344,8 @@ def setup_boodschappenlijst(app_with_ah):
             "hoeveelheid": 1,
             "eenheid": "stuk",
             "checked": False,
+            "eerste_recept": None,
+            "extra_aantal": 0,
         }
         for i in range(15)
     ]
