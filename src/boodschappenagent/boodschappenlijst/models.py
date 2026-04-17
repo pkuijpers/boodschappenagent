@@ -16,6 +16,8 @@ class BoodschappenRegel:
         eenheid: Eenheid.
         originele_namen: Alle originele namen (voor verificatie).
         opmerkingen: Unieke opmerkingen uit bronnen.
+        recepten: Geordende tuple van recept-namen die aan deze regel
+            bijdragen (eerste-gezien wint, zonder duplicaten).
     """
 
     naam: str
@@ -23,6 +25,7 @@ class BoodschappenRegel:
     eenheid: str
     originele_namen: frozenset[str]
     opmerkingen: list[str] = field(default_factory=list)
+    recepten: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         if not self.naam or not self.naam.strip():
@@ -51,6 +54,7 @@ class BoodschappenRegel:
             "eenheid": self.eenheid,
             "originele_namen": sorted(self.originele_namen),
             "opmerkingen": list(self.opmerkingen),
+            "recepten": list(self.recepten),
         }
 
     @classmethod
@@ -62,6 +66,7 @@ class BoodschappenRegel:
             eenheid=data["eenheid"],
             originele_namen=frozenset(data["originele_namen"]),
             opmerkingen=data.get("opmerkingen", []),
+            recepten=tuple(data.get("recepten", [])),
         )
 
 

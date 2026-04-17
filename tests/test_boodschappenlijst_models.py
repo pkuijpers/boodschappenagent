@@ -125,6 +125,7 @@ class TestBoodschappenRegel:
             "eenheid": "stuks",
             "originele_namen": ["ui", "uien"],  # gesorteerd
             "opmerkingen": ["fijngesneden"],
+            "recepten": [],
         }
 
     def test_from_dict(self) -> None:
@@ -156,6 +157,71 @@ class TestBoodschappenRegel:
         assert restored.eenheid == regel.eenheid
         assert restored.originele_namen == regel.originele_namen
         assert restored.opmerkingen == regel.opmerkingen
+
+    def test_recepten_default_is_lege_tuple(self) -> None:
+        regel = BoodschappenRegel(
+            naam="ui",
+            hoeveelheid=2.0,
+            eenheid="stuks",
+            originele_namen=frozenset({"ui"}),
+        )
+        assert regel.recepten == ()
+
+    def test_recepten_geordende_tuple(self) -> None:
+        regel = BoodschappenRegel(
+            naam="ui",
+            hoeveelheid=2.0,
+            eenheid="stuks",
+            originele_namen=frozenset({"ui"}),
+            recepten=("pasta bolognese", "groentesoep", "quiche"),
+        )
+        assert regel.recepten == ("pasta bolognese", "groentesoep", "quiche")
+
+    def test_to_dict_bevat_recepten(self) -> None:
+        regel = BoodschappenRegel(
+            naam="ui",
+            hoeveelheid=2.0,
+            eenheid="stuks",
+            originele_namen=frozenset({"ui"}),
+            recepten=("pasta bolognese", "groentesoep"),
+        )
+        result = regel.to_dict()
+        assert result["recepten"] == ["pasta bolognese", "groentesoep"]
+
+    def test_from_dict_leest_recepten(self) -> None:
+        data = {
+            "naam": "ui",
+            "hoeveelheid": 2.0,
+            "eenheid": "stuks",
+            "originele_namen": ["ui"],
+            "opmerkingen": [],
+            "recepten": ["pasta bolognese", "groentesoep"],
+        }
+        regel = BoodschappenRegel.from_dict(data)
+        assert regel.recepten == ("pasta bolognese", "groentesoep")
+
+    def test_from_dict_zonder_recepten_lege_tuple(self) -> None:
+        """Backwards-compat: oude JSON zonder 'recepten' sleutel werkt."""
+        data = {
+            "naam": "ui",
+            "hoeveelheid": 2.0,
+            "eenheid": "stuks",
+            "originele_namen": ["ui"],
+            "opmerkingen": [],
+        }
+        regel = BoodschappenRegel.from_dict(data)
+        assert regel.recepten == ()
+
+    def test_to_dict_from_dict_roundtrip_met_recepten(self) -> None:
+        regel = BoodschappenRegel(
+            naam="ui",
+            hoeveelheid=2.0,
+            eenheid="stuks",
+            originele_namen=frozenset({"ui"}),
+            recepten=("pasta bolognese", "soep"),
+        )
+        restored = BoodschappenRegel.from_dict(regel.to_dict())
+        assert restored.recepten == regel.recepten
 
 
 class TestBoodschappenlijst:
@@ -203,6 +269,7 @@ class TestBoodschappenlijst:
                     "eenheid": "stuks",
                     "originele_namen": ["ui"],
                     "opmerkingen": [],
+                    "recepten": [],
                 }
             ],
         }
