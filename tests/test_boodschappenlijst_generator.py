@@ -435,3 +435,66 @@ class TestZelfdeReceptMeerdereDagen:
         pasta = result.regels[0]
         # 400 (4 pers) + 200 (2 pers) = 600g, afgerond naar 5 = 600
         assert pasta.hoeveelheid == 600.0
+
+
+class TestRecepten:
+    """Tests voor recepten-tracking per regel."""
+
+    def test_een_recept(self) -> None:
+        gen = _make_generator()
+        recept = _make_recipe(
+            recipe_id="pasta-bolognese",
+            ingredienten=[Ingredient(naam="ui", hoeveelheid=2, eenheid="stuks")],
+        )
+        menu = WeekMenu(
+            week_start="2026-02-09",
+            dagen=[DagPlanning(dag=0, recept=recept, personen=4)],
+        )
+        result = gen.genereer(menu)
+        ui_regel = next(r for r in result.regels if r.naam == "ui")
+        assert ui_regel.recepten == ("Pasta Bolognese",)
+
+    def test_drie_recepten_week_volgorde(self) -> None:
+        """Ui in maandag (pasta), dinsdag (soep), donderdag (quiche)."""
+        gen = _make_generator()
+        pasta = _make_recipe(
+            recipe_id="pasta-bolognese",
+            ingredienten=[Ingredient(naam="ui", hoeveelheid=1, eenheid="stuks")],
+        )
+        soep = _make_recipe(
+            recipe_id="groentesoep",
+            ingredienten=[Ingredient(naam="ui", hoeveelheid=1, eenheid="stuks")],
+        )
+        quiche = _make_recipe(
+            recipe_id="quiche",
+            ingredienten=[Ingredient(naam="ui", hoeveelheid=1, eenheid="stuks")],
+        )
+        menu = WeekMenu(
+            week_start="2026-02-09",
+            dagen=[
+                DagPlanning(dag=0, recept=pasta, personen=4),
+                DagPlanning(dag=1, recept=soep, personen=4),
+                DagPlanning(dag=3, recept=quiche, personen=4),
+            ],
+        )
+        result = gen.genereer(menu)
+        ui_regel = next(r for r in result.regels if r.naam == "ui")
+        assert ui_regel.recepten == ("Pasta Bolognese", "Groentesoep", "Quiche")
+
+    def test_zelfde_recept_meerdere_dagen_zonder_duplicaten(self) -> None:
+        """Recept op maandag en woensdag → recept komt één keer voor."""
+        gen = _make_generator()
+        recept = _make_recipe(
+            recipe_id="pasta-bolognese",
+            ingredienten=[Ingredient(naam="ui", hoeveelheid=1, eenheid="stuks")],
+        )
+        menu = WeekMenu(
+            week_start="2026-02-09",
+            dagen=[
+                DagPlanning(dag=0, recept=recept, personen=4),
+                DagPlanning(dag=2, recept=recept, personen=4),
+            ],
+        )
+        result = gen.genereer(menu)
+        ui_regel = next(r for r in result.regels if r.naam == "ui")
+        assert ui_regel.recepten == ("Pasta Bolognese",)

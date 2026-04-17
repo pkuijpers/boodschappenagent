@@ -35,10 +35,12 @@ class BoodschappenlijstGenerator:
         hoeveelheden: dict[tuple[str, str], float] = {}
         originele_namen: dict[tuple[str, str], set[str]] = {}
         opmerkingen: dict[tuple[str, str], list[str]] = {}
+        recepten_per_key: dict[tuple[str, str], list[str]] = {}
 
         for dag in week_menu.geplande_dagen:
             assert dag.recept is not None  # geplande_dagen filtert None
             scaled = dag.recept.scale_to_portions(dag.personen)
+            recept_naam = dag.recept.naam
 
             for ing in scaled.ingredienten:
                 norm_naam, norm_eenheid = self._normalizer.normaliseer(
@@ -63,6 +65,12 @@ class BoodschappenlijstGenerator:
                 if ing.opmerking and ing.opmerking not in opmerkingen[key]:
                     opmerkingen[key].append(ing.opmerking)
 
+                # Recepten bijhouden (week-volgorde, dedupliceren)
+                if key not in recepten_per_key:
+                    recepten_per_key[key] = []
+                if recept_naam not in recepten_per_key[key]:
+                    recepten_per_key[key].append(recept_naam)
+
         # Regels aanmaken met afronding NA aggregatie
         regels = []
         for key, totaal in hoeveelheden.items():
@@ -75,6 +83,7 @@ class BoodschappenlijstGenerator:
                     eenheid=norm_eenheid,
                     originele_namen=frozenset(originele_namen[key]),
                     opmerkingen=opmerkingen[key],
+                    recepten=tuple(recepten_per_key[key]),
                 )
             )
 
