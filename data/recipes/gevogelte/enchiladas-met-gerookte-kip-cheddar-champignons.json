@@ -3,13 +3,13 @@
   "naam": "Enchilada's met gerookte kip, cheddar & champignons",
   "categorie": "gevogelte",
   "basis": "brood",
-  "basis_porties": 2,
+  "basis_porties": 4,
   "ingredienten": [
     {
       "naam": "Italiaanse roerbakgroente champignons",
       "hoeveelheid": 800,
       "eenheid": "gram",
-      "opmerking": "à 400 g"
+      "opmerking": null
     },
     {
       "naam": "gemalen komijn",

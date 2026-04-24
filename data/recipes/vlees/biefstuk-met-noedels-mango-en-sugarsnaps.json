@@ -6,7 +6,7 @@
   "seizoenen": ["alle"],
   "basis_porties": 4,
   "ingredienten": [
-    {"naam": "eiermie-noedels", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "eiernoedels", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
     {"naam": "sugarsnaps", "hoeveelheid": 400, "eenheid": "gram", "opmerking": "à 200 g"},
     {"naam": "biefstuk", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
     {"naam": "mango", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
