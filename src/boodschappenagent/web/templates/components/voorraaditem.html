@@ -1,7 +1,7 @@
 {% set ja_actief = item.op_voorraad %}
 {% set nee_actief = not item.op_voorraad %}
 <div data-testid="voorraaditem"
-     data-item="{{ item.naam }}"
+     data-item="{{ item.id }}"
      class="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
     <div class="flex-1 min-w-0 mr-4">
         <span class="font-medium capitalize {{ 'text-gray-400' if ja_actief else 'text-gray-800' }}">{{ item.naam }}</span>
@@ -13,8 +13,8 @@
                 {{ 'border-green-300' if ja_actief else 'border-red-200' }}">
         <button data-testid="status-ja"
                 data-actief="{{ 'true' if ja_actief else 'false' }}"
-                hx-post="/voorraad/{{ item.naam }}/status"
-                hx-vals='{"op_voorraad": "true"}'
+                hx-post="/voorraad/{{ item.id }}/status"
+                hx-vals='{"op_voorraad": "true", "naam": "{{ item.naam }}"}'
                 hx-target="closest [data-testid='voorraaditem']"
                 hx-swap="outerHTML"
                 class="px-4 py-1.5 text-sm font-semibold transition-colors
@@ -23,8 +23,8 @@
         </button>
         <button data-testid="status-nee"
                 data-actief="{{ 'true' if nee_actief else 'false' }}"
-                hx-post="/voorraad/{{ item.naam }}/status"
-                hx-vals='{"op_voorraad": "false"}'
+                hx-post="/voorraad/{{ item.id }}/status"
+                hx-vals='{"op_voorraad": "false", "naam": "{{ item.naam }}"}'
                 hx-target="closest [data-testid='voorraaditem']"
                 hx-swap="outerHTML"
                 class="px-4 py-1.5 text-sm font-semibold border-l transition-colors

@@ -16,7 +16,7 @@ AH_LOGIN_URL = (
 )
 
 
-def _render_login(request: Request, error: str | None = None):
+def _render_login(request: Request, terug: str = "/boodschappen", error: str | None = None):
     """Render de login pagina (full page of HTMX fragment)."""
     templates = request.app.state.templates
     is_htmx = request.headers.get("HX-Request") == "true"
@@ -26,14 +26,17 @@ def _render_login(request: Request, error: str | None = None):
     return templates.TemplateResponse(
         request=request,
         name=template_name,
-        context={"login_url": AH_LOGIN_URL, "error": error},
+        context={"login_url": AH_LOGIN_URL, "terug": terug, "error": error},
     )
 
 
 @router.get("/login", response_class=HTMLResponse)
-async def login_pagina(request: Request):
+async def login_pagina(
+    request: Request,
+    terug: Annotated[str, Query()] = "/boodschappen",
+):
     """Toon de AH login pagina met instructies en code-invoerveld."""
-    return _render_login(request)
+    return _render_login(request, terug=terug)
 
 
 @router.post("/login")
@@ -47,7 +50,7 @@ async def login_verwerken(
     try:
         token_manager.login(code)
     except Exception:
-        return _render_login(request, error="Ongeldige code. Probeer opnieuw.")
+        return _render_login(request, terug=next, error="Ongeldige code. Probeer opnieuw.")
     return RedirectResponse(url=next, status_code=303)
 
 

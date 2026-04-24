@@ -4,55 +4,34 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from boodschappenagent.models import Basis, Categorie, Ingredient, Seizoen
-from boodschappenagent.models.recipe import Recipe
-from boodschappenagent.planner import DagPlanning, WeekMenu
 from boodschappenagent.voorraadbeheer import VoorraadRepository
-from boodschappenagent.web.dependencies import get_voorraad_repository
+from boodschappenagent.web.dependencies import get_ah_client, get_voorraad_repository
 
-from .conftest import WEEK_START, make_full_week_menu, set_week_menu, soup
-
-
-def _make_pasta_recept() -> Recipe:
-    """Recept met pasta als ingredient (in STANDAARD_HOUDBAAR)."""
-    return Recipe(
-        id="spaghetti-bolognese",
-        naam="Spaghetti Bolognese",
-        categorie=Categorie.VLEES,
-        basis=Basis.PASTA,
-        seizoenen=[Seizoen.ALLE],
-        basis_porties=2,
-        ingredienten=[
-            Ingredient(naam="pasta", hoeveelheid=200, eenheid="gram"),
-            Ingredient(naam="gehakt", hoeveelheid=300, eenheid="gram"),
-        ],
-    )
-
-
-def _make_week_menu_met_pasta() -> WeekMenu:
-    """WeekMenu met Spaghetti Bolognese op dag 0."""
-    from .conftest import RECEPTEN
-
-    pasta_recept = _make_pasta_recept()
-    dagen = [DagPlanning(dag=0, recept=pasta_recept, personen=2)] + [
-        DagPlanning(dag=i, recept=RECEPTEN[i], personen=2) for i in range(1, 7)
-    ]
-    return WeekMenu(week_start=WEEK_START, dagen=dagen)
+from .conftest import TEST_VOORRAAD_PRODUCTEN, make_full_week_menu, set_week_menu, soup
 
 
 @pytest.fixture
 def client_with_voorraad(app_with_voorraad: FastAPI) -> TestClient:
-    """TestClient met lege VoorraadRepository override."""
+    """TestClient met lege VoorraadRepository en mock AHClient."""
     return TestClient(app_with_voorraad)
 
 
 @pytest.fixture
-def client_met_pasta_op_voorraad(
-    app_with_overrides: FastAPI, voorraad_met_pasta: VoorraadRepository
+def client_met_melk_op_voorraad(
+    app_with_overrides: FastAPI,
+    voorraad_met_melk: VoorraadRepository,
+    mock_ah_client,
+    mock_token_manager_authenticated,
 ) -> TestClient:
-    """TestClient met pasta op voorraad."""
+    """TestClient met Melk op voorraad, mock AHClient en ingelogde token manager."""
+    from boodschappenagent.web.dependencies import get_ah_token_manager
+
     app_with_overrides.dependency_overrides[get_voorraad_repository] = (
-        lambda: voorraad_met_pasta
+        lambda: voorraad_met_melk
+    )
+    app_with_overrides.dependency_overrides[get_ah_client] = lambda: mock_ah_client
+    app_with_overrides.dependency_overrides[get_ah_token_manager] = (
+        lambda: mock_token_manager_authenticated
     )
     return TestClient(app_with_overrides)
 
@@ -84,30 +63,34 @@ class TestVoorraadcheckLaden:
         assert response.status_code == 200
         assert "<html" not in response.text
 
-    def test_s6_1_twee_secties_aanwezig(self, client_with_voorraad: TestClient):
-        """S6.1: Voorraadcheck toont twee secties: houdbaar en vers."""
+    def test_s6_1_sectie_voorraad_aanwezig(self, client_with_voorraad: TestClient):
+        """S6.1: Voorraadcheck toont sectie 'sectie-voorraad'."""
         set_week_menu(client_with_voorraad, make_full_week_menu())
         s = soup(client_with_voorraad.get("/voorraad"))
-        assert s.select_one('[data-testid="sectie-houdbaar"]') is not None
-        assert s.select_one('[data-testid="sectie-vers"]') is not None
+        assert s.select_one('[data-testid="sectie-voorraad"]') is not None
 
-    def test_s6_3_verse_basics_altijd_zichtbaar(
-        self, client_with_voorraad: TestClient
-    ):
-        """S6.3: Verse basics altijd getoond, ongeacht weekmenu."""
+    def test_s6_2_ah_producten_zichtbaar(self, client_with_voorraad: TestClient):
+        """S6.2: Producten uit AH 'Voorraad' lijst worden getoond."""
         set_week_menu(client_with_voorraad, make_full_week_menu())
         s = soup(client_with_voorraad.get("/voorraad"))
-        vers_sectie = s.select_one('[data-testid="sectie-vers"]')
-        assert vers_sectie is not None
-        items = vers_sectie.select('[data-testid="voorraaditem"]')
-        assert len(items) > 0
+        sectie = s.select_one('[data-testid="sectie-voorraad"]')
+        items = sectie.select('[data-testid="voorraaditem"]')
+        assert len(items) == len(TEST_VOORRAAD_PRODUCTEN)
+
+    def test_s6_3_productnamen_getoond(self, client_with_voorraad: TestClient):
+        """S6.3: Productnamen uit AH lijst zijn zichtbaar op de pagina."""
+        set_week_menu(client_with_voorraad, make_full_week_menu())
+        s = soup(client_with_voorraad.get("/voorraad"))
+        tekst = s.get_text()
+        for p in TEST_VOORRAAD_PRODUCTEN:
+            assert p["title"] in tekst
 
     def test_s6_4_standaard_nee_actief(self, client_with_voorraad: TestClient):
         """S6.4: Elk item heeft standaard 'Nee' actief (veilige default)."""
         set_week_menu(client_with_voorraad, make_full_week_menu())
         s = soup(client_with_voorraad.get("/voorraad"))
         nee_buttons = s.select('[data-testid="status-nee"][data-actief="true"]')
-        assert len(nee_buttons) > 0
+        assert len(nee_buttons) == len(TEST_VOORRAAD_PRODUCTEN)
 
     def test_s6_6_zonder_weekmenu_redirect(self, client_with_voorraad: TestClient):
         """S6.6: Zonder weekmenu redirect naar /week."""
@@ -118,61 +101,59 @@ class TestVoorraadcheckLaden:
         assert response.status_code in (301, 302, 303, 307, 308)
         assert "/week" in response.headers["location"]
 
-    def test_s6_7_lege_voorraad_toont_verse_basics(
-        self, client_with_voorraad: TestClient
+    def test_s6_7_ah_fout_toont_melding(
+        self, app_with_overrides: FastAPI, mock_token_manager_authenticated
     ):
-        """S6.7: Lege VoorraadRepository toont minimaal verse basics."""
-        set_week_menu(client_with_voorraad, make_full_week_menu())
-        s = soup(client_with_voorraad.get("/voorraad"))
-        vers_sectie = s.select_one('[data-testid="sectie-vers"]')
-        assert vers_sectie is not None
-        items = vers_sectie.select('[data-testid="voorraaditem"]')
-        assert len(items) > 0
+        """S6.7: Als AH lijst leeg is, toont pagina foutmelding."""
+        from unittest.mock import MagicMock
 
+        from boodschappenagent.web.dependencies import get_ah_token_manager
 
-class TestVoorraadcheckHoudbaar:
-    """S6.2: Houdbare items uit weekmenu."""
-
-    def test_s6_2_pasta_in_houdbaar_sectie(self, client_with_voorraad: TestClient):
-        """S6.2: Weekmenu met pasta-recept → pasta verschijnt als houdbaar item."""
-        set_week_menu(client_with_voorraad, _make_week_menu_met_pasta())
-        s = soup(client_with_voorraad.get("/voorraad"))
-        houdbaar_sectie = s.select_one('[data-testid="sectie-houdbaar"]')
-        assert houdbaar_sectie is not None
-        items = houdbaar_sectie.select('[data-testid="voorraaditem"]')
-        item_namen = [item.get("data-item", "") for item in items]
-        assert "pasta" in item_namen
-
-    def test_s6_2_pasta_toont_recept_context(
-        self, client_with_voorraad: TestClient
-    ):
-        """S6.2: pasta item toont context met receptnaam 'Spaghetti Bolognese'."""
-        set_week_menu(client_with_voorraad, _make_week_menu_met_pasta())
-        s = soup(client_with_voorraad.get("/voorraad"))
-        houdbaar_sectie = s.select_one('[data-testid="sectie-houdbaar"]')
-        pasta_item = houdbaar_sectie.select_one(
-            '[data-testid="voorraaditem"][data-item="pasta"]'
+        lege_client = MagicMock()
+        lege_client.find_list_by_name.return_value = None
+        app_with_overrides.dependency_overrides[get_ah_client] = lambda: lege_client
+        app_with_overrides.dependency_overrides[get_ah_token_manager] = (
+            lambda: mock_token_manager_authenticated
         )
-        assert pasta_item is not None
-        assert "Spaghetti Bolognese" in pasta_item.get_text()
+        client = TestClient(app_with_overrides)
+        set_week_menu(client, make_full_week_menu())
+        s = soup(client.get("/voorraad"))
+        assert "Albert Heijn" in s.get_text()
+
+    def test_s6_8_niet_ingelogd_redirect_naar_login(
+        self, app_with_overrides: FastAPI, mock_ah_client, mock_token_manager_unauthenticated
+    ):
+        """S6.8: Niet ingelogd bij AH → redirect naar /ah/login."""
+        from boodschappenagent.web.dependencies import get_ah_token_manager
+
+        app_with_overrides.dependency_overrides[get_ah_client] = lambda: mock_ah_client
+        app_with_overrides.dependency_overrides[get_ah_token_manager] = (
+            lambda: mock_token_manager_unauthenticated
+        )
+        client = TestClient(app_with_overrides)
+        set_week_menu(client, make_full_week_menu())
+        response = client.get("/voorraad", follow_redirects=False)
+        assert response.status_code in (301, 302, 303, 307, 308)
+        location = response.headers["location"]
+        assert "/ah/login" in location
+        assert "terug=/week" in location
+        assert "next=/voorraad" in location
 
 
 class TestVoorraadcheckOpVoorraad:
     """S6.5: Items met bestaande voorraad tonen 'Ja' actief."""
 
-    def test_s6_5_pasta_op_voorraad_toont_ja(
-        self, client_met_pasta_op_voorraad: TestClient
+    def test_s6_5_melk_op_voorraad_toont_ja(
+        self, client_met_melk_op_voorraad: TestClient
     ):
-        """S6.5: pasta op voorraad → 'Ja' button actief."""
-        set_week_menu(
-            client_met_pasta_op_voorraad, _make_week_menu_met_pasta()
+        """S6.5: Melk op voorraad → 'Ja' button actief voor Melk item."""
+        set_week_menu(client_met_melk_op_voorraad, make_full_week_menu())
+        s = soup(client_met_melk_op_voorraad.get("/voorraad"))
+        melk_item = s.select_one(
+            '[data-testid="voorraaditem"][data-item="1001"]'
         )
-        s = soup(client_met_pasta_op_voorraad.get("/voorraad"))
-        pasta_item = s.select_one(
-            '[data-testid="voorraaditem"][data-item="pasta"]'
-        )
-        assert pasta_item is not None
-        ja_button = pasta_item.select_one(
+        assert melk_item is not None
+        ja_button = melk_item.select_one(
             '[data-testid="status-ja"][data-actief="true"]'
         )
         assert ja_button is not None
@@ -182,55 +163,55 @@ class TestVoorraadToggle:
     """S7: Voorraad status toggle (UI → VoorraadRepository → UI)."""
 
     def test_s7_1_toggle_ja_actief(self, client_with_voorraad: TestClient):
-        """S7.1: POST /voorraad/pasta/status met op_voorraad=true → Ja actief."""
-        set_week_menu(client_with_voorraad, _make_week_menu_met_pasta())
+        """S7.1: POST /voorraad/1001/status met op_voorraad=true → Ja actief."""
+        set_week_menu(client_with_voorraad, make_full_week_menu())
         response = client_with_voorraad.post(
-            "/voorraad/pasta/status",
-            data={"op_voorraad": "true"},
+            "/voorraad/1001/status",
+            data={"op_voorraad": "true", "naam": "Melk"},
         )
         assert response.status_code == 200
         s = soup(response)
-        pasta_item = s.select_one('[data-testid="voorraaditem"][data-item="pasta"]')
-        assert pasta_item is not None
-        ja_button = pasta_item.select_one('[data-testid="status-ja"][data-actief="true"]')
+        item = s.select_one('[data-testid="voorraaditem"][data-item="1001"]')
+        assert item is not None
+        ja_button = item.select_one('[data-testid="status-ja"][data-actief="true"]')
         assert ja_button is not None
 
     def test_s7_2_toggle_nee_actief(
-        self, client_met_pasta_op_voorraad: TestClient
+        self, client_met_melk_op_voorraad: TestClient
     ):
-        """S7.2: POST /voorraad/pasta/status met op_voorraad=false → Nee actief."""
-        set_week_menu(client_met_pasta_op_voorraad, _make_week_menu_met_pasta())
-        response = client_met_pasta_op_voorraad.post(
-            "/voorraad/pasta/status",
-            data={"op_voorraad": "false"},
+        """S7.2: POST /voorraad/1001/status met op_voorraad=false → Nee actief."""
+        set_week_menu(client_met_melk_op_voorraad, make_full_week_menu())
+        response = client_met_melk_op_voorraad.post(
+            "/voorraad/1001/status",
+            data={"op_voorraad": "false", "naam": "Melk"},
         )
         assert response.status_code == 200
         s = soup(response)
-        pasta_item = s.select_one('[data-testid="voorraaditem"][data-item="pasta"]')
-        assert pasta_item is not None
-        nee_button = pasta_item.select_one(
+        item = s.select_one('[data-testid="voorraaditem"][data-item="1001"]')
+        assert item is not None
+        nee_button = item.select_one(
             '[data-testid="status-nee"][data-actief="true"]'
         )
         assert nee_button is not None
 
     def test_s7_3_htmx_swap_enkel_item(self, client_with_voorraad: TestClient):
         """S7.3: Response bevat precies 1 voorraaditem (niet hele pagina)."""
-        set_week_menu(client_with_voorraad, _make_week_menu_met_pasta())
+        set_week_menu(client_with_voorraad, make_full_week_menu())
         response = client_with_voorraad.post(
-            "/voorraad/pasta/status",
-            data={"op_voorraad": "true"},
+            "/voorraad/1001/status",
+            data={"op_voorraad": "true", "naam": "Melk"},
         )
         assert response.status_code == 200
         s = soup(response)
         items = s.select('[data-testid="voorraaditem"]')
         assert len(items) == 1
 
-    def test_s7_4_onbekend_item_404(self, client_with_voorraad: TestClient):
-        """S7.4: Onbekend item → HTTP 404."""
+    def test_s7_4_onbekend_product_404(self, client_with_voorraad: TestClient):
+        """S7.4: Onbekend product ID → HTTP 404."""
         set_week_menu(client_with_voorraad, make_full_week_menu())
         response = client_with_voorraad.post(
-            "/voorraad/onbekend-item/status",
-            data={"op_voorraad": "true"},
+            "/voorraad/9999/status",
+            data={"op_voorraad": "true", "naam": "Onbekend"},
         )
         assert response.status_code == 404
 
@@ -238,22 +219,22 @@ class TestVoorraadToggle:
         """S7.5: Zonder weekmenu → HTTP 404."""
         client_with_voorraad.app.state.week_menu = None
         response = client_with_voorraad.post(
-            "/voorraad/pasta/status",
-            data={"op_voorraad": "true"},
+            "/voorraad/1001/status",
+            data={"op_voorraad": "true", "naam": "Melk"},
         )
         assert response.status_code == 404
 
     def test_s7_1_repository_opgeslagen(self, client_with_voorraad: TestClient):
-        """S7.1: Na toggle Ja is pasta op_voorraad=True in repository."""
-        set_week_menu(client_with_voorraad, _make_week_menu_met_pasta())
+        """S7.1: Na toggle Ja is Melk (lowercase) op_voorraad=True in repository."""
+        set_week_menu(client_with_voorraad, make_full_week_menu())
         client_with_voorraad.post(
-            "/voorraad/pasta/status",
-            data={"op_voorraad": "true"},
+            "/voorraad/1001/status",
+            data={"op_voorraad": "true", "naam": "Melk"},
         )
         repo: VoorraadRepository = (
             client_with_voorraad.app.dependency_overrides[get_voorraad_repository]()
         )
-        assert "pasta" in repo.op_voorraad_namen()
+        assert "melk" in repo.op_voorraad_namen()
 
 
 class TestVoorraadBevestig:

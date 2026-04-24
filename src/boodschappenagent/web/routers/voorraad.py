@@ -6,57 +6,64 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from fastapi.responses import RedirectResponse
 
+from boodschappenagent.ah import AHClient, AHTokenManager
 from boodschappenagent.voorraadbeheer import VoorraadRepository
 from boodschappenagent.voorraadbeheer.models import VoorraadItem, VoorraadType
-from boodschappenagent.voorraadbeheer.presets import STANDAARD_HOUDBAAR, VERSE_BASICS
-from boodschappenagent.web.dependencies import get_voorraad_repository
+from boodschappenagent.web.dependencies import (
+    get_ah_client,
+    get_ah_token_manager,
+    get_voorraad_repository,
+)
 
 router = APIRouter()
 
-_STANDAARD_HOUDBAAR_SET = set(STANDAARD_HOUDBAAR)
+AH_VOORRAAD_LIJST_NAAM = "Voorraad"
 
 
 def _get_week_menu(request: Request):
     return getattr(request.app.state, "week_menu", None)
 
 
+def _is_ah_authenticated(token_manager: AHTokenManager) -> bool:
+    """Check AH auth status; geeft False bij elke fout."""
+    try:
+        return token_manager.is_authenticated()
+    except Exception:
+        return False
+
+
+def _haal_voorraad_producten(client: AHClient) -> list[dict]:
+    """Haal producten op uit de AH 'Voorraad' favorietenlijst."""
+    try:
+        lijst = client.find_list_by_name(AH_VOORRAAD_LIJST_NAAM)
+        if lijst is None:
+            return []
+        lijst_met_producten = client.get_list_with_products(lijst.id)
+        return [
+            {"naam": p.title, "id": str(p.id)}
+            for p in (lijst_met_producten.products or [])
+        ]
+    except Exception:
+        return []
+
+
 def _build_voorraad_context(
-    request: Request, repository: VoorraadRepository
+    repository: VoorraadRepository, producten: list[dict]
 ) -> dict:
     """Bouw template context voor voorraadcheck pagina."""
-    week_menu = _get_week_menu(request)
     op_voorraad_namen = repository.op_voorraad_namen()
-
-    # Houdbare items: ingrediënten uit weekmenu die in STANDAARD_HOUDBAAR staan
-    gezien: set[str] = set()
-    houdbaar_items = []
-    for dag in week_menu.geplande_dagen:
-        for ing in dag.recept.ingredienten:
-            naam = ing.naam.lower()
-            if naam in _STANDAARD_HOUDBAAR_SET and naam not in gezien:
-                houdbaar_items.append(
-                    {
-                        "naam": naam,
-                        "context": dag.recept.naam,
-                        "op_voorraad": naam in op_voorraad_namen,
-                    }
-                )
-                gezien.add(naam)
-    houdbaar_items.sort(key=lambda x: x["naam"])
-
-    # Verse basics: altijd tonen
-    vers_items = [
+    items = [
         {
-            "naam": naam,
+            "naam": p["naam"],
+            "id": p["id"],
             "context": None,
-            "op_voorraad": naam in op_voorraad_namen,
+            "op_voorraad": p["naam"].lower() in op_voorraad_namen,
         }
-        for naam, *_ in VERSE_BASICS
+        for p in producten
     ]
-
     return {
-        "houdbaar_items": houdbaar_items,
-        "vers_items": vers_items,
+        "voorraad_items": items,
+        "ah_fout": len(producten) == 0,
     }
 
 
@@ -64,12 +71,18 @@ def _build_voorraad_context(
 async def voorraad(
     request: Request,
     repository: Annotated[VoorraadRepository, Depends(get_voorraad_repository)],
+    token_manager: Annotated[AHTokenManager, Depends(get_ah_token_manager)],
+    client: Annotated[AHClient, Depends(get_ah_client)],
 ):
-    """Voorraadcheck pagina — houdbare producten en verse basics."""
+    """Voorraadcheck pagina — producten uit AH Voorraad lijst."""
     if _get_week_menu(request) is None:
         return RedirectResponse(url="/week", status_code=303)
 
-    context = _build_voorraad_context(request, repository)
+    if not _is_ah_authenticated(token_manager):
+        return RedirectResponse(url="/ah/login?terug=/week&next=/voorraad", status_code=303)
+
+    producten = _haal_voorraad_producten(client)
+    context = _build_voorraad_context(repository, producten)
     templates = request.app.state.templates
     is_htmx = request.headers.get("HX-Request") == "true"
     template_name = (
@@ -88,36 +101,29 @@ async def voorraad_bevestig(request: Request):
     return RedirectResponse(url="/boodschappen", status_code=303)
 
 
-@router.post("/voorraad/{item}/status")
+@router.post("/voorraad/{product_id}/status")
 async def voorraad_toggle(
-    item: str,
+    product_id: str,
     request: Request,
+    naam: Annotated[str, Form()],
     op_voorraad: Annotated[str, Form()],
     repository: Annotated[VoorraadRepository, Depends(get_voorraad_repository)],
+    client: Annotated[AHClient, Depends(get_ah_client)],
 ):
-    """Toggle voorraadstatus van een item — retourneert enkelvoudig HTMX-fragment."""
+    """Toggle voorraadstatus van een product — retourneert enkelvoudig HTMX-fragment."""
     if _get_week_menu(request) is None:
         raise HTTPException(status_code=404)
 
-    context = _build_voorraad_context(request, repository)
-    houdbaar_by_naam = {i["naam"]: i for i in context["houdbaar_items"]}
-    vers_by_naam = {i["naam"]: i for i in context["vers_items"]}
-
-    if item not in houdbaar_by_naam and item not in vers_by_naam:
+    producten = _haal_voorraad_producten(client)
+    product_ids = {p["id"] for p in producten}
+    if product_id not in product_ids:
         raise HTTPException(status_code=404)
-
-    if item in houdbaar_by_naam:
-        voorraad_type = VoorraadType.HOUDBAAR
-        item_context = houdbaar_by_naam[item]["context"]
-    else:
-        voorraad_type = VoorraadType.VERS_BASIS
-        item_context = None
 
     is_op_voorraad = op_voorraad.lower() in ("true", "1", "yes", "ja")
     repository.update_item(
         VoorraadItem(
-            naam=item,
-            type=voorraad_type,
+            naam=naam.lower(),
+            type=VoorraadType.HOUDBAAR,
             op_voorraad=is_op_voorraad,
             laatst_gecheckt=str(date.today()),
         )
@@ -127,9 +133,12 @@ async def voorraad_toggle(
     return templates.TemplateResponse(
         request=request,
         name="components/voorraaditem.html",
-        context={"item": {
-            "naam": item,
-            "context": item_context,
-            "op_voorraad": is_op_voorraad,
-        }},
+        context={
+            "item": {
+                "naam": naam,
+                "id": product_id,
+                "context": None,
+                "op_voorraad": is_op_voorraad,
+            }
+        },
     )

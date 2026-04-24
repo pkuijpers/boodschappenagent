@@ -29,6 +29,7 @@ from boodschappenagent.web.app import create_app
 from boodschappenagent.web.dependencies import (
     DATA_DIR,
     RECIPE_DIRS,
+    get_ah_client,
     get_ah_integratie,
     get_ah_token_manager,
     get_all_recipes,
@@ -196,6 +197,42 @@ def htmx_client(app_with_overrides) -> TestClient:
 
 # --- Voorraad fixtures ---
 
+TEST_VOORRAAD_PRODUCTEN = [
+    {"id": 1001, "title": "Melk", "brand": "Campina", "size": "1L"},
+    {"id": 1002, "title": "Eieren", "brand": "Rondeel", "size": "12 stuks"},
+    {"id": 1003, "title": "Boter", "brand": "Becel", "size": "500g"},
+]
+
+
+@pytest.fixture
+def mock_ah_client() -> MagicMock:
+    """Gemockte AHClient met 'Voorraad' lijst van 3 testproducten."""
+    from boodschappenagent.ah.models import FavoriteList, Product
+
+    producten = [
+        Product(
+            id=p["id"],
+            title=p["title"],
+            brand=p["brand"],
+            size=p["size"],
+            price=1.99,
+            category="Zuivel",
+            is_orderable=True,
+        )
+        for p in TEST_VOORRAAD_PRODUCTEN
+    ]
+    voorraad_lijst = FavoriteList(
+        id="list-voorraad",
+        name="Voorraad",
+        total_items=len(producten),
+        items=[],
+        products=producten,
+    )
+    mock = MagicMock()
+    mock.find_list_by_name.return_value = voorraad_lijst
+    mock.get_list_with_products.return_value = voorraad_lijst
+    return mock
+
 
 @pytest.fixture
 def voorraad_repository(tmp_path) -> VoorraadRepository:
@@ -208,6 +245,19 @@ def voorraad_met_pasta(voorraad_repository) -> VoorraadRepository:
     """VoorraadRepository met pasta op voorraad."""
     item = VoorraadItem(
         naam="pasta",
+        type=VoorraadType.HOUDBAAR,
+        op_voorraad=True,
+        laatst_gecheckt="2026-03-03",
+    )
+    voorraad_repository.update_item(item)
+    return voorraad_repository
+
+
+@pytest.fixture
+def voorraad_met_melk(voorraad_repository) -> VoorraadRepository:
+    """VoorraadRepository met Melk op voorraad."""
+    item = VoorraadItem(
+        naam="melk",
         type=VoorraadType.HOUDBAAR,
         op_voorraad=True,
         laatst_gecheckt="2026-03-03",
@@ -231,10 +281,14 @@ def boodschappenlijst_filter(voorraad_repository) -> BoodschappenlijstFilter:
 
 
 @pytest.fixture
-def app_with_voorraad(app_with_overrides, voorraad_repository) -> FastAPI:
-    """App met dependency_overrides voor VoorraadRepository."""
+def app_with_voorraad(app_with_overrides, voorraad_repository, mock_ah_client, mock_token_manager_authenticated) -> FastAPI:
+    """App met dependency_overrides voor VoorraadRepository, AHClient en ingelogde token manager."""
     app_with_overrides.dependency_overrides[get_voorraad_repository] = (
         lambda: voorraad_repository
+    )
+    app_with_overrides.dependency_overrides[get_ah_client] = lambda: mock_ah_client
+    app_with_overrides.dependency_overrides[get_ah_token_manager] = (
+        lambda: mock_token_manager_authenticated
     )
     return app_with_overrides
 
