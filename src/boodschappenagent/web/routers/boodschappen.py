@@ -230,6 +230,12 @@ async def verstuur_naar_ah(
     if lijst is None:
         return RedirectResponse(url="/week", status_code=303)
 
+    # Filter gecheckte items uit — aangevinkt betekent "hoef ik niet te bestellen"
+    checked_namen = {item["naam"] for item in _get_items(request) if item.get("checked")}
+    if checked_namen:
+        gefilterde_regels = [r for r in lijst.regels if r.naam not in checked_namen]
+        lijst = Boodschappenlijst(week_start=lijst.week_start, regels=gefilterde_regels)
+
     # Check op lege lijst
     if len(lijst.regels) == 0:
         return templates.TemplateResponse(

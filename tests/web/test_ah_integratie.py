@@ -321,3 +321,74 @@ class TestVerstuurNaarAHErrors:
 
         assert response.status_code == 303
         assert response.headers["location"] == "/ah/login"
+
+
+class TestVerstuurNaarAHCheckedItems:
+    """Gecheckte items worden niet verstuurd naar AH."""
+
+    def test_gecheckt_item_wordt_niet_verstuurd(
+        self,
+        app_with_ah,
+        mock_token_manager,
+        mock_ah_integratie,
+        sync_resultaat_succes,
+        setup_boodschappenlijst,
+    ):
+        """Item met checked=True wordt uitgefilterd voor AH-bestelling."""
+        mock_token_manager.is_authenticated.return_value = True
+        mock_ah_integratie.sync_naar_lijst.return_value = sync_resultaat_succes
+
+        app_with_ah.state.boodschappenlijst[0]["checked"] = True
+
+        client = TestClient(app_with_ah)
+        client.post("/boodschappen/verstuur-naar-ah")
+
+        mock_ah_integratie.sync_naar_lijst.assert_called_once()
+        lijst_arg = mock_ah_integratie.sync_naar_lijst.call_args[0][0]
+        namen = [r.naam for r in lijst_arg.regels]
+        assert "product-0" not in namen
+        assert len(namen) == 14
+
+    def test_meerdere_gecheckte_items_worden_niet_verstuurd(
+        self,
+        app_with_ah,
+        mock_token_manager,
+        mock_ah_integratie,
+        sync_resultaat_succes,
+        setup_boodschappenlijst,
+    ):
+        """Meerdere gecheckte items worden allemaal uitgefilterd."""
+        mock_token_manager.is_authenticated.return_value = True
+        mock_ah_integratie.sync_naar_lijst.return_value = sync_resultaat_succes
+
+        app_with_ah.state.boodschappenlijst[0]["checked"] = True
+        app_with_ah.state.boodschappenlijst[3]["checked"] = True
+
+        client = TestClient(app_with_ah)
+        client.post("/boodschappen/verstuur-naar-ah")
+
+        mock_ah_integratie.sync_naar_lijst.assert_called_once()
+        lijst_arg = mock_ah_integratie.sync_naar_lijst.call_args[0][0]
+        namen = [r.naam for r in lijst_arg.regels]
+        assert "product-0" not in namen
+        assert "product-3" not in namen
+        assert len(namen) == 13
+
+    def test_geen_gecheckte_items_stuurt_volledige_lijst(
+        self,
+        app_with_ah,
+        mock_token_manager,
+        mock_ah_integratie,
+        sync_resultaat_succes,
+        setup_boodschappenlijst,
+    ):
+        """Zonder gecheckte items wordt de volledige lijst verstuurd."""
+        mock_token_manager.is_authenticated.return_value = True
+        mock_ah_integratie.sync_naar_lijst.return_value = sync_resultaat_succes
+
+        client = TestClient(app_with_ah)
+        client.post("/boodschappen/verstuur-naar-ah")
+
+        mock_ah_integratie.sync_naar_lijst.assert_called_once()
+        lijst_arg = mock_ah_integratie.sync_naar_lijst.call_args[0][0]
+        assert len(lijst_arg.regels) == 15

@@ -14,7 +14,7 @@ import uvicorn
 from playwright.sync_api import Playwright
 
 from boodschappenagent.ah import ProductMatch, SyncResultaat
-from boodschappenagent.ah.models import Product
+from boodschappenagent.ah.models import FavoriteList, Product
 from boodschappenagent.models import Basis, Categorie, Ingredient, Recipe, Seizoen
 from boodschappenagent.planner import (
     DagPlanning,
@@ -28,6 +28,7 @@ from boodschappenagent.voorraadbeheer import (
 )
 from boodschappenagent.web.app import create_app
 from boodschappenagent.web.dependencies import (
+    get_ah_client,
     get_ah_integratie,
     get_ah_token_manager,
     get_boodschappenlijst_filter,
@@ -119,6 +120,15 @@ TEST_WEEK_MENU = WeekMenu(
 # Woensdag (dag=2) is HelloFresh
 TEST_HELLOFRESH_DAGEN: set[int] = {2}
 
+# Voorraad testproducten voor de AH 'Voorraad' favorietenlijst mock
+TEST_VOORRAAD_PRODUCTEN = [
+    Product(id=1001, title="melk", brand="", size="1L", price=1.09, category="Zuivel", is_orderable=True),
+    Product(id=1002, title="eieren", brand="", size="6 stuks", price=2.49, category="Zuivel", is_orderable=True),
+    Product(id=1003, title="boter", brand="", size="250g", price=1.59, category="Zuivel", is_orderable=True),
+    Product(id=1004, title="kaas", brand="", size="500g", price=3.99, category="Zuivel", is_orderable=True),
+    Product(id=1005, title="optimel", brand="", size="1.5L", price=2.19, category="Zuivel", is_orderable=True),
+]
+
 
 @pytest.fixture(scope="session")
 def browser_context_args(browser_context_args, playwright: Playwright):
@@ -131,8 +141,24 @@ def browser_context_args(browser_context_args, playwright: Playwright):
 def mock_ah_token_manager():
     """Gemockte AHTokenManager voor E2E tests (session-scoped)."""
     mock = MagicMock()
-    mock.is_authenticated.return_value = False
+    mock.is_authenticated.return_value = True
     mock.login.return_value = None
+    return mock
+
+
+@pytest.fixture(scope="session")
+def mock_ah_client():
+    """Gemockte AHClient die test voorraadproducten retourneert (session-scoped)."""
+    voorraad_lijst = FavoriteList(
+        id="list-voorraad",
+        name="Voorraad",
+        total_items=len(TEST_VOORRAAD_PRODUCTEN),
+        items=[],
+        products=TEST_VOORRAAD_PRODUCTEN,
+    )
+    mock = MagicMock()
+    mock.find_list_by_name.return_value = voorraad_lijst
+    mock.get_list_with_products.return_value = voorraad_lijst
     return mock
 
 
@@ -166,7 +192,7 @@ def mock_ah_integratie():
 
 
 @pytest.fixture(scope="session")
-def app(tmp_path_factory, mock_ah_token_manager, mock_ah_integratie):
+def app(tmp_path_factory, mock_ah_token_manager, mock_ah_integratie, mock_ah_client):
     """FastAPI app met test-data op app.state en tijdelijke VoorraadRepository."""
     tmp_dir = tmp_path_factory.mktemp("voorraad_e2e")
     voorraad_path = tmp_dir / "voorraad.json"
@@ -189,6 +215,7 @@ def app(tmp_path_factory, mock_ah_token_manager, mock_ah_integratie):
     )
     app.dependency_overrides[get_ah_token_manager] = lambda: mock_ah_token_manager
     app.dependency_overrides[get_ah_integratie] = lambda: mock_ah_integratie
+    app.dependency_overrides[get_ah_client] = lambda: mock_ah_client
     app.dependency_overrides[get_menu_history] = lambda: MenuHistory(history_path)
 
     from boodschappenagent.planner import MenuPlanner, SeizoenKalender
@@ -242,8 +269,10 @@ def week_page(page, live_server_url, app):
 
 
 @pytest.fixture
-def voorraad_page(page, live_server_url, app):
+def voorraad_page(page, live_server_url, app, mock_ah_token_manager):
     """Navigeer naar /voorraad, herstel test-staat."""
+    mock_ah_token_manager.is_authenticated.return_value = True
+    mock_ah_token_manager.is_authenticated.side_effect = None
     app.state.week_menu = TEST_WEEK_MENU
     app.state.hellofresh_dagen = set(TEST_HELLOFRESH_DAGEN)
     # Reset voorraad naar schone staat (alle items standaard "Nee")
@@ -251,7 +280,7 @@ def voorraad_page(page, live_server_url, app):
     if voorraad_path.exists():
         voorraad_path.unlink()
     page.goto(f"{live_server_url}/voorraad")
-    page.wait_for_selector("[data-testid='sectie-houdbaar']")
+    page.wait_for_selector("[data-testid='sectie-voorraad']")
     return page
 
 

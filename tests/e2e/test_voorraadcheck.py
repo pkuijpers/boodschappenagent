@@ -13,13 +13,13 @@ class TestVoorraadcheckLaadt:
         """E8: /voorraad toont header 'Voorraadcheck'."""
         expect(voorraad_page.locator("h1")).to_contain_text("Voorraadcheck")
 
-    def test_e8_sectie_houdbaar_zichtbaar(self, voorraad_page: Page):
-        """E8: Sectie 'Houdbare producten' is zichtbaar."""
-        expect(voorraad_page.locator("[data-testid='sectie-houdbaar']")).to_be_visible()
+    def test_e8_sectie_voorraad_zichtbaar(self, voorraad_page: Page):
+        """E8: Sectie 'Voorraadlijst' is zichtbaar."""
+        expect(voorraad_page.locator("[data-testid='sectie-voorraad']")).to_be_visible()
 
-    def test_e8_sectie_vers_zichtbaar(self, voorraad_page: Page):
-        """E8: Sectie 'Verse basics' is zichtbaar."""
-        expect(voorraad_page.locator("[data-testid='sectie-vers']")).to_be_visible()
+    def test_e8_items_zichtbaar(self, voorraad_page: Page):
+        """E8: Voorraad sectie toont minimaal één item."""
+        expect(voorraad_page.locator("[data-testid='voorraaditem']").first).to_be_visible()
 
     def test_e8_items_hebben_ja_nee_toggles(self, voorraad_page: Page):
         """E8: Voorraaditem heeft 'Ja' en 'Nee' toggles."""

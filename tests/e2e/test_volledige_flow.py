@@ -9,6 +9,12 @@ pytestmark = pytest.mark.e2e
 class TestVolledigeFlow:
     """E14: Volledige flow Week → Voorraad → Boodschappen."""
 
+    @pytest.fixture(autouse=True)
+    def set_auth(self, mock_ah_token_manager):
+        """Zet AH authenticatie aan voor voorraad-flow tests."""
+        mock_ah_token_manager.is_authenticated.return_value = True
+        mock_ah_token_manager.is_authenticated.side_effect = None
+
     def test_e14_week_naar_voorraad_via_verder_knop(self, week_page: Page):
         """E14: Klik 'Verder' op /week navigeert naar /voorraad."""
         verder = week_page.locator("[data-testid='verder-button']")
@@ -24,9 +30,8 @@ class TestVolledigeFlow:
         week_page.wait_for_url("**/voorraad")
         expect(week_page.locator("h1")).to_contain_text("Voorraadcheck")
 
-        # Stap 2: Twee secties zijn zichtbaar
-        expect(week_page.locator("[data-testid='sectie-houdbaar']")).to_be_visible()
-        expect(week_page.locator("[data-testid='sectie-vers']")).to_be_visible()
+        # Stap 2: Voorraad sectie is zichtbaar
+        expect(week_page.locator("[data-testid='sectie-voorraad']")).to_be_visible()
 
         # Stap 3: /voorraad → /boodschappen via 'Naar boodschappenlijst'
         week_page.locator("[data-testid='naar-boodschappen-button']").click()

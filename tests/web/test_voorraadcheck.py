@@ -150,7 +150,7 @@ class TestVoorraadcheckOpVoorraad:
         set_week_menu(client_met_melk_op_voorraad, make_full_week_menu())
         s = soup(client_met_melk_op_voorraad.get("/voorraad"))
         melk_item = s.select_one(
-            '[data-testid="voorraaditem"][data-item="1001"]'
+            '[data-testid="voorraaditem"][data-item="Melk"]'
         )
         assert melk_item is not None
         ja_button = melk_item.select_one(
@@ -171,7 +171,7 @@ class TestVoorraadToggle:
         )
         assert response.status_code == 200
         s = soup(response)
-        item = s.select_one('[data-testid="voorraaditem"][data-item="1001"]')
+        item = s.select_one('[data-testid="voorraaditem"][data-item="Melk"]')
         assert item is not None
         ja_button = item.select_one('[data-testid="status-ja"][data-actief="true"]')
         assert ja_button is not None
@@ -187,7 +187,7 @@ class TestVoorraadToggle:
         )
         assert response.status_code == 200
         s = soup(response)
-        item = s.select_one('[data-testid="voorraaditem"][data-item="1001"]')
+        item = s.select_one('[data-testid="voorraaditem"][data-item="Melk"]')
         assert item is not None
         nee_button = item.select_one(
             '[data-testid="status-nee"][data-actief="true"]'
