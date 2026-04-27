@@ -99,3 +99,24 @@ class TestGenereerBewaartPersonen:
         client.post("/week/genereer")
 
         assert client.app.state.week_menu.dagen[1].recept is not None
+
+
+class TestHellofreshDefaultDagen:
+    """S3.5: Fresh generatie stelt di/wo/do standaard in als HelloFresh."""
+
+    def test_fresh_genereer_zet_hellofresh_op_dinsdag_woensdag_donderdag(
+        self, client: TestClient
+    ):
+        """S3.5.1: Zonder bestaand menu worden dag 1, 2, 3 standaard HF."""
+        # Geen set_week_menu — simuleert verse week
+        client.post("/week/genereer")
+
+        assert client.app.state.hellofresh_dagen == {1, 2, 3}
+
+    def test_reshuffle_behoudt_bestaande_hellofresh_dagen(self, client: TestClient):
+        """S3.5.2: Genereer met bestaand menu behoudt huidige HF-keuzes."""
+        set_week_menu(client, make_full_week_menu(), hellofresh_dagen={0, 4})
+
+        client.post("/week/genereer")
+
+        assert client.app.state.hellofresh_dagen == {0, 4}
