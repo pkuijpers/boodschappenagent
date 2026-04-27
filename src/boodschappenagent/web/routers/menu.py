@@ -133,6 +133,9 @@ def _generate_week_menu(request: Request, planner: MenuPlanner) -> None:
     bestaand = getattr(request.app.state, "week_menu", None)
     dag_personen = {d.dag: d.personen for d in bestaand.dagen} if bestaand else {}
 
+    if bestaand is None:
+        request.app.state.hellofresh_dagen = {1, 2, 3}
+
     maand = MAAND_AFKORTINGEN[today.month]
     dag_inputs = [DagInput(dag=i, personen=dag_personen.get(i, 2)) for i in range(7)]
     week_menu = planner.plan_week(
