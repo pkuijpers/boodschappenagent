@@ -107,7 +107,8 @@ class MenuPlanner:
 
         # IDs van andere dagen deze week + het huidige recept uitsluiten
         used_ids = {d.recept.id for d in week_menu.geplande_dagen if d.dag != dag}
-        used_ids.add(target.recept.id)
+        if target.recept is not None:
+            used_ids.add(target.recept.id)
 
         # Zoek vorige geplande dag (met recept) vóór target
         vorige = None
@@ -120,8 +121,9 @@ class MenuPlanner:
         )
         nieuw_recept = self._rng.choice(candidates)
 
+        nieuwe_personen = target.personen if target.personen > 0 else 2
         nieuwe_dagen = [
-            DagPlanning(dag=d.dag, recept=nieuw_recept, personen=d.personen)
+            DagPlanning(dag=d.dag, recept=nieuw_recept, personen=nieuwe_personen)
             if d.dag == dag
             else d
             for d in week_menu.dagen

@@ -218,7 +218,7 @@ class TestDagTypeWijzigenUI:
         ).to_have_count(0)
 
     def test_niet_thuis_terug_naar_recept_knoppen(self, week_page: Page):
-        """E6: Niet-thuis → Recept (422) → dagkaart blijft."""
+        """E6: Niet-thuis → Recept → planner kiest recept, dagkaart wordt recept."""
         # Zet dag 4 op niet-thuis
         week_page.locator("[data-testid='dagkaart'][data-dag='4']").click()
         week_page.wait_for_selector("#sheet [data-testid='dag-aanpassen']")
@@ -227,17 +227,16 @@ class TestDagTypeWijzigenUI:
             "[data-testid='dagkaart'][data-dag='4'][data-type='niet-thuis']"
         )
 
-        # Probeer terug naar recept — 422, HTMX does not swap on error
+        # Terug naar recept — planner kiest automatisch een recept
         week_page.locator("[data-testid='dagtype-recept']").click()
 
-        # Dagkaart blijft niet-thuis (expect auto-retries tot timeout)
+        # Dagkaart wordt recept en sheet toont personen-selector
         expect(
             week_page.locator("[data-testid='dagkaart'][data-dag='4']")
-        ).to_have_attribute("data-type", "niet-thuis")
+        ).to_have_attribute("data-type", "recept")
 
-        # Sheet toont nog steeds dagtype-selector
         expect(
-            week_page.locator("#sheet [data-testid='dagtype-selector']")
+            week_page.locator("#sheet [data-testid='personen-selector']")
         ).to_be_visible()
 
     def test_personen_aanpassen_via_sheet(self, week_page: Page):

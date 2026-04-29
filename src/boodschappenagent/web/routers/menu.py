@@ -258,6 +258,7 @@ async def stel_type_in(
     dagtype: Annotated[
         Literal["geen_menu", "recept", "hellofresh"], Form(alias="type")
     ],
+    planner: Annotated[MenuPlanner, Depends(get_menu_planner)],
 ):
     """Wijzig het dagtype voor een specifieke dag.
 
@@ -268,20 +269,20 @@ async def stel_type_in(
     hellofresh_dagen = set(getattr(request.app.state, "hellofresh_dagen", set()))
 
     nieuwe_dagen = []
+    needs_recipe = False
     for d in week_menu.dagen:
         if d.dag == dag:
             if dagtype in ("geen_menu", "hellofresh"):
                 nieuwe_dagen.append(DagPlanning(dag=dag, recept=None, personen=0))
             else:  # recept
-                recept = d.recept
-                if recept is None:
-                    raise HTTPException(
-                        status_code=422, detail="Geen recept beschikbaar"
+                if d.recept is None:
+                    nieuwe_dagen.append(d)  # planner kiest recept hieronder
+                    needs_recipe = True
+                else:
+                    personen = d.personen if d.personen > 0 else 2
+                    nieuwe_dagen.append(
+                        DagPlanning(dag=dag, recept=d.recept, personen=personen)
                     )
-                personen = d.personen if d.personen > 0 else 2
-                nieuwe_dagen.append(
-                    DagPlanning(dag=dag, recept=recept, personen=personen)
-                )
         else:
             nieuwe_dagen.append(d)
 
@@ -290,10 +291,14 @@ async def stel_type_in(
     else:
         hellofresh_dagen.discard(dag)
 
-    request.app.state.week_menu = WeekMenu(
-        week_start=week_menu.week_start, dagen=nieuwe_dagen
-    )
     request.app.state.hellofresh_dagen = hellofresh_dagen
+
+    new_menu = WeekMenu(week_start=week_menu.week_start, dagen=nieuwe_dagen)
+    if needs_recipe:
+        maand = MAAND_AFKORTINGEN[date.today().month]
+        new_menu = planner.vervang_recept(new_menu, dag, maand)
+
+    request.app.state.week_menu = new_menu
     _save_state(request)
 
     dag_context = _build_dag_context(dag, request)

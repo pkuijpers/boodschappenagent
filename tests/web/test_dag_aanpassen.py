@@ -206,17 +206,22 @@ class TestDagTypeSelector:
         assert dag.recept is None
         assert dag.personen == 0
 
-    def test_hellofresh_terug_naar_recept_geeft_422(self, client: TestClient):
-        """Na hellofresh → recept geeft 422 zonder recept."""
+    def test_hellofresh_naar_recept_kiest_recept_via_planner(self, client: TestClient):
+        """Hellofresh → recept kiest een recept via de planner en geeft 200."""
         set_week_menu(client, make_week_menu_met_hellofresh(), hellofresh_dagen={2})
         response = client.post("/week/dag/2/stel-type-in", data={"type": "recept"})
-        assert response.status_code == 422
+        assert response.status_code == 200
+        dag = client.app.state.week_menu.dagen[2]
+        assert dag.recept is not None
+        assert dag.personen > 0
 
-    def test_zet_hellofresh_uit_app_state_bij_422(self, client: TestClient):
-        """Bij 422 (geen recept) blijft dag in hellofresh_dagen."""
+    def test_hellofresh_naar_recept_verwijdert_uit_hellofresh_dagen(
+        self, client: TestClient
+    ):
+        """Na hellofresh → recept wordt dag verwijderd uit hellofresh_dagen."""
         set_week_menu(client, make_week_menu_met_hellofresh(), hellofresh_dagen={2})
         client.post("/week/dag/2/stel-type-in", data={"type": "recept"})
-        assert 2 in client.app.state.hellofresh_dagen
+        assert 2 not in client.app.state.hellofresh_dagen
 
     def test_wijzigt_alleen_gevraagde_dag(self, client: TestClient):
         """S5.3.4: Alleen dag 0 wordt gewijzigd; overige 6 dagen ongewijzigd."""
@@ -239,12 +244,15 @@ class TestDagTypeSelector:
         response = client.post("/week/dag/0/stel-type-in", data={"type": "geen_menu"})
         assert response.status_code == 404
 
-    def test_geen_menu_terug_naar_recept_geeft_422(self, client: TestClient):
-        """Na geen_menu → recept geeft 422 zonder recept."""
+    def test_geen_menu_naar_recept_kiest_recept_via_planner(self, client: TestClient):
+        """Na geen_menu → recept kiest de planner een nieuw recept (geeft 200)."""
         set_week_menu(client, make_full_week_menu())
         client.post("/week/dag/0/stel-type-in", data={"type": "geen_menu"})
         response = client.post("/week/dag/0/stel-type-in", data={"type": "recept"})
-        assert response.status_code == 422
+        assert response.status_code == 200
+        dag = client.app.state.week_menu.dagen[0]
+        assert dag.recept is not None
+        assert dag.personen > 0
 
 
 class TestPersonenSelector:
