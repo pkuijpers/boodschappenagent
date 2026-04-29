@@ -128,6 +128,44 @@ class TestVoorraadRepositoryUpdateItem:
         assert items[0].op_voorraad is False
 
 
+class TestVoorraadRepositorySyncMetAHNamen:
+    def test_nieuw_ah_item_wordt_toegevoegd(self, tmp_path: Path) -> None:
+        repo = VoorraadRepository(tmp_path / "voorraad.json")
+        repo.sync_met_ah_namen({"Melk", "Eieren"})
+        namen = {i.naam for i in repo.load()}
+        assert namen == {"melk", "eieren"}
+
+    def test_nieuw_item_standaard_niet_op_voorraad(self, tmp_path: Path) -> None:
+        repo = VoorraadRepository(tmp_path / "voorraad.json")
+        repo.sync_met_ah_namen({"Melk"})
+        assert repo.load()[0].op_voorraad is False
+
+    def test_bestaand_item_behoudt_op_voorraad_status(self, tmp_path: Path) -> None:
+        path = tmp_path / "voorraad.json"
+        repo = VoorraadRepository(path)
+        repo.save([_make_item("melk", op_voorraad=False)])
+        repo.sync_met_ah_namen({"Melk"})
+        items = repo.load()
+        assert len(items) == 1
+        assert items[0].naam == "melk"
+        assert items[0].op_voorraad is False
+
+    def test_item_niet_op_ah_lijst_wordt_verwijderd(self, tmp_path: Path) -> None:
+        path = tmp_path / "voorraad.json"
+        repo = VoorraadRepository(path)
+        repo.save([_make_item("pasta"), _make_item("rijst")])
+        repo.sync_met_ah_namen({"pasta"})
+        namen = {i.naam for i in repo.load()}
+        assert namen == {"pasta"}
+
+    def test_lege_ah_lijst_verwijdert_alle_items(self, tmp_path: Path) -> None:
+        path = tmp_path / "voorraad.json"
+        repo = VoorraadRepository(path)
+        repo.save([_make_item("pasta")])
+        repo.sync_met_ah_namen(set())
+        assert repo.load() == []
+
+
 class TestVoorraadRepositoryOpVoorraadNamen:
     def test_returns_names_in_stock(self, tmp_path: Path) -> None:
         path = tmp_path / "voorraad.json"

@@ -82,6 +82,8 @@ async def voorraad(
         return RedirectResponse(url="/ah/login?terug=/week&next=/voorraad", status_code=303)
 
     producten = _haal_voorraad_producten(client)
+    if producten:
+        repository.sync_met_ah_namen({p["naam"] for p in producten})
     context = _build_voorraad_context(repository, producten)
     templates = request.app.state.templates
     is_htmx = request.headers.get("HX-Request") == "true"

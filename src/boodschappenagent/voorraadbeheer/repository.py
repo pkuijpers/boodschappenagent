@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 import json
+from datetime import date
 from pathlib import Path
 
-from boodschappenagent.voorraadbeheer.models import VoorraadItem
+from boodschappenagent.voorraadbeheer.models import VoorraadItem, VoorraadType
 
 
 class VoorraadRepository:
@@ -68,3 +69,30 @@ class VoorraadRepository:
             Set van itemnamen.
         """
         return {i.naam for i in self.load() if i.op_voorraad}
+
+    def sync_met_ah_namen(self, namen: set[str]) -> None:
+        """Synchroniseer voorraad met AH productnamen.
+
+        - Nieuwe namen worden toegevoegd met op_voorraad=True.
+        - Namen die niet meer in de set staan worden verwijderd.
+        - Bestaande items behouden hun op_voorraad status.
+
+        Args:
+            namen: Huidige productnamen uit de AH 'Voorraad' lijst.
+        """
+        bestaand = {i.naam.lower(): i for i in self.load()}
+        nieuwe_items = []
+        for naam in namen:
+            naam_lower = naam.lower()
+            if naam_lower in bestaand:
+                nieuwe_items.append(bestaand[naam_lower])
+            else:
+                nieuwe_items.append(
+                    VoorraadItem(
+                        naam=naam_lower,
+                        type=VoorraadType.HOUDBAAR,
+                        op_voorraad=False,
+                        laatst_gecheckt=str(date.today()),
+                    )
+                )
+        self.save(nieuwe_items)

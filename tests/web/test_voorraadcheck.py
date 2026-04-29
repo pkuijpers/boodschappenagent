@@ -237,6 +237,75 @@ class TestVoorraadToggle:
         assert "melk" in repo.op_voorraad_namen()
 
 
+class TestVoorraadSyncMetAHLijst:
+    """Voorraad wordt gesynchroniseerd met AH 'Voorraad' lijst bij laden."""
+
+    def test_nieuw_ah_product_wordt_toegevoegd_aan_repository(
+        self, client_with_voorraad: TestClient
+    ):
+        """Nieuw AH product (niet in repository) → toegevoegd na GET /voorraad."""
+        set_week_menu(client_with_voorraad, make_full_week_menu())
+        client_with_voorraad.get("/voorraad")
+        repo: VoorraadRepository = (
+            client_with_voorraad.app.dependency_overrides[get_voorraad_repository]()
+        )
+        namen = {i.naam for i in repo.load()}
+        for p in TEST_VOORRAAD_PRODUCTEN:
+            assert p["title"].lower() in namen
+
+    def test_verouderd_item_verwijderd_uit_repository(
+        self, app_with_voorraad: FastAPI
+    ):
+        """Item in repository dat niet meer op AH lijst staat → verwijderd na GET /voorraad."""
+        from boodschappenagent.voorraadbeheer.models import VoorraadItem, VoorraadType
+
+        repo: VoorraadRepository = (
+            app_with_voorraad.dependency_overrides[get_voorraad_repository]()
+        )
+        repo.save(
+            [
+                VoorraadItem(
+                    naam="oud-product",
+                    type=VoorraadType.HOUDBAAR,
+                    op_voorraad=True,
+                    laatst_gecheckt="2026-01-01",
+                )
+            ]
+        )
+        client = TestClient(app_with_voorraad)
+        set_week_menu(client, make_full_week_menu())
+        client.get("/voorraad")
+        namen = {i.naam for i in repo.load()}
+        assert "oud-product" not in namen
+
+    def test_bestaand_item_behoudt_status_bij_sync(
+        self, app_with_voorraad: FastAPI
+    ):
+        """Item dat al in repository staat behoudt op_voorraad=False na sync."""
+        from boodschappenagent.voorraadbeheer.models import VoorraadItem, VoorraadType
+
+        repo: VoorraadRepository = (
+            app_with_voorraad.dependency_overrides[get_voorraad_repository]()
+        )
+        # Melk staat in TEST_VOORRAAD_PRODUCTEN, maar al als niet-op-voorraad opgeslagen
+        repo.save(
+            [
+                VoorraadItem(
+                    naam="melk",
+                    type=VoorraadType.HOUDBAAR,
+                    op_voorraad=False,
+                    laatst_gecheckt="2026-01-01",
+                )
+            ]
+        )
+        client = TestClient(app_with_voorraad)
+        set_week_menu(client, make_full_week_menu())
+        client.get("/voorraad")
+        items = repo.load()
+        melk = next(i for i in items if i.naam == "melk")
+        assert melk.op_voorraad is False
+
+
 class TestVoorraadBevestig:
     """S8: Voorraad bevestigen (batch update → redirect)."""
 
