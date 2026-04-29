@@ -120,3 +120,13 @@ class TestHellofreshDefaultDagen:
         client.post("/week/genereer")
 
         assert client.app.state.hellofresh_dagen == {0, 4}
+
+    def test_fresh_genereer_di_wo_do_hebben_geen_recept(self, client: TestClient):
+        """S3.5.3: Bij verse generatie hebben dag 1, 2, 3 recept=None in WeekMenu."""
+        client.post("/week/genereer")
+
+        week_menu = client.app.state.week_menu
+        for dag_nr in [1, 2, 3]:
+            dag = next(d for d in week_menu.dagen if d.dag == dag_nr)
+            assert dag.recept is None, f"dag {dag_nr} heeft recept, verwacht None"
+            assert dag.personen == 0, f"dag {dag_nr} heeft personen>0, verwacht 0"
