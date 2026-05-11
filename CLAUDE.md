@@ -220,4 +220,5 @@ Always use Context7 (via the `mcp__context7__resolve-library-id` and `mcp__conte
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
+at `specs/001-menu-variety-ratio/plan.md`.
 <!-- SPECKIT END -->
