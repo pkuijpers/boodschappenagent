@@ -24,7 +24,13 @@
       "mcp__puppeteer__puppeteer_evaluate",
       "Bash(xargs basename:*)",
       "Bash(git -C /home/pieter/projects/albert/agent-backend/.worktrees/fix-hellofresh-bugfix add src/boodschappenagent/web/routers/menu.py tests/e2e/conftest.py tests/e2e/test_dag_aanpassen.py tests/e2e/test_hellofresh_boodschappen.py tests/web/conftest.py tests/web/test_dag_aanpassen.py)",
-      "Bash(git -C:*)"
+      "Bash(git -C:*)",
+      "Bash(bash .specify/scripts/bash/check-prerequisites.sh --json --paths-only)",
+      "Bash(bash .specify/scripts/bash/setup-plan.sh --json)",
+      "Bash(bash .specify/extensions/git/scripts/bash/auto-commit.sh after_plan)",
+      "Bash(bash .specify/scripts/bash/setup-tasks.sh --json)",
+      "Bash(bash .specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks)",
+      "Bash(bash .specify/extensions/git/scripts/bash/auto-commit.sh after_implement)"
     ]
   },
   "enableAllProjectMcpServers": true,
