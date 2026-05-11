@@ -10,6 +10,8 @@ from boodschappenagent.planner.models import DagInput, DagPlanning, WeekMenu
 from boodschappenagent.planner.seizoen_kalender import SeizoenKalender
 from boodschappenagent.repository.recipe_search import RecipeSearch
 
+SEIZOENS_KANS = 0.8
+
 
 class MenuPlanner:
     """Weekmenu-planner met variatie- en CO2-seizoenslogica."""
@@ -26,6 +28,12 @@ class MenuPlanner:
         self._history = history
         self._kalender = kalender
         self._rng = random.Random(random_seed)
+
+    def _kies_pool(self, seasonal: list[Recipe]) -> list[Recipe]:
+        """Kies 80% seizoenspool of 20% volledig assortiment per dag."""
+        if self._rng.random() < SEIZOENS_KANS and seasonal:
+            return seasonal
+        return self._recipes
 
     def _seasonal_and_recent(self, maand: str) -> tuple[list[Recipe], set[str]]:
         """Haal seizoensgeschikte recepten en recent gegeten IDs op."""
@@ -68,8 +76,9 @@ class MenuPlanner:
                 dagen.append(dag)
                 continue
 
+            pool = self._kies_pool(seasonal)
             candidates = self._filter_candidates_with_fallback(
-                seasonal, used_ids, recent_ids, vorige
+                pool, used_ids, recent_ids, vorige
             )
             recipe = self._rng.choice(candidates)
             used_ids.add(recipe.id)
@@ -116,8 +125,9 @@ class MenuPlanner:
             if d.dag < dag:
                 vorige = d
 
+        pool = self._kies_pool(seasonal)
         candidates = self._filter_candidates_with_fallback(
-            seasonal, used_ids, recent_ids, vorige
+            pool, used_ids, recent_ids, vorige
         )
         nieuw_recept = self._rng.choice(candidates)
 
@@ -133,7 +143,7 @@ class MenuPlanner:
 
     def _filter_candidates_with_fallback(
         self,
-        seasonal: list[Recipe],
+        pool: list[Recipe],
         used_ids: set[str],
         recent_ids: set[str],
         vorige: DagPlanning | None,
@@ -151,7 +161,7 @@ class MenuPlanner:
         Raises:
             ValueError: Als er helemaal geen recepten zijn.
         """
-        not_used = [r for r in seasonal if r.id not in used_ids]
+        not_used = [r for r in pool if r.id not in used_ids]
         not_used_not_recent = [r for r in not_used if r.id not in recent_ids]
 
         if vorige and vorige.recept:
@@ -185,9 +195,9 @@ class MenuPlanner:
         if not_used:
             return not_used
 
-        if not seasonal:
-            msg = "geen kandidaat-recepten beschikbaar voor de huidige maand"
+        if not pool:
+            msg = "geen kandidaat-recepten beschikbaar voor de huidige pool"
             raise ValueError(msg)
 
         # Laatste redmiddel: sta duplicaten toe
-        return seasonal
+        return pool

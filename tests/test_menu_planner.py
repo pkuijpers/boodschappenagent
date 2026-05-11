@@ -145,7 +145,7 @@ class TestPlanWeekCo2Filtering:
     """Tests voor CO2-seizoensfiltering in de planner."""
 
     def test_alleen_seizoensgeschikte_recepten(self, tmp_path, kalender):
-        """Recept met niet-seizoensgroenten wordt niet gekozen."""
+        """Seizoensrecept wordt sterk verkozen boven buiten-seizoen recept."""
         winter_recept = _make_recipe(
             "stampot",
             Categorie.VLEES,
@@ -168,11 +168,22 @@ class TestPlanWeekCo2Filtering:
         history = MenuHistory(tmp_path / "history.json")
         week_input = [DagInput(dag=0, personen=2)]
 
-        # In februari: boerenkool ✅, ui ✅, tomaat ❌, paprika ❌
-        for seed in range(20):
-            planner = MenuPlanner(recipes, history, kalender, random_seed=seed)
-            result = planner.plan_week(week_input, "feb", "2026-02-09")
-            assert result.dagen[0].recept.id == "stampot"
+        # In februari: boerenkool ✅ (seizoen), tomaat/paprika ❌ (buiten seizoen).
+        # Met 80/20 selectie: 80% kans seizoenspool → altijd stampot;
+        # 20% kans volledig assortiment → 50% kans stampot.
+        # Verwacht ~90% stampot over 100 seeds; handhaven ≥70% als veiligheidsmarge.
+        stampot_count = sum(
+            1
+            for seed in range(100)
+            if MenuPlanner(recipes, history, kalender, random_seed=seed)
+            .plan_week(week_input, "feb", "2026-02-09")
+            .dagen[0]
+            .recept.id
+            == "stampot"
+        )
+        assert stampot_count >= 70, (
+            f"Stampot slechts {stampot_count}/100 keer gekozen; verwacht ≥70%"
+        )
 
     def test_zomer_recept_wel_in_juli(self, tmp_path, kalender):
         """In juli zijn zomergroenten wel geschikt."""
@@ -407,3 +418,187 @@ class TestPlanWeekDeterministic:
         ids_a = [d.recept.id for d in result_a.dagen]
         ids_b = [d.recept.id for d in result_b.dagen]
         assert ids_a != ids_b
+
+
+_CATEGORIEEN = [
+    Categorie.VLEES,
+    Categorie.GEVOGELTE,
+    Categorie.VIS,
+    Categorie.VEGETARISCH,
+    Categorie.VEGANISTISCH,
+]
+_BASES = [Basis.PASTA, Basis.RIJST, Basis.BROOD, Basis.AARDAPPEL, Basis.GEEN]
+
+
+def _maak_seizoen_recept(i: int) -> Recipe:
+    """Recept met boerenkool — seizoensgeschikt in 'feb'."""
+    return _make_recipe(
+        f"seizoen-{i}",
+        _CATEGORIEEN[i % 5],
+        _BASES[i % 5],
+        ingredienten=[Ingredient(naam="boerenkool", hoeveelheid=200, eenheid="gram")],
+    )
+
+
+def _maak_buiten_recept(i: int) -> Recipe:
+    """Recept met tomaat — NIET seizoensgeschikt in 'feb'."""
+    return _make_recipe(
+        f"buiten-{i}",
+        _CATEGORIEEN[(i + 2) % 5],
+        _BASES[(i + 2) % 5],
+        ingredienten=[Ingredient(naam="tomaat", hoeveelheid=200, eenheid="gram")],
+    )
+
+
+class TestVarietieProbabilistisch:
+    """Tests voor 80/20 probabilistische pool-selectie (SC-001)."""
+
+    @pytest.fixture
+    def alle_recepten(self) -> list[Recipe]:
+        """5 seizoens- + 5 buiten-seizoen recepten voor 'feb'."""
+        return [_maak_seizoen_recept(i) for i in range(5)] + [
+            _maak_buiten_recept(i) for i in range(5)
+        ]
+
+    @pytest.fixture
+    def seizoen_ids(self, alle_recepten: list[Recipe]) -> set[str]:
+        return {r.id for r in alle_recepten if r.id.startswith("seizoen-")}
+
+    @pytest.fixture
+    def buiten_ids(self, alle_recepten: list[Recipe]) -> set[str]:
+        return {r.id for r in alle_recepten if r.id.startswith("buiten-")}
+
+    def test_80_procent_seizoens_gemiddeld(
+        self,
+        tmp_path: Path,
+        kalender: SeizoenKalender,
+        alle_recepten: list[Recipe],
+        seizoen_ids: set[str],
+    ) -> None:
+        from boodschappenagent.repository import RecipeSearch
+
+        # Verify seasonal pool composition matches expectation
+        pool = RecipeSearch(alle_recepten).filter_by_co2_maand(kalender, "feb").results
+        assert {r.id for r in pool} == seizoen_ids, (
+            "Seizoenspool bevat onverwachte recepten"
+        )
+
+        history = MenuHistory(tmp_path / "history.json")
+        week_input = [DagInput(dag=i, personen=2) for i in range(7)]
+
+        seizoen_count = 0
+        totaal_count = 0
+        for seed in range(100):
+            planner = MenuPlanner(alle_recepten, history, kalender, random_seed=seed)
+            result = planner.plan_week(week_input, "feb", "2026-02-09")
+            for dag in result.geplande_dagen:
+                totaal_count += 1
+                if dag.recept.id in seizoen_ids:
+                    seizoen_count += 1
+
+        ratio = seizoen_count / totaal_count
+        assert 0.70 <= ratio <= 0.90, (
+            f"Seizoensratio {ratio:.2%} buiten 70%-90% bandbreedte"
+        )
+
+    def test_20_procent_volledig_assortiment(
+        self,
+        tmp_path: Path,
+        kalender: SeizoenKalender,
+        alle_recepten: list[Recipe],
+        buiten_ids: set[str],
+    ) -> None:
+        history = MenuHistory(tmp_path / "history.json")
+        week_input = [DagInput(dag=i, personen=2) for i in range(7)]
+
+        found_buiten = False
+        for seed in range(100):
+            planner = MenuPlanner(alle_recepten, history, kalender, random_seed=seed)
+            result = planner.plan_week(week_input, "feb", "2026-02-09")
+            for dag in result.geplande_dagen:
+                if dag.recept.id in buiten_ids:
+                    found_buiten = True
+                    break
+            if found_buiten:
+                break
+
+        assert found_buiten, (
+            "Nooit een buiten-seizoen recept geselecteerd over 100 seeds"
+        )
+
+    def test_vervang_recept_gebruikt_ook_probabilistische_selectie(
+        self,
+        tmp_path: Path,
+        kalender: SeizoenKalender,
+        alle_recepten: list[Recipe],
+        buiten_ids: set[str],
+    ) -> None:
+        history = MenuHistory(tmp_path / "history.json")
+        week_input = [DagInput(dag=i, personen=2) for i in range(7)]
+
+        found_buiten = False
+        for seed in range(200):
+            planner = MenuPlanner(alle_recepten, history, kalender, random_seed=seed)
+            menu = planner.plan_week(week_input, "feb", "2026-02-09")
+            nieuw = planner.vervang_recept(menu, 3, "feb")
+            if nieuw.dagen[3].recept and nieuw.dagen[3].recept.id in buiten_ids:
+                found_buiten = True
+                break
+
+        assert found_buiten, (
+            "vervang_recept() selecteert nooit een buiten-seizoen recept over 200 seeds"
+        )
+
+    def test_variatie_constraints_gelden_voor_beide_pools(
+        self,
+        tmp_path: Path,
+        kalender: SeizoenKalender,
+        alle_recepten: list[Recipe],
+        buiten_ids: set[str],
+    ) -> None:
+        """Recente uitsluiting geldt ongeacht welke pool (SC-003)."""
+        from datetime import date, timedelta
+
+        # Markeer één buiten-seizoen recept als recent gegeten (SC-003)
+        buiten_id = sorted(buiten_ids)[0]
+        history = MenuHistory(tmp_path / "history.json")
+        history.save(
+            [
+                {
+                    "datum": (date.today() - timedelta(days=3)).isoformat(),
+                    "recept_id": buiten_id,
+                    "personen": 2,
+                }
+            ]
+        )
+        week_input = [DagInput(dag=0, personen=2)]
+
+        # Over 100 seeds — ook als het 20%-pad de volledige catalogus kiest,
+        # wordt het recent-gegeten recept nooit geselecteerd
+        for seed in range(100):
+            planner = MenuPlanner(alle_recepten, history, kalender, random_seed=seed)
+            result = planner.plan_week(week_input, "feb", "2026-02-09")
+            assert result.dagen[0].recept.id != buiten_id, (
+                f"seed={seed}: recent gegeten recept '{buiten_id}' toch geselecteerd"
+            )
+
+    def test_fallback_bij_lege_seizoenspool(
+        self,
+        tmp_path: Path,
+        kalender: SeizoenKalender,
+    ) -> None:
+        """Lege seizoenspool: volledige catalogus gebruikt als fallback (FR-005)."""
+        # Alleen buiten-seizoen recepten (tomaat) → seizoenspool is leeg in 'feb'
+        buiten_recepten = [_maak_buiten_recept(i) for i in range(5)]
+        history = MenuHistory(tmp_path / "history.json")
+        week_input = [DagInput(dag=0, personen=2)]
+
+        for seed in range(20):
+            planner = MenuPlanner(buiten_recepten, history, kalender, random_seed=seed)
+            result = planner.plan_week(week_input, "feb", "2026-02-09")
+            assert result.dagen[0].recept is not None, (
+                f"seed={seed}: plan_week() faalde met lege seizoenspool"
+            )
+            assert result.dagen[0].recept.id in {r.id for r in buiten_recepten}, (
+                f"seed={seed}: recept uit lege seizoenspool verwacht"
+            )
