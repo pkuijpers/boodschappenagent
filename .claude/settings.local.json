@@ -30,7 +30,8 @@
       "Bash(bash .specify/extensions/git/scripts/bash/auto-commit.sh after_plan)",
       "Bash(bash .specify/scripts/bash/setup-tasks.sh --json)",
       "Bash(bash .specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks)",
-      "Bash(bash .specify/extensions/git/scripts/bash/auto-commit.sh after_implement)"
+      "Bash(bash .specify/extensions/git/scripts/bash/auto-commit.sh after_implement)",
+      "Bash(bash .specify/extensions/git/scripts/bash/create-new-feature.sh --json --short-name \"fix-manual-items-ah-send\" \"artikelen die ik handmatig toevoeg aan de boodschappenlijst worden niet naar AH gestuurd bij klikken op Verstuur naar AH\")"
     ]
   },
   "enableAllProjectMcpServers": true,
