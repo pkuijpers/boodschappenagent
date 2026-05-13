@@ -392,3 +392,143 @@ class TestVerstuurNaarAHCheckedItems:
         mock_ah_integratie.sync_naar_lijst.assert_called_once()
         lijst_arg = mock_ah_integratie.sync_naar_lijst.call_args[0][0]
         assert len(lijst_arg.regels) == 15
+
+
+class TestVerstuurNaarAHHandmatig:
+    """S20: Handmatig toegevoegde artikelen worden meegestuurd naar AH."""
+
+    def test_s20_1_handmatig_item_wordt_meegestuurd(
+        self,
+        app_with_ah,
+        mock_token_manager,
+        mock_ah_integratie,
+        sync_resultaat_succes,
+        setup_boodschappenlijst_met_handmatig,
+    ):
+        """S20.1: Handmatig artikel "zeep" wordt meegestuurd naar AH."""
+        mock_token_manager.is_authenticated.return_value = True
+        mock_ah_integratie.sync_naar_lijst.return_value = sync_resultaat_succes
+
+        client = TestClient(app_with_ah)
+        client.post("/boodschappen/verstuur-naar-ah")
+
+        mock_ah_integratie.sync_naar_lijst.assert_called_once()
+        namen = [r.naam for r in mock_ah_integratie.sync_naar_lijst.call_args[0][0].regels]
+        assert "zeep" in namen
+        assert "pasta" in namen
+
+    def test_s20_2_gemengde_lijst_alle_items_meegestuurd(
+        self,
+        app_with_ah,
+        mock_token_manager,
+        mock_ah_integratie,
+        sync_resultaat_succes,
+        setup_boodschappenlijst_met_handmatig,
+    ):
+        """S20.2: Gemengde lijst van 3 menu + 2 handmatig resulteert in 5 regels."""
+        mock_token_manager.is_authenticated.return_value = True
+        mock_ah_integratie.sync_naar_lijst.return_value = sync_resultaat_succes
+
+        app_with_ah.state.boodschappenlijst = [
+            {"id": f"menu-{i}", "naam": f"menu-item-{i}", "hoeveelheid": 1, "eenheid": "stuk", "checked": False, "handmatig": False, "eerste_recept": "Recept", "extra_aantal": 0}
+            for i in range(3)
+        ] + [
+            {"id": f"handmatig-{i}", "naam": f"handmatig-item-{i}", "hoeveelheid": 1, "eenheid": "stuks", "checked": False, "handmatig": True, "eerste_recept": None, "extra_aantal": 0}
+            for i in range(2)
+        ]
+
+        client = TestClient(app_with_ah)
+        client.post("/boodschappen/verstuur-naar-ah")
+
+        mock_ah_integratie.sync_naar_lijst.assert_called_once()
+        assert len(mock_ah_integratie.sync_naar_lijst.call_args[0][0].regels) == 5
+
+    def test_s20_3_alleen_handmatige_items_worden_verstuurd(
+        self,
+        app_with_ah,
+        mock_token_manager,
+        mock_ah_integratie,
+        sync_resultaat_succes,
+        setup_boodschappenlijst_met_handmatig,
+    ):
+        """S20.3: Lijst met alleen handmatige items wordt volledig verstuurd."""
+        mock_token_manager.is_authenticated.return_value = True
+        mock_ah_integratie.sync_naar_lijst.return_value = sync_resultaat_succes
+
+        from boodschappenagent.boodschappenlijst.models import Boodschappenlijst
+
+        app_with_ah.state.boodschappenlijst_model = Boodschappenlijst(
+            week_start="2026-02-16",
+            regels=[],
+        )
+        app_with_ah.state.boodschappenlijst = [
+            {"id": f"handmatig-{i}", "naam": f"handmatig-item-{i}", "hoeveelheid": 1, "eenheid": "stuks", "checked": False, "handmatig": True, "eerste_recept": None, "extra_aantal": 0}
+            for i in range(2)
+        ]
+
+        client = TestClient(app_with_ah)
+        client.post("/boodschappen/verstuur-naar-ah")
+
+        mock_ah_integratie.sync_naar_lijst.assert_called_once()
+        assert len(mock_ah_integratie.sync_naar_lijst.call_args[0][0].regels) == 2
+
+    def test_s20_4_bevestiging_flow_met_handmatig(
+        self,
+        app_with_ah,
+        mock_token_manager,
+        mock_ah_integratie,
+        sync_resultaat_succes,
+        setup_boodschappenlijst_met_handmatig,
+    ):
+        """S20.4: Gemengde lijst geeft bevestigingspagina (geen foutpagina)."""
+        mock_token_manager.is_authenticated.return_value = True
+        mock_ah_integratie.sync_naar_lijst.return_value = sync_resultaat_succes
+
+        client = TestClient(app_with_ah)
+        response = client.post("/boodschappen/verstuur-naar-ah")
+
+        assert response.status_code == 200
+        assert soup(response).select_one('[data-testid="ah-bevestiging"]') is not None
+
+    def test_s20_5_fout_bij_versturen_toont_foutmelding(
+        self,
+        app_with_ah,
+        mock_token_manager,
+        mock_ah_integratie,
+        setup_boodschappenlijst_met_handmatig,
+    ):
+        """S20.5: AH API fout toont foutmelding, lijst blijft ongewijzigd (FR-004/SC-004)."""
+        mock_token_manager.is_authenticated.return_value = True
+        mock_ah_integratie.sync_naar_lijst.side_effect = Exception("AH API error")
+
+        client = TestClient(app_with_ah)
+        response = client.post("/boodschappen/verstuur-naar-ah")
+
+        assert response.status_code == 200
+        assert soup(response).select_one('[data-testid="ah-api-error"]') is not None
+        assert len(app_with_ah.state.boodschappenlijst) == 2
+
+    def test_s20_6_lege_boodschappenlijst_toont_melding(
+        self,
+        app_with_ah,
+        mock_token_manager,
+        mock_ah_integratie,
+        setup_boodschappenlijst_met_handmatig,
+    ):
+        """S20.6: Lege boodschappenlijst toont lege-lijst melding, sync niet aangeroepen."""
+        mock_token_manager.is_authenticated.return_value = True
+
+        from boodschappenagent.boodschappenlijst.models import Boodschappenlijst
+
+        app_with_ah.state.boodschappenlijst_model = Boodschappenlijst(
+            week_start="2026-02-16",
+            regels=[],
+        )
+        app_with_ah.state.boodschappenlijst = []
+
+        client = TestClient(app_with_ah)
+        response = client.post("/boodschappen/verstuur-naar-ah")
+
+        assert response.status_code == 200
+        assert soup(response).select_one('[data-testid="ah-lege-lijst"]') is not None
+        mock_ah_integratie.sync_naar_lijst.assert_not_called()

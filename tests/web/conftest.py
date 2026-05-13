@@ -405,6 +405,49 @@ def setup_boodschappenlijst(app_with_ah):
     ]
 
 
+@pytest.fixture
+def setup_boodschappenlijst_met_handmatig(app_with_ah):
+    """Zet boodschappenlijst met 1 menu-item en 1 handmatig item op app.state."""
+    from boodschappenagent.boodschappenlijst.models import (
+        Boodschappenlijst,
+        BoodschappenRegel,
+    )
+
+    app_with_ah.state.boodschappenlijst_model = Boodschappenlijst(
+        week_start=WEEK_START,
+        regels=[
+            BoodschappenRegel(
+                naam="pasta",
+                hoeveelheid=500,
+                eenheid="g",
+                originele_namen=frozenset({"pasta"}),
+            )
+        ],
+    )
+    app_with_ah.state.boodschappenlijst = [
+        {
+            "id": "menu-1",
+            "naam": "pasta",
+            "hoeveelheid": 500,
+            "eenheid": "g",
+            "checked": False,
+            "handmatig": False,
+            "eerste_recept": "Pasta bolognese",
+            "extra_aantal": 0,
+        },
+        {
+            "id": "handmatig-1",
+            "naam": "zeep",
+            "hoeveelheid": 1,
+            "eenheid": "stuks",
+            "checked": False,
+            "handmatig": True,
+            "eerste_recept": None,
+            "extra_aantal": 0,
+        },
+    ]
+
+
 def _make_product_match(naam: str, gevonden: bool, product_id: int = 1) -> ProductMatch:
     """Helper om een ProductMatch te maken."""
     from boodschappenagent.ah.models import Product

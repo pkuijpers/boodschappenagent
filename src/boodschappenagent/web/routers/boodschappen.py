@@ -9,7 +9,10 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 
 from boodschappenagent.ah import AHIntegratie, AHTokenManager
 from boodschappenagent.boodschappenlijst import BoodschappenlijstGenerator
-from boodschappenagent.boodschappenlijst.models import Boodschappenlijst
+from boodschappenagent.boodschappenlijst.models import (
+    Boodschappenlijst,
+    BoodschappenRegel,
+)
 from boodschappenagent.voorraadbeheer import BoodschappenlijstFilter
 from boodschappenagent.web.dependencies import (
     get_ah_integratie,
@@ -226,23 +229,31 @@ async def verstuur_naar_ah(
         return RedirectResponse(url="/ah/login", status_code=303)
 
     # Check of er een boodschappenlijst is
-    lijst = _get_boodschappenlijst(request)
-    if lijst is None:
+    sentinel = _get_boodschappenlijst(request)
+    if sentinel is None:
         return RedirectResponse(url="/week", status_code=303)
 
-    # Filter gecheckte items uit — aangevinkt betekent "hoef ik niet te bestellen"
-    checked_namen = {item["naam"] for item in _get_items(request) if item.get("checked")}
-    if checked_namen:
-        gefilterde_regels = [r for r in lijst.regels if r.naam not in checked_namen]
-        lijst = Boodschappenlijst(week_start=lijst.week_start, regels=gefilterde_regels)
+    # Bouw te versturen lijst op vanuit UI-itemslijst (bevat menu + handmatige items)
+    te_versturen = [item for item in _get_items(request) if not item.get("checked")]
 
     # Check op lege lijst
-    if len(lijst.regels) == 0:
+    if not te_versturen:
         return templates.TemplateResponse(
             request=request,
             name="pages/ah_error.html",
             context={"error_type": "lege_lijst"},
         )
+
+    regels = [
+        BoodschappenRegel(
+            naam=item["naam"],
+            hoeveelheid=item["hoeveelheid"],
+            eenheid=item["eenheid"],
+            originele_namen=frozenset({item["naam"]}),
+        )
+        for item in te_versturen
+    ]
+    lijst = Boodschappenlijst(week_start=sentinel.week_start, regels=regels)
 
     # Sync naar AH
     try:
