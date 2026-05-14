@@ -3,12 +3,15 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from boodschappenagent.ah.client import AHClient
 from boodschappenagent.ah.models import Product
 from boodschappenagent.ah.quantity_calculator import bereken_aantal
 from boodschappenagent.boodschappenlijst.models import Boodschappenlijst
+
+if TYPE_CHECKING:
+    from boodschappenagent.ah.preferences import MatchVoorkeurenRepository
 
 # Vertaling van AHClient smart_search bronnen naar Nederlandse termen
 _BRON_VERTALING = {
@@ -90,13 +93,18 @@ class AHIntegratie:
         self,
         lijst: Boodschappenlijst,
         referentie_lijst_id: str | None = None,
+        voorkeuren_repo: MatchVoorkeurenRepository | None = None,
     ) -> list[ProductMatch]:
         """Zoek AH producten voor alle regels op de boodschappenlijst.
+
+        Past opgeslagen product-voorkeuren toe vóór smart_search.
 
         Args:
             lijst: De boodschappenlijst om te matchen.
             referentie_lijst_id: Optioneel ID van een bestaande AH lijst
                 om als referentie te gebruiken (snellere matching).
+            voorkeuren_repo: Optionele repository met opgeslagen product-
+                voorkeuren per ingredientnaam.
 
         Returns:
             Lijst van ProductMatch resultaten, een per boodschappenregel.
@@ -115,21 +123,64 @@ class AHIntegratie:
 
         matches = []
         for regel in lijst.regels:
-            product, bron = self._client.smart_search(
-                regel.naam,
-                reference_products=reference_products,
+            product, bron = self._zoek_met_voorkeur(
+                regel, reference_products, voorkeuren_repo
             )
             aantal = bereken_aantal(regel, product) if product else 1
             matches.append(
                 ProductMatch(
                     regel=regel,
                     product=product,
-                    bron=_BRON_VERTALING.get(bron, bron),
+                    bron=bron,
                     aantal=aantal,
                 )
             )
 
         return matches
+
+    def _zoek_met_voorkeur(
+        self,
+        regel: Any,
+        reference_products: list[Product] | None,
+        voorkeuren_repo: MatchVoorkeurenRepository | None,
+    ) -> tuple[Product | None, str]:
+        """Zoek product voor één regel, met voorkeur-lookup als eerste stap."""
+        if voorkeuren_repo is not None:
+            voorkeur = voorkeuren_repo.get(regel.naam)
+            if voorkeur is not None:
+                # Controleer of het voorkeurs-product nog besteld kan worden
+                zoekresultaten = self._client.search_products(regel.naam)
+                voorkeur_product = next(
+                    (p for p in zoekresultaten if p.id == voorkeur.article_id),
+                    None,
+                )
+                if voorkeur_product is not None and voorkeur_product.is_orderable:
+                    return voorkeur_product, "voorkeur"
+                # Voorkeur niet (meer) beschikbaar — gebruik smart_search als fallback
+                product, bron_raw = self._client.smart_search(
+                    regel.naam,
+                    reference_products=reference_products,
+                )
+                return product, "voorkeur_niet_beschikbaar"
+
+        # Geen voorkeur of geen repo — standaard smart_search
+        product, bron_raw = self._client.smart_search(
+            regel.naam,
+            reference_products=reference_products,
+        )
+        return product, _BRON_VERTALING.get(bron_raw, bron_raw)
+
+    def create_list(self, naam: str) -> str:
+        """Maak een nieuwe AH favorieten-lijst aan en geef het ID terug."""
+        return self._client.create_list(naam)
+
+    def add_products_to_list(
+        self,
+        lijst_id: str,
+        producten: list[tuple[int, int]],
+    ) -> None:
+        """Voeg producten toe aan een AH favorieten-lijst."""
+        self._client.add_products_to_list(lijst_id, producten)
 
     def sync_naar_lijst(
         self,
