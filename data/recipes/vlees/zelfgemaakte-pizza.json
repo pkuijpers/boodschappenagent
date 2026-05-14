@@ -1,0 +1,25 @@
+{
+  "id": "zelfgemaakte-pizza",
+  "naam": "Zelfgemaakte pizza",
+  "categorie": "vlees",
+  "basis": "brood",
+  "seizoenen": ["alle"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "bloem", "hoeveelheid": 600, "eenheid": "gram", "opmerking": null},
+    {"naam": "zout", "hoeveelheid": 1, "eenheid": "snuf", "opmerking": null},
+    {"naam": "tomato frito", "hoeveelheid": 2, "eenheid": "pakje", "opmerking": null},
+    {"naam": "geraspte kaas", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
+    {"naam": "achterham", "hoeveelheid": 100, "eenheid": "gram", "opmerking": null},
+    {"naam": "paprika", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "champignons", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "ui", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "oregano", "hoeveelheid": 5, "eenheid": "gram", "opmerking": null},
+    {"naam": "olijfolie", "hoeveelheid": 100, "eenheid": "ml", "opmerking": null}
+
+  ],
+  "tags": ["vlees"],
+  "bereidingstijd_min": 55,
+  "bereidingswijze": "",
+  "bron": "eigen recept"
+}
