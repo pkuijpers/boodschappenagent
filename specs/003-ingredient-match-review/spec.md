@@ -7,6 +7,12 @@
 
 ## Clarifications
 
+### Session 2026-05-15
+
+- Q: Welke matches worden opgeslagen na het bevestigen van het matchoverzicht? → A: Alle bevestigde matches — niet alleen gecorrigeerde. Auto-matched items zonder bestaande voorkeur krijgen na bevestiging een nieuwe opgeslagen voorkeur; items met bestaande voorkeur worden alleen overschreven bij expliciete correctie door de gebruiker.
+- Q: Welke productinformatie wordt getoond bij het gekoppelde product in het matchoverzicht? → A: Productnaam én hoeveelheid (bijv. "500 g") naast de naam; het merk wordt niet getoond.
+- Q: Wat gebeurt er met de opgeslagen voorkeur als auto-match een ander product vindt en de gebruiker dit niet corrigeert? → A: Als een ingredient een opgeslagen voorkeur heeft, wordt auto-matching volledig overgeslagen — de voorkeur wordt altijd direct gebruikt. Alleen bij expliciete correctie door de gebruiker wordt de voorkeur overschreven.
+
 ### Session 2026-05-14
 
 - Q: Wat is de volgorde van de flow — wordt de AH-lijst aangemaakt vóór of ná de match-review? → A: Eerst alle ingrediënten matchen, dan review en correcties, dan pas de AH-lijst aanmaken. De lijst wordt dus niet aangemaakt vóór de review.
@@ -53,17 +59,18 @@ De gebruiker kan een onjuist gematcht product vervangen door een alternatief te 
 
 ### User Story 3 - Bewaar voorkeurs-match per ingredient (Priority: P3)
 
-Gecorrigeerde of bevestigde article IDs worden opgeslagen bij het ingredient, zodat toekomstige boodschappenlijsten automatisch het juiste product gebruiken.
+Gecorrigeerde matches én nieuw bevestigde auto-matches (voor ingrediënten zonder bestaande voorkeur) worden opgeslagen bij het ingredient. Ingrediënten met een bestaande voorkeur slaan auto-matching volledig over — de opgeslagen voorkeur wordt direct gebruikt. Zo hoeft de gebruiker elke week minder te corrigeren.
 
 **Why this priority**: Opgeslagen voorkeuren voorkomen dat de gebruiker dezelfde correctie elke week opnieuw moet doen.
 
-**Independent Test**: Corrigeer een match, start daarna opnieuw het match-proces met hetzelfde ingredient, en controleer dat de opgeslagen voorkeur automatisch gebruikt wordt zodat de gebruiker geen correctie meer hoeft te doen.
+**Independent Test**: Corrigeer een match, start daarna opnieuw het match-proces met hetzelfde ingredient, en controleer dat de opgeslagen voorkeur automatisch gebruikt wordt (auto-match API wordt niet aangeroepen voor dat ingredient). Controleer ook dat een nieuw ingredient (zonder voorkeur) na bevestiging een voorkeur heeft gekregen.
 
 **Acceptance Scenarios**:
 
-1. **Given** een gebruiker heeft een match gecorrigeerd, **When** het match-proces opnieuw gestart wordt met hetzelfde ingredient, **Then** wordt automatisch het eerder opgeslagen article ID gebruikt
+1. **Given** een gebruiker heeft een match gecorrigeerd, **When** het match-proces opnieuw gestart wordt met hetzelfde ingredient, **Then** wordt automatisch het eerder opgeslagen article ID gebruikt en wordt auto-matching overgeslagen
 2. **Given** een ingredient met opgeslagen voorkeur, **When** dat product niet meer beschikbaar is bij AH, **Then** valt het systeem terug op automatische matching en markeert het ingredient als "voorkeur niet beschikbaar"
 3. **Given** een ingredient heeft een opgeslagen voorkeur, **When** de gebruiker een nieuwe correctie doorvoert, **Then** wordt de opgeslagen voorkeur overschreven met het nieuwe article ID
+4. **Given** een ingredient heeft geen opgeslagen voorkeur, **When** de gebruiker de auto-match bevestigt zonder correctie, **Then** wordt het article ID van de auto-match opgeslagen als nieuwe voorkeur voor dat ingredient
 
 ---
 
@@ -80,12 +87,12 @@ Gecorrigeerde of bevestigde article IDs worden opgeslagen bij het ingredient, zo
 ### Functional Requirements
 
 - **FR-001**: Wanneer de gebruiker het verstuurproces start, MOET het systeem eerst alle items matchen aan AH-producten — zowel recept-ingrediënten als handmatige artikelen — en een matchoverzicht tonen vóórdat de AH-lijst aangemaakt wordt
-- **FR-002**: Het matchoverzicht MOET per ingredient minimaal tonen: ingredientnaam, gevraagde hoeveelheid, gekoppeld productnaam, en productprijs
+- **FR-002**: Het matchoverzicht MOET per ingredient minimaal tonen: ingredientnaam, gevraagde hoeveelheid, gekoppeld productnaam, hoeveelheid van het gekoppelde product (bijv. "500 g"), en productprijs — het merk van het gekoppelde product wordt niet getoond
 - **FR-003**: Gebruiker MOET voor elk ingredient een correctieactie kunnen starten vanuit het matchoverzicht
 - **FR-004**: Systeem MOET bij correctie een zoekfunctie bieden die AH-producten doorzoekt op naam
 - **FR-005**: Gebruiker MOET een zoekresultaat kunnen selecteren als vervangende match voor een ingredient
-- **FR-006**: Systeem MOET na bevestiging het article ID van het geselecteerde product opslaan bij het betreffende ingredient
-- **FR-007**: Systeem MOET bij een volgend matchproces met hetzelfde ingredient het opgeslagen article ID gebruiken in plaats van opnieuw te matchen
+- **FR-006**: Systeem MOET na bevestiging van het matchoverzicht het bevestigde article ID opslaan voor alle ingrediënten zonder bestaande voorkeur; bij expliciete correctie door de gebruiker MOET de bestaande voorkeur altijd overschreven worden met het nieuw geselecteerde article ID
+- **FR-007**: Systeem MOET bij het matchproces voor elk ingredient eerst controleren of er een opgeslagen voorkeur (preferred_article_id) bestaat — zo ja, MOET die voorkeur direct gebruikt worden en wordt auto-matching voor dat ingredient overgeslagen; zo nee, wordt auto-matching uitgevoerd
 - **FR-008**: Systeem MOET ingrediënten zonder gevonden match duidelijk markeren in het overzicht
 - **FR-009**: Gebruiker MOET vanuit het matchoverzicht de AH-lijst kunnen aanmaken zodra alle ingrediënten een match hebben
 - **FR-010**: De AH-lijst mag pas aangemaakt worden nadat de gebruiker het matchoverzicht heeft bevestigd en alle ingrediënten een match hebben
@@ -96,7 +103,7 @@ Gecorrigeerde of bevestigde article IDs worden opgeslagen bij het ingredient, zo
 - **Recept-ingredient**: Afkomstig uit een recept — heeft naam, eenheid, hoeveelheid, en optioneel een opgeslagen `preferred_article_id`
 - **Handmatig artikel**: Vrije tekstbeschrijving toegevoegd door de gebruiker (bijv. "oregano", "ibuprofen") — heeft alleen een naam en optioneel een opgeslagen `preferred_article_id`; beide typen gaan door hetzelfde matchproces
 - **Match Result**: Koppeling tussen een item (recept-ingredient of handmatig artikel) en een AH-product voor een specifieke boodschappenlijst (article ID, productnaam, prijs, beschikbaarheid)
-- **AH Product**: Article ID, naam, prijs, eenheid, beschikbaarheid (zoekresultaat van AH)
+- **AH Product**: Article ID, naam, prijs, eenheid (bijv. "500 g" — wordt getoond naast productnaam in matchoverzicht en zoekresultaten), beschikbaarheid (zoekresultaat van AH)
 
 ## Success Criteria *(mandatory)*
 

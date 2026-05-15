@@ -193,6 +193,73 @@ Task T011: "Create match_review.html page"
 
 ---
 
+## Phase 7: Session 2026-05-15 — Targeted Updates
+
+**Context**: The full feature shipped in commit `883a26a`. Two targeted updates were clarified in session 2026-05-15 and are still pending.
+
+**Scope**: One template change (1 line) + one route condition change (1 condition). Both require failing tests first (TDD, Constitution I).
+
+---
+
+### Update A — US1: Toon productgrootte in matchoverzicht (FR-002)
+
+**Goal**: Show `item.product.size` (e.g. "500 g") inline next to the product name in each match review card. Brand is not shown.
+
+**Independent Test**: Render the match review page with a matched item; assert the product size string appears in the card HTML.
+
+#### Tests
+
+> **Write FIRST — ensure they FAIL before implementation**
+
+- [X] T032 [US1] Add failing test in `tests/web/test_boodschappen.py` — assert `item.product.size` (e.g. "500 g") is present in rendered `match_review_item.html` HTML for a matched item
+
+#### Implementation
+
+- [X] T033 [US1] Add `item.product.size` inline after product title in `src/boodschappenagent/web/templates/fragments/match_review_item.html` — rendered as `text-xs text-gray-400` per ui-design.md State 1 card spec; guard with `{% if item.product.size %}` to handle None
+
+**Checkpoint**: T032 passes. Product size visible in match review card. All existing tests still green.
+
+---
+
+### Update B — US3: Sla alle bevestigde matches op als voorkeur (FR-006)
+
+**Goal**: After the user confirms the match review, save a `MatchVoorkeur` for every confirmed item — not only explicitly corrected ones. Items already loaded from an existing saved preference (`bron == "voorkeur"`, not corrected) are skipped.
+
+**Save condition** (from research.md):
+```python
+item.product is not None and (item.gecorrigeerd or item.bron != "voorkeur")
+```
+
+Concretely:
+- `bron == "voorkeur"`, `gecorrigeerd=False` → **skip** (preference already stored, unchanged)
+- `bron == "voorkeur"`, `gecorrigeerd=True` → **save** (user chose a different product; overwrite)
+- `bron != "voorkeur"`, `product is not None` → **save** (new preference; eliminates future review noise)
+
+**Independent Test**: POST to `bevestig-matches` with one auto-matched item (`bron="zoekopdracht"`) and one voorkeur item (`bron="voorkeur"`, `gecorrigeerd=False`). Assert: auto-matched item → `MatchVoorkeurenRepository.save()` called; voorkeur item (not corrected) → save not called.
+
+#### Tests
+
+> **Write FIRST — ensure they FAIL before implementation**
+
+- [X] T034 [US3] Add failing tests in `tests/web/test_boodschappen.py` for updated `bevestig_matches` save logic:
+  - `bron="zoekopdracht"`, product set → `MatchVoorkeurenRepository.save()` called after confirm
+  - `bron="voorkeur"`, `gecorrigeerd=False` → save is **skipped**
+  - `bron="voorkeur"`, `gecorrigeerd=True` → preference **overwritten** via save
+
+#### Implementation
+
+- [X] T035 [US3] Update save condition in `bevestig_matches` in `src/boodschappenagent/web/routers/boodschappen.py` — replace current save guard (save only when `gecorrigeerd=True`) with: `item.product is not None and (item.gecorrigeerd or item.bron != "voorkeur")`
+
+**Checkpoint**: All three T034 test cases pass. Existing tests still green.
+
+---
+
+### Afronden
+
+- [X] T036 [P] Run `uv run ruff check --fix .` and `uv run ruff format .` — fix any linting/formatting issues in `boodschappen.py` and `match_review_item.html` before committing
+
+---
+
 ## Notes
 
 - [P] tasks = different files, no data dependencies — safe to parallelise

@@ -92,8 +92,10 @@ Not persisted — lives in `app.state` for the current session only. Cleared aft
                 │
                 ▼ POST /boodschappen/bevestig-matches (all items have product ≠ None)
                 │
-                ├─ gecorrigeerd=True  → save MatchVoorkeur to data/match_preferences.json
-                └─ AH list created   → redirect to ah_bevestiging.html
+                ├─ bron == "voorkeur" AND NOT gecorrigeerd  → skip (already stored)
+                ├─ bron == "voorkeur" AND gecorrigeerd      → overwrite MatchVoorkeur
+                ├─ bron != "voorkeur" AND product found     → save new MatchVoorkeur
+                └─ AH list created                          → redirect to ah_bevestiging.html
 ```
 
 ---

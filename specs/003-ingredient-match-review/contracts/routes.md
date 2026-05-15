@@ -101,7 +101,7 @@ Creates the AH list from confirmed matches and saves preferences.
 **Flow**:
 1. Create AH list via `create_list(naam)`
 2. Add products via `add_products_to_list(lijst_id, [(article_id, aantal), ...])`
-3. For each `MatchReviewItem` where `gecorrigeerd=True`: call `MatchVoorkeurenRepository.save(MatchVoorkeur(...))`
+3. For each `MatchReviewItem` where `product is not None AND (gecorrigeerd=True OR bron != "voorkeur")`: call `MatchVoorkeurenRepository.save(MatchVoorkeur(...))`. Items with `bron == "voorkeur"` that were not corrected are skipped (preference already in storage).
 4. Clear `app.state.match_review_items`
 5. Build `SyncResultaat` from the confirmed matches
 

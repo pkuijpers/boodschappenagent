@@ -46,7 +46,7 @@ Cards are in a single column list. The confirm button is sticky at the bottom.
 │ melk                        Corrigeer › │  ← text-gray-800 font-medium + text-ah-blue
 │ 1 liter                                 │  ← text-sm text-gray-400
 ├─────────────────────────────────────────┤
-│ 🛒  AH Volle melk 1L         € 1,09     │  ← text-gray-700 + price right-aligned
+│ 🛒  AH Volle melk 1L  1 l    € 1,09     │  ← title text-gray-700; size text-xs text-gray-400 inline
 │     zoekopdracht                        │  ← badge: text-xs text-gray-400
 └─────────────────────────────────────────┘
 ```

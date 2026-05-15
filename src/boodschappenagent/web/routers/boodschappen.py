@@ -339,13 +339,14 @@ async def bevestig_matches(
     if product_quantities:
         ah_integratie.add_products_to_list(lijst_id, list(product_quantities.items()))
 
-    # Sla correcties op als voorkeur (US3)
+    # Sla bevestigde matches op als voorkeur (US3)
+    # Skip alleen items die al als ongewijzigde voorkeur zijn ingeladen.
     from datetime import datetime
 
-    for item in items:
-        if item.gecorrigeerd and item.product is not None:
-            from boodschappenagent.ah.preferences import MatchVoorkeur
+    from boodschappenagent.ah.preferences import MatchVoorkeur
 
+    for item in items:
+        if item.product is not None and (item.gecorrigeerd or item.bron != "voorkeur"):
             voorkeuren_repo.save(
                 MatchVoorkeur(
                     ingredient_naam=item.naam.lower().strip(),

@@ -220,5 +220,5 @@ Always use Context7 (via the `mcp__context7__resolve-library-id` and `mcp__conte
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at `specs/002-fix-manual-items-ah-send/plan.md`.
+at `specs/003-ingredient-match-review/plan.md`.
 <!-- SPECKIT END -->

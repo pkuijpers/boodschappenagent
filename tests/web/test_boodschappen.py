@@ -552,9 +552,7 @@ class TestZoekProduct:
         kies_buttons = html.find_all("button", string=lambda t: t and "Kies" in t)
         assert len(kies_buttons) <= 10
 
-    def test_initieel_openen_bevat_zoekbalk(
-        self, app_with_ah, mock_token_manager
-    ):
+    def test_initieel_openen_bevat_zoekbalk(self, app_with_ah, mock_token_manager):
         """q="" (initieel openen) → response bevat de zoekbalk input."""
         mock_token_manager.is_authenticated.return_value = True
         items = [_make_match_review_item("melk")]
@@ -785,3 +783,156 @@ class TestBevestigMatchesVoorkeuren:
         client.post("/boodschappen/bevestig-matches")
 
         mock_match_voorkeuren_repository.save.assert_not_called()
+
+
+# ── T032: Productgrootte in matchoverzicht (Update A) ─────────────────────────
+
+
+class TestProductGrootteInMatchReview:
+    """T032: Productgrootte (size) wordt getoond in match review card."""
+
+    def test_product_size_zichtbaar_in_card(self, app_with_ah, mock_token_manager):
+        """Match review card toont item.product.size naast de productnaam."""
+        mock_token_manager.is_authenticated.return_value = True
+        # _make_product geeft size="1L" mee
+        product = _make_product(123, "AH Volle melk", 1.09)
+        item = _make_match_review_item("melk", product=product)
+        _setup_match_review_state(app_with_ah, [item])
+
+        client = TestClient(app_with_ah)
+        response = client.get("/boodschappen/match-review")
+
+        assert response.status_code == 200
+        assert "1L" in response.text
+
+    def test_product_size_none_geeft_geen_fout(self, app_with_ah, mock_token_manager):
+        """Card rendert foutloos als product.size None is."""
+        from boodschappenagent.ah.models import Product
+
+        mock_token_manager.is_authenticated.return_value = True
+        product = Product(
+            id=456,
+            title="AH Havermelk",
+            brand="AH",
+            size=None,
+            price=1.49,
+            category="Zuivel",
+            is_orderable=True,
+        )
+        item = _make_match_review_item("havermelk", product=product)
+        _setup_match_review_state(app_with_ah, [item])
+
+        client = TestClient(app_with_ah)
+        response = client.get("/boodschappen/match-review")
+
+        assert response.status_code == 200
+
+
+# ── T034: Bijgewerkte sla-logic voor bevestig_matches (Update B) ──────────────
+
+
+class TestBevestigMatchesBijgewerkteSaveLogic:
+    """T034: bevestig_matches slaat alle bevestigde items op als voorkeur.
+
+    Save condition:
+        item.product is not None and (item.gecorrigeerd or item.bron != "voorkeur")
+    """
+
+    def test_zoekopdracht_item_wordt_opgeslagen(
+        self,
+        app_with_ah,
+        mock_token_manager,
+        mock_ah_integratie,
+        mock_match_voorkeuren_repository,
+    ):
+        """Item met bron="zoekopdracht" en product → save() aangeroepen."""
+        mock_token_manager.is_authenticated.return_value = True
+        mock_ah_integratie.create_list.return_value = "list-abc"
+
+        product = _make_product(article_id=111)
+        from boodschappenagent.ah.preferences import MatchReviewItem
+
+        items = [
+            MatchReviewItem(
+                id=str(uuid4()),
+                naam="pasta",
+                hoeveelheid=500.0,
+                eenheid="gram",
+                product=product,
+                bron="zoekopdracht",
+                gecorrigeerd=False,
+                aantal=2,
+            )
+        ]
+        _setup_match_review_state(app_with_ah, items)
+
+        client = TestClient(app_with_ah, follow_redirects=False)
+        client.post("/boodschappen/bevestig-matches")
+
+        mock_match_voorkeuren_repository.save.assert_called_once()
+
+    def test_voorkeur_niet_gecorrigeerd_wordt_overgeslagen(
+        self,
+        app_with_ah,
+        mock_token_manager,
+        mock_ah_integratie,
+        mock_match_voorkeuren_repository,
+    ):
+        """Item met bron="voorkeur" en gecorrigeerd=False → save() NIET aangeroepen."""
+        mock_token_manager.is_authenticated.return_value = True
+        mock_ah_integratie.create_list.return_value = "list-abc"
+
+        product = _make_product(article_id=222)
+        from boodschappenagent.ah.preferences import MatchReviewItem
+
+        items = [
+            MatchReviewItem(
+                id=str(uuid4()),
+                naam="melk",
+                hoeveelheid=1.0,
+                eenheid="liter",
+                product=product,
+                bron="voorkeur",
+                gecorrigeerd=False,
+                aantal=1,
+            )
+        ]
+        _setup_match_review_state(app_with_ah, items)
+
+        client = TestClient(app_with_ah, follow_redirects=False)
+        client.post("/boodschappen/bevestig-matches")
+
+        mock_match_voorkeuren_repository.save.assert_not_called()
+
+    def test_voorkeur_gecorrigeerd_wordt_overschreven(
+        self,
+        app_with_ah,
+        mock_token_manager,
+        mock_ah_integratie,
+        mock_match_voorkeuren_repository,
+    ):
+        """bron="voorkeur" en gecorrigeerd=True → save() aangeroepen (overschrijven)."""
+        mock_token_manager.is_authenticated.return_value = True
+        mock_ah_integratie.create_list.return_value = "list-abc"
+
+        product = _make_product(article_id=333)
+        from boodschappenagent.ah.preferences import MatchReviewItem
+
+        items = [
+            MatchReviewItem(
+                id=str(uuid4()),
+                naam="melk",
+                hoeveelheid=1.0,
+                eenheid="liter",
+                product=product,
+                bron="voorkeur",
+                gecorrigeerd=True,
+                aantal=1,
+            )
+        ]
+        _setup_match_review_state(app_with_ah, items)
+
+        client = TestClient(app_with_ah, follow_redirects=False)
+        client.post("/boodschappen/bevestig-matches")
+
+        mock_match_voorkeuren_repository.save.assert_called_once()

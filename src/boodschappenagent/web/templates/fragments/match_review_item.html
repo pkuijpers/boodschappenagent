@@ -68,6 +68,7 @@
             <span class="text-gray-400">🛒</span>
           {% endif %}
           <span class="text-sm text-gray-700">{{ item.product.title }}</span>
+          {% if item.product.size %}<span class="text-xs text-gray-400">{{ item.product.size }}</span>{% endif %}
         </div>
         <span class="text-sm text-gray-500 ml-2">
           € {{ "%.2f"|format(item.product.price) | replace(".", ",") }}
