@@ -24,26 +24,61 @@ This command is invoked as a hook after (or before) core commands. It:
 
 ## Execution
 
-Determine the event name from the hook that triggered this command, then run the script:
+1. Determine the event name from the hook context (e.g., `after_implement`, `before_plan`).
 
-- **Bash**: `.specify/extensions/git/scripts/bash/auto-commit.sh <event_name>`
-- **PowerShell**: `.specify/extensions/git/scripts/powershell/auto-commit.ps1 <event_name>`
+2. Read `.specify/extensions/git/git-config.yml` and check whether auto-commit is enabled for this event:
+   - Look for `auto_commit.<event_name>.enabled: true`
+   - Fall back to `auto_commit.default: true` if no event-specific key exists
+   - If disabled or config missing: exit silently
 
-Replace `<event_name>` with the actual hook event (e.g., `after_specify`, `before_plan`, `after_implement`).
+3. Check for uncommitted changes:
+   ```bash
+   git status --porcelain
+   ```
+   If no changes: print `[specify] No changes to commit after <event>` and exit.
+
+4. Gather context for the commit message:
+   ```bash
+   git diff --stat HEAD        # changed files + line counts
+   git diff --name-only HEAD   # file list
+   ```
+   Also consider: the event name, the current branch name, and any task or spec context available in the conversation.
+
+5. **Generate a descriptive commit message** — do NOT use the static `message` from git-config.yml. Write a meaningful message that describes what actually changed:
+   - **Subject line** (≤72 chars): use conventional commits format, e.g. `feat(module): beschrijving` or `test(module): beschrijving`
+   - **Body** (optional): bullet list of the most relevant changes — new files, key functions/classes added, tests written/passing
+   - Base the module/scope on the changed file paths
+   - Write in the same language as the rest of the project (Dutch for this project)
+   - Example for `after_implement`:
+     ```
+     feat(ingredient-match): implementeer MatchReview datamodel
+
+     - Voeg MatchReview frozen dataclass toe met status enum
+     - Schrijf unit tests voor to_dict/from_dict roundtrip
+     - Alle 12 nieuwe tests groen
+     ```
+   - Example for `before_plan`:
+     ```
+     chore(spec): sla voortgang op voor planning
+
+     - spec.md bijgewerkt met clarificaties
+     ```
+
+6. Stage and commit:
+   ```bash
+   git add .
+   git commit -m "<generated message>"
+   ```
 
 ## Configuration
 
-In `.specify/extensions/git/git-config.yml`:
+In `.specify/extensions/git/git-config.yml`, only `enabled` is used — `message` is ignored in favour of the generated message:
 
 ```yaml
 auto_commit:
-  default: false          # Global toggle — set true to enable for all commands
-  after_specify:
-    enabled: true          # Override per-command
-    message: "[Spec Kit] Add specification"
-  after_plan:
-    enabled: false
-    message: "[Spec Kit] Add implementation plan"
+  default: false
+  after_implement:
+    enabled: true   # message field is ignored; Claude generates it
 ```
 
 ## Graceful Degradation
