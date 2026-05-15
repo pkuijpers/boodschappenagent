@@ -30,7 +30,13 @@
       "Bash(bash .specify/extensions/git/scripts/bash/create-new-feature.sh --json *)",
       "Bash(bash .specify/scripts/bash/check-prerequisites.sh *)",
       "Bash(bash .specify/scripts/bash/setup-plan.sh --json)",
-      "Bash(bash .specify/scripts/bash/setup-tasks.sh --json)"
+      "Bash(bash .specify/scripts/bash/setup-tasks.sh --json)",
+      "Skill(speckit-git-commit)",
+      "Skill(speckit-git-commit:*)",
+      "Bash(bash .specify/extensions/git/scripts/bash/auto-commit.sh after_tasks)",
+      "Skill(speckit-implement)",
+      "Skill(speckit-implement:*)",
+      "Bash(bash .specify/extensions/git/scripts/bash/auto-commit.sh before_implement)"
     ]
   },
   "enableAllProjectMcpServers": true,
