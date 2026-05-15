@@ -87,3 +87,55 @@ class BoodschappenlijstFilter:
         regels.sort(key=lambda r: r.naam)
 
         return Boodschappenlijst(week_start=lijst.week_start, regels=regels)
+
+    def voeg_pantry_toe(self, lijst: Boodschappenlijst) -> Boodschappenlijst:
+        """Voeg VERS_BASIS en HOUDBAAR items toe die niet op voorraad zijn.
+
+        Stap 1 (filteren op voorraad) wordt NIET uitgevoerd — de gebruiker
+        heeft al via ingredient-selectie beslist wat er besteld wordt.
+        """
+        bestaande_namen = {r.naam for r in lijst.regels}
+        regels = list(lijst.regels)
+        items = self._repository.load()
+
+        # Stap 2: voeg verse basics toe die niet op voorraad zijn
+        verse_basis_niet_op_voorraad = {
+            i.naam
+            for i in items
+            if i.type is VoorraadType.VERS_BASIS and not i.op_voorraad
+        }
+        for naam, hoeveelheid, eenheid in VERSE_BASICS:
+            if naam in verse_basis_niet_op_voorraad and naam not in bestaande_namen:
+                regels.append(
+                    BoodschappenRegel(
+                        naam=naam,
+                        hoeveelheid=hoeveelheid,
+                        eenheid=eenheid,
+                        originele_namen=frozenset({naam}),
+                    )
+                )
+                bestaande_namen.add(naam)
+
+        # Stap 3: voeg houdbare producten toe die niet op voorraad zijn
+        houdbaar_niet_op_voorraad = [
+            i
+            for i in items
+            if i.type is VoorraadType.HOUDBAAR
+            and not i.op_voorraad
+            and i.naam not in bestaande_namen
+        ]
+        for item in houdbaar_niet_op_voorraad:
+            regels.append(
+                BoodschappenRegel(
+                    naam=item.naam,
+                    hoeveelheid=1,
+                    eenheid="stuks",
+                    originele_namen=frozenset({item.naam}),
+                )
+            )
+            bestaande_namen.add(item.naam)
+
+        # Stap 4: sorteer alfabetisch
+        regels.sort(key=lambda r: r.naam)
+
+        return Boodschappenlijst(week_start=lijst.week_start, regels=regels)

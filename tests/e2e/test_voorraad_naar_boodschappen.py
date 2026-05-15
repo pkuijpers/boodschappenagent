@@ -1,7 +1,9 @@
-"""E2E test: voorraad 'Nee' items verschijnen op boodschappenlijst.
+"""E2E test: Voorraad items en de bestelflow.
 
-Reproduceert de bug waarbij items die op de voorraadcheck als 'Nee' (niet op
-voorraad) gemarkeerd worden, niet op de boodschappenlijst verschijnen.
+In feature 004 is de flow gewijzigd: de 'Naar boodschappenlijst' knop op /voorraad
+doet nu een POST naar /voorraad/bevestig die AH-matching start en redirect naar
+/boodschappen/match-review. De boodschappenlijst wordt samengesteld uit
+ingredient_selectie (recept-ingrediënten), niet meer uit de AH 'Voorraad' lijst.
 """
 
 import pytest
@@ -10,38 +12,40 @@ from playwright.sync_api import Page, expect
 pytestmark = pytest.mark.e2e
 
 
-class TestVoorraadNaarBoodschappen:
-    """Voorraad 'Nee' items moeten op de boodschappenlijst komen."""
+class TestVoorraadNaarMatchReview:
+    """Voorraad bevestig start AH-matching en navigeert naar match-review."""
 
-    def test_vers_item_nee_verschijnt_op_boodschappenlijst(
-        self, voorraad_page: Page
-    ):
-        """Vers basic als 'Nee' markeren → verschijnt op boodschappenlijst."""
-        # Zoek het voorraaditem voor 'optimel'
+    @pytest.fixture(autouse=True)
+    def reset_state(self, app, mock_ah_token_manager):
+        """Reset app state en authenticatie."""
+        app.state.ingredient_selectie = None
+        mock_ah_token_manager.is_authenticated.return_value = True
+        mock_ah_token_manager.is_authenticated.side_effect = None
+
+    def test_voorraad_naar_match_review(self, week_page: Page):
+        """'Naar boodschappenlijst' op /voorraad redirect naar /boodschappen/match-review."""  # noqa: E501
+        # Navigeer via de volledige flow zodat ingredient_selectie gevuld is
+        week_page.locator("[data-testid='verder-button']").click()
+        week_page.wait_for_url("**/ingredient-selectie")
+        week_page.locator("button[type='submit']").click()
+        week_page.wait_for_url("**/voorraad")
+
+        # Klik op 'Naar boodschappenlijst' → match-review
+        week_page.locator("[data-testid='naar-boodschappen-button']").click()
+        week_page.wait_for_url("**/boodschappen/match-review")
+        expect(week_page.locator("[data-testid='match-review']")).to_be_visible()
+
+    def test_voorraad_toggle_voor_bevestig(self, voorraad_page: Page):
+        """Voorraad toggle werkt nog steeds via HTMX."""
         optimel_item = voorraad_page.locator(
             "[data-testid='voorraaditem'][data-item='optimel']"
         )
         expect(optimel_item).to_be_visible()
-
-        # Default staat is 'Nee' (niet op voorraad). Klik 'Nee' om te bevestigen.
         nee_btn = optimel_item.locator("[data-testid='status-nee']")
         nee_btn.click()
-
-        # Wacht op HTMX swap — Nee moet actief blijven
-        voorraad_page.wait_for_timeout(500)
+        voorraad_page.wait_for_timeout(300)
         optimel_item = voorraad_page.locator(
             "[data-testid='voorraaditem'][data-item='optimel']"
         )
         nee_btn = optimel_item.locator("[data-testid='status-nee']")
         expect(nee_btn).to_have_attribute("data-actief", "true")
-
-        # Navigeer naar boodschappenlijst
-        voorraad_page.locator("[data-testid='naar-boodschappen-button']").click()
-        voorraad_page.wait_for_url("**/boodschappen")
-
-        # Optimel moet op de boodschappenlijst staan
-        boodschap_items = voorraad_page.locator("[data-testid='boodschapitem']")
-        item_namen = boodschap_items.all_text_contents()
-        assert any(
-            "optimel" in naam.lower() for naam in item_namen
-        ), f"'optimel' niet gevonden op boodschappenlijst: {item_namen}"

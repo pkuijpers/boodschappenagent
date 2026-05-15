@@ -16,7 +16,9 @@ AH_LOGIN_URL = (
 )
 
 
-def _render_login(request: Request, terug: str = "/boodschappen", error: str | None = None):
+def _render_login(
+    request: Request, terug: str = "/boodschappen", error: str | None = None
+):
     """Render de login pagina (full page of HTMX fragment)."""
     templates = request.app.state.templates
     is_htmx = request.headers.get("HX-Request") == "true"
@@ -50,7 +52,9 @@ async def login_verwerken(
     try:
         token_manager.login(code)
     except Exception:
-        return _render_login(request, terug=next, error="Ongeldige code. Probeer opnieuw.")
+        return _render_login(
+            request, terug=next, error="Ongeldige code. Probeer opnieuw."
+        )
     return RedirectResponse(url=next, status_code=303)
 
 

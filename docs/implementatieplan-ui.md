@@ -128,7 +128,7 @@ tests/
   - **Recept:** Naam, porties, categorie-emoji, basis, "X mnd geleden"
   - **HelloFresh:** Oranje balk, niet interactief
   - **Niet thuis:** Grijze balk
-- [x] "Verder naar boodschappen" knop onderaan
+- [x] "Verder naar ingrediëntselectie" knop onderaan (navigeert via POST /week/bevestig naar /ingredient-selectie)
 - [x] Tests: Weekoverzicht toont 7 dagen, correcte receptnamen, HelloFresh-dagen zijn oranje
 
 #### 1b. Shuffle
@@ -183,21 +183,35 @@ Zoekfunctionaliteit vervalt; vervangen door variety-aware random selectie.
 
 ---
 
-### Fase 2: Voorraadcheck (scherm 5.4)
+### Fase 1.5: Ingrediënt-selectie (scherm tussen weekoverzicht en voorraadcheck) ✅
 
-**Doel:** Checklist met "Heb je nog...?" Ja/Nee per product.
+**Doel:** Gebruiker kan recept-ingrediënten aan/uitvinken en hoeveelheden aanpassen vóór de voorraadcheck.
 
-- [ ] `GET /voorraad` — Genereert check-suggesties op basis van weekmenu
-- [ ] `templates/pages/voorraad.html` — Twee secties: "Houdbare producten", "Standaard boodschappen"
-- [ ] `templates/components/voorraaditem.html` — Productnaam, context (welk recept), Ja/Nee toggles
-- [ ] `POST /voorraad/{item}/status` → HTMX swap van individueel item (toggle Ja/Nee)
-- [ ] Default: "Nee" (veilige default — liever te veel dan te weinig)
-- [ ] `POST /voorraad/bevestig` → Batch-update inventory, redirect naar boodschappenlijst
-- [ ] "Naar boodschappenlijst" knop onderaan
-- [ ] Tests:
-  - Voorraadcheck toont items gegroepeerd op type
-  - Ja/Nee toggle werkt via HTMX
-  - Batch-update slaat alle statussen op
+**Geïmplementeerd in feature 004 (2026-05-15).**
+
+- [x] `GET /ingredient-selectie` — Initialiseer `app.state.ingredient_selectie` vanuit weekmenu; retourneert full page of HTMX-fragment
+- [x] `templates/pages/ingredient_selectie.html` — Header "Ingrediënten selecteren", back button → /week
+- [x] `templates/fragments/ingredient_selectie_content.html` — Receptgroepen met ingrediëntenlijst
+- [x] `templates/components/ingredient_selectie_item.html` — Checkbox toggle, hoeveelheid-input; 44×44pt touch targets
+- [x] `POST /ingredient-selectie/bevestig` → Redirect naar /voorraad (selectie blijft in app.state)
+- [x] `POST /ingredient-selectie/{item_id}/toggle` → Toggle geselecteerd-status, retourneert item-fragment
+- [x] `PATCH /ingredient-selectie/{item_id}/hoeveelheid` → Update hoeveelheid, retourneert item-fragment
+
+---
+
+### Fase 2: Voorraadcheck (scherm 5.4) ✅
+
+**Doel:** Checklist met AH-voorraadlijst; ingrediënten aggregeren en AH-matching starten.
+
+**Geïmplementeerd (basis in eerdere features, aggregatie + matching in feature 004).**
+
+- [x] `GET /voorraad` — Haalt producten op uit AH 'Voorraad' favorietenlijst; redirect naar /ah/login bij ontbreken authenticatie
+- [x] `templates/pages/voorraad.html` — Sectie "Voorraadlijst", back button → /ingredient-selectie
+- [x] `templates/components/voorraaditem.html` — Productnaam, Ja/Nee toggles
+- [x] `POST /voorraad/{product_id}/status` → HTMX swap van individueel item (toggle Ja/Nee)
+- [x] `POST /voorraad/bevestig` → Aggregeert geselecteerde ingrediënten, voegt pantry-items toe, start AH-matching via `AHIntegratie.zoek_producten()`, redirect naar `/boodschappen/match-review`
+- [x] "Naar boodschappenlijst" knop (POST /voorraad/bevestig) onderaan
+- [x] Foutafhandeling: lege lijst → `ah_error.html` met `error_type=lege_lijst`; AH API fout → `ah_error.html` met `error_type=api_error`
 
 ---
 

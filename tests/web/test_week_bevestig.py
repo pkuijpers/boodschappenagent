@@ -13,11 +13,11 @@ class TestWeekBevestig:
     """POST /week/bevestig synct history en redirect naar /voorraad."""
 
     def test_bevestig_redirect_naar_voorraad(self, client: TestClient):
-        """POST /week/bevestig redirect naar /voorraad."""
+        """POST /week/bevestig redirect naar /ingredient-selectie."""
         set_week_menu(client, make_full_week_menu())
         response = client.post("/week/bevestig", follow_redirects=False)
         assert response.status_code == 303
-        assert response.headers["location"] == "/voorraad"
+        assert response.headers["location"] == "/ingredient-selectie"
 
     def test_bevestig_schrijft_history(self, client: TestClient, menu_history):
         """POST /week/bevestig schrijft het weekmenu naar history."""
@@ -57,9 +57,7 @@ class TestWeekBevestig:
         entries = menu_history.load()
         assert len(entries) == 7
 
-    def test_bevestig_zonder_weekmenu_redirect_naar_week(
-        self, client: TestClient
-    ):
+    def test_bevestig_zonder_weekmenu_redirect_naar_week(self, client: TestClient):
         """Zonder weekmenu redirect naar /week."""
         response = client.post("/week/bevestig", follow_redirects=False)
         assert response.status_code == 303
@@ -69,9 +67,7 @@ class TestWeekBevestig:
 class TestGenereerSchrijftGeenHistory:
     """POST /week/genereer schrijft NIET meer naar history."""
 
-    def test_genereer_schrijft_geen_history(
-        self, client: TestClient, menu_history
-    ):
+    def test_genereer_schrijft_geen_history(self, client: TestClient, menu_history):
         """Na genereer is history nog leeg — pas bij bevestig wordt geschreven."""
         set_week_menu(client, make_full_week_menu())
         client.post("/week/genereer")

@@ -19,7 +19,9 @@ class TestVoorraadcheckLaadt:
 
     def test_e8_items_zichtbaar(self, voorraad_page: Page):
         """E8: Voorraad sectie toont minimaal één item."""
-        expect(voorraad_page.locator("[data-testid='voorraaditem']").first).to_be_visible()
+        expect(
+            voorraad_page.locator("[data-testid='voorraaditem']").first
+        ).to_be_visible()
 
     def test_e8_items_hebben_ja_nee_toggles(self, voorraad_page: Page):
         """E8: Voorraaditem heeft 'Ja' en 'Nee' toggles."""

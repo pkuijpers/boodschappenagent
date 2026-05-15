@@ -4,7 +4,6 @@ S1 uit het testplan: de volledige keten van HTTP request → route →
 template rendering → HTML response met BeautifulSoup asserties.
 """
 
-
 from fastapi.testclient import TestClient
 
 from boodschappenagent.planner import DagInput
@@ -195,9 +194,7 @@ class TestVerouderdMenuOpDisk:
         client.app.state.week_menu = None
         old_menu = make_full_week_menu()  # week_start = "2026-02-16" (oud)
 
-        with patch(
-            "boodschappenagent.web.routers.menu.load_week_menu"
-        ) as mock_load:
+        with patch("boodschappenagent.web.routers.menu.load_week_menu") as mock_load:
             mock_load.return_value = (old_menu, set())
             client.get("/week")
 
@@ -218,16 +215,10 @@ class TestVerouderdMenuOpDisk:
 
         from boodschappenagent.planner import DagPlanning, WeekMenu
 
-        dagen = [
-            DagPlanning(dag=i, recept=RECEPTEN[i], personen=2) for i in range(7)
-        ]
-        current_menu = WeekMenu(
-            week_start=current_week_start.isoformat(), dagen=dagen
-        )
+        dagen = [DagPlanning(dag=i, recept=RECEPTEN[i], personen=2) for i in range(7)]
+        current_menu = WeekMenu(week_start=current_week_start.isoformat(), dagen=dagen)
 
-        with patch(
-            "boodschappenagent.web.routers.menu.load_week_menu"
-        ) as mock_load:
+        with patch("boodschappenagent.web.routers.menu.load_week_menu") as mock_load:
             mock_load.return_value = (current_menu, set())
             client.get("/week")
 

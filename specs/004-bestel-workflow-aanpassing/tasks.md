@@ -21,10 +21,10 @@
 
 **⚠️ CRITICAL**: Geen user story-werk kan beginnen vóór deze fase compleet is.
 
-- [ ] T001 Registreer ingredient_selectie router (nog aan te maken) in `src/boodschappenagent/web/app.py` via `include_router`
-- [ ] T002 Update assertie in `tests/web/test_week_bevestig.py` (`test_bevestig_redirect_naar_voorraad`): verwacht redirect naar `/ingredient-selectie` in plaats van `/voorraad` (TDD red step — test faalt na dit)
-- [ ] T003 Update `POST /week/bevestig` redirect van `/voorraad` naar `/ingredient-selectie` in `src/boodschappenagent/web/routers/menu.py` (maakt T002 groen)
-- [ ] T004 Update back button in `src/boodschappenagent/web/templates/pages/voorraad.html` van `/week` naar `/ingredient-selectie`
+- [X] T001 Registreer ingredient_selectie router (nog aan te maken) in `src/boodschappenagent/web/app.py` via `include_router`
+- [X] T002 Update assertie in `tests/web/test_week_bevestig.py` (`test_bevestig_redirect_naar_voorraad`): verwacht redirect naar `/ingredient-selectie` in plaats van `/voorraad` (TDD red step — test faalt na dit)
+- [X] T003 Update `POST /week/bevestig` redirect van `/voorraad` naar `/ingredient-selectie` in `src/boodschappenagent/web/routers/menu.py` (maakt T002 groen)
+- [X] T004 Update back button in `src/boodschappenagent/web/templates/pages/voorraad.html` van `/week` naar `/ingredient-selectie`
 
 **Checkpoint**: Bestaande tests groen; ingredient_selectie router geregistreerd (geeft 500 tot endpoints bestaan — acceptabel voor nu)
 
@@ -38,20 +38,20 @@
 
 ### Tests voor User Story 1 (schrijf EERST — zorg dat ze FALEN vóór implementatie) ⚠️
 
-- [ ] T005 [P] [US1] Schrijf failing tests voor `GET /ingredient-selectie`: initialisatie vanuit `app.state.week_menu`, HTMX-fragment response, en bewaren bestaande selectie bij terug-navigatie in `tests/web/test_ingredient_selectie.py`
-- [ ] T006 [P] [US1] Schrijf failing tests voor `POST /ingredient-selectie/{item_id}/toggle`: toggling van `geselecteerd` in `app.state`, 404 bij onbekend id, en retour van ingredient_selectie_item.html fragment in `tests/web/test_ingredient_selectie.py`
-- [ ] T007 [P] [US1] Schrijf failing tests voor `PATCH /ingredient-selectie/{item_id}/hoeveelheid`: update van `hoeveelheid` in `app.state`, 404 bij onbekend id, en retour van bijgewerkt item-fragment in `tests/web/test_ingredient_selectie.py`
-- [ ] T008 [P] [US1] Schrijf failing test voor `POST /ingredient-selectie/bevestig`: verwacht 303 redirect naar `/voorraad`, en dat `app.state.ingredient_selectie` NIET gewist wordt (FR-011) in `tests/web/test_ingredient_selectie.py`
+- [X] T005 [P] [US1] Schrijf failing tests voor `GET /ingredient-selectie`: initialisatie vanuit `app.state.week_menu`, HTMX-fragment response, en bewaren bestaande selectie bij terug-navigatie in `tests/web/test_ingredient_selectie.py`
+- [X] T006 [P] [US1] Schrijf failing tests voor `POST /ingredient-selectie/{item_id}/toggle`: toggling van `geselecteerd` in `app.state`, 404 bij onbekend id, en retour van ingredient_selectie_item.html fragment in `tests/web/test_ingredient_selectie.py`
+- [X] T007 [P] [US1] Schrijf failing tests voor `PATCH /ingredient-selectie/{item_id}/hoeveelheid`: update van `hoeveelheid` in `app.state`, 404 bij onbekend id, en retour van bijgewerkt item-fragment in `tests/web/test_ingredient_selectie.py`
+- [X] T008 [P] [US1] Schrijf failing test voor `POST /ingredient-selectie/bevestig`: verwacht 303 redirect naar `/voorraad`, en dat `app.state.ingredient_selectie` NIET gewist wordt (FR-011) in `tests/web/test_ingredient_selectie.py`
 
 ### Implementatie voor User Story 1
 
-- [ ] T009 [US1] Maak `src/boodschappenagent/web/routers/ingredient_selectie.py` aan met `GET /ingredient-selectie`: initialiseer `app.state.ingredient_selectie` als `list[dict]` vanuit `app.state.week_menu` (alleen als nog niet aanwezig of leeg); retourneert full page of HTMX-fragment op basis van `HX-Request` header; redirect 303 naar `/week` als `week_menu` ontbreekt
-- [ ] T010 [P] [US1] Maak `src/boodschappenagent/web/templates/pages/ingredient_selectie.html` aan: full page met header "Ingrediënten selecteren", back button → `/week`, receptgroepen met ingrediënten, en "Verder naar voorraadcheck" submit button
-- [ ] T011 [P] [US1] Maak `src/boodschappenagent/web/templates/fragments/ingredient_selectie_content.html` aan: HTMX-fragment (geen `<html>`-wrapper) met receptgroepen en ingrediëntenlijst — zelfde context als full page
-- [ ] T012 [US1] Maak `src/boodschappenagent/web/templates/components/ingredient_selectie_item.html` aan: checkbox (hx-post toggle), ingredientnaam, hoeveelheid-input (hx-patch hoeveelheid), eenheid; uitgegrijsd/doorgestreept styling wanneer `geselecteerd=False`; min. 44×44 pt touch targets
-- [ ] T013 [US1] Voeg `POST /ingredient-selectie/bevestig` endpoint toe aan `src/boodschappenagent/web/routers/ingredient_selectie.py` — **registreer deze route vóór de parametrische `/{item_id}`-routes** (FastAPI match-volgorde); laat `app.state.ingredient_selectie` intact; redirect 303 naar `/voorraad`
-- [ ] T014 [US1] Voeg `POST /ingredient-selectie/{item_id}/toggle` endpoint toe aan `src/boodschappenagent/web/routers/ingredient_selectie.py`: toggle `geselecteerd` in `app.state.ingredient_selectie`; retourneert `ingredient_selectie_item.html` component; 404 als `item_id` onbekend
-- [ ] T015 [US1] Voeg `PATCH /ingredient-selectie/{item_id}/hoeveelheid` endpoint toe aan `src/boodschappenagent/web/routers/ingredient_selectie.py`: update `hoeveelheid` (float) in `app.state.ingredient_selectie`; retourneert `ingredient_selectie_item.html` component; 404 als `item_id` onbekend
+- [X] T009 [US1] Maak `src/boodschappenagent/web/routers/ingredient_selectie.py` aan met `GET /ingredient-selectie`: initialiseer `app.state.ingredient_selectie` als `list[dict]` vanuit `app.state.week_menu` (alleen als nog niet aanwezig of leeg); retourneert full page of HTMX-fragment op basis van `HX-Request` header; redirect 303 naar `/week` als `week_menu` ontbreekt
+- [X] T010 [P] [US1] Maak `src/boodschappenagent/web/templates/pages/ingredient_selectie.html` aan: full page met header "Ingrediënten selecteren", back button → `/week`, receptgroepen met ingrediënten, en "Verder naar voorraadcheck" submit button
+- [X] T011 [P] [US1] Maak `src/boodschappenagent/web/templates/fragments/ingredient_selectie_content.html` aan: HTMX-fragment (geen `<html>`-wrapper) met receptgroepen en ingrediëntenlijst — zelfde context als full page
+- [X] T012 [US1] Maak `src/boodschappenagent/web/templates/components/ingredient_selectie_item.html` aan: checkbox (hx-post toggle), ingredientnaam, hoeveelheid-input (hx-patch hoeveelheid), eenheid; uitgegrijsd/doorgestreept styling wanneer `geselecteerd=False`; min. 44×44 pt touch targets
+- [X] T013 [US1] Voeg `POST /ingredient-selectie/bevestig` endpoint toe aan `src/boodschappenagent/web/routers/ingredient_selectie.py` — **registreer deze route vóór de parametrische `/{item_id}`-routes** (FastAPI match-volgorde); laat `app.state.ingredient_selectie` intact; redirect 303 naar `/voorraad`
+- [X] T014 [US1] Voeg `POST /ingredient-selectie/{item_id}/toggle` endpoint toe aan `src/boodschappenagent/web/routers/ingredient_selectie.py`: toggle `geselecteerd` in `app.state.ingredient_selectie`; retourneert `ingredient_selectie_item.html` component; 404 als `item_id` onbekend
+- [X] T015 [US1] Voeg `PATCH /ingredient-selectie/{item_id}/hoeveelheid` endpoint toe aan `src/boodschappenagent/web/routers/ingredient_selectie.py`: update `hoeveelheid` (float) in `app.state.ingredient_selectie`; retourneert `ingredient_selectie_item.html` component; 404 als `item_id` onbekend
 
 **Checkpoint**: User Story 1 is volledig functioneel en onafhankelijk testbaar via `uv run pytest tests/web/test_ingredient_selectie.py`
 
@@ -65,13 +65,13 @@
 
 ### Tests voor User Story 2 (schrijf EERST — zorg dat ze FALEN vóór implementatie) ⚠️
 
-- [ ] T016 [P] [US2] Schrijf failing tests voor `voeg_pantry_toe(lijst)` methode: voegt VERS_BASIS en HOUDBAAR pantry-items toe die niet al in de lijst zitten; voert stap 1 (filteren op voorraad) NIET uit in `tests/voorraadbeheer/test_filter.py`
-- [ ] T017 [P] [US2] Schrijf failing tests voor ingredient-aggregatielogica in `POST /voorraad/bevestig`: gelijke ingrediënten uit verschillende recepten worden samengevoegd (hoeveelheden opgeteld), niet-geselecteerde items worden weggelaten, `app.state.boodschappenlijst` bevat de gecombineerde regels in `tests/web/test_voorraadcheck.py`
+- [X] T016 [P] [US2] Schrijf failing tests voor `voeg_pantry_toe(lijst)` methode: voegt VERS_BASIS en HOUDBAAR pantry-items toe die niet al in de lijst zitten; voert stap 1 (filteren op voorraad) NIET uit in `tests/voorraadbeheer/test_filter.py`
+- [X] T017 [P] [US2] Schrijf failing tests voor ingredient-aggregatielogica in `POST /voorraad/bevestig`: gelijke ingrediënten uit verschillende recepten worden samengevoegd (hoeveelheden opgeteld), niet-geselecteerde items worden weggelaten, `app.state.boodschappenlijst` bevat de gecombineerde regels in `tests/web/test_voorraadcheck.py`
 
 ### Implementatie voor User Story 2
 
-- [ ] T018 [US2] Implementeer `voeg_pantry_toe(self, lijst: Boodschappenlijst) -> Boodschappenlijst` op `BoodschappenlijstFilter` in `src/boodschappenagent/voorraadbeheer/filter.py`: kopieer stappen 2 en 3 van `filter_op_voorraad` (VERS_BASIS en HOUDBAAR toevoegen) zonder stap 1 (voorraad-filter)
-- [ ] T019 [US2] Implementeer aggregatielogica in `POST /voorraad/bevestig` in `src/boodschappenagent/web/routers/voorraad.py`: (1) lees `app.state.ingredient_selectie`, filter `geselecteerd=True`; (2) aggregeer per `(norm_naam, norm_eenheid)` via `IngredientNormalizer` en `PortionCalculator.round_quantity`; (3) maak `Boodschappenlijst`; (4) roep `BoodschappenlijstFilter.voeg_pantry_toe(lijst)` aan; (5) sla op in `app.state`
+- [X] T018 [US2] Implementeer `voeg_pantry_toe(self, lijst: Boodschappenlijst) -> Boodschappenlijst` op `BoodschappenlijstFilter` in `src/boodschappenagent/voorraadbeheer/filter.py`: kopieer stappen 2 en 3 van `filter_op_voorraad` (VERS_BASIS en HOUDBAAR toevoegen) zonder stap 1 (voorraad-filter)
+- [X] T019 [US2] Implementeer aggregatielogica in `POST /voorraad/bevestig` in `src/boodschappenagent/web/routers/voorraad.py`: (1) lees `app.state.ingredient_selectie`, filter `geselecteerd=True`; (2) aggregeer per `(norm_naam, norm_eenheid)` via `IngredientNormalizer` en `PortionCalculator.round_quantity`; (3) maak `Boodschappenlijst`; (4) roep `BoodschappenlijstFilter.voeg_pantry_toe(lijst)` aan; (5) sla op in `app.state`
 
 **Checkpoint**: User Stories 1 én 2 werken onafhankelijk; `tests/web/test_voorraadcheck.py` slaagt voor aggregatietests
 
@@ -85,14 +85,14 @@
 
 ### Tests voor User Story 3 (schrijf EERST — zorg dat ze FALEN vóór implementatie) ⚠️
 
-- [ ] T020 [P] [US3] Schrijf failing test voor succesvolle bevestiging: `POST /voorraad/bevestig` met gevulde gecombineerde lijst redirectt 303 naar `/boodschappen/match-review` en slaat `match_review_items` op in `app.state` in `tests/web/test_voorraadcheck.py`
-- [ ] T021 [P] [US3] Schrijf failing test voor lege boodschappenlijst: `POST /voorraad/bevestig` met leeg `ingredient_selectie` én geen pantry-items retourneert 200 met `ah_error.html` en `error_type=lege_lijst` in `tests/web/test_voorraadcheck.py`
-- [ ] T022 [US3] Update `TestVoorraadBevestig.test_s8_1_redirect_naar_boodschappen` assertie: verwacht redirect naar `/boodschappen/match-review` (niet `/boodschappen`) in `tests/web/test_voorraadcheck.py`
+- [X] T020 [P] [US3] Schrijf failing test voor succesvolle bevestiging: `POST /voorraad/bevestig` met gevulde gecombineerde lijst redirectt 303 naar `/boodschappen/match-review` en slaat `match_review_items` op in `app.state` in `tests/web/test_voorraadcheck.py`
+- [X] T021 [P] [US3] Schrijf failing test voor lege boodschappenlijst: `POST /voorraad/bevestig` met leeg `ingredient_selectie` én geen pantry-items retourneert 200 met `ah_error.html` en `error_type=lege_lijst` in `tests/web/test_voorraadcheck.py`
+- [X] T022 [US3] Update `TestVoorraadBevestig.test_s8_1_redirect_naar_boodschappen` assertie: verwacht redirect naar `/boodschappen/match-review` (niet `/boodschappen`) in `tests/web/test_voorraadcheck.py`
 
 ### Implementatie voor User Story 3
 
-- [ ] T023 [US3] Breid `POST /voorraad/bevestig` uit in `src/boodschappenagent/web/routers/voorraad.py`: (1) AH auth check → redirect `/ah/login` bij ontbreken; (2) lege-lijst validatie → retourneer `ah_error.html` met `error_type=lege_lijst`; (3) roep `AHIntegratie.zoek_producten(lijst, voorkeuren_repo)` aan; (4) sla `match_review_items` op in `app.state`; (5) redirect 303 naar `/boodschappen/match-review` — voeg dependencies toe: `get_ah_token_manager`, `get_ah_integratie`, `get_match_voorkeuren_repository`
-- [ ] T024 [P] [US3] Voeg `lege_lijst` error_type toe aan `src/boodschappenagent/web/templates/pages/ah_error.html` met gebruikersvriendelijke melding dat de boodschappenlijst leeg is
+- [X] T023 [US3] Breid `POST /voorraad/bevestig` uit in `src/boodschappenagent/web/routers/voorraad.py`: (1) AH auth check → redirect `/ah/login` bij ontbreken; (2) lege-lijst validatie → retourneer `ah_error.html` met `error_type=lege_lijst`; (3) roep `AHIntegratie.zoek_producten(lijst, voorkeuren_repo)` aan; (4) sla `match_review_items` op in `app.state`; (5) redirect 303 naar `/boodschappen/match-review` — voeg dependencies toe: `get_ah_token_manager`, `get_ah_integratie`, `get_match_voorkeuren_repository`
+- [X] T024 [P] [US3] Voeg `lege_lijst` error_type toe aan `src/boodschappenagent/web/templates/pages/ah_error.html` met gebruikersvriendelijke melding dat de boodschappenlijst leeg is (was reeds aanwezig)
 
 **Checkpoint**: Volledige flow is functioneel en getest; alle drie user stories werken end-to-end
 
@@ -102,9 +102,9 @@
 
 **Purpose**: Afwerking en validatie die meerdere user stories raken.
 
-- [ ] T025 [P] Voeg E2E Playwright-test toe voor de volledige bestelflow (weekmenu → ingredient-selectie → voorraadcheck → match-review) in `tests/e2e/test_bestel_flow.py` (iPhone 13 viewport, 390×844)
-- [ ] T026 [P] Update `docs/implementatieplan-ui.md` met nieuwe werkstroom: Weekoverzicht → Ingredient-selectie → Voorraadcheck → Matching → Match-review
-- [ ] T027 Voer `uv run ruff check . && uv run ruff format .` uit en herstel eventuele linting-schendingen in gewijzigde bestanden
+- [X] T025 [P] Voeg E2E Playwright-test toe voor de volledige bestelflow (weekmenu → ingredient-selectie → voorraadcheck → match-review) in `tests/e2e/test_bestel_flow.py` (iPhone 13 viewport, 390×844)
+- [X] T026 [P] Update `docs/implementatieplan-ui.md` met nieuwe werkstroom: Weekoverzicht → Ingredient-selectie → Voorraadcheck → Matching → Match-review
+- [X] T027 Voer `uv run ruff check . && uv run ruff format .` uit en herstel eventuele linting-schendingen in gewijzigde bestanden
 
 ---
 

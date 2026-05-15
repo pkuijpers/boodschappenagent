@@ -91,8 +91,7 @@ class MenuHistory:
 
         # Bereken alle datums van deze week
         week_datums = {
-            (week_start + timedelta(days=d.dag)).isoformat()
-            for d in week_menu.dagen
+            (week_start + timedelta(days=d.dag)).isoformat() for d in week_menu.dagen
         }
 
         # Verwijder bestaande entries voor deze week

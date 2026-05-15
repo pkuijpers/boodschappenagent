@@ -1,0 +1,45 @@
+<div id="item-{{ item.id }}"
+     data-testid="ingredient-item"
+     data-item-id="{{ item.id }}"
+     class="flex items-center gap-3 py-3 px-4 {{ 'opacity-50' if not item.geselecteerd else '' }}">
+
+    <button type="button"
+            hx-post="/ingredient-selectie/{{ item.id }}/toggle"
+            hx-target="#item-{{ item.id }}"
+            hx-swap="outerHTML"
+            class="flex-shrink-0 w-11 h-11 flex items-center justify-center rounded-full
+                   {{ 'bg-ah-blue text-white' if item.geselecteerd else 'bg-gray-100 text-gray-400' }}
+                   transition-colors"
+            aria-label="{{ 'Deselecteer' if item.geselecteerd else 'Selecteer' }} {{ item.naam }}">
+        {% if item.geselecteerd %}
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+        </svg>
+        {% else %}
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+        {% endif %}
+    </button>
+
+    <span class="flex-1 text-gray-800 {{ 'line-through text-gray-400' if not item.geselecteerd else '' }}">
+        {{ item.naam }}
+    </span>
+
+    <div class="flex items-center gap-1 shrink-0">
+        <input type="number"
+               name="hoeveelheid"
+               value="{{ item.hoeveelheid | int if item.hoeveelheid == item.hoeveelheid | int else item.hoeveelheid }}"
+               step="any"
+               min="0"
+               hx-patch="/ingredient-selectie/{{ item.id }}/hoeveelheid"
+               hx-target="#item-{{ item.id }}"
+               hx-swap="outerHTML"
+               hx-trigger="change"
+               class="w-16 text-right border border-gray-200 rounded-lg px-2 py-1.5 text-sm
+                      {{ 'text-gray-400' if not item.geselecteerd else 'text-gray-800' }}
+                      focus:outline-none focus:ring-2 focus:ring-ah-blue min-h-[44px]"
+               aria-label="Hoeveelheid {{ item.naam }}">
+        <span class="text-gray-500 text-sm w-10">{{ item.eenheid }}</span>
+    </div>
+</div>

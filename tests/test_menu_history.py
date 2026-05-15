@@ -176,10 +176,12 @@ class TestMenuHistorySyncWeek:
         path = tmp_path / "history.json"
         history = MenuHistory(path)
         # Eerste keer: oud menu
-        history.save([
-            {"datum": "2026-02-09", "recept_id": "oud-recept", "personen": 4},
-            {"datum": "2026-02-10", "recept_id": "oud-recept-2", "personen": 2},
-        ])
+        history.save(
+            [
+                {"datum": "2026-02-09", "recept_id": "oud-recept", "personen": 4},
+                {"datum": "2026-02-10", "recept_id": "oud-recept-2", "personen": 2},
+            ]
+        )
         # Sync met nieuw menu voor dezelfde week
         week = WeekMenu(
             week_start="2026-02-09",
@@ -197,10 +199,12 @@ class TestMenuHistorySyncWeek:
     def test_sync_week_behoudt_andere_weken(self, tmp_path: Path) -> None:
         path = tmp_path / "history.json"
         history = MenuHistory(path)
-        history.save([
-            {"datum": "2026-02-02", "recept_id": "vorige-week", "personen": 2},
-            {"datum": "2026-02-09", "recept_id": "deze-week-oud", "personen": 4},
-        ])
+        history.save(
+            [
+                {"datum": "2026-02-02", "recept_id": "vorige-week", "personen": 2},
+                {"datum": "2026-02-09", "recept_id": "deze-week-oud", "personen": 4},
+            ]
+        )
         week = WeekMenu(
             week_start="2026-02-09",
             dagen=[

@@ -45,17 +45,13 @@ def mock_token_response():
 class TestLogin:
     """Tests for AHTokenManager.login method."""
 
-    def test_login_exchanges_code_for_tokens(
-        self, token_manager, mock_token_response
-    ):
+    def test_login_exchanges_code_for_tokens(self, token_manager, mock_token_response):
         """Login should POST auth code to token endpoint."""
         mock_response = Mock()
         mock_response.json.return_value = mock_token_response
         mock_response.raise_for_status = Mock()
 
-        with patch(
-            PATCH_POST, return_value=mock_response
-        ) as mock_post:
+        with patch(PATCH_POST, return_value=mock_response) as mock_post:
             token_manager.login("test-auth-code")
 
         mock_post.assert_called_once_with(
@@ -71,9 +67,7 @@ class TestLogin:
             },
         )
 
-    def test_login_saves_tokens(
-        self, token_manager, token_file, mock_token_response
-    ):
+    def test_login_saves_tokens(self, token_manager, token_file, mock_token_response):
         """Login should persist tokens to disk."""
         mock_response = Mock()
         mock_response.json.return_value = mock_token_response
@@ -91,9 +85,7 @@ class TestLogin:
     def test_login_raises_on_http_error(self, token_manager):
         """Login should propagate HTTP errors."""
         mock_response = Mock()
-        mock_response.raise_for_status.side_effect = Exception(
-            "401 Unauthorized"
-        )
+        mock_response.raise_for_status.side_effect = Exception("401 Unauthorized")
 
         with (
             patch(PATCH_POST, return_value=mock_response),
@@ -110,9 +102,7 @@ class TestLogin:
 class TestRefresh:
     """Tests for AHTokenManager.refresh method."""
 
-    def test_refresh_updates_tokens(
-        self, token_manager, mock_token_response
-    ):
+    def test_refresh_updates_tokens(self, token_manager, mock_token_response):
         """Refresh should POST refresh token and update."""
         token_manager._access_token = "old-access-token"
         token_manager._refresh_token = "old-refresh-token"
@@ -122,9 +112,7 @@ class TestRefresh:
         mock_response.json.return_value = mock_token_response
         mock_response.raise_for_status = Mock()
 
-        with patch(
-            PATCH_POST, return_value=mock_response
-        ) as mock_post:
+        with patch(PATCH_POST, return_value=mock_response) as mock_post:
             token_manager.refresh()
 
         mock_post.assert_called_once_with(
@@ -164,9 +152,7 @@ class TestGetAccessToken:
 
         assert token_manager.get_access_token() == "valid-token"
 
-    def test_auto_refreshes_when_expired(
-        self, token_manager, mock_token_response
-    ):
+    def test_auto_refreshes_when_expired(self, token_manager, mock_token_response):
         """Should refresh and return new token if expired."""
         token_manager._access_token = "expired-token"
         token_manager._refresh_token = "refresh-token"

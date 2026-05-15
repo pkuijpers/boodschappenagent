@@ -1,0 +1,21 @@
+<div id="ingredient-selectie-content">
+    {% for groep in groepen %}
+    <section class="mb-6 px-4">
+        <h2 class="text-lg font-semibold text-gray-700 mb-3">{{ groep.recept_naam }}</h2>
+        <div class="bg-white rounded-xl border border-gray-100 divide-y divide-gray-100">
+            {% for item in groep.ingredienten %}
+                {% include "components/ingredient_selectie_item.html" %}
+            {% endfor %}
+        </div>
+    </section>
+    {% endfor %}
+
+    <div class="px-4 pb-6">
+        <form action="/ingredient-selectie/bevestig" method="post">
+            <button type="submit"
+                    class="w-full bg-ah-blue text-white font-semibold py-4 rounded-xl hover:bg-ah-blue-dark transition-colors text-base min-h-[44px]">
+                Verder naar voorraadcheck
+            </button>
+        </form>
+    </div>
+</div>

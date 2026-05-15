@@ -179,3 +179,73 @@ class TestGecombineerdFilterEnToevoegen:
 
         namen = [r.naam for r in result.regels]
         assert namen == sorted(namen)
+
+
+class TestVoegPantryToe:
+    """T016: voeg_pantry_toe() voegt pantry-items toe zonder stap-1 filter."""
+
+    def test_voeg_verse_basis_toe_die_niet_op_voorraad_is(self, tmp_path: Path) -> None:
+        """VERS_BASIS item niet op voorraad → toegevoegd aan lijst."""
+        repo = VoorraadRepository(tmp_path / "voorraad.json")
+        repo.save([_make_item("melk", VoorraadType.VERS_BASIS, op_voorraad=False)])
+
+        lijst = Boodschappenlijst(week_start="2026-02-16", regels=[])
+        filt = BoodschappenlijstFilter(repo)
+        result = filt.voeg_pantry_toe(lijst)
+
+        namen = {r.naam for r in result.regels}
+        assert "melk" in namen
+
+    def test_voeg_houdbaar_toe_dat_niet_op_voorraad_is(self, tmp_path: Path) -> None:
+        """HOUDBAAR item niet op voorraad → toegevoegd aan lijst."""
+        repo = VoorraadRepository(tmp_path / "voorraad.json")
+        repo.save([_make_item("pasta", VoorraadType.HOUDBAAR, op_voorraad=False)])
+
+        lijst = Boodschappenlijst(week_start="2026-02-16", regels=[])
+        filt = BoodschappenlijstFilter(repo)
+        result = filt.voeg_pantry_toe(lijst)
+
+        namen = {r.naam for r in result.regels}
+        assert "pasta" in namen
+
+    def test_voegt_geen_item_op_voorraad_toe(self, tmp_path: Path) -> None:
+        """Item dat op voorraad is wordt NIET toegevoegd."""
+        repo = VoorraadRepository(tmp_path / "voorraad.json")
+        repo.save([_make_item("pasta", VoorraadType.HOUDBAAR, op_voorraad=True)])
+
+        lijst = Boodschappenlijst(week_start="2026-02-16", regels=[])
+        filt = BoodschappenlijstFilter(repo)
+        result = filt.voeg_pantry_toe(lijst)
+
+        namen = {r.naam for r in result.regels}
+        assert "pasta" not in namen
+
+    def test_filtert_niet_op_voorraad(self, tmp_path: Path) -> None:
+        """Items op voorraad worden NIET gefilterd — stap 1 overgeslagen."""
+        repo = VoorraadRepository(tmp_path / "voorraad.json")
+        repo.save([_make_item("pasta", VoorraadType.HOUDBAAR, op_voorraad=True)])
+
+        lijst = Boodschappenlijst(
+            week_start="2026-02-16",
+            regels=[_make_regel("pasta", 500, "g")],
+        )
+        filt = BoodschappenlijstFilter(repo)
+        result = filt.voeg_pantry_toe(lijst)
+
+        namen = {r.naam for r in result.regels}
+        assert "pasta" in namen
+
+    def test_geen_duplicaten(self, tmp_path: Path) -> None:
+        """Item al in lijst → niet nogmaals toegevoegd door pantry."""
+        repo = VoorraadRepository(tmp_path / "voorraad.json")
+        repo.save([_make_item("pasta", VoorraadType.HOUDBAAR, op_voorraad=False)])
+
+        lijst = Boodschappenlijst(
+            week_start="2026-02-16",
+            regels=[_make_regel("pasta", 500, "g")],
+        )
+        filt = BoodschappenlijstFilter(repo)
+        result = filt.voeg_pantry_toe(lijst)
+
+        pasta_regels = [r for r in result.regels if r.naam == "pasta"]
+        assert len(pasta_regels) == 1

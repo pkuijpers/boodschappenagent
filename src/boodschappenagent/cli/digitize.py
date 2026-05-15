@@ -29,7 +29,9 @@ def _print_progress(current: int, total: int, recipe_naam: str | None) -> None:
 
     # Truncate recipe naam voor display
     if recipe_naam:
-        display_name = recipe_naam[:35] + "..." if len(recipe_naam) > 38 else recipe_naam
+        display_name = (
+            recipe_naam[:35] + "..." if len(recipe_naam) > 38 else recipe_naam
+        )
     else:
         display_name = "(mislukt)"
 

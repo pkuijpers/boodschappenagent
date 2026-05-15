@@ -28,7 +28,9 @@ class TestMatchReviewVolledigeFlow:
         """Klikken op 'Verstuur naar AH' redirect naar de match-review pagina."""
         boodschappen_page.click("[data-testid='verstuur-naar-ah-button']")
         boodschappen_page.wait_for_url("**/boodschappen/match-review")
-        expect(boodschappen_page.locator("[data-testid='match-review']")).to_be_visible()
+        expect(
+            boodschappen_page.locator("[data-testid='match-review']")
+        ).to_be_visible()
 
     def test_match_review_toont_items(self, boodschappen_page: Page):
         """Match-review pagina toont alle gematche items."""
@@ -97,9 +99,7 @@ class TestMatchReviewGeenMatch:
         btn = page.locator("[data-testid='bevestig-btn']")
         expect(btn).to_be_disabled()
 
-    def test_geen_match_toont_amber_kaart(
-        self, page: Page, live_server_url: str, app
-    ):
+    def test_geen_match_toont_amber_kaart(self, page: Page, live_server_url: str, app):
         """Item zonder match heeft amber stijling."""
         app.state.match_review_items = [
             MatchReviewItem(
@@ -130,7 +130,9 @@ class TestMatchReviewCorrectie:
         expect(zoek_input).to_be_visible()
 
     def test_zoekbalk_behoudt_tekst_tijdens_typen(
-        self, match_review_page: Page, mock_ah_integratie  # noqa: ARG002
+        self,
+        match_review_page: Page,
+        mock_ah_integratie,  # noqa: ARG002
     ):
         """Typen in de zoekbalk wist niet de reeds ingevoerde tekst (debounce bug)."""
         corrigeer = match_review_page.locator("button:has-text('Corrigeer')").first
@@ -149,7 +151,9 @@ class TestMatchReviewCorrectie:
         expect(zoek_input).to_have_value("kaas")
 
     def test_kies_product_update_kaart(
-        self, match_review_page: Page, mock_ah_integratie  # noqa: ARG002
+        self,
+        match_review_page: Page,
+        mock_ah_integratie,  # noqa: ARG002
     ):
         """Na het kiezen van een product wordt de kaart bijgewerkt naar gecorrigeerd."""
         corrigeer = match_review_page.locator("button:has-text('Corrigeer')").first

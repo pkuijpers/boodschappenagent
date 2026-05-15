@@ -1,6 +1,5 @@
 """Tests voor hoeveelheid-berekening op basis van boodschappenregel en AH product."""
 
-
 from boodschappenagent.ah.models import Product
 from boodschappenagent.ah.quantity_calculator import bereken_aantal
 from boodschappenagent.boodschappenlijst.models import BoodschappenRegel
@@ -90,9 +89,7 @@ class TestBerekenAantalEenheidConversie:
 
     def test_kg_naar_gram_product(self):
         """1.5 kg nodig, product is 300 g → 5."""
-        assert (
-            bereken_aantal(_regel("gehakt", 1.5, "kilogram"), _product("300 g")) == 5
-        )
+        assert bereken_aantal(_regel("gehakt", 1.5, "kilogram"), _product("300 g")) == 5
 
     def test_nederlandse_komma_in_product_size(self):
         """2 liter nodig, product is 1,5 l → 2 (ceil(2.0/1.5))."""
@@ -107,32 +104,22 @@ class TestBerekenAantalNietBerekenbaar:
     """Eenheden die niet berekenbaar zijn → altijd 1."""
 
     def test_naar_smaak(self):
-        assert (
-            bereken_aantal(_regel("peper", 1.0, "naar smaak"), _product("40 g")) == 1
-        )
+        assert bereken_aantal(_regel("peper", 1.0, "naar smaak"), _product("40 g")) == 1
 
     def test_snuf(self):
         assert bereken_aantal(_regel("zout", 1.0, "snuf"), _product("1 kg")) == 1
 
     def test_mespunt(self):
-        assert (
-            bereken_aantal(_regel("kaneel", 1.0, "mespunt"), _product("40 g")) == 1
-        )
+        assert bereken_aantal(_regel("kaneel", 1.0, "mespunt"), _product("40 g")) == 1
 
     def test_eetlepel(self):
-        assert (
-            bereken_aantal(_regel("olie", 2.0, "eetlepel"), _product("500 ml")) == 1
-        )
+        assert bereken_aantal(_regel("olie", 2.0, "eetlepel"), _product("500 ml")) == 1
 
     def test_theelepel(self):
-        assert (
-            bereken_aantal(_regel("komijn", 1.0, "theelepel"), _product("30 g")) == 1
-        )
+        assert bereken_aantal(_regel("komijn", 1.0, "theelepel"), _product("30 g")) == 1
 
     def test_teen(self):
-        assert (
-            bereken_aantal(_regel("knoflook", 3.0, "teen"), _product("2 stuks")) == 1
-        )
+        assert bereken_aantal(_regel("knoflook", 3.0, "teen"), _product("2 stuks")) == 1
 
 
 class TestBerekenAantalEdgeCases:
@@ -149,9 +136,7 @@ class TestBerekenAantalEdgeCases:
     def test_onparseerbare_product_size(self):
         """Onparseerbare size → fallback 1."""
         assert (
-            bereken_aantal(
-                _regel("tomaten", 400.0, "gram"), _product("div. formaten")
-            )
+            bereken_aantal(_regel("tomaten", 400.0, "gram"), _product("div. formaten"))
             == 1
         )
 

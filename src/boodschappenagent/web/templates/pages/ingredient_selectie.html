@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Ingrediënten selecteren — Albert{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto pt-6">
+    <header class="flex items-center mb-6 px-4">
+        <a href="/week" hx-boost="false" class="p-2 -ml-2 rounded-full hover:bg-gray-100 transition-colors mr-2" aria-label="Terug naar weekoverzicht">
+            <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+        </a>
+        <h1 class="text-2xl font-semibold text-gray-800">Ingrediënten selecteren</h1>
+    </header>
+
+    {% include "fragments/ingredient_selectie_content.html" %}
+</div>
+{% endblock %}

@@ -59,16 +59,12 @@ class TestNormaliseerNaam:
         assert naam == "quinoa"
 
     def test_extra_synoniemen(self) -> None:
-        normalizer = IngredientNormalizer(
-            extra_synoniemen={"rode paprika": "paprika"}
-        )
+        normalizer = IngredientNormalizer(extra_synoniemen={"rode paprika": "paprika"})
         naam, _ = normalizer.normaliseer("rode paprika", "stuks")
         assert naam == "paprika"
 
     def test_extra_synoniemen_overschrijven_niet(self) -> None:
-        normalizer = IngredientNormalizer(
-            extra_synoniemen={"quinoa": "graan"}
-        )
+        normalizer = IngredientNormalizer(extra_synoniemen={"quinoa": "graan"})
         naam, _ = normalizer.normaliseer("uien", "stuks")
         assert naam == "ui"
 

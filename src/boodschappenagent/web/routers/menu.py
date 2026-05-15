@@ -189,7 +189,7 @@ async def bevestig_week(
     if week_menu is None:
         return RedirectResponse(url="/week", status_code=303)
     history.sync_week(week_menu)
-    return RedirectResponse(url="/voorraad", status_code=303)
+    return RedirectResponse(url="/ingredient-selectie", status_code=303)
 
 
 @router.post("/week/shuffle")
