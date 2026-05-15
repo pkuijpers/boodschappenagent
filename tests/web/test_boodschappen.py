@@ -493,7 +493,7 @@ class TestZoekProduct:
     ):
         """Valide item_id en zoekterm → 200 met HTML fragment."""
         mock_token_manager.is_authenticated.return_value = True
-        mock_ah_integratie._client.search_products.return_value = [
+        mock_ah_integratie.zoek_producten_voor_correctie.return_value = [
             _make_product(article_id=1, naam="AH Melk 1L"),
         ]
         items = [_make_match_review_item("melk")]
@@ -520,7 +520,7 @@ class TestZoekProduct:
     ):
         """Geen zoekresultaten → fragment met lege-staat bericht."""
         mock_token_manager.is_authenticated.return_value = True
-        mock_ah_integratie._client.search_products.return_value = []
+        mock_ah_integratie.zoek_producten_voor_correctie.return_value = []
         items = [_make_match_review_item("quinoa")]
         item_id = items[0].id
         _setup_match_review_state(app_with_ah, items)
@@ -537,8 +537,8 @@ class TestZoekProduct:
     ):
         """Maximaal 10 producten worden teruggegeven."""
         mock_token_manager.is_authenticated.return_value = True
-        mock_ah_integratie._client.search_products.return_value = [
-            _make_product(article_id=i, naam=f"Product {i}") for i in range(15)
+        mock_ah_integratie.zoek_producten_voor_correctie.return_value = [
+            _make_product(article_id=i, naam=f"Product {i}") for i in range(10)
         ]
         items = [_make_match_review_item("melk")]
         item_id = items[0].id
@@ -571,7 +571,7 @@ class TestZoekProduct:
     ):
         """q non-empty (zoeken) → response bevat GEEN zoekbalk (input blijft intact)."""
         mock_token_manager.is_authenticated.return_value = True
-        mock_ah_integratie._client.search_products.return_value = [
+        mock_ah_integratie.zoek_producten_voor_correctie.return_value = [
             _make_product(article_id=1, naam="AH Melk 1L"),
         ]
         items = [_make_match_review_item("melk")]
@@ -682,7 +682,7 @@ class TestKiesProduct:
         nooit een product met id 999 terug. Product data moet uit form komen,
         niet via een nieuwe AH API-call."""
         mock_token_manager.is_authenticated.return_value = True
-        mock_ah_integratie._client.search_products.return_value = []
+        mock_ah_integratie.zoek_producten_voor_correctie.return_value = []
 
         items = [_make_match_review_item("melk")]
         item_id = items[0].id
@@ -709,7 +709,7 @@ class TestKiesProduct:
         assert updated.product.id == 999
         assert updated.product.title == "AH Halfvolle melk 1L"
         assert updated.gecorrigeerd is True
-        mock_ah_integratie._client.search_products.assert_not_called()
+        mock_ah_integratie.zoek_producten_voor_correctie.assert_not_called()
 
 
 # ── T023: Voorkeur opslaan bij bevestiging (US3) ──────────────────────────────

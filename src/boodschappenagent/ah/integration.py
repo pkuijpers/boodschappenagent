@@ -182,6 +182,12 @@ class AHIntegratie:
         """Voeg producten toe aan een AH favorieten-lijst."""
         self._client.add_products_to_list(lijst_id, producten)
 
+    def zoek_producten_voor_correctie(
+        self, query: str, limit: int = 10
+    ) -> list[Product]:
+        """Zoek producten voor de correctie-flow (productmatch review)."""
+        return self._client.search_products(query)[:limit]
+
     def sync_naar_lijst(
         self,
         lijst: Boodschappenlijst,
