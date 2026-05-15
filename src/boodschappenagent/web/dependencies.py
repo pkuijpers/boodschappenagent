@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 from boodschappenagent.ah import AHClient, AHIntegratie, AHTokenManager
+from boodschappenagent.ah.preferences import MatchVoorkeurenRepository
 from boodschappenagent.boodschappenlijst import (
     BoodschappenlijstGenerator,
     IngredientNormalizer,
@@ -131,3 +132,8 @@ def get_ah_integratie() -> AHIntegratie:
     """AHIntegratie met AHClient."""
     client = get_ah_client()
     return AHIntegratie(client)
+
+
+def get_match_voorkeuren_repository() -> MatchVoorkeurenRepository:
+    """MatchVoorkeurenRepository met standaard pad data/match_preferences.json."""
+    return MatchVoorkeurenRepository(DATA_DIR / "match_preferences.json")

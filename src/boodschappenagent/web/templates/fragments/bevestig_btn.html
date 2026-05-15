@@ -1,0 +1,29 @@
+{#
+  OOB bevestig-knop fragment — wordt vervangen via HTMX OOB swap.
+  Variables: alle_gevonden (bool)
+#}
+
+{% if alle_gevonden %}
+  <button
+    id="bevestig-btn"
+    class="w-full py-3 rounded-xl bg-ah-blue text-white text-center font-medium"
+    hx-post="/boodschappen/bevestig-matches"
+    hx-boost="false"
+    type="button"
+    data-testid="bevestig-btn"
+    hx-swap-oob="true"
+  >
+    Bevestig en maak AH-lijst aan
+  </button>
+{% else %}
+  <button
+    id="bevestig-btn"
+    class="w-full py-3 rounded-xl bg-gray-200 text-gray-400 text-center font-medium"
+    disabled
+    type="button"
+    data-testid="bevestig-btn"
+    hx-swap-oob="true"
+  >
+    Bevestig en maak AH-lijst aan
+  </button>
+{% endif %}

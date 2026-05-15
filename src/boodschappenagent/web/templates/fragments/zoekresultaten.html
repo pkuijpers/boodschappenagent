@@ -1,0 +1,23 @@
+{#
+  Zoekresultaten fragment — zoekbalk + container voor resultaten (state 4: search open).
+  Variables: item_id (str UUID)
+  De resultaten worden apart ingeladen via zoekresultaten_inner.html in #zoekresultaten-inner-{{ item_id }}.
+#}
+
+<!-- Zoekbalk (state 4: search open) -->
+<div class="flex items-center gap-2 mb-2">
+  <input
+    type="text"
+    name="q"
+    placeholder="Zoek een product..."
+    class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-ah-blue"
+    hx-get="/boodschappen/zoek-product?item_id={{ item_id }}"
+    hx-trigger="input changed delay:300ms"
+    hx-target="#zoekresultaten-inner-{{ item_id }}"
+    hx-swap="innerHTML"
+    data-testid="zoek-input"
+    autofocus
+  >
+</div>
+
+<div id="zoekresultaten-inner-{{ item_id }}"></div>

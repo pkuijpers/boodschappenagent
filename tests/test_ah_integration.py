@@ -527,6 +527,130 @@ class TestZoekProducten:
 
 
 # =============================================================================
+# T022: AHIntegratie.zoek_producten — met MatchVoorkeurenRepository
+# =============================================================================
+
+
+class TestZoekProductenMetVoorkeuren:
+    """T022: zoek_producten() past opgeslagen voorkeuren toe vóór smart_search."""
+
+    @pytest.fixture
+    def melk_voorkeur_product(self):
+        """AH product als opgeslagen voorkeur voor melk."""
+        return Product(
+            id=123456,
+            title="AH Volle melk 1L",
+            brand="AH",
+            size="1L",
+            price=1.09,
+            category="Zuivel",
+            is_orderable=True,
+        )
+
+    @pytest.fixture
+    def niet_besteldbaar_product(self):
+        """AH product dat niet besteld kan worden."""
+        return Product(
+            id=999999,
+            title="Uitverkocht product",
+            brand="X",
+            size="1L",
+            price=0.99,
+            category="Zuivel",
+            is_orderable=False,
+        )
+
+    @pytest.fixture
+    def mock_voorkeuren_repo(self):
+        from unittest.mock import MagicMock
+
+        return MagicMock()
+
+    def test_voorkeur_gevonden_bron_is_voorkeur(
+        self, mock_client, melk_regel, melk_voorkeur_product, mock_voorkeuren_repo
+    ):
+        """Voorkeur gevonden en product beschikbaar → bron='voorkeur'."""
+        from boodschappenagent.ah.preferences import MatchVoorkeur
+
+        mock_voorkeuren_repo.get.return_value = MatchVoorkeur(
+            ingredient_naam="melk",
+            article_id=123456,
+            product_naam="AH Volle melk 1L",
+            updated_at="2026-05-14T10:00:00",
+        )
+        mock_client.search_products = Mock(return_value=[melk_voorkeur_product])
+        mock_client.smart_search = Mock(return_value=(None, "not_found"))
+
+        lijst = Boodschappenlijst(week_start="2026-02-16", regels=[melk_regel])
+        integratie = AHIntegratie(mock_client)
+        matches = integratie.zoek_producten(lijst, voorkeuren_repo=mock_voorkeuren_repo)
+
+        assert len(matches) == 1
+        assert matches[0].bron == "voorkeur"
+        assert matches[0].product is not None
+        assert matches[0].product.id == 123456
+        mock_client.smart_search.assert_not_called()
+
+    def test_voorkeur_niet_beschikbaar_valt_terug_op_smart_search(
+        self,
+        mock_client,
+        melk_regel,
+        niet_besteldbaar_product,
+        melk_voorkeur_product,
+        mock_voorkeuren_repo,
+    ):
+        """Voorkeur niet besteldbaar → fallback naar smart_search."""
+        from boodschappenagent.ah.preferences import MatchVoorkeur
+
+        mock_voorkeuren_repo.get.return_value = MatchVoorkeur(
+            ingredient_naam="melk",
+            article_id=999999,
+            product_naam="Uitverkocht product",
+            updated_at="2026-05-14T10:00:00",
+        )
+        mock_client.search_products = Mock(return_value=[niet_besteldbaar_product])
+        mock_client.smart_search = Mock(return_value=(melk_voorkeur_product, "search"))
+
+        lijst = Boodschappenlijst(week_start="2026-02-16", regels=[melk_regel])
+        integratie = AHIntegratie(mock_client)
+        matches = integratie.zoek_producten(lijst, voorkeuren_repo=mock_voorkeuren_repo)
+
+        assert len(matches) == 1
+        assert matches[0].bron == "voorkeur_niet_beschikbaar"
+        mock_client.smart_search.assert_called_once()
+
+    def test_geen_voorkeur_gebruikt_smart_search(
+        self, mock_client, melk_regel, melk_voorkeur_product, mock_voorkeuren_repo
+    ):
+        """Geen voorkeur opgeslagen → smart_search zoals gewoonlijk."""
+        mock_voorkeuren_repo.get.return_value = None
+        mock_client.smart_search = Mock(return_value=(melk_voorkeur_product, "search"))
+        mock_client.find_list_by_name = Mock(return_value=None)
+
+        lijst = Boodschappenlijst(week_start="2026-02-16", regels=[melk_regel])
+        integratie = AHIntegratie(mock_client)
+        matches = integratie.zoek_producten(lijst, voorkeuren_repo=mock_voorkeuren_repo)
+
+        assert len(matches) == 1
+        assert matches[0].bron == "zoekopdracht"
+        mock_client.smart_search.assert_called_once()
+
+    def test_zonder_repo_gedrag_ongewijzigd(
+        self, mock_client, melk_regel, melk_voorkeur_product
+    ):
+        """Zonder voorkeuren_repo (None) → gedrag identiek aan voor US3."""
+        mock_client.find_list_by_name = Mock(return_value=None)
+        mock_client.smart_search = Mock(return_value=(melk_voorkeur_product, "search"))
+
+        lijst = Boodschappenlijst(week_start="2026-02-16", regels=[melk_regel])
+        integratie = AHIntegratie(mock_client)
+        matches = integratie.zoek_producten(lijst)  # Geen voorkeuren_repo
+
+        assert len(matches) == 1
+        assert matches[0].bron == "zoekopdracht"
+
+
+# =============================================================================
 # AHIntegratie.sync_naar_lijst Tests
 # =============================================================================
 
@@ -685,9 +809,7 @@ class TestSyncNaarLijst:
         self, mock_client, knoflook_regel, knoflook_product
     ):
         """Test dat quantity 1 is voor niet-berekenbare eenheden (teen)."""
-        lijst = Boodschappenlijst(
-            week_start="2026-02-16", regels=[knoflook_regel]
-        )
+        lijst = Boodschappenlijst(week_start="2026-02-16", regels=[knoflook_regel])
         mock_client.create_list = Mock(return_value="new-list-id")
         mock_client.smart_search = Mock(return_value=(knoflook_product, "search"))
         mock_client.add_products_to_list = Mock(return_value={"totalSize": 1})
@@ -703,11 +825,15 @@ class TestSyncNaarLijst:
     def test_dedupliceert_producten(self, mock_client, melk_product):
         """Test dat duplicate product IDs samengevoegd worden met opgetelde quantity."""
         regel1 = BoodschappenRegel(
-            naam="melk", hoeveelheid=1.0, eenheid="liter",
+            naam="melk",
+            hoeveelheid=1.0,
+            eenheid="liter",
             originele_namen=frozenset({"melk"}),
         )
         regel2 = BoodschappenRegel(
-            naam="volle melk", hoeveelheid=1.0, eenheid="liter",
+            naam="volle melk",
+            hoeveelheid=1.0,
+            eenheid="liter",
             originele_namen=frozenset({"volle melk"}),
         )
         lijst = Boodschappenlijst(week_start="2026-02-16", regels=[regel1, regel2])

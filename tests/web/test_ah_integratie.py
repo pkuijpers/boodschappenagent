@@ -161,98 +161,166 @@ class TestAHLogout:
 
 
 class TestVerstuurNaarAHSucces:
-    """S15: Verstuur naar AH (succes flow)."""
+    """S15: Verstuur naar AH redirectt naar match-review na matching."""
 
-    @pytest.fixture
-    def _bevestiging_succes(
-        self, app_with_ah, mock_token_manager, mock_ah_integratie,
-        sync_resultaat_succes, setup_boodschappenlijst,
+    def test_s15_1_verstuur_redirect_naar_match_review(
+        self,
+        app_with_ah,
+        mock_token_manager,
+        mock_ah_integratie,
+        setup_boodschappenlijst,  # noqa: ARG002
     ):
-        """POST /boodschappen/verstuur-naar-ah met volledig succes resultaat."""
+        """S15.1: Succesvol matchen → 303 redirect naar /boodschappen/match-review."""
+        from boodschappenagent.ah.integration import ProductMatch
+        from boodschappenagent.ah.models import Product
+
         mock_token_manager.is_authenticated.return_value = True
-        mock_ah_integratie.sync_naar_lijst.return_value = sync_resultaat_succes
-        client = TestClient(app_with_ah)
+        mock_ah_integratie.zoek_producten.return_value = [
+            ProductMatch(
+                regel=type(
+                    "R",
+                    (),
+                    {"naam": f"product-{i}", "hoeveelheid": 1.0, "eenheid": "stuk"},
+                )(),
+                product=Product(
+                    id=i,
+                    title=f"Product {i}",
+                    brand="",
+                    size="",
+                    price=1.0,
+                    category="",
+                    is_orderable=True,
+                ),
+                bron="zoekopdracht",
+                aantal=1,
+            )
+            for i in range(15)
+        ]
+
+        client = TestClient(app_with_ah, follow_redirects=False)
         response = client.post("/boodschappen/verstuur-naar-ah")
-        assert response.status_code == 200
-        return soup(response)
 
-    def test_s15_1_verstuur_toont_bevestiging(self, _bevestiging_succes):
-        """S15.1: Bevestigingsscherm met groen vinkje."""
-        assert _bevestiging_succes.select_one('[data-testid="ah-bevestiging"]') is not None
+        assert response.status_code == 303
+        assert response.headers["location"] == "/boodschappen/match-review"
 
-    def test_s15_2_bevestiging_toont_aantal_producten(self, _bevestiging_succes):
-        """S15.2: Bevestiging toont "15 producten in je mandje"."""
-        aantal_el = _bevestiging_succes.select_one('[data-testid="ah-aantal-producten"]')
-        assert aantal_el is not None
-        assert "15" in aantal_el.get_text()
+    def test_s15_2_match_review_items_aanwezig_in_state(
+        self,
+        app_with_ah,
+        mock_token_manager,
+        mock_ah_integratie,
+        setup_boodschappenlijst,  # noqa: ARG002
+    ):
+        """S15.2: Match-review items worden opgeslagen in app.state."""
+        from boodschappenagent.ah.integration import ProductMatch
+        from boodschappenagent.ah.models import Product
 
-    def test_s15_3_bevestiging_toont_lijst_naam(self, _bevestiging_succes):
-        """S15.3: Bevestiging toont de lijst naam."""
-        naam_el = _bevestiging_succes.select_one('[data-testid="ah-lijst-naam"]')
-        assert naam_el is not None
-        assert "Boodschappen 2026-03-02" in naam_el.get_text()
+        mock_token_manager.is_authenticated.return_value = True
+        mock_ah_integratie.zoek_producten.return_value = [
+            ProductMatch(
+                regel=type(
+                    "R", (), {"naam": "melk", "hoeveelheid": 1.0, "eenheid": "liter"}
+                )(),
+                product=Product(
+                    id=1,
+                    title="AH Melk",
+                    brand="AH",
+                    size="1L",
+                    price=1.09,
+                    category="Zuivel",
+                    is_orderable=True,
+                ),
+                bron="zoekopdracht",
+                aantal=1,
+            )
+        ]
 
-    def test_s15_4_open_albert_heijn_link(self, _bevestiging_succes):
-        """S15.4: "Open Albert Heijn" link wijst naar de specifieke lijst-URL."""
-        link = _bevestiging_succes.select_one('[data-testid="ah-open-link"]')
-        assert link is not None
-        href = link.get("href", "")
-        assert "ah.nl/favorieten/lijst/list-123" in href
+        client = TestClient(app_with_ah, follow_redirects=False)
+        client.post("/boodschappen/verstuur-naar-ah")
 
-    def test_s15_5_terug_naar_home_link(self, _bevestiging_succes):
-        """S15.5: "Terug naar home" link naar /week."""
-        assert _bevestiging_succes.select_one('a[href="/week"]') is not None
+        items = getattr(app_with_ah.state, "match_review_items", None)
+        assert items is not None and len(items) == 1
+
+    def test_s15_3_zoek_producten_niet_sync_naar_lijst(
+        self,
+        app_with_ah,
+        mock_token_manager,
+        mock_ah_integratie,
+        setup_boodschappenlijst,  # noqa: ARG002
+    ):
+        """S15.3: zoek_producten() wordt aangeroepen; sync_naar_lijst() niet meer."""
+
+        mock_token_manager.is_authenticated.return_value = True
+        mock_ah_integratie.zoek_producten.return_value = []
+
+        app_with_ah.state.boodschappenlijst = []
+        client = TestClient(app_with_ah, follow_redirects=False)
+        client.post("/boodschappen/verstuur-naar-ah")
+
+        mock_ah_integratie.sync_naar_lijst.assert_not_called()
 
 
 class TestVerstuurNaarAHNietGevonden:
-    """S16: Verstuur naar AH (niet-gevonden producten)."""
+    """S16: Niet-gevonden producten zijn zichtbaar in de match-review pagina."""
 
-    @pytest.fixture
-    def _bevestiging_deels(
-        self, app_with_ah, mock_token_manager, mock_ah_integratie,
-        sync_resultaat_deels, setup_boodschappenlijst,
+    def test_s16_1_niet_gevonden_in_match_review_state(
+        self,
+        app_with_ah,
+        mock_token_manager,
+        mock_ah_integratie,
+        setup_boodschappenlijst,  # noqa: ARG002
     ):
-        """POST /boodschappen/verstuur-naar-ah met deels-gevonden resultaat."""
+        """S16.1: Niet-gevonden items (product=None) landen in match_review_items."""
+        from boodschappenagent.ah.integration import ProductMatch
+
         mock_token_manager.is_authenticated.return_value = True
-        mock_ah_integratie.sync_naar_lijst.return_value = sync_resultaat_deels
-        client = TestClient(app_with_ah)
-        response = client.post("/boodschappen/verstuur-naar-ah")
-        assert response.status_code == 200
-        return soup(response)
+        mock_ah_integratie.zoek_producten.return_value = [
+            ProductMatch(
+                regel=type(
+                    "R",
+                    (),
+                    {"naam": "verse basilicum", "hoeveelheid": 1.0, "eenheid": "bos"},
+                )(),
+                product=None,
+                bron="niet_gevonden",
+                aantal=1,
+            )
+        ]
 
-    def test_s16_1_niet_gevonden_sectie_zichtbaar(self, _bevestiging_deels):
-        """S16.1: Niet-gevonden sectie zichtbaar bij 2 van 15 niet gevonden."""
-        sectie = _bevestiging_deels.select_one('[data-testid="ah-niet-gevonden"]')
-        assert sectie is not None
-        items = _bevestiging_deels.select('[data-testid="ah-niet-gevonden-item"]')
-        assert len(items) == 2
+        client = TestClient(app_with_ah, follow_redirects=False)
+        client.post("/boodschappen/verstuur-naar-ah")
 
-    def test_s16_2_niet_gevonden_items_tonen_naam(self, _bevestiging_deels):
-        """S16.2: Niet-gevonden items tonen productnaam."""
-        items = _bevestiging_deels.select('[data-testid="ah-niet-gevonden-item"]')
-        namen = [item.get_text(strip=True) for item in items]
-        assert "verse basilicum" in namen
+        items = getattr(app_with_ah.state, "match_review_items", None)
+        assert items is not None
+        assert items[0].product is None
+        assert items[0].bron == "niet_gevonden"
 
-    def test_s16_3_geen_niet_gevonden_sectie_als_alles_gevonden(
-        self, app_with_ah, mock_token_manager, mock_ah_integratie,
-        sync_resultaat_succes, setup_boodschappenlijst,
+    def test_s16_2_niet_gevonden_redirect_naar_match_review(
+        self,
+        app_with_ah,
+        mock_token_manager,
+        mock_ah_integratie,
+        setup_boodschappenlijst,  # noqa: ARG002
     ):
-        """S16.3: Geen niet-gevonden sectie als alle producten gevonden zijn."""
+        """S16.2: Niet-gevonden producten → redirect naar match-review."""
+        from boodschappenagent.ah.integration import ProductMatch
+
         mock_token_manager.is_authenticated.return_value = True
-        mock_ah_integratie.sync_naar_lijst.return_value = sync_resultaat_succes
-        client = TestClient(app_with_ah)
+        mock_ah_integratie.zoek_producten.return_value = [
+            ProductMatch(
+                regel=type(
+                    "R", (), {"naam": "quinoa", "hoeveelheid": 200.0, "eenheid": "gram"}
+                )(),
+                product=None,
+                bron="niet_gevonden",
+                aantal=1,
+            )
+        ]
+
+        client = TestClient(app_with_ah, follow_redirects=False)
         response = client.post("/boodschappen/verstuur-naar-ah")
 
-        html = soup(response)
-        assert html.select_one('[data-testid="ah-niet-gevonden"]') is None
-
-    def test_s16_4_samenvatting_in_header(self, _bevestiging_deels):
-        """S16.4: Samenvatting "13 van 15 producten gevonden" zichtbaar."""
-        samenvatting = _bevestiging_deels.select_one('[data-testid="ah-samenvatting"]')
-        assert samenvatting is not None
-        tekst = samenvatting.get_text(strip=True)
-        assert "13" in tekst
-        assert "15" in tekst
+        assert response.status_code == 303
+        assert response.headers["location"] == "/boodschappen/match-review"
 
 
 class TestVerstuurNaarAHErrors:
@@ -301,11 +369,11 @@ class TestVerstuurNaarAHErrors:
         app_with_ah,
         mock_token_manager,
         mock_ah_integratie,
-        setup_boodschappenlijst,
+        setup_boodschappenlijst,  # noqa: ARG002
     ):
-        """S17.4: AH API fout -> foutmelding."""
+        """S17.4: AH API fout (zoek_producten) -> foutmelding."""
         mock_token_manager.is_authenticated.return_value = True
-        mock_ah_integratie.sync_naar_lijst.side_effect = Exception("AH API error")
+        mock_ah_integratie.zoek_producten.side_effect = Exception("AH API error")
         client = TestClient(app_with_ah)
         response = client.post("/boodschappen/verstuur-naar-ah")
 
@@ -324,27 +392,26 @@ class TestVerstuurNaarAHErrors:
 
 
 class TestVerstuurNaarAHCheckedItems:
-    """Gecheckte items worden niet verstuurd naar AH."""
+    """Gecheckte items worden niet verstuurd naar AH (gefilterde lijst)."""
 
     def test_gecheckt_item_wordt_niet_verstuurd(
         self,
         app_with_ah,
         mock_token_manager,
         mock_ah_integratie,
-        sync_resultaat_succes,
-        setup_boodschappenlijst,
+        setup_boodschappenlijst,  # noqa: ARG002
     ):
-        """Item met checked=True wordt uitgefilterd voor AH-bestelling."""
+        """Item met checked=True: zoek_producten krijgt 14 regels."""
         mock_token_manager.is_authenticated.return_value = True
-        mock_ah_integratie.sync_naar_lijst.return_value = sync_resultaat_succes
+        mock_ah_integratie.zoek_producten.return_value = []
 
         app_with_ah.state.boodschappenlijst[0]["checked"] = True
 
-        client = TestClient(app_with_ah)
+        client = TestClient(app_with_ah, follow_redirects=False)
         client.post("/boodschappen/verstuur-naar-ah")
 
-        mock_ah_integratie.sync_naar_lijst.assert_called_once()
-        lijst_arg = mock_ah_integratie.sync_naar_lijst.call_args[0][0]
+        mock_ah_integratie.zoek_producten.assert_called_once()
+        lijst_arg = mock_ah_integratie.zoek_producten.call_args[0][0]
         namen = [r.naam for r in lijst_arg.regels]
         assert "product-0" not in namen
         assert len(namen) == 14
@@ -354,21 +421,20 @@ class TestVerstuurNaarAHCheckedItems:
         app_with_ah,
         mock_token_manager,
         mock_ah_integratie,
-        sync_resultaat_succes,
-        setup_boodschappenlijst,
+        setup_boodschappenlijst,  # noqa: ARG002
     ):
         """Meerdere gecheckte items worden allemaal uitgefilterd."""
         mock_token_manager.is_authenticated.return_value = True
-        mock_ah_integratie.sync_naar_lijst.return_value = sync_resultaat_succes
+        mock_ah_integratie.zoek_producten.return_value = []
 
         app_with_ah.state.boodschappenlijst[0]["checked"] = True
         app_with_ah.state.boodschappenlijst[3]["checked"] = True
 
-        client = TestClient(app_with_ah)
+        client = TestClient(app_with_ah, follow_redirects=False)
         client.post("/boodschappen/verstuur-naar-ah")
 
-        mock_ah_integratie.sync_naar_lijst.assert_called_once()
-        lijst_arg = mock_ah_integratie.sync_naar_lijst.call_args[0][0]
+        mock_ah_integratie.zoek_producten.assert_called_once()
+        lijst_arg = mock_ah_integratie.zoek_producten.call_args[0][0]
         namen = [r.naam for r in lijst_arg.regels]
         assert "product-0" not in namen
         assert "product-3" not in namen
@@ -379,41 +445,41 @@ class TestVerstuurNaarAHCheckedItems:
         app_with_ah,
         mock_token_manager,
         mock_ah_integratie,
-        sync_resultaat_succes,
-        setup_boodschappenlijst,
+        setup_boodschappenlijst,  # noqa: ARG002
     ):
-        """Zonder gecheckte items wordt de volledige lijst verstuurd."""
+        """Zonder gecheckte items krijgt zoek_producten de volledige lijst."""
         mock_token_manager.is_authenticated.return_value = True
-        mock_ah_integratie.sync_naar_lijst.return_value = sync_resultaat_succes
+        mock_ah_integratie.zoek_producten.return_value = []
 
-        client = TestClient(app_with_ah)
+        client = TestClient(app_with_ah, follow_redirects=False)
         client.post("/boodschappen/verstuur-naar-ah")
 
-        mock_ah_integratie.sync_naar_lijst.assert_called_once()
-        lijst_arg = mock_ah_integratie.sync_naar_lijst.call_args[0][0]
+        mock_ah_integratie.zoek_producten.assert_called_once()
+        lijst_arg = mock_ah_integratie.zoek_producten.call_args[0][0]
         assert len(lijst_arg.regels) == 15
 
 
 class TestVerstuurNaarAHHandmatig:
-    """S20: Handmatig toegevoegde artikelen worden meegestuurd naar AH."""
+    """S20: Handmatig toegevoegde artikelen worden meegestuurd naar zoek_producten."""
 
     def test_s20_1_handmatig_item_wordt_meegestuurd(
         self,
         app_with_ah,
         mock_token_manager,
         mock_ah_integratie,
-        sync_resultaat_succes,
-        setup_boodschappenlijst_met_handmatig,
+        setup_boodschappenlijst_met_handmatig,  # noqa: ARG002
     ):
-        """S20.1: Handmatig artikel "zeep" wordt meegestuurd naar AH."""
+        """S20.1: Handmatig artikel "zeep" zit in de lijst voor zoek_producten."""
         mock_token_manager.is_authenticated.return_value = True
-        mock_ah_integratie.sync_naar_lijst.return_value = sync_resultaat_succes
+        mock_ah_integratie.zoek_producten.return_value = []
 
-        client = TestClient(app_with_ah)
+        client = TestClient(app_with_ah, follow_redirects=False)
         client.post("/boodschappen/verstuur-naar-ah")
 
-        mock_ah_integratie.sync_naar_lijst.assert_called_once()
-        namen = [r.naam for r in mock_ah_integratie.sync_naar_lijst.call_args[0][0].regels]
+        mock_ah_integratie.zoek_producten.assert_called_once()
+        namen = [
+            r.naam for r in mock_ah_integratie.zoek_producten.call_args[0][0].regels
+        ]
         assert "zeep" in namen
         assert "pasta" in namen
 
@@ -422,38 +488,54 @@ class TestVerstuurNaarAHHandmatig:
         app_with_ah,
         mock_token_manager,
         mock_ah_integratie,
-        sync_resultaat_succes,
-        setup_boodschappenlijst_met_handmatig,
+        setup_boodschappenlijst_met_handmatig,  # noqa: ARG002
     ):
-        """S20.2: Gemengde lijst van 3 menu + 2 handmatig resulteert in 5 regels."""
+        """S20.2: Gemengde lijst (3 menu + 2 handmatig) → 5 regels."""
         mock_token_manager.is_authenticated.return_value = True
-        mock_ah_integratie.sync_naar_lijst.return_value = sync_resultaat_succes
+        mock_ah_integratie.zoek_producten.return_value = []
 
         app_with_ah.state.boodschappenlijst = [
-            {"id": f"menu-{i}", "naam": f"menu-item-{i}", "hoeveelheid": 1, "eenheid": "stuk", "checked": False, "handmatig": False, "eerste_recept": "Recept", "extra_aantal": 0}
+            {
+                "id": f"menu-{i}",
+                "naam": f"menu-item-{i}",
+                "hoeveelheid": 1,
+                "eenheid": "stuk",
+                "checked": False,
+                "handmatig": False,
+                "eerste_recept": "Recept",
+                "extra_aantal": 0,
+            }
             for i in range(3)
         ] + [
-            {"id": f"handmatig-{i}", "naam": f"handmatig-item-{i}", "hoeveelheid": 1, "eenheid": "stuks", "checked": False, "handmatig": True, "eerste_recept": None, "extra_aantal": 0}
+            {
+                "id": f"handmatig-{i}",
+                "naam": f"handmatig-item-{i}",
+                "hoeveelheid": 1,
+                "eenheid": "stuks",
+                "checked": False,
+                "handmatig": True,
+                "eerste_recept": None,
+                "extra_aantal": 0,
+            }
             for i in range(2)
         ]
 
-        client = TestClient(app_with_ah)
+        client = TestClient(app_with_ah, follow_redirects=False)
         client.post("/boodschappen/verstuur-naar-ah")
 
-        mock_ah_integratie.sync_naar_lijst.assert_called_once()
-        assert len(mock_ah_integratie.sync_naar_lijst.call_args[0][0].regels) == 5
+        mock_ah_integratie.zoek_producten.assert_called_once()
+        assert len(mock_ah_integratie.zoek_producten.call_args[0][0].regels) == 5
 
     def test_s20_3_alleen_handmatige_items_worden_verstuurd(
         self,
         app_with_ah,
         mock_token_manager,
         mock_ah_integratie,
-        sync_resultaat_succes,
-        setup_boodschappenlijst_met_handmatig,
+        setup_boodschappenlijst_met_handmatig,  # noqa: ARG002
     ):
-        """S20.3: Lijst met alleen handmatige items wordt volledig verstuurd."""
+        """S20.3: Alleen handmatige items → volledig doorgegeven aan zoek_producten."""
         mock_token_manager.is_authenticated.return_value = True
-        mock_ah_integratie.sync_naar_lijst.return_value = sync_resultaat_succes
+        mock_ah_integratie.zoek_producten.return_value = []
 
         from boodschappenagent.boodschappenlijst.models import Boodschappenlijst
 
@@ -462,44 +544,52 @@ class TestVerstuurNaarAHHandmatig:
             regels=[],
         )
         app_with_ah.state.boodschappenlijst = [
-            {"id": f"handmatig-{i}", "naam": f"handmatig-item-{i}", "hoeveelheid": 1, "eenheid": "stuks", "checked": False, "handmatig": True, "eerste_recept": None, "extra_aantal": 0}
+            {
+                "id": f"handmatig-{i}",
+                "naam": f"handmatig-item-{i}",
+                "hoeveelheid": 1,
+                "eenheid": "stuks",
+                "checked": False,
+                "handmatig": True,
+                "eerste_recept": None,
+                "extra_aantal": 0,
+            }
             for i in range(2)
         ]
 
-        client = TestClient(app_with_ah)
+        client = TestClient(app_with_ah, follow_redirects=False)
         client.post("/boodschappen/verstuur-naar-ah")
 
-        mock_ah_integratie.sync_naar_lijst.assert_called_once()
-        assert len(mock_ah_integratie.sync_naar_lijst.call_args[0][0].regels) == 2
+        mock_ah_integratie.zoek_producten.assert_called_once()
+        assert len(mock_ah_integratie.zoek_producten.call_args[0][0].regels) == 2
 
-    def test_s20_4_bevestiging_flow_met_handmatig(
+    def test_s20_4_gemengde_lijst_redirect_naar_match_review(
         self,
         app_with_ah,
         mock_token_manager,
         mock_ah_integratie,
-        sync_resultaat_succes,
-        setup_boodschappenlijst_met_handmatig,
+        setup_boodschappenlijst_met_handmatig,  # noqa: ARG002
     ):
-        """S20.4: Gemengde lijst geeft bevestigingspagina (geen foutpagina)."""
+        """S20.4: Gemengde lijst → 303 redirect naar match-review."""
         mock_token_manager.is_authenticated.return_value = True
-        mock_ah_integratie.sync_naar_lijst.return_value = sync_resultaat_succes
+        mock_ah_integratie.zoek_producten.return_value = []
 
-        client = TestClient(app_with_ah)
+        client = TestClient(app_with_ah, follow_redirects=False)
         response = client.post("/boodschappen/verstuur-naar-ah")
 
-        assert response.status_code == 200
-        assert soup(response).select_one('[data-testid="ah-bevestiging"]') is not None
+        assert response.status_code == 303
+        assert response.headers["location"] == "/boodschappen/match-review"
 
     def test_s20_5_fout_bij_versturen_toont_foutmelding(
         self,
         app_with_ah,
         mock_token_manager,
         mock_ah_integratie,
-        setup_boodschappenlijst_met_handmatig,
+        setup_boodschappenlijst_met_handmatig,  # noqa: ARG002
     ):
-        """S20.5: AH API fout toont foutmelding, lijst blijft ongewijzigd (FR-004/SC-004)."""
+        """S20.5: AH API fout toont foutmelding, lijst blijft ongewijzigd."""
         mock_token_manager.is_authenticated.return_value = True
-        mock_ah_integratie.sync_naar_lijst.side_effect = Exception("AH API error")
+        mock_ah_integratie.zoek_producten.side_effect = Exception("AH API error")
 
         client = TestClient(app_with_ah)
         response = client.post("/boodschappen/verstuur-naar-ah")
@@ -513,9 +603,9 @@ class TestVerstuurNaarAHHandmatig:
         app_with_ah,
         mock_token_manager,
         mock_ah_integratie,
-        setup_boodschappenlijst_met_handmatig,
+        setup_boodschappenlijst_met_handmatig,  # noqa: ARG002
     ):
-        """S20.6: Lege boodschappenlijst toont lege-lijst melding, sync niet aangeroepen."""
+        """S20.6: Lege lijst toont melding; zoek_producten niet aangeroepen."""
         mock_token_manager.is_authenticated.return_value = True
 
         from boodschappenagent.boodschappenlijst.models import Boodschappenlijst
@@ -531,4 +621,4 @@ class TestVerstuurNaarAHHandmatig:
 
         assert response.status_code == 200
         assert soup(response).select_one('[data-testid="ah-lege-lijst"]') is not None
-        mock_ah_integratie.sync_naar_lijst.assert_not_called()
+        mock_ah_integratie.zoek_producten.assert_not_called()

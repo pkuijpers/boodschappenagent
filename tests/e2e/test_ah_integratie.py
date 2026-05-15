@@ -2,8 +2,8 @@
 
 import pytest
 
-from boodschappenagent.ah import ProductMatch, SyncResultaat
 from boodschappenagent.ah.models import Product
+from boodschappenagent.ah.preferences import MatchReviewItem
 
 
 @pytest.mark.e2e
@@ -92,7 +92,7 @@ class TestE17LoginFlowFout:
 
 @pytest.mark.e2e
 class TestE18VerstuurNaarAHSucces:
-    """E18: Verstuur naar AH (succes)."""
+    """E18: Verstuur naar AH (succes) — via match-review flow."""
 
     def test_verstuur_naar_ah_toont_bevestiging(
         self,
@@ -100,54 +100,24 @@ class TestE18VerstuurNaarAHSucces:
         live_server_url,
         app,
         mock_ah_token_manager,
-        mock_ah_integratie,
     ):
-        """Verstuur -> bevestigingsscherm."""
-        # Setup: authenticeer en zet sync resultaat
+        """Verstuur -> match-review -> bevestig -> bevestigingsscherm."""
         mock_ah_token_manager.is_authenticated.return_value = True
-
-        matches = [
-            ProductMatch(
-                regel=type("Regel", (), {"naam": f"product-{i}"})(),
-                product=Product(
-                    id=i, title=f"AH Product {i}", brand="AH",
-                    size="1 stuk", price=2.99, category="", is_orderable=True,
-                ),
-                bron="zoekopdracht",
-            )
-            for i in range(5)
-        ]
-        mock_ah_integratie.sync_naar_lijst.return_value = SyncResultaat(
-            lijst_id="e2e-list-123",
-            lijst_naam="Boodschappen 2026-02-16",
-            matches=matches,
-        )
-
-        # Reset app state voor boodschappenlijst
         app.state.boodschappenlijst = None
+        app.state.match_review_items = []
 
         page.goto(f"{live_server_url}/boodschappen")
         page.wait_for_selector("[data-testid='boodschappen-header']")
 
-        # Verstuur naar AH via formulier POST (de knop komt in stap 7)
-        page.evaluate("""() => {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '/boodschappen/verstuur-naar-ah';
-            document.body.appendChild(form);
-            form.submit();
-        }""")
+        page.click("[data-testid='verstuur-naar-ah-button']")
+        page.wait_for_url("**/boodschappen/match-review")
 
-        # Bevestigingsscherm zichtbaar
+        page.click("[data-testid='bevestig-btn']")
+        page.wait_for_url("**/boodschappen/ah-bevestiging", timeout=5000)
+
         bevestiging = page.locator('[data-testid="ah-bevestiging"]')
-        bevestiging.wait_for(state="visible", timeout=5000)
+        assert bevestiging.is_visible()
 
-        # Aantal producten
-        aantal = page.locator('[data-testid="ah-aantal-producten"]')
-        assert aantal.is_visible()
-        assert "5" in aantal.text_content()
-
-        # "Open Albert Heijn" link
         ah_link = page.locator('[data-testid="ah-open-link"]')
         assert ah_link.is_visible()
         assert "ah.nl" in ah_link.get_attribute("href")
@@ -155,73 +125,51 @@ class TestE18VerstuurNaarAHSucces:
 
 @pytest.mark.e2e
 class TestE19NietGevondenProducten:
-    """E19: Niet-gevonden producten — verstuur met 2 onvindbare producten."""
+    """E19: Niet-gevonden producten — match-review toont amber kaart, knop disabled."""
 
-    def test_niet_gevonden_sectie_zichtbaar(
+    def test_geen_match_toont_uitgeschakelde_knop(
         self,
         page,
         live_server_url,
         app,
-        mock_ah_token_manager,
-        mock_ah_integratie,
     ):
-        """Verstuur met 2 niet-gevonden producten -> niet-gevonden sectie zichtbaar."""
-        mock_ah_token_manager.is_authenticated.return_value = True
-
-        # 3 gevonden + 2 niet gevonden
-        gevonden_matches = [
-            ProductMatch(
-                regel=type("Regel", (), {"naam": f"product-{i}"})(),
-                product=Product(
-                    id=i, title=f"AH Product {i}", brand="AH",
-                    size="1 stuk", price=2.99, category="", is_orderable=True,
-                ),
-                bron="zoekopdracht",
-            )
-            for i in range(3)
-        ]
-        niet_gevonden_matches = [
-            ProductMatch(
-                regel=type("Regel", (), {"naam": naam})(),
+        """Items zonder match tonen amber stijl en bevestig-knop is uitgeschakeld."""
+        app.state.match_review_items = [
+            MatchReviewItem(
+                id="niet-gevonden-e19",
+                naam="verse basilicum",
+                hoeveelheid=1.0,
+                eenheid="bos",
                 product=None,
                 bron="niet_gevonden",
-            )
-            for naam in ["verse basilicum", "za'atar kruiden"]
+                gecorrigeerd=False,
+                aantal=1,
+            ),
+            MatchReviewItem(
+                id="gevonden-e19",
+                naam="rijst",
+                hoeveelheid=1.0,
+                eenheid="kg",
+                product=Product(
+                    id=10,
+                    title="AH Rijst 1kg",
+                    brand="AH",
+                    size="1 kg",
+                    price=1.29,
+                    category="",
+                    is_orderable=True,
+                ),
+                bron="zoekopdracht",
+                gecorrigeerd=False,
+                aantal=1,
+            ),
         ]
-        mock_ah_integratie.sync_naar_lijst.return_value = SyncResultaat(
-            lijst_id="e2e-list-456",
-            lijst_naam="Boodschappen 2026-02-16",
-            matches=gevonden_matches + niet_gevonden_matches,
-        )
 
-        app.state.boodschappenlijst = None
+        page.goto(f"{live_server_url}/boodschappen/match-review")
+        page.wait_for_selector("[data-testid='match-review']")
 
-        page.goto(f"{live_server_url}/boodschappen")
-        page.wait_for_selector("[data-testid='boodschappen-header']")
-
-        # Verstuur via JS form submit
-        page.evaluate("""() => {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '/boodschappen/verstuur-naar-ah';
-            document.body.appendChild(form);
-            form.submit();
-        }""")
-
-        # Bevestigingsscherm zichtbaar
-        page.locator('[data-testid="ah-bevestiging"]').wait_for(
-            state="visible", timeout=5000
-        )
-
-        # Niet-gevonden sectie zichtbaar
-        niet_gevonden = page.locator('[data-testid="ah-niet-gevonden"]')
-        assert niet_gevonden.is_visible()
-
-        # Beide niet-gevonden productnamen zichtbaar
-        items = page.locator('[data-testid="ah-niet-gevonden-item"]')
-        assert items.count() == 2
-        teksten = [items.nth(i).text_content() for i in range(2)]
-        assert any("verse basilicum" in t for t in teksten)
+        btn = page.locator('[data-testid="bevestig-btn"]')
+        assert btn.is_disabled()
 
 
 @pytest.mark.e2e
@@ -263,30 +211,27 @@ class TestE21VolleFlow:
         app,
         mock_ah_token_manager,
     ):
-        """Hele flow werkt: boodschappen -> verstuur -> bevestiging -> /week."""
+        """Hele flow: boodschappen -> verstuur -> match-review -> bevestig -> /week."""
         mock_ah_token_manager.is_authenticated.return_value = True
         mock_ah_token_manager.is_authenticated.side_effect = None
 
         app.state.boodschappenlijst = None
+        app.state.match_review_items = []
 
         page.goto(f"{live_server_url}/boodschappen")
         page.wait_for_selector("[data-testid='boodschappen-header']")
 
-        # Klik "Verstuur naar AH" knop (nu een form submit)
-        verstuur_knop = page.locator('[data-testid="verstuur-naar-ah-button"]')
-        verstuur_knop.wait_for(state="visible")
-        verstuur_knop.click()
+        page.click("[data-testid='verstuur-naar-ah-button']")
+        page.wait_for_url("**/boodschappen/match-review")
 
-        # Bevestigingsscherm zichtbaar
-        bevestiging = page.locator('[data-testid="ah-bevestiging"]')
-        bevestiging.wait_for(state="visible", timeout=5000)
-        assert bevestiging.is_visible()
+        page.click("[data-testid='bevestig-btn']")
+        page.wait_for_url("**/boodschappen/ah-bevestiging", timeout=5000)
 
-        # Klik "Terug naar home"
+        assert page.locator('[data-testid="ah-bevestiging"]').is_visible()
+
         terug_link = page.get_by_role("link", name="Terug naar home")
         terug_link.wait_for(state="visible")
         terug_link.click()
         page.wait_for_url("**/week**", timeout=5000)
 
-        # Eindig op /week
         assert "/week" in page.url

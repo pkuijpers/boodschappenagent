@@ -1,31 +1,34 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version change: (none) → 1.0.0 (initial constitution — first ratification)
+Version change: 1.1.0 → 1.1.1
+
+Bump rationale: PATCH — removed three subsections that were at the wrong
+abstraction level for a constitution (System Components, Development Phases,
+CO2-Seizoenskalender Logic). These belong in CLAUDE.md and feature specs
+respectively. Principle V simplified to retain only the non-negotiable design
+decision (no seasonal tags on recipes) without algorithm or file-path detail.
 
 Modified principles:
-  N/A (first creation; all placeholders replaced)
+  V. Domain Modelling — removed implementation-specific CO2 algorithm detail;
+     retained the non-negotiable "no seasonal tags on recipes" rule
 
 Added sections:
-  - Core Principles (5 principles)
-  - Technical Standards
-  - Development Workflow
-  - Governance
+  None
 
 Removed sections:
-  N/A
+  - Technical Standards: System Components (belongs in CLAUDE.md)
+  - Technical Standards: CO2-Seizoenskalender Logic (belongs in feature spec)
+  - Technical Standards: Development Phases (belongs in CLAUDE.md)
 
 Templates reviewed:
-  ✅ .specify/templates/plan-template.md — Constitution Check gate is generic;
-     no outdated references found
-  ✅ .specify/templates/spec-template.md — no constitution-specific tokens;
-     no updates needed
-  ✅ .specify/templates/tasks-template.md — task categorization aligns with TDD
-     principle; no updates needed
+  ✅ .specify/templates/plan-template.md — no updates needed
+  ✅ .specify/templates/spec-template.md — no updates needed
+  ✅ .specify/templates/tasks-template.md — no updates needed
   ℹ  .specify/templates/commands/ — directory does not exist; skipped
 
 Deferred items:
-  None — all placeholders resolved
+  None
 -->
 
 # Boodschappenagent Constitution
@@ -62,7 +65,8 @@ All Python code MUST pass `ruff check` and `ruff format` before commit.
 Line-length violations MUST be fixed. In templates, inline `style` attributes
 and hardcoded hex color values are forbidden; all visual tokens MUST be
 defined once in the Tailwind config inside `base.html` using semantic names
-(`ah-*`, `hf-*`, `muted-*`).
+(`ah-*` for Albert Heijn brand, `hf-*` for HelloFresh, `muted-*` for
+inactive/disabled states).
 
 ### V. Domain Modelling
 
@@ -70,6 +74,29 @@ All domain models MUST be frozen dataclasses. Serialization MUST use the
 `to_dict()` / `from_dict()` pattern. Search and filter chains MUST use a
 fluent interface. Data is persisted in JSON files under `data/`; no
 relational database is used.
+
+Seasonal suitability of recipes MUST be derived at runtime from a CO2-based
+vegetable calendar, not from static tags on individual recipes. Seasonal tags
+on recipes are forbidden.
+
+### VI. UI/UX Design Philosophy
+
+The UI MUST follow the "Systeem stelt voor, jij past aan" principle: the app
+always opens with a fully populated weekly menu proposal — never a blank
+screen. The user's task is to reject or replace, not to build from zero.
+
+All interactive targets MUST be at least 44×44 pt (touch-first). The primary
+platform is iOS/iPadOS (iPhone 13 viewport: 390×844 for E2E tests). All
+screen transitions MUST use HTMX out-of-band updates: when a sheet is open
+and the user triggers a change (dagtype, persons, shuffle recipe), the
+background dagkaart MUST update in place while the sheet remains open. No
+full-page reloads for within-session changes.
+
+The weekly planning flow is a fixed 6-step sequence:
+Weekoverzicht → (optioneel) Recept vervangen / Shuffle → Voorraadcheck →
+Boodschappenlijst → AH Mandje → Kookmodus (dagelijks, los van de flow).
+No step MAY be skipped by the system; the user MAY choose to proceed past
+any step directly.
 
 ## Technical Standards
 
@@ -82,6 +109,9 @@ script execution (`uv run`, `uv add`, `uv sync`). Never use `pip` directly.
 pattern via `create_app()` for testability.
 
 **Frontend**: HTMX + Tailwind CSS (CDN) — no bundler, no SPA.
+Color tokens defined in `base.html` Tailwind config:
+`ah-blue (#00A0E2)`, `ah-blue-dark (#0077B3)`, `hf-orange (#FF6B00)`,
+`muted-bg (#F5F5F5)`.
 
 **Testing stack**: pytest for unit tests; Playwright for E2E tests
 (iPhone 13 emulation, 390×844). E2E tests are marked `@pytest.mark.e2e`.
@@ -130,4 +160,4 @@ principles before merge.
 
 Runtime development guidance: `CLAUDE.md`
 
-**Version**: 1.0.0 | **Ratified**: 2026-05-11 | **Last Amended**: 2026-05-11
+**Version**: 1.1.1 | **Ratified**: 2026-05-11 | **Last Amended**: 2026-05-14

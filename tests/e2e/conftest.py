@@ -13,7 +13,7 @@ import pytest
 import uvicorn
 from playwright.sync_api import Playwright
 
-from boodschappenagent.ah import ProductMatch, SyncResultaat
+from boodschappenagent.ah import ProductMatch
 from boodschappenagent.ah.models import FavoriteList, Product
 from boodschappenagent.models import Basis, Categorie, Ingredient, Recipe, Seizoen
 from boodschappenagent.planner import (
@@ -32,6 +32,7 @@ from boodschappenagent.web.dependencies import (
     get_ah_integratie,
     get_ah_token_manager,
     get_boodschappenlijst_filter,
+    get_match_voorkeuren_repository,
     get_menu_history,
     get_voorraad_checker,
     get_voorraad_repository,
@@ -122,11 +123,51 @@ TEST_HELLOFRESH_DAGEN: set[int] = {2}
 
 # Voorraad testproducten voor de AH 'Voorraad' favorietenlijst mock
 TEST_VOORRAAD_PRODUCTEN = [
-    Product(id=1001, title="melk", brand="", size="1L", price=1.09, category="Zuivel", is_orderable=True),
-    Product(id=1002, title="eieren", brand="", size="6 stuks", price=2.49, category="Zuivel", is_orderable=True),
-    Product(id=1003, title="boter", brand="", size="250g", price=1.59, category="Zuivel", is_orderable=True),
-    Product(id=1004, title="kaas", brand="", size="500g", price=3.99, category="Zuivel", is_orderable=True),
-    Product(id=1005, title="optimel", brand="", size="1.5L", price=2.19, category="Zuivel", is_orderable=True),
+    Product(
+        id=1001,
+        title="melk",
+        brand="",
+        size="1L",
+        price=1.09,
+        category="Zuivel",
+        is_orderable=True,
+    ),
+    Product(
+        id=1002,
+        title="eieren",
+        brand="",
+        size="6 stuks",
+        price=2.49,
+        category="Zuivel",
+        is_orderable=True,
+    ),
+    Product(
+        id=1003,
+        title="boter",
+        brand="",
+        size="250g",
+        price=1.59,
+        category="Zuivel",
+        is_orderable=True,
+    ),
+    Product(
+        id=1004,
+        title="kaas",
+        brand="",
+        size="500g",
+        price=3.99,
+        category="Zuivel",
+        is_orderable=True,
+    ),
+    Product(
+        id=1005,
+        title="optimel",
+        brand="",
+        size="1.5L",
+        price=2.19,
+        category="Zuivel",
+        is_orderable=True,
+    ),
 ]
 
 
@@ -171,8 +212,8 @@ def mock_ah_integratie():
         ProductMatch(
             regel=type("Regel", (), {"naam": f"product-{i}"})(),
             product=Product(
-                id=i,
-                title=f"AH Product {i}",
+                id=i + 1,
+                title=f"AH Product {i + 1}",
                 brand="AH",
                 size="1 stuk",
                 price=2.99,
@@ -180,14 +221,25 @@ def mock_ah_integratie():
                 is_orderable=True,
             ),
             bron="zoekopdracht",
+            aantal=1,
         )
         for i in range(5)
     ]
-    mock.sync_naar_lijst.return_value = SyncResultaat(
-        lijst_id="e2e-list-123",
-        lijst_naam="Boodschappen 2026-02-16",
-        matches=matches,
-    )
+    mock.zoek_producten.return_value = matches
+    mock.create_list.return_value = "e2e-list-123"
+    mock.add_products_to_list.return_value = None
+    # Zoekresultaten voor correctie flow
+    mock._client.search_products.return_value = [
+        Product(
+            id=99,
+            title="AH Gecorrigeerd Product",
+            brand="AH",
+            size="1 stuk",
+            price=1.49,
+            category="",
+            is_orderable=True,
+        )
+    ]
     return mock
 
 
@@ -217,6 +269,9 @@ def app(tmp_path_factory, mock_ah_token_manager, mock_ah_integratie, mock_ah_cli
     app.dependency_overrides[get_ah_integratie] = lambda: mock_ah_integratie
     app.dependency_overrides[get_ah_client] = lambda: mock_ah_client
     app.dependency_overrides[get_menu_history] = lambda: MenuHistory(history_path)
+    app.dependency_overrides[get_match_voorkeuren_repository] = lambda: MagicMock(
+        get=MagicMock(return_value=None)
+    )
 
     from boodschappenagent.planner import MenuPlanner, SeizoenKalender
     from boodschappenagent.web.dependencies import get_menu_planner
@@ -290,6 +345,46 @@ def boodschappen_page(page, live_server_url, app):
     app.state.week_menu = TEST_WEEK_MENU
     app.state.hellofresh_dagen = set(TEST_HELLOFRESH_DAGEN)
     app.state.boodschappenlijst = None
+    app.state.match_review_items = []
     page.goto(f"{live_server_url}/boodschappen")
     page.wait_for_selector("[data-testid='boodschappen-header']")
+    return page
+
+
+@pytest.fixture
+def match_review_page(page, live_server_url, app):
+    """Navigeer naar /boodschappen/match-review met pre-gevulde state."""
+    from boodschappenagent.ah.preferences import MatchReviewItem
+
+    app.state.week_menu = TEST_WEEK_MENU
+    app.state.boodschappenlijst_model = None
+    app.state.sync_resultaat = None
+
+    producten = [
+        Product(
+            id=i + 1,
+            title=f"AH Product {i + 1}",
+            brand="AH",
+            size="1 stuk",
+            price=2.99,
+            category="",
+            is_orderable=True,
+        )
+        for i in range(3)
+    ]
+    app.state.match_review_items = [
+        MatchReviewItem(
+            id=f"e2e-item-{i}",
+            naam=f"ingredient-{i + 1}",
+            hoeveelheid=1.0,
+            eenheid="stuks",
+            product=producten[i],
+            bron="zoekopdracht",
+            gecorrigeerd=False,
+            aantal=1,
+        )
+        for i in range(3)
+    ]
+    page.goto(f"{live_server_url}/boodschappen/match-review")
+    page.wait_for_selector("[data-testid='match-review']")
     return page

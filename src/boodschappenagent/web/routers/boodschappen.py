@@ -5,9 +5,11 @@ from typing import Annotated
 from uuid import uuid4
 
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, Response
 
 from boodschappenagent.ah import AHIntegratie, AHTokenManager
+from boodschappenagent.ah.integration import ProductMatch, SyncResultaat
+from boodschappenagent.ah.preferences import MatchReviewItem, MatchVoorkeurenRepository
 from boodschappenagent.boodschappenlijst import BoodschappenlijstGenerator
 from boodschappenagent.boodschappenlijst.models import (
     Boodschappenlijst,
@@ -19,6 +21,7 @@ from boodschappenagent.web.dependencies import (
     get_ah_token_manager,
     get_boodschappenlijst_filter,
     get_boodschappenlijst_generator,
+    get_match_voorkeuren_repository,
 )
 
 router = APIRouter()
@@ -221,22 +224,22 @@ async def verstuur_naar_ah(
     request: Request,
     token_manager: Annotated[AHTokenManager, Depends(get_ah_token_manager)],
     ah_integratie: Annotated[AHIntegratie, Depends(get_ah_integratie)],
+    voorkeuren_repo: Annotated[
+        MatchVoorkeurenRepository, Depends(get_match_voorkeuren_repository)
+    ],
 ):
-    """Verstuur boodschappenlijst naar Albert Heijn."""
+    """Match boodschappenlijst aan AH producten en redirect naar match-review."""
     templates = request.app.state.templates
 
     if not _is_ah_authenticated(token_manager):
         return RedirectResponse(url="/ah/login", status_code=303)
 
-    # Check of er een boodschappenlijst is
     sentinel = _get_boodschappenlijst(request)
     if sentinel is None:
         return RedirectResponse(url="/week", status_code=303)
 
-    # Bouw te versturen lijst op vanuit UI-itemslijst (bevat menu + handmatige items)
     te_versturen = [item for item in _get_items(request) if not item.get("checked")]
 
-    # Check op lege lijst
     if not te_versturen:
         return templates.TemplateResponse(
             request=request,
@@ -255,9 +258,8 @@ async def verstuur_naar_ah(
     ]
     lijst = Boodschappenlijst(week_start=sentinel.week_start, regels=regels)
 
-    # Sync naar AH
     try:
-        resultaat = ah_integratie.sync_naar_lijst(lijst)
+        matches = ah_integratie.zoek_producten(lijst, voorkeuren_repo=voorkeuren_repo)
     except Exception:
         return templates.TemplateResponse(
             request=request,
@@ -265,8 +267,229 @@ async def verstuur_naar_ah(
             context={"error_type": "api_error"},
         )
 
+    review_items = [
+        MatchReviewItem(
+            id=str(uuid4()),
+            naam=match.regel.naam,
+            hoeveelheid=getattr(match.regel, "hoeveelheid", None),
+            eenheid=getattr(match.regel, "eenheid", "stuks"),
+            product=match.product,
+            bron=match.bron,
+            gecorrigeerd=False,
+            aantal=match.aantal,
+        )
+        for match in matches
+    ]
+    request.app.state.match_review_items = review_items
+
+    return RedirectResponse(url="/boodschappen/match-review", status_code=303)
+
+
+@router.get("/boodschappen/match-review")
+async def match_review(request: Request):
+    """Match-review pagina — toont alle gematche items voor bevestiging."""
+    items = getattr(request.app.state, "match_review_items", None) or []
+    if not items:
+        return RedirectResponse(url="/boodschappen", status_code=303)
+
+    templates = request.app.state.templates
+    return templates.TemplateResponse(
+        request=request,
+        name="pages/match_review.html",
+        context={"items": items},
+    )
+
+
+@router.post("/boodschappen/bevestig-matches")
+async def bevestig_matches(
+    request: Request,
+    token_manager: Annotated[AHTokenManager, Depends(get_ah_token_manager)],
+    ah_integratie: Annotated[AHIntegratie, Depends(get_ah_integratie)],
+    voorkeuren_repo: Annotated[
+        MatchVoorkeurenRepository, Depends(get_match_voorkeuren_repository)
+    ],
+):
+    """Maak AH-lijst aan van bevestigde matches; sla correcties op als voorkeur."""
+    if not _is_ah_authenticated(token_manager):
+        return RedirectResponse(url="/ah/login", status_code=303)
+
+    items: list[MatchReviewItem] = (
+        getattr(request.app.state, "match_review_items", None) or []
+    )
+
+    if any(item.product is None for item in items):
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "Niet alle items hebben een match"
+                " — bevestig pas als alle items een product hebben"
+            ),
+        )
+
+    sentinel = _get_boodschappenlijst(request)
+    lijst_naam = f"Boodschappen {sentinel.week_start}" if sentinel else "Boodschappen"
+
+    lijst_id = ah_integratie.create_list(lijst_naam)
+
+    product_quantities: dict[int, int] = {}
+    for item in items:
+        product_quantities[item.product.id] = (
+            product_quantities.get(item.product.id, 0) + item.aantal
+        )
+    if product_quantities:
+        ah_integratie.add_products_to_list(lijst_id, list(product_quantities.items()))
+
+    # Sla bevestigde matches op als voorkeur (US3)
+    # Skip alleen items die al als ongewijzigde voorkeur zijn ingeladen.
+    from datetime import datetime
+
+    from boodschappenagent.ah.preferences import MatchVoorkeur
+
+    for item in items:
+        if item.product is not None and (item.gecorrigeerd or item.bron != "voorkeur"):
+            voorkeuren_repo.save(
+                MatchVoorkeur(
+                    ingredient_naam=item.naam.lower().strip(),
+                    article_id=item.product.id,
+                    product_naam=item.product.title,
+                    updated_at=datetime.now().isoformat(timespec="seconds"),
+                )
+            )
+
+    # Bouw SyncResultaat voor de bevestigingspagina
+    productmatches = [
+        ProductMatch(
+            regel=type("Regel", (), {"naam": item.naam})(),
+            product=item.product,
+            bron=item.bron,
+            aantal=item.aantal,
+        )
+        for item in items
+    ]
+    resultaat = SyncResultaat(
+        lijst_id=lijst_id,
+        lijst_naam=lijst_naam,
+        matches=productmatches,
+    )
+    request.app.state.sync_resultaat = resultaat
+
+    request.app.state.match_review_items = []
+
+    redirect_url = "/boodschappen/ah-bevestiging"
+    if request.headers.get("HX-Request") == "true":
+        response = Response(status_code=200)
+        response.headers["HX-Redirect"] = redirect_url
+        return response
+    return RedirectResponse(url=redirect_url, status_code=303)
+
+
+@router.get("/boodschappen/ah-bevestiging")
+async def ah_bevestiging(request: Request):
+    """Bevestigingspagina na het aanmaken van de AH-lijst."""
+    resultaat = getattr(request.app.state, "sync_resultaat", None)
+    if resultaat is None:
+        return RedirectResponse(url="/week", status_code=303)
+
+    templates = request.app.state.templates
     return templates.TemplateResponse(
         request=request,
         name="pages/ah_bevestiging.html",
         context={"resultaat": resultaat},
     )
+
+
+@router.get("/boodschappen/zoek-product")
+async def zoek_product(
+    request: Request,
+    q: str,
+    item_id: str,
+    ah_integratie: Annotated[AHIntegratie, Depends(get_ah_integratie)],
+):
+    """Zoek AH-producten voor het corrigeren van een match (HTMX fragment)."""
+    items: list[MatchReviewItem] = (
+        getattr(request.app.state, "match_review_items", None) or []
+    )
+    item = next((i for i in items if i.id == item_id), None)
+    if item is None:
+        raise HTTPException(status_code=404, detail="Item niet gevonden")
+
+    producten = []
+    if q and q.strip():
+        try:
+            producten = ah_integratie._client.search_products(q.strip())[:10]
+        except Exception:
+            producten = []
+
+    templates = request.app.state.templates
+    # q leeg → initieel openen: zoekbalk + lege container.
+    # q gevuld → alleen resultaten, zodat de input niet wordt vervangen.
+    template_name = (
+        "fragments/zoekresultaten_inner.html"
+        if q and q.strip()
+        else "fragments/zoekresultaten.html"
+    )
+    return templates.TemplateResponse(
+        request=request,
+        name=template_name,
+        context={"producten": producten, "item_id": item_id},
+    )
+
+
+@router.post("/boodschappen/kies-product")
+async def kies_product(
+    request: Request,
+    item_id: Annotated[str, Form()],
+    article_id: Annotated[int, Form()],
+    title: Annotated[str, Form()],
+    brand: Annotated[str, Form()] = "",
+    size: Annotated[str, Form()] = "",
+    price: Annotated[float, Form()] = 0.0,
+    category: Annotated[str, Form()] = "",
+):
+    """Kies een alternatief product voor een match-review item (HTMX OOB swap)."""
+    if article_id <= 0:
+        raise HTTPException(status_code=400, detail="Ongeldig article_id")
+
+    items: list[MatchReviewItem] = (
+        getattr(request.app.state, "match_review_items", None) or []
+    )
+    item = next((i for i in items if i.id == item_id), None)
+    if item is None:
+        raise HTTPException(status_code=404, detail="Item niet gevonden")
+
+    from boodschappenagent.ah.models import Product
+    from boodschappenagent.ah.quantity_calculator import bereken_aantal
+    from boodschappenagent.boodschappenlijst.models import BoodschappenRegel
+
+    product = Product(
+        id=article_id,
+        title=title,
+        brand=brand,
+        size=size,
+        price=price,
+        category=category,
+        is_orderable=True,
+    )
+
+    regel = BoodschappenRegel(
+        naam=item.naam,
+        hoeveelheid=item.hoeveelheid or 1.0,
+        eenheid=item.eenheid,
+        originele_namen=frozenset({item.naam}),
+    )
+    item.product = product
+    item.bron = "zoekopdracht"
+    item.gecorrigeerd = True
+    item.aantal = bereken_aantal(regel, product)
+
+    alle_gevonden = all(i.product is not None for i in items)
+
+    templates = request.app.state.templates
+
+    card_html = templates.get_template("fragments/match_review_item.html").render(
+        {"item": item, "request": request}
+    )
+    btn_html = templates.get_template("fragments/bevestig_btn.html").render(
+        {"alle_gevonden": alle_gevonden, "request": request}
+    )
+    return HTMLResponse(content=card_html + btn_html)

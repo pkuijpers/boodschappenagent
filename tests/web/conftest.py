@@ -35,6 +35,7 @@ from boodschappenagent.web.dependencies import (
     get_all_recipes,
     get_boodschappenlijst_filter,
     get_boodschappenlijst_generator,
+    get_match_voorkeuren_repository,
     get_menu_history,
     get_menu_planner,
     get_voorraad_repository,
@@ -281,8 +282,13 @@ def boodschappenlijst_filter(voorraad_repository) -> BoodschappenlijstFilter:
 
 
 @pytest.fixture
-def app_with_voorraad(app_with_overrides, voorraad_repository, mock_ah_client, mock_token_manager_authenticated) -> FastAPI:
-    """App met dependency_overrides voor VoorraadRepository, AHClient en ingelogde token manager."""
+def app_with_voorraad(
+    app_with_overrides,
+    voorraad_repository,
+    mock_ah_client,
+    mock_token_manager_authenticated,
+) -> FastAPI:
+    """App met overrides voor VoorraadRepository, AHClient en ingelogde TokenManager."""
     app_with_overrides.dependency_overrides[get_voorraad_repository] = (
         lambda: voorraad_repository
     )
@@ -341,30 +347,59 @@ def mock_ah_integratie() -> MagicMock:
     return MagicMock()
 
 
+@pytest.fixture
+def mock_match_voorkeuren_repository() -> MagicMock:
+    """Gemockte MatchVoorkeurenRepository (geen echte JSON bestandstoegang)."""
+    mock = MagicMock()
+    mock.get.return_value = None
+    return mock
+
+
 def _apply_ah_overrides(
-    app: FastAPI, mock_token_manager: MagicMock, mock_ah_integratie: MagicMock
+    app: FastAPI,
+    mock_token_manager: MagicMock,
+    mock_ah_integratie: MagicMock,
+    mock_match_voorkeuren_repository: MagicMock | None = None,
 ) -> FastAPI:
     """Installeer AH dependency overrides op een app."""
     app.dependency_overrides[get_ah_token_manager] = lambda: mock_token_manager
     app.dependency_overrides[get_ah_integratie] = lambda: mock_ah_integratie
+    if mock_match_voorkeuren_repository is not None:
+        app.dependency_overrides[get_match_voorkeuren_repository] = (
+            lambda: mock_match_voorkeuren_repository
+        )
     return app
 
 
 @pytest.fixture
-def app_with_ah(app_with_overrides, mock_token_manager, mock_ah_integratie) -> FastAPI:
+def app_with_ah(
+    app_with_overrides,
+    mock_token_manager,
+    mock_ah_integratie,
+    mock_match_voorkeuren_repository,
+) -> FastAPI:
     """App met dependency_overrides voor AH token manager en integratie."""
     return _apply_ah_overrides(
-        app_with_overrides, mock_token_manager, mock_ah_integratie
+        app_with_overrides,
+        mock_token_manager,
+        mock_ah_integratie,
+        mock_match_voorkeuren_repository,
     )
 
 
 @pytest.fixture
 def app_with_boodschappen_and_ah(
-    app_with_boodschappen, mock_token_manager, mock_ah_integratie
+    app_with_boodschappen,
+    mock_token_manager,
+    mock_ah_integratie,
+    mock_match_voorkeuren_repository,
 ) -> FastAPI:
     """App met boodschappen en AH dependencies."""
     return _apply_ah_overrides(
-        app_with_boodschappen, mock_token_manager, mock_ah_integratie
+        app_with_boodschappen,
+        mock_token_manager,
+        mock_ah_integratie,
+        mock_match_voorkeuren_repository,
     )
 
 

@@ -24,6 +24,7 @@
       "mcp__puppeteer__puppeteer_evaluate",
       "Bash(xargs basename:*)",
       "Bash(git -C:*)",
+      "Bash(bash .specify/extensions/git/scripts/bash/auto-commit.sh after_constitution)",
       "Bash(bash .specify/extensions/git/scripts/bash/auto-commit.sh after_plan)",
       "Bash(bash .specify/extensions/git/scripts/bash/auto-commit.sh after_implement)",
       "Bash(bash .specify/extensions/git/scripts/bash/create-new-feature.sh --json *)",

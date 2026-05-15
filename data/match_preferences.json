@@ -1,0 +1,56 @@
+{
+  "cheddar": {
+    "ingredient_naam": "cheddar",
+    "article_id": 454161,
+    "product_naam": "AH Cheddar geraspte kaas",
+    "updated_at": "2026-05-15T15:09:40"
+  },
+  "gerookte kipreepjes": {
+    "ingredient_naam": "gerookte kipreepjes",
+    "article_id": 477573,
+    "product_naam": "AH Scharrel kipfiletreepjes gerookt",
+    "updated_at": "2026-05-15T15:09:40"
+  },
+  "hummus": {
+    "ingredient_naam": "hummus",
+    "article_id": 438961,
+    "product_naam": "AH Terra Plantaardige hummus naturel",
+    "updated_at": "2026-05-15T15:09:40"
+  },
+  "peper": {
+    "ingredient_naam": "peper",
+    "article_id": 414981,
+    "product_naam": "Verstegen Zwarte peper heel",
+    "updated_at": "2026-05-15T15:09:40"
+  },
+  "tuinkers": {
+    "ingredient_naam": "tuinkers",
+    "article_id": 41245,
+    "product_naam": "Discover Fresh Tuinkers",
+    "updated_at": "2026-05-15T15:09:40"
+  },
+  "gemalen komijn": {
+    "ingredient_naam": "gemalen komijn",
+    "article_id": 570443,
+    "product_naam": "AH Komijn gemalen",
+    "updated_at": "2026-05-15T15:40:46"
+  },
+  "italiaanse roerbakgroente champignons": {
+    "ingredient_naam": "italiaanse roerbakgroente champignons",
+    "article_id": 133277,
+    "product_naam": "AH Roerbakgroente Italiaans champignons",
+    "updated_at": "2026-05-15T15:40:46"
+  },
+  "maistortillas": {
+    "ingredient_naam": "maistortillas",
+    "article_id": 450151,
+    "product_naam": "La Morena Gele maistortilla (10 stks)",
+    "updated_at": "2026-05-15T15:40:46"
+  },
+  "olijfolie": {
+    "ingredient_naam": "olijfolie",
+    "article_id": 48896,
+    "product_naam": "AH Olijfolie traditioneel",
+    "updated_at": "2026-05-15T15:40:46"
+  }
+}

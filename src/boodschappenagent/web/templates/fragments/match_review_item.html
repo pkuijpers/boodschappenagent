@@ -1,0 +1,98 @@
+{#
+  Match review card — één item.
+  Gebruik: {% include "fragments/match_review_item.html" with item=item %}
+  Variables: item (MatchReviewItem)
+  States: 1=gevonden, 2=voorkeur, 3=niet_gevonden, 4=zoeken, 5=gecorrigeerd, 6=voorkeur_niet_beschikbaar
+#}
+
+{% set has_match = item.product is not none %}
+{% set is_gecorrigeerd = item.gecorrigeerd %}
+{% set is_voorkeur = item.bron == "voorkeur" %}
+{% set is_voorkeur_niet_beschikbaar = item.bron == "voorkeur_niet_beschikbaar" %}
+{% set is_geen_match = not has_match %}
+
+{% if is_gecorrigeerd %}
+  {% set card_class = "bg-white rounded-xl p-4 border border-gray-100 border-l-4 border-l-ah-green" %}
+{% elif is_geen_match %}
+  {% set card_class = "bg-amber-50 rounded-xl p-4 border border-amber-200" %}
+{% else %}
+  {% set card_class = "bg-white rounded-xl p-4 border border-gray-100" %}
+{% endif %}
+
+<div id="item-{{ item.id }}" class="{{ card_class }}" data-testid="match-review-item">
+  <!-- Ingredient header -->
+  <div class="flex items-center justify-between mb-1">
+    <span class="text-gray-800 font-medium">{{ item.naam }}</span>
+
+    {% if is_geen_match %}
+      <button
+        class="text-sm font-medium text-amber-700"
+        hx-get="/boodschappen/zoek-product?item_id={{ item.id }}&q="
+        hx-target="#zoek-{{ item.id }}"
+        hx-swap="innerHTML"
+        type="button"
+      >
+        Zoek product
+      </button>
+    {% else %}
+      <button
+        class="text-sm font-medium text-ah-blue"
+        hx-get="/boodschappen/zoek-product?item_id={{ item.id }}&q="
+        hx-target="#zoek-{{ item.id }}"
+        hx-swap="innerHTML"
+        type="button"
+      >
+        Corrigeer ›
+      </button>
+    {% endif %}
+  </div>
+
+  <!-- Hoeveelheid / eenheid -->
+  {% if item.hoeveelheid is not none %}
+    <p class="text-sm text-gray-400 mb-2">
+      {{ item.hoeveelheid | int if item.hoeveelheid == item.hoeveelheid | int else item.hoeveelheid }}
+      {{ item.eenheid }}
+    </p>
+  {% endif %}
+
+  <hr class="border-gray-100 mb-2">
+
+  <!-- Product sectie / zoekgebied -->
+  <div id="zoek-{{ item.id }}">
+    {% if has_match %}
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          {% if is_gecorrigeerd %}
+            <span class="text-ah-green font-bold">✓</span>
+          {% else %}
+            <span class="text-gray-400">🛒</span>
+          {% endif %}
+          <span class="text-sm text-gray-700">{{ item.product.title }}</span>
+          {% if item.product.size %}<span class="text-xs text-gray-400">{{ item.product.size }}</span>{% endif %}
+        </div>
+        <span class="text-sm text-gray-500 ml-2">
+          € {{ "%.2f"|format(item.product.price) | replace(".", ",") }}
+        </span>
+      </div>
+
+      <!-- Bron badge -->
+      <div class="mt-1">
+        {% if is_voorkeur %}
+          <span class="text-xs bg-ah-blue-light text-ah-blue px-2 py-0.5 rounded-full">⭐ voorkeur</span>
+        {% elif is_voorkeur_niet_beschikbaar %}
+          <span class="text-xs text-amber-700">⚠️ voorkeur niet meer beschikbaar</span>
+        {% elif is_gecorrigeerd %}
+          <span class="text-xs text-gray-400">✏️ gecorrigeerd</span>
+        {% else %}
+          <span class="text-xs text-gray-400">{{ item.bron }}</span>
+        {% endif %}
+      </div>
+    {% else %}
+      <!-- State 3: geen match -->
+      <div class="flex items-center gap-2 text-amber-700">
+        <span>⚠️</span>
+        <span class="text-sm">Geen match gevonden</span>
+      </div>
+    {% endif %}
+  </div>
+</div>
