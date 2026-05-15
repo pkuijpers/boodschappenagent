@@ -559,15 +559,9 @@ class TestZoekProduct:
 class TestKiesProduct:
     """T016: POST /boodschappen/kies-product werkt item bij en retourneert OOB fragment."""  # noqa: E501
 
-    def test_werkt_item_bij_met_gekozen_product(
-        self, app_with_ah, mock_token_manager, mock_ah_integratie
-    ):
-        """Geldig item_id + article_id → item bijgewerkt in state."""
+    def test_werkt_item_bij_met_gekozen_product(self, app_with_ah, mock_token_manager):
+        """Geldig item_id + article_id + product-velden → item bijgewerkt in state."""
         mock_token_manager.is_authenticated.return_value = True
-        nieuw_product = _make_product(
-            article_id=999, naam="AH Halfvolle melk 1L", prijs=0.99
-        )
-        mock_ah_integratie._client.search_products.return_value = [nieuw_product]
 
         items = [_make_match_review_item("melk")]
         item_id = items[0].id
@@ -576,7 +570,15 @@ class TestKiesProduct:
         client = TestClient(app_with_ah)
         response = client.post(
             "/boodschappen/kies-product",
-            data={"item_id": item_id, "article_id": 999},
+            data={
+                "item_id": item_id,
+                "article_id": 999,
+                "title": "AH Halfvolle melk 1L",
+                "brand": "AH",
+                "size": "1L",
+                "price": "0.99",
+                "category": "Zuivel",
+            },
         )
 
         assert response.status_code == 200
@@ -595,7 +597,7 @@ class TestKiesProduct:
         client = TestClient(app_with_ah)
         response = client.post(
             "/boodschappen/kies-product",
-            data={"item_id": "niet-bestaand", "article_id": 123},
+            data={"item_id": "niet-bestaand", "article_id": 123, "title": "Test"},
         )
 
         assert response.status_code == 404
@@ -610,18 +612,14 @@ class TestKiesProduct:
         client = TestClient(app_with_ah)
         response = client.post(
             "/boodschappen/kies-product",
-            data={"item_id": item_id, "article_id": 0},
+            data={"item_id": item_id, "article_id": 0, "title": "Test"},
         )
 
         assert response.status_code == 400
 
-    def test_retourneert_oob_card_update(
-        self, app_with_ah, mock_token_manager, mock_ah_integratie
-    ):
+    def test_retourneert_oob_card_update(self, app_with_ah, mock_token_manager):
         """Respons bevat bijgewerkte card HTML voor HTMX OOB swap."""
         mock_token_manager.is_authenticated.return_value = True
-        nieuw_product = _make_product(article_id=777, naam="AH Pasta 500g")
-        mock_ah_integratie._client.search_products.return_value = [nieuw_product]
 
         items = [_make_match_review_item("pasta")]
         item_id = items[0].id
@@ -630,11 +628,55 @@ class TestKiesProduct:
         client = TestClient(app_with_ah)
         response = client.post(
             "/boodschappen/kies-product",
-            data={"item_id": item_id, "article_id": 777},
+            data={
+                "item_id": item_id,
+                "article_id": 777,
+                "title": "AH Pasta 500g",
+                "brand": "AH",
+                "size": "500g",
+                "price": "1.49",
+                "category": "Pasta",
+            },
         )
 
         assert response.status_code == 200
         assert f"item-{item_id}" in response.text
+
+    def test_product_gekozen_via_form_data_zonder_api_call(
+        self, app_with_ah, mock_token_manager, mock_ah_integratie
+    ):
+        """Reproduceert productie-bug: search_products("999") geeft in productie
+        nooit een product met id 999 terug. Product data moet uit form komen,
+        niet via een nieuwe AH API-call."""
+        mock_token_manager.is_authenticated.return_value = True
+        mock_ah_integratie._client.search_products.return_value = []
+
+        items = [_make_match_review_item("melk")]
+        item_id = items[0].id
+        _setup_match_review_state(app_with_ah, items)
+
+        client = TestClient(app_with_ah)
+        response = client.post(
+            "/boodschappen/kies-product",
+            data={
+                "item_id": item_id,
+                "article_id": 999,
+                "title": "AH Halfvolle melk 1L",
+                "brand": "AH",
+                "size": "1 liter",
+                "price": "0.99",
+                "category": "Zuivel",
+            },
+        )
+
+        assert response.status_code == 200
+        updated = next(
+            i for i in app_with_ah.state.match_review_items if i.id == item_id
+        )
+        assert updated.product.id == 999
+        assert updated.product.title == "AH Halfvolle melk 1L"
+        assert updated.gecorrigeerd is True
+        mock_ah_integratie._client.search_products.assert_not_called()
 
 
 # ── T023: Voorkeur opslaan bij bevestiging (US3) ──────────────────────────────

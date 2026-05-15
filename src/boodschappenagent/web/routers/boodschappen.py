@@ -432,7 +432,11 @@ async def kies_product(
     request: Request,
     item_id: Annotated[str, Form()],
     article_id: Annotated[int, Form()],
-    ah_integratie: Annotated[AHIntegratie, Depends(get_ah_integratie)],
+    title: Annotated[str, Form()],
+    brand: Annotated[str, Form()] = "",
+    size: Annotated[str, Form()] = "",
+    price: Annotated[float, Form()] = 0.0,
+    category: Annotated[str, Form()] = "",
 ):
     """Kies een alternatief product voor een match-review item (HTMX OOB swap)."""
     if article_id <= 0:
@@ -445,18 +449,19 @@ async def kies_product(
     if item is None:
         raise HTTPException(status_code=404, detail="Item niet gevonden")
 
-    try:
-        producten = ah_integratie._client.search_products(str(article_id))
-        product = next((p for p in producten if p.id == article_id), None)
-        if product is None:
-            raise HTTPException(status_code=404, detail="Product niet gevonden")
-    except HTTPException:
-        raise
-    except Exception as err:
-        raise HTTPException(status_code=400, detail="Fout bij ophalen product") from err
-
+    from boodschappenagent.ah.models import Product
     from boodschappenagent.ah.quantity_calculator import bereken_aantal
     from boodschappenagent.boodschappenlijst.models import BoodschappenRegel
+
+    product = Product(
+        id=article_id,
+        title=title,
+        brand=brand,
+        size=size,
+        price=price,
+        category=category,
+        is_orderable=True,
+    )
 
     regel = BoodschappenRegel(
         naam=item.naam,

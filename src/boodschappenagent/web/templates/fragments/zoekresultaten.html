@@ -32,7 +32,7 @@
           <button
             class="text-sm font-medium text-ah-blue py-1 px-2 min-h-[44px] min-w-[44px]"
             hx-post="/boodschappen/kies-product"
-            hx-vals='{"item_id": "{{ item_id }}", "article_id": {{ product.id }}}'
+            hx-vals='{{ {"item_id": item_id, "article_id": product.id, "title": product.title, "brand": product.brand, "size": product.size, "price": product.price, "category": product.category} | tojson }}'
             hx-target="#item-{{ item_id }}"
             hx-swap="outerHTML"
             type="button"
