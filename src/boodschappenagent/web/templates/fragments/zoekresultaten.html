@@ -1,6 +1,7 @@
 {#
-  Zoekresultaten fragment — zoekbalk + lijst van AH producten voor match-correctie.
-  Variables: producten (list[Product]), item_id (str UUID)
+  Zoekresultaten fragment — zoekbalk + container voor resultaten (state 4: search open).
+  Variables: item_id (str UUID)
+  De resultaten worden apart ingeladen via zoekresultaten_inner.html in #zoekresultaten-inner-{{ item_id }}.
 #}
 
 <!-- Zoekbalk (state 4: search open) -->
@@ -12,38 +13,11 @@
     class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-ah-blue"
     hx-get="/boodschappen/zoek-product?item_id={{ item_id }}"
     hx-trigger="input changed delay:300ms"
-    hx-target="#zoek-{{ item_id }}"
+    hx-target="#zoekresultaten-inner-{{ item_id }}"
     hx-swap="innerHTML"
     data-testid="zoek-input"
     autofocus
   >
 </div>
 
-{% if producten %}
-  <div class="divide-y divide-gray-100" data-testid="zoekresultaten-lijst">
-    {% for product in producten %}
-      <div class="flex items-center justify-between py-2">
-        <div>
-          <p class="text-sm text-gray-800">{{ product.title }}</p>
-          <p class="text-xs text-gray-500">{{ product.brand }}{% if product.size %} · {{ product.size }}{% endif %}</p>
-        </div>
-        <div class="flex items-center gap-3 ml-2">
-          <span class="text-sm text-gray-500">€ {{ "%.2f"|format(product.price) | replace(".", ",") }}</span>
-          <button
-            class="text-sm font-medium text-ah-blue py-1 px-2 min-h-[44px] min-w-[44px]"
-            hx-post="/boodschappen/kies-product"
-            hx-vals='{{ {"item_id": item_id, "article_id": product.id, "title": product.title, "brand": product.brand, "size": product.size, "price": product.price, "category": product.category} | tojson }}'
-            hx-target="#item-{{ item_id }}"
-            hx-swap="outerHTML"
-            type="button"
-            data-testid="kies-btn"
-          >
-            Kies
-          </button>
-        </div>
-      </div>
-    {% endfor %}
-  </div>
-{% else %}
-  <p class="text-sm text-gray-400 py-2" data-testid="geen-resultaten">Geen resultaten gevonden</p>
-{% endif %}
+<div id="zoekresultaten-inner-{{ item_id }}"></div>

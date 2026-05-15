@@ -129,6 +129,25 @@ class TestMatchReviewCorrectie:
         zoek_input = match_review_page.locator("[data-testid='zoek-input']").first
         expect(zoek_input).to_be_visible()
 
+    def test_zoekbalk_behoudt_tekst_tijdens_typen(
+        self, match_review_page: Page, mock_ah_integratie  # noqa: ARG002
+    ):
+        """Typen in de zoekbalk wist niet de reeds ingevoerde tekst (debounce bug)."""
+        corrigeer = match_review_page.locator("button:has-text('Corrigeer')").first
+        corrigeer.click()
+
+        zoek_input = match_review_page.locator("[data-testid='zoek-input']").first
+        expect(zoek_input).to_be_visible()
+
+        # Type character-by-character zoals een echte gebruiker doet
+        zoek_input.press_sequentially("kaas")
+
+        # Wacht tot HTMX debounce (300ms) + response is afgerond
+        match_review_page.wait_for_timeout(700)
+
+        # Input moet de getypte tekst bewaard hebben — niet gewist door HTMX swap
+        expect(zoek_input).to_have_value("kaas")
+
     def test_kies_product_update_kaart(
         self, match_review_page: Page, mock_ah_integratie  # noqa: ARG002
     ):

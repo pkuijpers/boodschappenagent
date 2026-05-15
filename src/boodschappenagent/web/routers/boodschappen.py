@@ -420,9 +420,16 @@ async def zoek_product(
             producten = []
 
     templates = request.app.state.templates
+    # q leeg → initieel openen: zoekbalk + lege container.
+    # q gevuld → alleen resultaten, zodat de input niet wordt vervangen.
+    template_name = (
+        "fragments/zoekresultaten_inner.html"
+        if q and q.strip()
+        else "fragments/zoekresultaten.html"
+    )
     return templates.TemplateResponse(
         request=request,
-        name="fragments/zoekresultaten.html",
+        name=template_name,
         context={"producten": producten, "item_id": item_id},
     )
 

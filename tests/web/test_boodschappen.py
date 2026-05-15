@@ -552,6 +552,41 @@ class TestZoekProduct:
         kies_buttons = html.find_all("button", string=lambda t: t and "Kies" in t)
         assert len(kies_buttons) <= 10
 
+    def test_initieel_openen_bevat_zoekbalk(
+        self, app_with_ah, mock_token_manager
+    ):
+        """q="" (initieel openen) → response bevat de zoekbalk input."""
+        mock_token_manager.is_authenticated.return_value = True
+        items = [_make_match_review_item("melk")]
+        item_id = items[0].id
+        _setup_match_review_state(app_with_ah, items)
+
+        client = TestClient(app_with_ah)
+        response = client.get(f"/boodschappen/zoek-product?q=&item_id={item_id}")
+
+        assert response.status_code == 200
+        html = soup(response)
+        assert html.select_one('[data-testid="zoek-input"]') is not None
+
+    def test_zoekresultaat_bevat_geen_zoekbalk(
+        self, app_with_ah, mock_token_manager, mock_ah_integratie
+    ):
+        """q non-empty (zoeken) → response bevat GEEN zoekbalk (input blijft intact)."""
+        mock_token_manager.is_authenticated.return_value = True
+        mock_ah_integratie._client.search_products.return_value = [
+            _make_product(article_id=1, naam="AH Melk 1L"),
+        ]
+        items = [_make_match_review_item("melk")]
+        item_id = items[0].id
+        _setup_match_review_state(app_with_ah, items)
+
+        client = TestClient(app_with_ah)
+        response = client.get(f"/boodschappen/zoek-product?q=melk&item_id={item_id}")
+
+        assert response.status_code == 200
+        html = soup(response)
+        assert html.select_one('[data-testid="zoek-input"]') is None
+
 
 # ── T016: POST /boodschappen/kies-product (US2) ───────────────────────────────
 
