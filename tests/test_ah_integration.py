@@ -871,3 +871,59 @@ class TestSyncNaarLijst:
         integratie.sync_naar_lijst(boodschappenlijst, referentie_lijst_id="ref-id")
 
         mock_client.get_list_with_products.assert_called_once_with("ref-id")
+
+
+# =============================================================================
+# AHIntegratie.zoek_producten_voor_correctie Tests
+# =============================================================================
+
+
+class TestZoekProductenVoorCorrectie:
+    """Tests voor AHIntegratie.zoek_producten_voor_correctie method."""
+
+    def test_geeft_resultaten_terug_via_facade(self, mock_client, melk_product):
+        """Zoekresultaten worden teruggegeven via de facade, niet via _client direct."""
+        mock_client.search_products = Mock(return_value=[melk_product])
+
+        integratie = AHIntegratie(mock_client)
+        resultaten = integratie.zoek_producten_voor_correctie("melk")
+
+        assert resultaten == [melk_product]
+        mock_client.search_products.assert_called_once_with("melk")
+
+    def test_beperkt_resultaten_tot_limit(self, mock_client):
+        """Resultaten worden beperkt tot het opgegeven limit."""
+        producten = [
+            Product(id=i, title=f"Product {i}", brand="AH", size="1x", price=1.0,
+                    category="", is_orderable=True)
+            for i in range(15)
+        ]
+        mock_client.search_products = Mock(return_value=producten)
+
+        integratie = AHIntegratie(mock_client)
+        resultaten = integratie.zoek_producten_voor_correctie("melk", limit=10)
+
+        assert len(resultaten) == 10
+
+    def test_standaard_limit_is_10(self, mock_client):
+        """Standaard limit is 10."""
+        producten = [
+            Product(id=i, title=f"Product {i}", brand="AH", size="1x", price=1.0,
+                    category="", is_orderable=True)
+            for i in range(15)
+        ]
+        mock_client.search_products = Mock(return_value=producten)
+
+        integratie = AHIntegratie(mock_client)
+        resultaten = integratie.zoek_producten_voor_correctie("melk")
+
+        assert len(resultaten) == 10
+
+    def test_lege_resultaten_bij_geen_matches(self, mock_client):
+        """Lege lijst bij geen zoekresultaten."""
+        mock_client.search_products = Mock(return_value=[])
+
+        integratie = AHIntegratie(mock_client)
+        resultaten = integratie.zoek_producten_voor_correctie("xyzabc")
+
+        assert resultaten == []

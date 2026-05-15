@@ -416,7 +416,7 @@ async def zoek_product(
     producten = []
     if q and q.strip():
         try:
-            producten = ah_integratie._client.search_products(q.strip())[:10]
+            producten = ah_integratie.zoek_producten_voor_correctie(q)
         except Exception:
             producten = []
 
