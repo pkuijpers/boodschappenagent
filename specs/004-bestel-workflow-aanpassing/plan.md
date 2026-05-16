@@ -99,6 +99,6 @@ Alle taken (T001–T034) zijn geïmplementeerd, met uitzondering van de geclarif
 | Phase 4: US3 matching redirect | ✅ | T020–T024 |
 | Phase 5: Polish | ✅ | T025–T027, T033 |
 | Phase 6: Correcties | ✅ (deels) | T028–T031, T034 — T032a/T032 heropend (zie tasks.md) |
-| **FR-013 UI clarificatie** | ❌ Open | T035–T036 — +/- knoppen met dynamische stapgrootte |
+| **FR-013 UI clarificatie** | ✅ | T035–T036 — +/- knoppen met dynamische stapgrootte |
 
-**Openstaand**: `ingredient_selectie_item.html` gebruikt `<input type="number" step="any">` waar `boodschapitem.html` +/- knoppen met dynamische stapgrootte gebruikt. FR-013 is na clarificatie (2026-05-16) preciezer gespecificeerd — T035/T036 in tasks.md voegen de correcte implementatie toe.
+**Volledig geïmplementeerd**: `ingredient_selectie_item.html` gebruikt nu dezelfde +/- button-layout met dynamische stapgrootte als `boodschapitem.html`.

@@ -383,15 +383,87 @@ class TestIngredientSelectieItemStijl:
         assert "rounded" in class_str
         assert "border" in class_str
 
-    def test_hoeveelheid_input_heeft_border_en_rounded_klassen(
-        self, client: TestClient
-    ):
-        """Hoeveelheid-input heeft 'border' en 'rounded' klassen."""
+    def test_hoeveelheid_knoppen_hebben_rounded_full_klassen(self, client: TestClient):
+        """Hoeveelheid +/- knoppen hebben 'rounded-full' klassen (zoals boodschapitem)."""  # noqa: E501
+        from bs4 import BeautifulSoup
+
         set_week_menu(client, _make_week_menu_met_ingredienten())
         s = soup(client.get("/ingredient-selectie"))
-        item = s.select("[data-testid='ingredient-item']")[0]
-        inp = item.select_one("input[type='number']")
-        assert inp is not None
-        class_str = " ".join(inp.get("class", []))
-        assert "border" in class_str
-        assert "rounded" in class_str
+        eerste_item_html = str(s.select("[data-testid='ingredient-item']")[0])
+        item_soup = BeautifulSoup(eerste_item_html, "html.parser")
+        hoeveelheid_buttons = item_soup.select("button[hx-patch]")
+        assert len(hoeveelheid_buttons) == 2
+        for btn in hoeveelheid_buttons:
+            class_str = " ".join(btn.get("class", []))
+            assert "rounded-full" in class_str
+
+
+# --- T035: FR-013 clarificatie — +/- knoppen met dynamische stapgrootte ---
+
+
+class TestIngredientSelectieItemPlusMinus:
+    """T035: ingredient_selectie_item.html heeft +/- knoppen i.p.v. number input."""
+
+    def _init_met_gram_item(self, client: TestClient) -> str:
+        """Initialiseer selectie met een item van 200 gram."""
+        recept = Recipe(
+            id="test-gram",
+            naam="Test Gram Recept",
+            categorie=Categorie.GEVOGELTE,
+            basis=Basis.RIJST,
+            seizoenen=[Seizoen.ALLE],
+            basis_porties=2,
+            ingredienten=[Ingredient(naam="meel", hoeveelheid=200, eenheid="gram")],
+        )
+        dagen = [DagPlanning(dag=0, recept=recept, personen=2)] + [
+            DagPlanning(dag=i, recept=None, personen=0) for i in range(1, 7)
+        ]
+        menu = WeekMenu(week_start=WEEK_START, dagen=dagen)
+        set_week_menu(client, menu)
+        client.get("/ingredient-selectie")
+        return client.app.state.ingredient_selectie[0]["id"]
+
+    def _get_fragment(self, client: TestClient, item_id: str, hoeveelheid: float):
+        """Render item fragment via PATCH endpoint en geef BeautifulSoup terug."""
+        from bs4 import BeautifulSoup
+
+        response = client.patch(
+            f"/ingredient-selectie/{item_id}/hoeveelheid",
+            data={"hoeveelheid": str(hoeveelheid)},
+        )
+        return BeautifulSoup(response.text, "html.parser")
+
+    def test_geen_number_input_in_item(self, client: TestClient):
+        """ingredient_selectie_item.html bevat geen <input type='number'>."""
+        item_id = self._init_met_gram_item(client)
+        item_soup = self._get_fragment(client, item_id, 200)
+        assert item_soup.select_one("input[type='number']") is None
+
+    def test_heeft_twee_hoeveelheid_knoppen(self, client: TestClient):
+        """ingredient_selectie_item.html bevat twee hoeveelheid-buttons (- en +)."""
+        item_id = self._init_met_gram_item(client)
+        item_soup = self._get_fragment(client, item_id, 200)
+        assert len(item_soup.select("button[hx-patch]")) == 2
+
+    def test_minus_knop_hx_vals_gram_200(self, client: TestClient):
+        """Minus-knop heeft hx-vals met hoeveelheid 175 voor 200 gram (stap 25)."""
+        import json
+
+        item_id = self._init_met_gram_item(client)
+        item_soup = self._get_fragment(client, item_id, 200)
+        minus_knop = item_soup.select("button[hx-patch]")[0]
+        vals = json.loads(minus_knop.get("hx-vals", "{}"))
+        assert float(vals["hoeveelheid"]) == 175.0
+
+    def test_minus_knop_disabled_bij_minimum(self, client: TestClient):
+        """Minus-knop is disabled wanneer hoeveelheid <= stapgrootte (25 voor gram)."""
+        item_id = self._init_met_gram_item(client)
+        item_soup = self._get_fragment(client, item_id, 25)
+        minus_knop = item_soup.select("button[hx-patch]")[0]
+        assert minus_knop.has_attr("disabled")
+
+    def test_geen_recept_sublabel(self, client: TestClient):
+        """ingredient_selectie_item.html bevat geen recept-sublabel."""
+        item_id = self._init_met_gram_item(client)
+        item_soup = self._get_fragment(client, item_id, 200)
+        assert item_soup.select_one("[data-testid='recept-context']") is None

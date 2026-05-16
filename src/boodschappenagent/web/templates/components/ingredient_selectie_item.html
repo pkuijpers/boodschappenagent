@@ -1,3 +1,16 @@
+{% set hoeveelheid_display = item.hoeveelheid|int if item.hoeveelheid == item.hoeveelheid|int else item.hoeveelheid %}
+{% if item.eenheid in ['gram', 'ml'] %}
+    {% set stap_minus = 100 if item.hoeveelheid > 500 else 25 %}
+    {% set stap_plus = 100 if item.hoeveelheid >= 500 else 25 %}
+{% elif 'lepel' in item.eenheid %}
+    {% set stap_minus = 0.5 %}
+    {% set stap_plus = 0.5 %}
+{% else %}
+    {% set stap_minus = 1 %}
+    {% set stap_plus = 1 %}
+{% endif %}
+{% set hoeveelheid_minus = item.hoeveelheid - stap_minus if item.hoeveelheid > stap_minus else stap_minus %}
+{% set hoeveelheid_plus = item.hoeveelheid + stap_plus %}
 <div id="item-{{ item.id }}"
      data-testid="ingredient-item"
      data-item-id="{{ item.id }}"
@@ -22,20 +35,32 @@
         {{ item.naam }}
     </span>
 
-    <div class="flex items-center gap-1 shrink-0">
-        <input type="number"
-               name="hoeveelheid"
-               value="{{ item.hoeveelheid | int if item.hoeveelheid == item.hoeveelheid | int else item.hoeveelheid }}"
-               step="any"
-               min="0"
-               hx-patch="/ingredient-selectie/{{ item.id }}/hoeveelheid"
-               hx-target="#item-{{ item.id }}"
-               hx-swap="outerHTML"
-               hx-trigger="change"
-               class="w-16 text-right border border-gray-200 rounded-lg px-2 py-1.5 text-sm
-                      {{ 'text-gray-400' if not item.geselecteerd else 'text-gray-800' }}
-                      focus:outline-none focus:ring-2 focus:ring-ah-blue min-h-[44px]"
-               aria-label="Hoeveelheid {{ item.naam }}">
-        <span class="text-gray-500 text-sm w-10">{{ item.eenheid }}</span>
+    <div class="flex items-center shrink-0 gap-1.5">
+        <button type="button"
+                hx-patch="/ingredient-selectie/{{ item.id }}/hoeveelheid"
+                hx-vals='{"hoeveelheid": "{{ hoeveelheid_minus }}"}'
+                hx-target="#item-{{ item.id }}"
+                hx-swap="outerHTML"
+                {% if item.hoeveelheid <= stap_minus %}disabled{% endif %}
+                class="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center
+                       text-gray-500 text-xl leading-none shrink-0 touch-manipulation
+                       active:bg-gray-200 disabled:opacity-30">
+            &minus;
+        </button>
+        <span data-testid="hoeveelheid"
+              value="{{ hoeveelheid_display }}"
+              class="text-sm text-gray-600 text-center tabular-nums min-w-[4.5rem]">
+            {{ hoeveelheid_display }}&nbsp;{{ item.eenheid }}
+        </span>
+        <button type="button"
+                hx-patch="/ingredient-selectie/{{ item.id }}/hoeveelheid"
+                hx-vals='{"hoeveelheid": "{{ hoeveelheid_plus }}"}'
+                hx-target="#item-{{ item.id }}"
+                hx-swap="outerHTML"
+                class="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center
+                       text-gray-500 text-xl leading-none shrink-0 touch-manipulation
+                       active:bg-gray-200">
+            +
+        </button>
     </div>
 </div>
