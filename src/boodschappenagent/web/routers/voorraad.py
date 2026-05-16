@@ -6,18 +6,16 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from fastapi.responses import RedirectResponse
 
-from boodschappenagent.ah import AHClient, AHTokenManager
+from boodschappenagent.ah import AHIntegratie, AHTokenManager
 from boodschappenagent.voorraadbeheer import VoorraadRepository
 from boodschappenagent.voorraadbeheer.models import VoorraadItem, VoorraadType
 from boodschappenagent.web.dependencies import (
-    get_ah_client,
+    get_ah_integratie,
     get_ah_token_manager,
     get_voorraad_repository,
 )
 
 router = APIRouter()
-
-AH_VOORRAAD_LIJST_NAAM = "Voorraad"
 
 
 def _get_week_menu(request: Request):
@@ -32,17 +30,11 @@ def _is_ah_authenticated(token_manager: AHTokenManager) -> bool:
         return False
 
 
-def _haal_voorraad_producten(client: AHClient) -> list[dict]:
+def _haal_voorraad_producten(ah_integratie: AHIntegratie) -> list[dict]:
     """Haal producten op uit de AH 'Voorraad' favorietenlijst."""
     try:
-        lijst = client.find_list_by_name(AH_VOORRAAD_LIJST_NAAM)
-        if lijst is None:
-            return []
-        lijst_met_producten = client.get_list_with_products(lijst.id)
-        return [
-            {"naam": p.title, "id": str(p.id)}
-            for p in (lijst_met_producten.products or [])
-        ]
+        producten = ah_integratie.haal_voorraad_producten()
+        return [{"naam": p.title, "id": str(p.id)} for p in producten]
     except Exception:
         return []
 
@@ -72,7 +64,7 @@ async def voorraad(
     request: Request,
     repository: Annotated[VoorraadRepository, Depends(get_voorraad_repository)],
     token_manager: Annotated[AHTokenManager, Depends(get_ah_token_manager)],
-    client: Annotated[AHClient, Depends(get_ah_client)],
+    ah_integratie: Annotated[AHIntegratie, Depends(get_ah_integratie)],
 ):
     """Voorraadcheck pagina — producten uit AH Voorraad lijst."""
     if _get_week_menu(request) is None:
@@ -81,7 +73,7 @@ async def voorraad(
     if not _is_ah_authenticated(token_manager):
         return RedirectResponse(url="/ah/login?terug=/week&next=/voorraad", status_code=303)
 
-    producten = _haal_voorraad_producten(client)
+    producten = _haal_voorraad_producten(ah_integratie)
     if producten:
         repository.sync_met_ah_namen({p["naam"] for p in producten})
     context = _build_voorraad_context(repository, producten)
@@ -110,13 +102,13 @@ async def voorraad_toggle(
     naam: Annotated[str, Form()],
     op_voorraad: Annotated[str, Form()],
     repository: Annotated[VoorraadRepository, Depends(get_voorraad_repository)],
-    client: Annotated[AHClient, Depends(get_ah_client)],
+    ah_integratie: Annotated[AHIntegratie, Depends(get_ah_integratie)],
 ):
     """Toggle voorraadstatus van een product — retourneert enkelvoudig HTMX-fragment."""
     if _get_week_menu(request) is None:
         raise HTTPException(status_code=404)
 
-    producten = _haal_voorraad_producten(client)
+    producten = _haal_voorraad_producten(ah_integratie)
     product_ids = {p["id"] for p in producten}
     if product_id not in product_ids:
         raise HTTPException(status_code=404)

@@ -21,6 +21,7 @@ _BRON_VERTALING = {
 }
 
 DEFAULT_REFERENTIE_LIJST_NAAM = "boodschappen"
+VOORRAAD_LIJST_NAAM = "Voorraad"
 
 
 @dataclass(frozen=True)
@@ -85,6 +86,8 @@ class AHIntegratie:
     Zoekt producten, maakt een AH favorieten-lijst aan,
     en voegt gevonden producten toe.
     """
+
+    VOORRAAD_LIJST_NAAM = VOORRAAD_LIJST_NAAM
 
     def __init__(self, client: AHClient) -> None:
         self._client = client
@@ -187,6 +190,14 @@ class AHIntegratie:
     ) -> list[Product]:
         """Zoek producten voor de correctie-flow (productmatch review)."""
         return self._client.search_products(query)[:limit]
+
+    def haal_voorraad_producten(self) -> list[Product]:
+        """Haal producten op uit de AH 'Voorraad' favorietenlijst."""
+        lijst = self._client.find_list_by_name(self.VOORRAAD_LIJST_NAAM)
+        if lijst is None:
+            return []
+        met_producten = self._client.get_list_with_products(lijst.id)
+        return met_producten.products or []
 
     def sync_naar_lijst(
         self,

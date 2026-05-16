@@ -874,6 +874,74 @@ class TestSyncNaarLijst:
 
 
 # =============================================================================
+# AHIntegratie.haal_voorraad_producten Tests
+# =============================================================================
+
+
+class TestHaalVoorraadProducten:
+    """Tests voor AHIntegratie.haal_voorraad_producten method."""
+
+    def test_geeft_producten_terug_uit_voorraad_lijst(
+        self, mock_client, melk_product, ui_product
+    ):
+        """Happy path: producten uit 'Voorraad' lijst worden teruggegeven."""
+        from boodschappenagent.ah.models import FavoriteList
+
+        voorraad_lijst = FavoriteList(
+            id="lijst-voorraad",
+            name="Voorraad",
+            total_items=2,
+            items=[],
+            products=[melk_product, ui_product],
+        )
+        mock_client.find_list_by_name = Mock(return_value=voorraad_lijst)
+        mock_client.get_list_with_products = Mock(return_value=voorraad_lijst)
+
+        integratie = AHIntegratie(mock_client)
+        result = integratie.haal_voorraad_producten()
+
+        assert result == [melk_product, ui_product]
+        mock_client.find_list_by_name.assert_called_once_with("Voorraad")
+        mock_client.get_list_with_products.assert_called_once_with("lijst-voorraad")
+
+    def test_geeft_lege_lijst_als_voorraad_lijst_niet_bestaat(self, mock_client):
+        """find_list_by_name geeft None → lege lijst terug."""
+        mock_client.find_list_by_name = Mock(return_value=None)
+        mock_client.get_list_with_products = Mock()
+
+        integratie = AHIntegratie(mock_client)
+        result = integratie.haal_voorraad_producten()
+
+        assert result == []
+        mock_client.get_list_with_products.assert_not_called()
+
+    def test_geeft_lege_lijst_als_products_none_is(self, mock_client):
+        """Lijst bestaat maar products is None → lege lijst terug."""
+        from boodschappenagent.ah.models import FavoriteList
+
+        lijst_zonder_producten = FavoriteList(
+            id="lijst-leeg",
+            name="Voorraad",
+            total_items=0,
+            items=[],
+            products=None,
+        )
+        mock_client.find_list_by_name = Mock(return_value=lijst_zonder_producten)
+        mock_client.get_list_with_products = Mock(return_value=lijst_zonder_producten)
+
+        integratie = AHIntegratie(mock_client)
+        result = integratie.haal_voorraad_producten()
+
+        assert result == []
+
+    def test_gebruikt_voorraad_lijst_naam_constante(self):
+        """De lijstnaam 'Voorraad' is afkomstig van de VOORRAAD_LIJST_NAAM constante."""
+        from boodschappenagent.ah.integration import AHIntegratie as AI
+
+        assert AI.VOORRAAD_LIJST_NAAM == "Voorraad"
+
+
+# =============================================================================
 # AHIntegratie.zoek_producten_voor_correctie Tests
 # =============================================================================
 

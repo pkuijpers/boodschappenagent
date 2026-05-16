@@ -4,8 +4,12 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
+from boodschappenagent.ah import AHIntegratie
 from boodschappenagent.voorraadbeheer import VoorraadRepository
-from boodschappenagent.web.dependencies import get_ah_client, get_voorraad_repository
+from boodschappenagent.web.dependencies import (
+    get_ah_integratie,
+    get_voorraad_repository,
+)
 
 from .conftest import TEST_VOORRAAD_PRODUCTEN, make_full_week_menu, set_week_menu, soup
 
@@ -23,13 +27,15 @@ def client_met_melk_op_voorraad(
     mock_ah_client,
     mock_token_manager_authenticated,
 ) -> TestClient:
-    """TestClient met Melk op voorraad, mock AHClient en ingelogde token manager."""
+    """TestClient met Melk op voorraad, mock AHIntegratie en ingelogde token manager."""
     from boodschappenagent.web.dependencies import get_ah_token_manager
 
     app_with_overrides.dependency_overrides[get_voorraad_repository] = (
         lambda: voorraad_met_melk
     )
-    app_with_overrides.dependency_overrides[get_ah_client] = lambda: mock_ah_client
+    app_with_overrides.dependency_overrides[get_ah_integratie] = (
+        lambda: AHIntegratie(mock_ah_client)
+    )
     app_with_overrides.dependency_overrides[get_ah_token_manager] = (
         lambda: mock_token_manager_authenticated
     )
@@ -111,7 +117,9 @@ class TestVoorraadcheckLaden:
 
         lege_client = MagicMock()
         lege_client.find_list_by_name.return_value = None
-        app_with_overrides.dependency_overrides[get_ah_client] = lambda: lege_client
+        app_with_overrides.dependency_overrides[get_ah_integratie] = (
+            lambda: AHIntegratie(lege_client)
+        )
         app_with_overrides.dependency_overrides[get_ah_token_manager] = (
             lambda: mock_token_manager_authenticated
         )
@@ -126,7 +134,9 @@ class TestVoorraadcheckLaden:
         """S6.8: Niet ingelogd bij AH → redirect naar /ah/login."""
         from boodschappenagent.web.dependencies import get_ah_token_manager
 
-        app_with_overrides.dependency_overrides[get_ah_client] = lambda: mock_ah_client
+        app_with_overrides.dependency_overrides[get_ah_integratie] = (
+            lambda: AHIntegratie(mock_ah_client)
+        )
         app_with_overrides.dependency_overrides[get_ah_token_manager] = (
             lambda: mock_token_manager_unauthenticated
         )

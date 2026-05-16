@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from boodschappenagent.ah import ProductMatch, SyncResultaat
+from boodschappenagent.ah import AHIntegratie, ProductMatch, SyncResultaat
 from boodschappenagent.boodschappenlijst import (
     BoodschappenlijstGenerator,
     IngredientNormalizer,
@@ -29,7 +29,6 @@ from boodschappenagent.web.app import create_app
 from boodschappenagent.web.dependencies import (
     DATA_DIR,
     RECIPE_DIRS,
-    get_ah_client,
     get_ah_integratie,
     get_ah_token_manager,
     get_all_recipes,
@@ -288,11 +287,13 @@ def app_with_voorraad(
     mock_ah_client,
     mock_token_manager_authenticated,
 ) -> FastAPI:
-    """App met overrides voor VoorraadRepository, AHClient en ingelogde TokenManager."""
+    """App met overrides voor VoorraadRepository, AHIntegratie en TokenManager."""
     app_with_overrides.dependency_overrides[get_voorraad_repository] = (
         lambda: voorraad_repository
     )
-    app_with_overrides.dependency_overrides[get_ah_client] = lambda: mock_ah_client
+    app_with_overrides.dependency_overrides[get_ah_integratie] = (
+        lambda: AHIntegratie(mock_ah_client)
+    )
     app_with_overrides.dependency_overrides[get_ah_token_manager] = (
         lambda: mock_token_manager_authenticated
     )

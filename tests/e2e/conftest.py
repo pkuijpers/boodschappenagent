@@ -228,6 +228,7 @@ def mock_ah_integratie():
     mock.zoek_producten.return_value = matches
     mock.create_list.return_value = "e2e-list-123"
     mock.add_products_to_list.return_value = None
+    mock.haal_voorraad_producten.return_value = TEST_VOORRAAD_PRODUCTEN
     # Zoekresultaten voor correctie flow
     mock._client.search_products.return_value = [
         Product(
