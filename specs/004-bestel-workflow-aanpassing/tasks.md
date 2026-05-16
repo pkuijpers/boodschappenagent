@@ -105,7 +105,7 @@
 - [X] T025 [P] Voeg E2E Playwright-test toe voor de volledige bestelflow (weekmenu → ingredient-selectie → voorraadcheck → match-review) in `tests/e2e/test_bestel_flow.py` (iPhone 13 viewport, 390×844)
 - [X] T026 [P] Update `docs/implementatieplan-ui.md` met nieuwe werkstroom: Weekoverzicht → Ingredient-selectie → Voorraadcheck → Matching → Match-review
 - [X] T027 Voer `uv run ruff check . && uv run ruff format .` uit en herstel eventuele linting-schendingen in gewijzigde bestanden
-- [ ] T033 Voer MINOR version bump uit in `.specify/memory/constitution.md`: (1) update Principle VI flow-volgorde naar "Weekoverzicht → Ingredient-selectie → Voorraadcheck → Matching → Match-review"; (2) verwijder "Boodschappenlijst" als aparte stap uit de vaste 6-stappen-reeks; (3) verhoog versie van 1.1.1 → 1.2.0; (4) voeg Sync Impact Report toe als HTML comment boven de constitutie
+- [X] T033 Voer MINOR version bump uit in `.specify/memory/constitution.md`: (1) update Principle VI flow-volgorde naar "Weekoverzicht → Ingredient-selectie → Voorraadcheck → Matching → Match-review"; (2) verwijder "Boodschappenlijst" als aparte stap uit de vaste 6-stappen-reeks; (3) verhoog versie van 1.1.1 → 1.2.0; (4) voeg Sync Impact Report toe als HTML comment boven de constitutie
 
 ---
 
@@ -117,22 +117,36 @@
 
 ### FR-012 — Weekmenu-wijziging reset ingredient-selectie
 
-- [ ] T028 [US1] Schrijf failing test in `tests/web/test_ingredient_selectie.py`: `GET /ingredient-selectie` met bestaande `app.state.ingredient_selectie` (gebouwd uit oud menu) maar gewijzigd `app.state.week_menu` (andere receptenset) → verwacht dat `ingredient_selectie` volledig gereset wordt en opnieuw gebouwd wordt vanuit het nieuwe weekmenu
-- [ ] T029 [US1] Implementeer weekmenu-wijzigingsdetectie in `GET /ingredient-selectie` handler in `src/boodschappenagent/web/routers/ingredient_selectie.py`: vergelijk de set van `recept_naam`-waarden in `app.state.ingredient_selectie` met de set van receptnamen in `app.state.week_menu`; als deze sets niet overeenkomen → reset `app.state.ingredient_selectie` en herbouw volledig vanuit `app.state.week_menu` (alle items `geselecteerd=True`)
+- [X] T028 [US1] Schrijf failing test in `tests/web/test_ingredient_selectie.py`: `GET /ingredient-selectie` met bestaande `app.state.ingredient_selectie` (gebouwd uit oud menu) maar gewijzigd `app.state.week_menu` (andere receptenset) → verwacht dat `ingredient_selectie` volledig gereset wordt en opnieuw gebouwd wordt vanuit het nieuwe weekmenu
+- [X] T029 [US1] Implementeer weekmenu-wijzigingsdetectie in `GET /ingredient-selectie` handler in `src/boodschappenagent/web/routers/ingredient_selectie.py`: vergelijk de set van `recept_naam`-waarden in `app.state.ingredient_selectie` met de set van receptnamen in `app.state.week_menu`; als deze sets niet overeenkomen → reset `app.state.ingredient_selectie` en herbouw volledig vanuit `app.state.week_menu` (alle items `geselecteerd=True`)
 
 ### FR-009 — Back button match-review → /voorraad
 
-- [ ] T030 [US3] Schrijf failing test: controleer dat de `GET /boodschappen/match-review` pagina een back button bevat met `href="/voorraad"` (niet `/boodschappen`) in `tests/web/test_boodschappen.py` of `tests/e2e/test_bestel_flow.py`
-- [ ] T031 [US3] Update back button in `src/boodschappenagent/web/templates/pages/match_review.html`: wijzig `href` van `/boodschappen` naar `/voorraad` zodat terugnavigatie vanuit match-review correct naar de voorraadcheck gaat (conform FR-009 terugnavigatiestroom)
+- [X] T030 [US3] Schrijf failing test: controleer dat de `GET /boodschappen/match-review` pagina een back button bevat met `href="/voorraad"` (niet `/boodschappen`) in `tests/web/test_boodschappen.py` of `tests/e2e/test_bestel_flow.py`
+- [X] T031 [US3] Update back button in `src/boodschappenagent/web/templates/pages/match_review.html`: wijzig `href` van `/boodschappen` naar `/voorraad` zodat terugnavigatie vanuit match-review correct naar de voorraadcheck gaat (conform FR-009 terugnavigatiestroom)
 
 ### FR-013 — Ingredient-selectie gebruikt zelfde componenten als /boodschappen
 
-- [ ] T032a [US1] Schrijf failing test in `tests/web/test_ingredient_selectie.py`: render het `ingredient_selectie_item.html` fragment voor een testitem en controleer dat het exact dezelfde Tailwind-klassen op checkbox-input en hoeveelheid-input bevat als het overeenkomstige boodschappenlijst-item-component (bijv. via BeautifulSoup-assertions op CSS-klassen en HTMX-attributen)
-- [ ] T032 [P] [US1] Inspecteer `src/boodschappenagent/web/templates/components/` en `src/boodschappenagent/web/templates/pages/boodschappen.html` voor de exacte checkbox-markup en hoeveelheden-selector; pas `src/boodschappenagent/web/templates/components/ingredient_selectie_item.html` aan zodat checkbox-input en hoeveelheid-input exact dezelfde Tailwind-klassen, input-types en HTMX-attributen gebruiken als het bestaande boodschappenlijst-item-component
+- [X] T032a [US1] Schrijf failing test in `tests/web/test_ingredient_selectie.py`: render het `ingredient_selectie_item.html` fragment voor een testitem en controleer dat het exact dezelfde Tailwind-klassen op checkbox-input en hoeveelheid-input bevat als het overeenkomstige boodschappenlijst-item-component (bijv. via BeautifulSoup-assertions op CSS-klassen en HTMX-attributen)
+- [X] T032 [P] [US1] Inspecteer `src/boodschappenagent/web/templates/components/` en `src/boodschappenagent/web/templates/pages/boodschappen.html` voor de exacte checkbox-markup en hoeveelheden-selector; pas `src/boodschappenagent/web/templates/components/ingredient_selectie_item.html` aan zodat checkbox-input en hoeveelheid-input exact dezelfde Tailwind-klassen, input-types en HTMX-attributen gebruiken als het bestaande boodschappenlijst-item-component
+
+### FR-013 Clarificatie (2026-05-16) — +/- knoppen met dynamische stapgrootte
+
+**Context**: Na clarificatie sessie van 2026-05-16 is FR-013 preciezer gespecificeerd. De huidige `ingredient_selectie_item.html` gebruikt `<input type="number" step="any">` — dit moet vervangen worden door dezelfde grote ronde `-`/`+`-knoppen als `boodschapitem.html`, inclusief dynamische stapgrootte en disabled-state.
+
+**Stapgrootte-logica** (uit `boodschapitem.html`):
+- gram/ml: 25 onder 500; 100 vanaf 500
+- lepel (eenheid bevat "lepel"): 0.5
+- overig: 1
+- Minimum hoeveelheid = 1 stapgrootte (minus-knop `disabled` aan ondergrens)
+- Geen recept-sublabel ("voor [recept]") — items zijn al per recept gegroepeerd
+
+- [ ] T035 [US1] Schrijf failing tests in `tests/web/test_ingredient_selectie.py` voor de geclarificeerde +/- UI: (1) controleer dat de rendered `ingredient_selectie_item.html` géén `<input type="number">` bevat maar wél twee `<button>`-elementen voor `-` en `+`; (2) controleer dat bij eenheid "gram" en hoeveelheid 200 de `hx-vals` van de minus-knop `{"hoeveelheid": "175"}` bevat (stap 25); (3) controleer dat bij hoeveelheid ≤ stapgrootte de minus-knop het `disabled`-attribuut heeft; (4) controleer dat er geen recept-sublabel in de rendered HTML staat
+- [ ] T036 [US1] Update `src/boodschappenagent/web/templates/components/ingredient_selectie_item.html`: vervang `<input type="number">` + eenheid-span door de +/- button-layout uit `boodschapitem.html` — `stap_minus`/`stap_plus` berekening (gram/ml: 25/100 op 500-grens; lepel: 0.5; overig: 1); `hoeveelheid_minus`/`hoeveelheid_plus` pre-computatie; grote ronde knoppen (`w-9 h-9 rounded-full`) met `hx-patch="/ingredient-selectie/{{ item.id }}/hoeveelheid"` en `hx-vals`; hoeveelheid als `<span>` (niet input); minus-knop `disabled` wanneer `hoeveelheid <= stap_minus`; geen recept-sublabel
 
 ### Edge Case — Leeg weekmenu (geen recepten)
 
-- [ ] T034 [US1] Schrijf failing tests in `tests/web/test_ingredient_selectie.py` voor weekmenu zonder recepten (bijv. alleen 'niet-thuis'-dagen): `GET /ingredient-selectie` → `app.state.ingredient_selectie = []`, scherm laadt zonder redirect; `POST /ingredient-selectie/bevestig` → redirect 303 naar `/voorraad` (lege selectie is geldig); `POST /voorraad/bevestig` met alleen voorraadartikelen en lege recept-selectie → succesvol redirect naar `/boodschappen/match-review`
+- [X] T034 [US1] Schrijf failing tests in `tests/web/test_ingredient_selectie.py` voor weekmenu zonder recepten (bijv. alleen 'niet-thuis'-dagen): `GET /ingredient-selectie` → `app.state.ingredient_selectie = []`, scherm laadt zonder redirect; `POST /ingredient-selectie/bevestig` → redirect 303 naar `/voorraad` (lege selectie is geldig); `POST /voorraad/bevestig` met alleen voorraadartikelen en lege recept-selectie → succesvol redirect naar `/boodschappen/match-review`
 
 **Checkpoint**: Alle issues opgelost; full flow hertest met handmatige validatie
 

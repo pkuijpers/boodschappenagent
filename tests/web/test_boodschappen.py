@@ -286,6 +286,18 @@ class TestMatchReviewPagina:
         assert response.status_code == 303
         assert response.headers["location"] == "/boodschappen"
 
+    def test_back_button_href_is_voorraad(self, app_with_ah, mock_token_manager):
+        """T030: Back button op match-review pagina verwijst naar /voorraad (FR-009)."""
+        mock_token_manager.is_authenticated.return_value = True
+        _setup_match_review_state(app_with_ah)
+
+        client = TestClient(app_with_ah)
+        response = client.get("/boodschappen/match-review")
+
+        html = soup(response)
+        back_link = html.find("a", href="/voorraad")
+        assert back_link is not None, "Back button met href='/voorraad' niet gevonden"
+
     def test_confirm_button_aanwezig(self, app_with_ah, mock_token_manager):
         """Pagina bevat bevestig-knop (#bevestig-btn)."""
         mock_token_manager.is_authenticated.return_value = True

@@ -10,3 +10,4 @@ logs/
 data/ah_tokens.json
 .worktrees/
 backup/
+data/match_preferences.json

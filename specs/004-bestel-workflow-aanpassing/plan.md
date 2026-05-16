@@ -1,40 +1,40 @@
-# Implementation Plan: Bestel Workflow Aanpassing — Recept-ingrediëntselectie voor Voorraadcheck
+# Implementation Plan: Bestel Workflow Aanpassing
 
-**Branch**: `004-bestel-workflow-aanpassing` | **Date**: 2026-05-15 | **Spec**: [spec.md](spec.md)
-**Input**: Feature specification from `specs/004-bestel-workflow-aanpassing/spec.md`
+**Branch**: `004-bestel-workflow-aanpassing` | **Date**: 2026-05-16 | **Spec**: [spec.md](spec.md)
+**Input**: Feature specification from `/specs/004-bestel-workflow-aanpassing/spec.md`
 
 ## Summary
 
-Voeg een ingredient-selectiescherm toe tussen het weekmenu en de voorraadcheck, zodat de gebruiker per recept kan beslissen welke ingrediënten besteld moeten worden en in welke hoeveelheid. Na de voorraadcheck worden de geselecteerde recept-ingrediënten en de pantry-items samengevoegd en start product matching direct — het bestaande boodschappenlijst-scherm valt buiten de normale bestelflow.
+Voeg een ingredient-selectiescherm toe tussen het weekmenu en de voorraadcheck. De gebruiker kan per recept-ingredient aan/uitvinken en de hoeveelheid aanpassen via dezelfde +/- UI als `/boodschappen` (inclusief dynamische stapgrootte). Na de voorraadcheck worden de geselecteerde recept-ingrediënten geaggregeerd en gecombineerd met de voorraadartikelen, waarna product matching direct start — zonder een apart boodschappenlijstscherm.
 
-**Nieuwe stappenvolgorde**: Weekoverzicht → Ingredient-selectie → Voorraadcheck → [aggregatie + matching] → Match-review → AH Bevestiging
+**Technische aanpak**: Nieuw `ingredient_selectie` router in FastAPI; `app.state.ingredient_selectie: list[dict]` voor in-memory sessiestate (conform bestaand `app.state.boodschappenlijst` patroon); `PATCH /voorraad/bevestig` aggregeert via `IngredientNormalizer` en roept nieuw `voeg_pantry_toe()` aan op `BoodschappenlijstFilter`; ingredient_selectie_item.html hergebruikt exact dezelfde +/- button markup en dynamische stapgrootte-logica als `boodschapitem.html`.
 
 ## Technical Context
 
 **Language/Version**: Python 3.14+
-**Primary Dependencies**: FastAPI 0.111+, Jinja2, HTMX 1.9+, BeautifulSoup4 (tests), pytest
-**Storage**: In-memory `app.state` voor sessiedata (geen persistentie nodig voor ingredient-selectie)
-**Testing**: pytest + FastAPI TestClient; Playwright E2E
-**Target Platform**: Web server (Uvicorn); primair mobiel (iPhone 13, 390×844)
-**Project Type**: Web application (FastAPI + HTMX server-side rendering)
-**Performance Goals**: Ingredient-selectie initialisatie < 100ms (in-memory operatie op weekmenu)
-**Constraints**: Mobiel-first (min. 44×44 pt touch targets); geen SPA; HTML-over-the-wire
-**Scale/Scope**: Enkelvoudige gebruiker, lokaal; weekmenu bevat maximaal 7 recepten, elk max ~15 ingrediënten
+**Primary Dependencies**: FastAPI, Jinja2, HTMX (CDN), Tailwind CSS (CDN), pytest, Playwright
+**Storage**: In-memory `app.state` (geen persistentie voor ingredient-selectie sessiestate)
+**Testing**: pytest (unit/integration via TestClient); Playwright (E2E, iPhone 13, `@pytest.mark.e2e`)
+**Target Platform**: Mobiel (iPhone 13 viewport 390×844); Python server op Linux
+**Project Type**: Web-service (FastAPI + SSR)
+**Performance Goals**: Initialisatietijd ingredient-selectiescherm < 100ms (in-memory, max. ~105 items)
+**Constraints**: Alle touch targets ≥ 44×44 pt; geen inline `style` attributen; hex-waarden alleen in Tailwind config in `base.html`
+**Scale/Scope**: 1 gebruiker per sessie; max. 7 recepten × ~15 ingrediënten = max. ~105 items
 
 ## Constitution Check
 
-*Re-check after Phase 1 design completed below.*
+*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-| Gate | Status | Notes |
-|------|--------|-------|
-| TDD (Principle I) | ✅ PASS | Plan volgt Red-Green-Refactor per stap |
-| Server-side rendering (Principle II) | ✅ PASS | Alle nieuwe schermen zijn FastAPI + Jinja2 + HTMX |
-| YAGNI (Principle III) | ✅ PASS | Geen speculatieve abstraties; IngredientSelectieItems zijn dicts (zelfde patroon als boodschappenlijst) |
-| Code quality gates (Principle IV) | ✅ PASS | Ruff check/format verplicht voor commit |
-| Domain modelling (Principle V) | ✅ PASS | Sessiestate in app.state als dicts (niet gepersisteerd); geen extra frozen dataclass nodig |
-| UI/UX design (Principle VI) | ⚠️ DEVIATION | Constitution vermeldt volgorde "Voorraadcheck → Boodschappenlijst"; na deze feature is de volgorde "Ingredient-selectie → Voorraadcheck → Matching". **Justified**: spec FR-009 definieert de nieuwe canonieke volgorde. Constitution-sectie VI vereist een MINOR-versie-bump na deze feature. |
+| Principe | Status | Toelichting |
+|----------|--------|-------------|
+| I. TDD (NON-NEGOTIABLE) | ✅ Pass | Alle taken volgen Red-Green-Refactor; tests in `tests/web/test_ingredient_selectie.py` en `tests/web/test_voorraadcheck.py` |
+| II. Server-Side Rendering | ✅ Pass | FastAPI + Jinja2 + HTMX; geen SPA; alle responses zijn HTML (full page of fragment) |
+| III. Simplicity (YAGNI) | ✅ Pass | `app.state` als `list[dict]` (geen frozen dataclass); geen extra abstractielagen; bestaande `IngredientNormalizer` hergebruikt |
+| IV. Code Quality Gates | ✅ Pass | ruff check + format vereist (T027); geen inline `style`; hex alleen in Tailwind config |
+| V. Domain Modelling | ✅ Pass | Ingredient-selectie gebruikt `list[dict]` conform bestaand patroon; geen nieuwe frozen dataclass |
+| VI. UI/UX Design Philosophy | ✅ Pass | Vaste flow: Weekoverzicht → Ingredient-selectie → Voorraadcheck → Matching → Match-review; touch targets ≥ 44×44 pt; +/- knoppen identiek aan boodschapitem.html |
 
-**Gate-oordeel**: Geen blokkerende schendingen. De workflow-volgorde in Principe VI wijkt af en vereist een constitution-update na implementatie, maar is afdoende gerechtvaardigd door de spec.
+**Post-Phase-1 re-check**: ✅ — geen nieuwe schendingen geïntroduceerd; `voeg_pantry_toe()` is de minimale toevoeging aan `BoodschappenlijstFilter` (YAGNI gerespecteerd).
 
 ## Project Structure
 
@@ -42,43 +42,63 @@ Voeg een ingredient-selectiescherm toe tussen het weekmenu en de voorraadcheck, 
 
 ```text
 specs/004-bestel-workflow-aanpassing/
-├── plan.md              # This file (/speckit-plan command output)
-├── research.md          # Phase 0 output
-├── data-model.md        # Phase 1 output
+├── plan.md                    # This file
+├── spec.md                    # Feature specification
+├── research.md                # Phase 0 output ✅
+├── data-model.md              # Phase 1 output ✅
 ├── contracts/
-│   └── http-endpoints.md  # Phase 1 output
-└── tasks.md             # Phase 2 output (/speckit-tasks command)
+│   └── http-endpoints.md      # Phase 1 output ✅
+└── tasks.md                   # Phase 2 output ✅
 ```
 
-### Source Code (repository root)
+### Source Code (gewijzigde en nieuwe bestanden)
 
 ```text
 src/boodschappenagent/web/
-    routers/
-        ingredient_selectie.py   # NEW — GET /ingredient-selectie, POST .../toggle, PATCH .../hoeveelheid, POST .../bevestig
-        voorraad.py              # MODIFIED — POST /voorraad/bevestig → start matching
-        menu.py                  # MODIFIED — POST /week/bevestig → redirect /ingredient-selectie
-    templates/
-        pages/
-            ingredient_selectie.html     # NEW
-            voorraad.html                # MODIFIED — back button → /ingredient-selectie
-        fragments/
-            ingredient_selectie_content.html  # NEW
-        components/
-            ingredient_selectie_item.html    # NEW
-    app.py               # MODIFIED — include ingredient_selectie router
+├── app.py                                        # include_router(ingredient_selectie_router)
+├── routers/
+│   ├── ingredient_selectie.py                    # NIEUW — GET/POST endpoints
+│   ├── menu.py                                   # GEWIJZIGD — POST /week/bevestig redirect
+│   └── voorraad.py                               # GEWIJZIGD — POST /voorraad/bevestig
+├── templates/
+│   ├── components/
+│   │   └── ingredient_selectie_item.html         # NIEUW — +/- buttons (zelfde als boodschapitem.html)
+│   ├── fragments/
+│   │   └── ingredient_selectie_content.html      # NIEUW — HTMX fragment
+│   └── pages/
+│       ├── ingredient_selectie.html              # NIEUW — full page
+│       ├── match_review.html                     # GEWIJZIGD — back button → /voorraad
+│       └── voorraad.html                         # GEWIJZIGD — back button → /ingredient-selectie
 
 src/boodschappenagent/voorraadbeheer/
-    filter.py            # MODIFIED — add voeg_pantry_toe() method
+└── filter.py                                     # GEWIJZIGD — voeg_pantry_toe() methode toegevoegd
 
-tests/web/
-    test_ingredient_selectie.py  # NEW
-    test_week_bevestig.py        # MODIFIED — redirect assertion
-    test_voorraadcheck.py        # MODIFIED — S8.1 redirect assertion
+tests/
+├── web/
+│   ├── test_ingredient_selectie.py               # NIEUW — US1 tests
+│   ├── test_voorraadcheck.py                     # GEWIJZIGD — US2+US3 tests
+│   ├── test_boodschappen.py                      # GEWIJZIGD — back button assertie
+│   └── test_week_bevestig.py                     # GEWIJZIGD — redirect assertie
+└── e2e/
+    └── test_bestel_flow.py                       # NIEUW — Playwright E2E
 ```
 
-**Structure Decision**: Enkelvoudige web applicatie (Option 1 + web app varianten). De ingredient_selectie router volgt dezelfde structuur als de bestaande voorraad en boodschappen routers.
+**Structure Decision**: Single project (Option 1). Web router en templates in bestaande structuur onder `src/boodschappenagent/web/`; geen aparte frontend/backend split.
 
-## Complexity Tracking
+---
 
-Geen constitution-schendingen die rechtvaardiging vereisen.
+## Implementatiestatus
+
+Alle taken (T001–T034) zijn geïmplementeerd, met uitzondering van de geclarificeerde FR-013 UI:
+
+| Fase | Status | Taken |
+|------|--------|-------|
+| Phase 1: Setup | ✅ | T001–T004 |
+| Phase 2: US1 ingredient-selectiescherm | ✅ (deels) | T005–T015 — router + templates aanwezig; ingredient_selectie_item.html gebruikt nog text input |
+| Phase 3: US2 aggregatie | ✅ | T016–T019 |
+| Phase 4: US3 matching redirect | ✅ | T020–T024 |
+| Phase 5: Polish | ✅ | T025–T027, T033 |
+| Phase 6: Correcties | ✅ (deels) | T028–T031, T034 — T032a/T032 heropend (zie tasks.md) |
+| **FR-013 UI clarificatie** | ❌ Open | T035–T036 — +/- knoppen met dynamische stapgrootte |
+
+**Openstaand**: `ingredient_selectie_item.html` gebruikt `<input type="number" step="any">` waar `boodschapitem.html` +/- knoppen met dynamische stapgrootte gebruikt. FR-013 is na clarificatie (2026-05-16) preciezer gespecificeerd — T035/T036 in tasks.md voegen de correcte implementatie toe.

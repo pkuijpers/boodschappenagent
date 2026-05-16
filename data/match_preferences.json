@@ -52,5 +52,59 @@
     "article_id": 48896,
     "product_naam": "AH Olijfolie traditioneel",
     "updated_at": "2026-05-15T15:40:46"
+  },
+  "gerookte amandelen": {
+    "ingredient_naam": "gerookte amandelen",
+    "article_id": 375962,
+    "product_naam": "AH Amandelen met rooksmaak gezouten",
+    "updated_at": "2026-05-16T21:05:45"
+  },
+  "gesneden spitskool": {
+    "ingredient_naam": "gesneden spitskool",
+    "article_id": 395949,
+    "product_naam": "AH Fijngesneden spitskool",
+    "updated_at": "2026-05-16T21:05:45"
+  },
+  "kaasschnitzel": {
+    "ingredient_naam": "kaasschnitzel",
+    "article_id": 442491,
+    "product_naam": "AH Kaasschnitzel",
+    "updated_at": "2026-05-16T21:05:45"
+  },
+  "knoflook": {
+    "ingredient_naam": "knoflook",
+    "article_id": 4160,
+    "product_naam": "AH Knoflook",
+    "updated_at": "2026-05-16T21:05:45"
+  },
+  "krieltjes": {
+    "ingredient_naam": "krieltjes",
+    "article_id": 67907,
+    "product_naam": "AH Krieltjes",
+    "updated_at": "2026-05-16T21:05:45"
+  },
+  "mandarijnen": {
+    "ingredient_naam": "mandarijnen",
+    "article_id": 94782,
+    "product_naam": "AH Mandarijnen",
+    "updated_at": "2026-05-16T21:05:45"
+  },
+  "peterselie": {
+    "ingredient_naam": "peterselie",
+    "article_id": 611646,
+    "product_naam": "AH Peterselie",
+    "updated_at": "2026-05-16T21:05:45"
+  },
+  "romige sladressing": {
+    "ingredient_naam": "romige sladressing",
+    "article_id": 398505,
+    "product_naam": "AH Yoghurtdressing bieslook",
+    "updated_at": "2026-05-16T21:05:45"
+  },
+  "witlof": {
+    "ingredient_naam": "witlof",
+    "article_id": 238834,
+    "product_naam": "AH Witlof",
+    "updated_at": "2026-05-16T21:05:45"
   }
 }

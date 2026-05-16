@@ -9,12 +9,8 @@ from fastapi.responses import RedirectResponse
 router = APIRouter()
 
 
-def _init_ingredient_selectie(request: Request) -> None:
-    """Initialiseer ingredient_selectie vanuit week_menu als nog niet aanwezig."""
-    bestaand = getattr(request.app.state, "ingredient_selectie", None)
-    if bestaand:
-        return
-    week_menu = request.app.state.week_menu
+def _build_items_from_menu(week_menu) -> list[dict]:
+    """Bouw ingredient_selectie items vanuit week_menu."""
     items = []
     for dag in week_menu.geplande_dagen:
         scaled = dag.recept.scale_to_portions(dag.personen)
@@ -29,7 +25,22 @@ def _init_ingredient_selectie(request: Request) -> None:
                     "geselecteerd": True,
                 }
             )
-    request.app.state.ingredient_selectie = items
+    return items
+
+
+def _init_ingredient_selectie(request: Request) -> None:
+    """Initialiseer ingredient_selectie vanuit week_menu.
+
+    Reset als het weekmenu gewijzigd is (andere receptenset dan huidige selectie).
+    """
+    week_menu = request.app.state.week_menu
+    menu_namen = {dag.recept.naam for dag in week_menu.geplande_dagen}
+    bestaand = getattr(request.app.state, "ingredient_selectie", None)
+    if bestaand:
+        bestaande_namen = {item["recept_naam"] for item in bestaand}
+        if bestaande_namen == menu_namen:
+            return
+    request.app.state.ingredient_selectie = _build_items_from_menu(week_menu)
 
 
 def _build_groepen_context(request: Request) -> dict:

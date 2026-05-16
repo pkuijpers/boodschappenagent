@@ -19,6 +19,8 @@
 - Q: Als het weekmenu gewijzigd is (recept toegevoegd of verwijderd) nadat de gebruiker de ingredient-selectie al gestart heeft, wat moet er dan met de eerdere selectie gebeuren? → A: Volledige reset — de ingredient-selectie start altijd opnieuw als het weekmenu gewijzigd is; alle ingrediënten staan standaard aangevinkt.
 - Q: Waar navigeert de back-button op de "controleer matches" (match-review) pagina naartoe? → A: Naar de Voorraadcheck — de directe voorgaande stap in de flow.
 - Q: Moet het ingredient-selectiescherm de checkbox- en hoeveelheden-selector-componenten hergebruiken van `/boodschappen`, of is visuele gelijkenis voldoende? → A: Exacte hergebruik van dezelfde Jinja2/HTMX-componenten als `/boodschappen` — geen aparte implementatie.
+- Q: Wat gebeurt er als de gebruiker de hoeveelheid via de minus-knop tot de minimale stapgrootte brengt? → A: Minus-knop wordt `disabled` bij minimum stapgrootte — zelfde gedrag als boodschapitem; de checkbox blijft de enige manier om een ingredient volledig te deselecteren.
+- Q: Moet het recept-sublabel ("voor [recept]") ook getoond worden in het ingredient-selectie item? → A: Weglaten — items zijn al gegroepeerd per recept via de sectie-header; het sublabel is redundant.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -94,7 +96,7 @@ Na het afronden van de voorraadcheck wordt het product-matchingproces direct ges
 - **FR-010**: Bij het samenvoegen tot de boodschappenlijst MOETEN gelijke ingrediënten uit verschillende recepten worden geaggregeerd: hoeveelheden worden opgeteld tot één regel per uniek ingredient (op basis van ingredientnaam en eenheid)
 - **FR-011**: De ingredient-selectie MOET bewaard blijven zolang de gebruiker actief is binnen de bestelflow — terugnavigeren vanuit de voorraadcheck naar het selectiescherm MOET de eerder gemaakte keuzes tonen
 - **FR-012**: Als het weekmenu gewijzigd is (recept toegevoegd of verwijderd) ten opzichte van de aktieve ingredient-selectie, MOET het systeem de ingredient-selectie volledig resetten: alle ingrediënten van het nieuwe weekmenu worden aangevinkt weergegeven
-- **FR-013**: Het ingredient-selectiescherm MOET de checkbox-component en hoeveelheden-selector hergebruiken van de `/boodschappen`-pagina — dezelfde Jinja2/HTMX-implementatie, geen aparte component
+- **FR-013**: Het ingredient-selectiescherm MOET dezelfde UI-controls gebruiken als `/boodschappen`: grote ronde `-`/`+`-knoppen links en rechts van de hoeveelheid (inclusief eenheid), met dynamische stapgrootte (gram/ml: 25 onder 500, 100 vanaf 500; lepel: 0,5; overig: 1). De minus-knop wordt `disabled` zodra de hoeveelheid de minimale stapgrootte bereikt. Het recept-sublabel ("voor [recept]") MOET worden weggelaten — items zijn al gegroepeerd per recept via de sectie-header. De checkbox-component is identiek aan boodschapitem (blauw vinkje indien geselecteerd, border-gray-300 indien niet). Geen aparte componentimplementatie.
 - **FR-008**: Als de gecombineerde boodschappenlijst (recept-ingrediënten + voorraadartikelen) leeg is, MOET het systeem de gebruiker waarschuwen en niet toestaan om door te gaan
 - **FR-009**: De navigatiestroom MOET zijn: Weekmenu → Ingredient-selectie → Voorraadcheck → [samenvoegen tot boodschappenlijst] → Product matching → Match-review (bestaande 003-flow). Terugnavigatie: Match-review → Voorraadcheck → Ingredient-selectie → Weekmenu. Als `week_menu` ontbreekt in `app.state`, MAG `GET /ingredient-selectie` redirecten naar `/week`
 
@@ -119,7 +121,7 @@ Na het afronden van de voorraadcheck wordt het product-matchingproces direct ges
 
 - De gebruiker werkt op een mobiel scherm (iPhone 13 viewport, 390×844), consistent met de bestaande UI-conventi
 - Uitgevinkte ingrediënten worden niet opgeslagen of onthouden tussen sessies — de selectie begint elke keer standaard met alles aangevinkt
-- De hoeveelheidsaanpassing is een vrij in te vullen getal (bijv. 2, 0.5) per ingredient; eenheid wordt niet gewijzigd
+- De hoeveelheidsaanpassing werkt via `-`/`+`-knoppen met dynamische stapgrootte (zie FR-013); eenheid wordt niet gewijzigd. Minimum hoeveelheid = 1 stapgrootte (minus-knop disabled aan ondergrens)
 - Handmatige artikelen (vrije tekst, niet aan een recept gekoppeld) vallen buiten de scope van dit selectiescherm — zij stromen ongewijzigd door naar de voorraadcheck en matching
 - De bestaande product-matching flow (003-ingredient-match-review) wordt ongewijzigd hergebruikt als laatste stap
 - "Ingredient-selectiescherm" vervangt de huidige positie van de boodschappenlijst; de boodschappenlijst als apart scherm valt na deze feature buiten de normale bestelflow

@@ -247,3 +247,151 @@ class TestIngredientSelectieBevestig:
         response = client.post("/ingredient-selectie/bevestig", follow_redirects=False)
         assert response.status_code == 303
         assert response.headers["location"] == "/week"
+
+
+# --- T028: FR-012 weekmenu-wijziging reset ingredient-selectie ---
+
+
+class TestIngredientSelectieMenuReset:
+    """T028/T029: GET /ingredient-selectie reset bij gewijzigd weekmenu."""
+
+    def test_gewijzigd_menu_reset_ingredient_selectie(self, client: TestClient):
+        """Bestaande selectie (oud menu) wordt gereset als weekmenu is gewijzigd."""
+        old_menu = _make_week_menu_met_ingredienten()
+        set_week_menu(client, old_menu)
+        client.get("/ingredient-selectie")
+        assert len(client.app.state.ingredient_selectie) == 4
+
+        recept_c = _make_recipe_met_ingredienten("recept-c", "Pasta bolognese")
+        recept_d = _make_recipe_met_ingredienten("recept-d", "Risotto")
+        from boodschappenagent.planner import DagPlanning, WeekMenu
+
+        new_dagen = [
+            DagPlanning(dag=0, recept=recept_c, personen=2),
+            DagPlanning(dag=1, recept=recept_d, personen=2),
+            DagPlanning(dag=2, recept=None, personen=0),
+            DagPlanning(dag=3, recept=None, personen=0),
+            DagPlanning(dag=4, recept=None, personen=0),
+            DagPlanning(dag=5, recept=None, personen=0),
+            DagPlanning(dag=6, recept=None, personen=0),
+        ]
+        new_menu = WeekMenu(week_start=WEEK_START, dagen=new_dagen)
+        set_week_menu(client, new_menu)
+        client.get("/ingredient-selectie")
+
+        namen = {item["recept_naam"] for item in client.app.state.ingredient_selectie}
+        assert "Pasta bolognese" in namen
+        assert "Risotto" in namen
+        assert "Kip curry" not in namen
+        assert "Kip wok" not in namen
+
+    def test_gewijzigd_menu_alle_items_geselecteerd(self, client: TestClient):
+        """Na reset zijn alle items geselecteerd (default True)."""
+        old_menu = _make_week_menu_met_ingredienten()
+        set_week_menu(client, old_menu)
+        client.get("/ingredient-selectie")
+        client.app.state.ingredient_selectie[0]["geselecteerd"] = False
+
+        recept_c = _make_recipe_met_ingredienten("recept-c", "Pasta bolognese")
+        from boodschappenagent.planner import DagPlanning, WeekMenu
+
+        new_dagen = [
+            DagPlanning(dag=0, recept=recept_c, personen=2),
+            DagPlanning(dag=1, recept=None, personen=0),
+            DagPlanning(dag=2, recept=None, personen=0),
+            DagPlanning(dag=3, recept=None, personen=0),
+            DagPlanning(dag=4, recept=None, personen=0),
+            DagPlanning(dag=5, recept=None, personen=0),
+            DagPlanning(dag=6, recept=None, personen=0),
+        ]
+        new_menu = WeekMenu(week_start=WEEK_START, dagen=new_dagen)
+        set_week_menu(client, new_menu)
+        client.get("/ingredient-selectie")
+
+        assert all(
+            item["geselecteerd"] is True
+            for item in client.app.state.ingredient_selectie
+        )
+
+    def test_zelfde_menu_behoudt_selectie(self, client: TestClient):
+        """Zelfde weekmenu (zelfde recepten) overschrijft bestaande selectie NIET."""
+        set_week_menu(client, _make_week_menu_met_ingredienten())
+        client.get("/ingredient-selectie")
+        client.app.state.ingredient_selectie[0]["geselecteerd"] = False
+        original_id = client.app.state.ingredient_selectie[0]["id"]
+
+        set_week_menu(client, _make_week_menu_met_ingredienten())
+        client.get("/ingredient-selectie")
+
+        assert client.app.state.ingredient_selectie[0]["geselecteerd"] is False
+        assert client.app.state.ingredient_selectie[0]["id"] == original_id
+
+
+# --- T034: Edge case — leeg weekmenu (geen recepten) ---
+
+
+def _make_leeg_week_menu() -> WeekMenu:
+    """Weekmenu zonder recepten (alle dagen 'niet-thuis')."""
+    from boodschappenagent.planner import DagPlanning, WeekMenu
+
+    dagen = [DagPlanning(dag=i, recept=None, personen=0) for i in range(7)]
+    return WeekMenu(week_start=WEEK_START, dagen=dagen)
+
+
+class TestIngredientSelectieLegMenu:
+    """T034: Edge case — weekmenu zonder recepten."""
+
+    def test_leeg_menu_initialisatie_lege_lijst(self, client: TestClient):
+        """GET /ingredient-selectie met leeg menu → ingredient_selectie = []."""
+        set_week_menu(client, _make_leeg_week_menu())
+        client.get("/ingredient-selectie")
+        assert client.app.state.ingredient_selectie == []
+
+    def test_leeg_menu_laadt_zonder_redirect(self, client: TestClient):
+        """GET /ingredient-selectie met leeg menu → 200 (geen redirect)."""
+        set_week_menu(client, _make_leeg_week_menu())
+        response = client.get("/ingredient-selectie")
+        assert response.status_code == 200
+
+    def test_leeg_menu_bevestig_redirect_naar_voorraad(self, client: TestClient):
+        """Bevestig met leeg menu → 303 redirect naar /voorraad."""
+        set_week_menu(client, _make_leeg_week_menu())
+        client.get("/ingredient-selectie")
+        response = client.post("/ingredient-selectie/bevestig", follow_redirects=False)
+        assert response.status_code == 303
+        assert response.headers["location"] == "/voorraad"
+
+
+# --- T032a: FR-013 ingredient_selectie_item.html moet zelfde klassen hebben ---
+
+
+class TestIngredientSelectieItemStijl:
+    """T032a: ingredient_selectie_item.html zelfde klassen als boodschapitem."""
+
+    def test_checkbox_heeft_rounded_border_klassen(self, client: TestClient):
+        """Checkbox-knop heeft 'rounded' en 'border' klassen (zoals boodschapitem)."""
+        set_week_menu(client, _make_week_menu_met_ingredienten())
+        s = soup(client.get("/ingredient-selectie"))
+        eerste_item_html = str(s.select("[data-testid='ingredient-item']")[0])
+        from bs4 import BeautifulSoup
+
+        item_soup = BeautifulSoup(eerste_item_html, "html.parser")
+        checkbox = item_soup.select_one("button[hx-post]")
+        assert checkbox is not None
+        classes = checkbox.get("class", [])
+        class_str = " ".join(classes)
+        assert "rounded" in class_str
+        assert "border" in class_str
+
+    def test_hoeveelheid_input_heeft_border_en_rounded_klassen(
+        self, client: TestClient
+    ):
+        """Hoeveelheid-input heeft 'border' en 'rounded' klassen."""
+        set_week_menu(client, _make_week_menu_met_ingredienten())
+        s = soup(client.get("/ingredient-selectie"))
+        item = s.select("[data-testid='ingredient-item']")[0]
+        inp = item.select_one("input[type='number']")
+        assert inp is not None
+        class_str = " ".join(inp.get("class", []))
+        assert "border" in class_str
+        assert "rounded" in class_str

@@ -86,7 +86,7 @@ Body: components/ingredient_selectie_item.html (enkelvoudig item)
 
 ### PATCH /ingredient-selectie/{item_id}/hoeveelheid
 
-**Beschrijving**: Pas de hoeveelheid van één ingredient aan.
+**Beschrijving**: Pas de hoeveelheid van één ingredient aan via pre-computed +/- knop waarden.
 
 **Precondities**:
 - `app.state.ingredient_selectie` bestaat
@@ -97,7 +97,7 @@ Body: components/ingredient_selectie_item.html (enkelvoudig item)
 PATCH /ingredient-selectie/{item_id}/hoeveelheid
 Content-Type: application/x-www-form-urlencoded
 Body:
-  hoeveelheid: float
+  hoeveelheid: float   ← pre-computed door template (+/- stapgrootte), nooit < 1 stap
 ```
 
 **Response**:
@@ -105,7 +105,11 @@ Body:
 200 OK
 Content-Type: text/html
 Body: components/ingredient_selectie_item.html (enkelvoudig item met nieuwe hoeveelheid)
+  - Vernieuwd met bijgewerkte hoeveelheid_minus/hoeveelheid_plus berekening
+  - Minus-knop disabled als nieuwe hoeveelheid == stap_minus
 ```
+
+**Noot**: De minimum-grens wordt afgedwongen in de template (minus-knop `disabled`), niet in de server. De server accepteert elk positief float-getal.
 
 ---
 

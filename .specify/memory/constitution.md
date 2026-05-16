@@ -1,25 +1,24 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version change: 1.1.0 → 1.1.1
+Version change: 1.1.1 → 1.2.0
 
-Bump rationale: PATCH — removed three subsections that were at the wrong
-abstraction level for a constitution (System Components, Development Phases,
-CO2-Seizoenskalender Logic). These belong in CLAUDE.md and feature specs
-respectively. Principle V simplified to retain only the non-negotiable design
-decision (no seasonal tags on recipes) without algorithm or file-path detail.
+Bump rationale: MINOR — materially updated Principle VI to reflect the new
+canonical bestelflow introduced by feature 004-bestel-workflow-aanpassing.
+The fixed 6-step sequence now includes Ingredient-selectie and removes
+Boodschappenlijst as a separate mandatory step in the ordering flow.
 
 Modified principles:
-  V. Domain Modelling — removed implementation-specific CO2 algorithm detail;
-     retained the non-negotiable "no seasonal tags on recipes" rule
+  VI. UI/UX Design Philosophy — updated the fixed flow sequence from
+      "Weekoverzicht → Voorraadcheck → Boodschappenlijst → AH Mandje → Kookmodus"
+      to "Weekoverzicht → Ingredient-selectie → Voorraadcheck → Matching →
+      Match-review → AH Bevestiging → Kookmodus"
 
 Added sections:
   None
 
 Removed sections:
-  - Technical Standards: System Components (belongs in CLAUDE.md)
-  - Technical Standards: CO2-Seizoenskalender Logic (belongs in feature spec)
-  - Technical Standards: Development Phases (belongs in CLAUDE.md)
+  None
 
 Templates reviewed:
   ✅ .specify/templates/plan-template.md — no updates needed
@@ -92,9 +91,10 @@ and the user triggers a change (dagtype, persons, shuffle recipe), the
 background dagkaart MUST update in place while the sheet remains open. No
 full-page reloads for within-session changes.
 
-The weekly planning flow is a fixed 6-step sequence:
-Weekoverzicht → (optioneel) Recept vervangen / Shuffle → Voorraadcheck →
-Boodschappenlijst → AH Mandje → Kookmodus (dagelijks, los van de flow).
+The weekly ordering flow is a fixed sequence:
+Weekoverzicht → (optioneel) Recept vervangen / Shuffle → Ingredient-selectie →
+Voorraadcheck → Matching → Match-review → AH Bevestiging.
+Kookmodus is a separate daily flow, independent of the ordering flow.
 No step MAY be skipped by the system; the user MAY choose to proceed past
 any step directly.
 
@@ -160,4 +160,4 @@ principles before merge.
 
 Runtime development guidance: `CLAUDE.md`
 
-**Version**: 1.1.1 | **Ratified**: 2026-05-11 | **Last Amended**: 2026-05-14
+**Version**: 1.2.0 | **Ratified**: 2026-05-11 | **Last Amended**: 2026-05-16
