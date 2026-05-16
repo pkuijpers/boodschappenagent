@@ -230,17 +230,17 @@ def mock_ah_integratie():
     mock.add_products_to_list.return_value = None
     mock.haal_voorraad_producten.return_value = TEST_VOORRAAD_PRODUCTEN
     # Zoekresultaten voor correctie flow
-    mock._client.search_products.return_value = [
-        Product(
-            id=99,
-            title="AH Gecorrigeerd Product",
-            brand="AH",
-            size="1 stuk",
-            price=1.49,
-            category="",
-            is_orderable=True,
-        )
-    ]
+    correctie_product = Product(
+        id=99,
+        title="AH Gecorrigeerd Product",
+        brand="AH",
+        size="1 stuk",
+        price=1.49,
+        category="",
+        is_orderable=True,
+    )
+    mock._client.search_products.return_value = [correctie_product]
+    mock.zoek_producten_voor_correctie.return_value = [correctie_product]
     return mock
 
 
