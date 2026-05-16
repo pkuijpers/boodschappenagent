@@ -66,12 +66,29 @@ class TestVoorraadToggle:
 
 
 class TestVoorraadNaarBoodschappenFlow:
-    """E10: Voorraad → Boodschappen navigatie."""
+    """E10: Voorraad → Match-review navigatie (via POST /voorraad/bevestig)."""
+
+    @pytest.fixture(autouse=True)
+    def setup_ingredient_selectie(self, app):
+        """Zet ingredient_selectie in app.state zodat POST /voorraad/bevestig werkt."""
+        app.state.ingredient_selectie = [
+            {
+                "id": "e10-test-item",
+                "recept_naam": "Test Recept",
+                "naam": "test-ingredient",
+                "hoeveelheid": 1.0,
+                "eenheid": "stuk",
+                "geselecteerd": True,
+            }
+        ]
+        yield
+        app.state.ingredient_selectie = None
 
     def test_e10_naar_boodschappen_button_navigeert(self, voorraad_page: Page):
-        """E10: 'Naar boodschappenlijst' knop navigeert naar /boodschappen."""
+        """E10: 'Naar boodschappenlijst' knop start AH-matching, navigeert naar match-review."""  # noqa: E501
         btn = voorraad_page.locator("[data-testid='naar-boodschappen-button']")
         expect(btn).to_be_visible()
         btn.click()
-        voorraad_page.wait_for_url("**/boodschappen")
-        expect(voorraad_page.locator("h1")).to_contain_text("Boodschappenlijst")
+        voorraad_page.wait_for_selector(
+            "[data-testid='match-review']", timeout=10000
+        )

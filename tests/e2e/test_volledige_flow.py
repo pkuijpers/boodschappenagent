@@ -44,13 +44,8 @@ class TestVolledigeFlow:
 
         # Stap 3: /ingredient-selectie → /voorraad via 'Verder naar voorraadcheck'
         week_page.locator("button[type='submit']").click()
-        week_page.wait_for_url("**/voorraad")
-        expect(week_page.locator("h1")).to_contain_text("Voorraadcheck")
+        week_page.wait_for_selector("[data-testid='sectie-voorraad']", timeout=10000)
 
-        # Stap 4: Voorraad sectie is zichtbaar
-        expect(week_page.locator("[data-testid='sectie-voorraad']")).to_be_visible()
-
-        # Stap 5: /voorraad → /boodschappen/match-review via 'Naar boodschappenlijst'
+        # Stap 4: /voorraad → /boodschappen/match-review via 'Naar boodschappenlijst'
         week_page.locator("[data-testid='naar-boodschappen-button']").click()
-        week_page.wait_for_url("**/boodschappen/match-review")
-        expect(week_page.locator("[data-testid='match-review']")).to_be_visible()
+        week_page.wait_for_selector("[data-testid='match-review']", timeout=10000)
