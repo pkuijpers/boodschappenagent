@@ -57,21 +57,21 @@
 
 ---
 
-## Phase 3: User Story 2 — Voorraadcheck aggregeert recept-ingrediënten en pantry-items (Priority: P2)
+## Phase 3: User Story 2 — Bevestig-endpoint aggregeert recept-ingrediënten en voegt voorraadartikelen toe (Priority: P2)
 
-**Goal**: Na de ingredient-selectie werkt de voorraadcheck ongewijzigd; na bevestiging worden de geselecteerde recept-ingrediënten geaggregeerd en samengevoegd met de pantry-items tot één `Boodschappenlijst`.
+**Goal**: Na de ingredient-selectie werkt de voorraadcheck ongewijzigd; na bevestiging worden de geselecteerde recept-ingrediënten geaggregeerd en samengevoegd met de voorraadartikelen tot één `Boodschappenlijst`.
 
 **Independent Test**: Doorloop weekmenu → ingredient-selectie → voorraadcheck en controleer dat `POST /voorraad/bevestig` de geselecteerde ingrediënten correct aggregeert (hoeveelheden opgeteld per uniek ingredient), `voeg_pantry_toe()` aanroept, en de gecombineerde `Boodschappenlijst` gereed is voor matching.
 
 ### Tests voor User Story 2 (schrijf EERST — zorg dat ze FALEN vóór implementatie) ⚠️
 
-- [X] T016 [P] [US2] Schrijf failing tests voor `voeg_pantry_toe(lijst)` methode: voegt VERS_BASIS en HOUDBAAR pantry-items toe die niet al in de lijst zitten; voert stap 1 (filteren op voorraad) NIET uit in `tests/voorraadbeheer/test_filter.py`
+- [X] T016 [P] [US2] Schrijf failing tests voor `voeg_pantry_toe(lijst)` methode: voegt VERS_BASIS en HOUDBAAR voorraadartikelen toe die niet al in de lijst zitten; voert stap 1 (filteren op voorraad) NIET uit in `tests/voorraadbeheer/test_filter.py`
 - [X] T017 [P] [US2] Schrijf failing tests voor ingredient-aggregatielogica in `POST /voorraad/bevestig`: gelijke ingrediënten uit verschillende recepten worden samengevoegd (hoeveelheden opgeteld), niet-geselecteerde items worden weggelaten, `app.state.boodschappenlijst` bevat de gecombineerde regels in `tests/web/test_voorraadcheck.py`
 
 ### Implementatie voor User Story 2
 
 - [X] T018 [US2] Implementeer `voeg_pantry_toe(self, lijst: Boodschappenlijst) -> Boodschappenlijst` op `BoodschappenlijstFilter` in `src/boodschappenagent/voorraadbeheer/filter.py`: kopieer stappen 2 en 3 van `filter_op_voorraad` (VERS_BASIS en HOUDBAAR toevoegen) zonder stap 1 (voorraad-filter)
-- [X] T019 [US2] Implementeer aggregatielogica in `POST /voorraad/bevestig` in `src/boodschappenagent/web/routers/voorraad.py`: (1) lees `app.state.ingredient_selectie`, filter `geselecteerd=True`; (2) aggregeer per `(norm_naam, norm_eenheid)` via `IngredientNormalizer` en `PortionCalculator.round_quantity`; (3) maak `Boodschappenlijst`; (4) roep `BoodschappenlijstFilter.voeg_pantry_toe(lijst)` aan; (5) sla op in `app.state`
+- [X] T019 [US2] Implementeer aggregatielogica in `POST /voorraad/bevestig` in `src/boodschappenagent/web/routers/voorraad.py`: (1) lees `app.state.ingredient_selectie`, filter `geselecteerd=True`; (2) aggregeer per `(norm_naam, norm_eenheid)` via `IngredientNormalizer` (uit `boodschappenagent.boodschappenlijst.normalizer`, reeds aanwezig) en `PortionCalculator.round_quantity`; (3) maak `Boodschappenlijst`; (4) roep `BoodschappenlijstFilter.voeg_pantry_toe(lijst)` aan; (5) sla op in `app.state`
 
 **Checkpoint**: User Stories 1 én 2 werken onafhankelijk; `tests/web/test_voorraadcheck.py` slaagt voor aggregatietests
 
@@ -105,6 +105,36 @@
 - [X] T025 [P] Voeg E2E Playwright-test toe voor de volledige bestelflow (weekmenu → ingredient-selectie → voorraadcheck → match-review) in `tests/e2e/test_bestel_flow.py` (iPhone 13 viewport, 390×844)
 - [X] T026 [P] Update `docs/implementatieplan-ui.md` met nieuwe werkstroom: Weekoverzicht → Ingredient-selectie → Voorraadcheck → Matching → Match-review
 - [X] T027 Voer `uv run ruff check . && uv run ruff format .` uit en herstel eventuele linting-schendingen in gewijzigde bestanden
+- [ ] T033 Voer MINOR version bump uit in `.specify/memory/constitution.md`: (1) update Principle VI flow-volgorde naar "Weekoverzicht → Ingredient-selectie → Voorraadcheck → Matching → Match-review"; (2) verwijder "Boodschappenlijst" als aparte stap uit de vaste 6-stappen-reeks; (3) verhoog versie van 1.1.1 → 1.2.0; (4) voeg Sync Impact Report toe als HTML comment boven de constitutie
+
+---
+
+## Phase 6: Correcties na handmatig testen (FR-012, FR-013, navigatiebug)
+
+**Purpose**: Drie problemen gevonden bij handmatig testen — weekmenu-wijziging reset niet, ingredient-selectie stijl wijkt af van /boodschappen, en back button op match-review gaat naar verkeerde pagina.
+
+**Independent Test**: Handmatig doorlopen van de drie issues: (1) menu aanpassen en ingredient-selectie openen → selectie herstart; (2) ingredient-selectiescherm visueel gelijk aan /boodschappen; (3) back button op match-review → /voorraad.
+
+### FR-012 — Weekmenu-wijziging reset ingredient-selectie
+
+- [ ] T028 [US1] Schrijf failing test in `tests/web/test_ingredient_selectie.py`: `GET /ingredient-selectie` met bestaande `app.state.ingredient_selectie` (gebouwd uit oud menu) maar gewijzigd `app.state.week_menu` (andere receptenset) → verwacht dat `ingredient_selectie` volledig gereset wordt en opnieuw gebouwd wordt vanuit het nieuwe weekmenu
+- [ ] T029 [US1] Implementeer weekmenu-wijzigingsdetectie in `GET /ingredient-selectie` handler in `src/boodschappenagent/web/routers/ingredient_selectie.py`: vergelijk de set van `recept_naam`-waarden in `app.state.ingredient_selectie` met de set van receptnamen in `app.state.week_menu`; als deze sets niet overeenkomen → reset `app.state.ingredient_selectie` en herbouw volledig vanuit `app.state.week_menu` (alle items `geselecteerd=True`)
+
+### FR-009 — Back button match-review → /voorraad
+
+- [ ] T030 [US3] Schrijf failing test: controleer dat de `GET /boodschappen/match-review` pagina een back button bevat met `href="/voorraad"` (niet `/boodschappen`) in `tests/web/test_boodschappen.py` of `tests/e2e/test_bestel_flow.py`
+- [ ] T031 [US3] Update back button in `src/boodschappenagent/web/templates/pages/match_review.html`: wijzig `href` van `/boodschappen` naar `/voorraad` zodat terugnavigatie vanuit match-review correct naar de voorraadcheck gaat (conform FR-009 terugnavigatiestroom)
+
+### FR-013 — Ingredient-selectie gebruikt zelfde componenten als /boodschappen
+
+- [ ] T032a [US1] Schrijf failing test in `tests/web/test_ingredient_selectie.py`: render het `ingredient_selectie_item.html` fragment voor een testitem en controleer dat het exact dezelfde Tailwind-klassen op checkbox-input en hoeveelheid-input bevat als het overeenkomstige boodschappenlijst-item-component (bijv. via BeautifulSoup-assertions op CSS-klassen en HTMX-attributen)
+- [ ] T032 [P] [US1] Inspecteer `src/boodschappenagent/web/templates/components/` en `src/boodschappenagent/web/templates/pages/boodschappen.html` voor de exacte checkbox-markup en hoeveelheden-selector; pas `src/boodschappenagent/web/templates/components/ingredient_selectie_item.html` aan zodat checkbox-input en hoeveelheid-input exact dezelfde Tailwind-klassen, input-types en HTMX-attributen gebruiken als het bestaande boodschappenlijst-item-component
+
+### Edge Case — Leeg weekmenu (geen recepten)
+
+- [ ] T034 [US1] Schrijf failing tests in `tests/web/test_ingredient_selectie.py` voor weekmenu zonder recepten (bijv. alleen 'niet-thuis'-dagen): `GET /ingredient-selectie` → `app.state.ingredient_selectie = []`, scherm laadt zonder redirect; `POST /ingredient-selectie/bevestig` → redirect 303 naar `/voorraad` (lege selectie is geldig); `POST /voorraad/bevestig` met alleen voorraadartikelen en lege recept-selectie → succesvol redirect naar `/boodschappen/match-review`
+
+**Checkpoint**: Alle issues opgelost; full flow hertest met handmatige validatie
 
 ---
 
@@ -117,6 +147,8 @@
 - **User Story 2 (Phase 3)**: Vereist US1 compleet (T015 aanwezig); US2 en US3 kunnen daarna parallel
 - **User Story 3 (Phase 4)**: Vereist US2 compleet (aggregatielogica aanwezig)
 - **Polish (Phase 5)**: Vereist US3 compleet
+- **Correcties (Phase 6)**: Vereist US1 compleet (T028/T029/T032a/T032/T034 raken ingredient-selectie); US3 compleet (T030/T031 raken match-review)
+- **Constitution (T033, onderdeel van Phase 5)**: Vereist volledige implementatie (Phases 1–4) — voer uit vóór merge naar main
 
 ### User Story Dependencies
 
@@ -197,7 +229,7 @@ Task: "Update S8.1 assertie (T022)" + "ah_error.html lege_lijst (T024)"  # paral
 
 1. Phase 1 → foundation klaar (bestaande tests groen)
 2. Phase 2 (US1) → ingredient-selectiescherm werkt → demo/valideer
-3. Phase 3 (US2) → aggregatie + pantry-items werkt → deel van flow testbaar
+3. Phase 3 (US2) → aggregatie + voorraadartikelen werkt → deel van flow testbaar
 4. Phase 4 (US3) → volledige flow werkend → e2e valideer
 5. Phase 5 → polish en afronden
 
@@ -210,4 +242,5 @@ Task: "Update S8.1 assertie (T022)" + "ah_error.html lege_lijst (T024)"  # paral
 - TDD: tests MOETEN FALEN vóór implementatie — nooit groen beginnen
 - Hanteer `app.state.ingredient_selectie` als `list[dict]` (niet als frozen dataclass) conform bestaand `app.state.boodschappenlijst` patroon
 - Route-volgorde in ingredient_selectie.py is kritisch: `bevestig` vóór `{item_id}/toggle`
-- Constitution update (MINOR versie-bump) vereist na implementatie — zie plan.md gate UI/UX
+- Constitution update (MINOR versie-bump): zie T033 in Phase 5 — uitvoeren vóór merge naar main
+- `IngredientNormalizer` is reeds aanwezig in `boodschappenagent.boodschappenlijst.normalizer`
