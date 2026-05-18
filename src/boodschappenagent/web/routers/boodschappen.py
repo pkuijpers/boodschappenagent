@@ -441,6 +441,7 @@ async def kies_product(
     item_id: Annotated[str, Form()],
     article_id: Annotated[int, Form()],
     title: Annotated[str, Form()],
+    ah_integratie: Annotated[AHIntegratie, Depends(get_ah_integratie)],
     brand: Annotated[str, Form()] = "",
     size: Annotated[str, Form()] = "",
     price: Annotated[float, Form()] = 0.0,
@@ -458,8 +459,6 @@ async def kies_product(
         raise HTTPException(status_code=404, detail="Item niet gevonden")
 
     from boodschappenagent.ah.models import Product
-    from boodschappenagent.ah.quantity_calculator import bereken_aantal
-    from boodschappenagent.boodschappenlijst.models import BoodschappenRegel
 
     product = Product(
         id=article_id,
@@ -477,10 +476,11 @@ async def kies_product(
         eenheid=item.eenheid,
         originele_namen=frozenset({item.naam}),
     )
-    item.product = product
-    item.bron = "zoekopdracht"
+    match = ah_integratie.kies_product_voor_regel(regel, product)
+    item.product = match.product
+    item.bron = match.bron
     item.gecorrigeerd = True
-    item.aantal = bereken_aantal(regel, product)
+    item.aantal = match.aantal
 
     alle_gevonden = all(i.product is not None for i in items)
 

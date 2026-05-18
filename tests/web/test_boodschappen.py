@@ -604,9 +604,18 @@ class TestZoekProduct:
 class TestKiesProduct:
     """T016: POST /boodschappen/kies-product werkt item bij en retourneert OOB fragment."""  # noqa: E501
 
-    def test_werkt_item_bij_met_gekozen_product(self, app_with_ah, mock_token_manager):
+    def test_werkt_item_bij_met_gekozen_product(
+        self, app_with_ah, mock_token_manager, mock_ah_integratie
+    ):
         """Geldig item_id + article_id + product-velden → item bijgewerkt in state."""
+        from boodschappenagent.ah.integration import ProductMatch
+
         mock_token_manager.is_authenticated.return_value = True
+        mock_ah_integratie.kies_product_voor_regel.side_effect = (
+            lambda regel, product: ProductMatch(
+                regel=regel, product=product, bron="zoekopdracht", aantal=1
+            )
+        )
 
         items = [_make_match_review_item("melk")]
         item_id = items[0].id
@@ -693,8 +702,15 @@ class TestKiesProduct:
         """Reproduceert productie-bug: search_products("999") geeft in productie
         nooit een product met id 999 terug. Product data moet uit form komen,
         niet via een nieuwe AH API-call."""
+        from boodschappenagent.ah.integration import ProductMatch
+
         mock_token_manager.is_authenticated.return_value = True
         mock_ah_integratie.zoek_producten_voor_correctie.return_value = []
+        mock_ah_integratie.kies_product_voor_regel.side_effect = (
+            lambda regel, product: ProductMatch(
+                regel=regel, product=product, bron="zoekopdracht", aantal=1
+            )
+        )
 
         items = [_make_match_review_item("melk")]
         item_id = items[0].id

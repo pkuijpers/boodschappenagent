@@ -8,7 +8,10 @@ from typing import TYPE_CHECKING, Any
 from boodschappenagent.ah.client import AHClient
 from boodschappenagent.ah.models import Product
 from boodschappenagent.ah.quantity_calculator import bereken_aantal
-from boodschappenagent.boodschappenlijst.models import Boodschappenlijst
+from boodschappenagent.boodschappenlijst.models import (
+    Boodschappenlijst,
+    BoodschappenRegel,
+)
 
 if TYPE_CHECKING:
     from boodschappenagent.ah.preferences import MatchVoorkeurenRepository
@@ -190,6 +193,15 @@ class AHIntegratie:
     ) -> list[Product]:
         """Zoek producten voor de correctie-flow (productmatch review)."""
         return self._client.search_products(query)[:limit]
+
+    def kies_product_voor_regel(
+        self, regel: BoodschappenRegel, product: Product
+    ) -> ProductMatch:
+        """Bereken ProductMatch voor een handmatig gekozen product."""
+        aantal = bereken_aantal(regel, product)
+        return ProductMatch(
+            regel=regel, product=product, bron="zoekopdracht", aantal=aantal
+        )
 
     def haal_voorraad_producten(self) -> list[Product]:
         """Haal producten op uit de AH 'Voorraad' favorietenlijst."""

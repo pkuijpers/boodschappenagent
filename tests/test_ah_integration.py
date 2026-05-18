@@ -995,3 +995,42 @@ class TestZoekProductenVoorCorrectie:
         resultaten = integratie.zoek_producten_voor_correctie("xyzabc")
 
         assert resultaten == []
+
+
+# =============================================================================
+# AHIntegratie.kies_product_voor_regel Tests
+# =============================================================================
+
+
+class TestKiesProductVoorRegel:
+    """Tests voor AHIntegratie.kies_product_voor_regel method."""
+
+    def test_geeft_product_match_terug(self, mock_client, melk_regel, melk_product):
+        """Methode geeft ProductMatch terug met correct ingevulde velden."""
+        integratie = AHIntegratie(mock_client)
+        match = integratie.kies_product_voor_regel(melk_regel, melk_product)
+
+        assert match.product is melk_product
+        assert match.regel is melk_regel
+        assert match.bron == "zoekopdracht"
+
+    def test_berekent_aantal_op_basis_van_regel(self, mock_client, melk_product):
+        """Aantal wordt berekend op basis van hoeveelheid en productgrootte."""
+        regel = BoodschappenRegel(
+            naam="melk",
+            hoeveelheid=2.0,
+            eenheid="liter",
+            originele_namen=frozenset({"melk"}),
+        )
+        integratie = AHIntegratie(mock_client)
+        match = integratie.kies_product_voor_regel(regel, melk_product)
+
+        # 2 liter nodig, product is "1 l" → aantal=2
+        assert match.aantal == 2
+
+    def test_bron_is_altijd_zoekopdracht(self, mock_client, melk_regel, melk_product):
+        """Bron is altijd 'zoekopdracht' voor handmatig gekozen producten."""
+        integratie = AHIntegratie(mock_client)
+        match = integratie.kies_product_voor_regel(melk_regel, melk_product)
+
+        assert match.bron == "zoekopdracht"
