@@ -1,0 +1,20 @@
+{
+  "id": "friet-hamburger-sla",
+  "naam": "Friet met hamburger en sla",
+  "categorie": "vlees",
+  "basis": "aardappel",
+  "seizoenen": ["herfst", "winter"],
+  "basis_porties": 2,
+  "ingredienten": [
+    {"naam": "frites", "hoeveelheid": 500, "eenheid": "gram", "opmerking": null},
+    {"naam": "hamburger", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "kropsla", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null},
+    {"naam": "cherrytomaten", "hoeveelheid": 125, "eenheid": "gram", "opmerking": null},
+    {"naam": "augurken", "hoeveelheid": 100, "eenheid": "gram", "opmerking": null},
+    {"naam": "zilveruitjes", "hoeveelheid": 100, "eenheid": "gram", "opmerking": null}
+  ],
+  "tags": ["avg", "traditioneel", "nederlands"],
+  "bereidingstijd_min": 30,
+  "bereidingswijze": "",
+  "bron": "eigen recept"
+}

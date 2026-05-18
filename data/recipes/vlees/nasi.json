@@ -1,0 +1,20 @@
+{
+  "id": "nasi",
+  "naam": "Nasi",
+  "categorie": "vlees",
+  "basis": "rijst",
+  "seizoenen": ["herfst", "winter"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "rijst", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
+    {"naam": "boemboe nasi goreng", "hoeveelheid": 95, "eenheid": "gram", "opmerking": null},
+    {"naam": "gehakt", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
+    {"naam": "nasi groente", "hoeveelheid": 600, "eenheid": "gram", "opmerking": null},
+    {"naam": "satesaus", "hoeveelheid": 200, "eenheid": "gram", "opmerking": null},
+    {"naam": "kroepoek", "hoeveelheid": 75, "eenheid": "gram", "opmerking": null}
+  ],
+  "tags": ["traditioneel", "indisch"],
+  "bereidingstijd_min": 30,
+  "bereidingswijze": "",
+  "bron": "eigen recept"
+}

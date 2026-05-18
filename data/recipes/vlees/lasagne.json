@@ -1,0 +1,20 @@
+{
+  "id": "lasagne",
+  "naam": "Lasagne",
+  "categorie": "vlees",
+  "basis": "pasta",
+  "seizoenen": ["herfst", "winter"],
+  "basis_porties": 4,
+  "ingredienten": [
+    {"naam": "lasagnebladen", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null},
+    {"naam": "Honig basis voor lasagnesaus", "hoeveelheid": 125, "eenheid": "gram", "opmerking": null},
+    {"naam": "gehakt", "hoeveelheid": 300, "eenheid": "gram", "opmerking": null},
+    {"naam": "roerbakgroente Italiaans", "hoeveelheid": 600, "eenheid": "gram", "opmerking": null},
+    {"naam": "geraspte kaas", "hoeveelheid": 200, "eenheid": "gram", "opmerking": null},
+    {"naam": "melk", "hoeveelheid": 500, "eenheid": "ml", "opmerking": null}
+  ],
+  "tags": ["traditioneel", "italiaans"],
+  "bereidingstijd_min": 30,
+  "bereidingswijze": "",
+  "bron": "eigen recept"
+}

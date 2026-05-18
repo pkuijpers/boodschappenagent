@@ -1,0 +1,17 @@
+{
+  "id": "avg-kipfilet-broccoli",
+  "naam": "AVG met kipfilet en broccoli",
+  "categorie": "gevogelte",
+  "basis": "aardappel",
+  "seizoenen": ["herfst", "winter"],
+  "basis_porties": 2,
+  "ingredienten": [
+    {"naam": "kipfilet", "hoeveelheid": 200, "eenheid": "gram", "opmerking": null},
+    {"naam": "aardappelen", "hoeveelheid": 500, "eenheid": "gram", "opmerking": null},
+    {"naam": "broccoli", "hoeveelheid": 1, "eenheid": "stuks", "opmerking": null}
+  ],
+  "tags": ["avg", "traditioneel", "nederlands"],
+  "bereidingstijd_min": 30,
+  "bereidingswijze": "",
+  "bron": "eigen recept"
+}

@@ -1,0 +1,18 @@
+{
+  "id": "hutspot",
+  "naam": "Hutspot",
+  "categorie": "vlees",
+  "basis": "aardappel",
+  "seizoenen": ["herfst", "winter"],
+  "basis_porties": 2,
+  "ingredienten": [
+    {"naam": "rundersaucijs", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "aardappelen", "hoeveelheid": 750, "eenheid": "gram", "opmerking": null},
+    {"naam": "winterpeen", "hoeveelheid": 500, "eenheid": "gram", "opmerking": null},
+    {"naam": "ui", "hoeveelheid": 250, "eenheid": "gram", "opmerking": null}
+  ],
+  "tags": ["avg", "traditioneel", "nederlands"],
+  "bereidingstijd_min": 30,
+  "bereidingswijze": "",
+  "bron": "eigen recept"
+}

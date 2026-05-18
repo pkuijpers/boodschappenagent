@@ -1,0 +1,17 @@
+{
+  "id": "puree-varkenshaas-rodekool",
+  "naam": "Varkenshaas met puree en rode kool",
+  "categorie": "vlees",
+  "basis": "aardappel",
+  "seizoenen": ["herfst", "winter"],
+  "basis_porties": 2,
+  "ingredienten": [
+    {"naam": "varkenshaas", "hoeveelheid": 200, "eenheid": "gram", "opmerking": null},
+    {"naam": "aardappelen", "hoeveelheid": 750, "eenheid": "gram", "opmerking": null},
+    {"naam": "rode kool", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null}
+  ],
+  "tags": ["avg", "traditioneel", "nederlands"],
+  "bereidingstijd_min": 30,
+  "bereidingswijze": "",
+  "bron": "eigen recept"
+}

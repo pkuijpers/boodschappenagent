@@ -1,0 +1,17 @@
+{
+  "id": "avg-hamburger-boontjes",
+  "naam": "AVG met hamburger en boontjes",
+  "categorie": "vlees",
+  "basis": "aardappel",
+  "seizoenen": ["herfst", "winter"],
+  "basis_porties": 2,
+  "ingredienten": [
+    {"naam": "hamburger", "hoeveelheid": 2, "eenheid": "stuks", "opmerking": null},
+    {"naam": "aardappelen", "hoeveelheid": 500, "eenheid": "gram", "opmerking": null},
+    {"naam": "sperziebonen", "hoeveelheid": 400, "eenheid": "gram", "opmerking": null}
+  ],
+  "tags": ["avg", "traditioneel", "nederlands"],
+  "bereidingstijd_min": 30,
+  "bereidingswijze": "",
+  "bron": "eigen recept"
+}
