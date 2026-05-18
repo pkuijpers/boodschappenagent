@@ -1,5 +1,6 @@
 """Boodschappenlijst module: genereer een boodschappenlijst uit een WeekMenu."""
 
+from boodschappenagent.boodschappenlijst.filter import BoodschappenlijstFilter
 from boodschappenagent.boodschappenlijst.generator import BoodschappenlijstGenerator
 from boodschappenagent.boodschappenlijst.models import (
     Boodschappenlijst,
@@ -10,6 +11,7 @@ from boodschappenagent.boodschappenlijst.normalizer import IngredientNormalizer
 __all__ = [
     "BoodschappenRegel",
     "Boodschappenlijst",
+    "BoodschappenlijstFilter",
     "BoodschappenlijstGenerator",
     "IngredientNormalizer",
 ]

@@ -6,6 +6,7 @@ from pathlib import Path
 from boodschappenagent.ah import AHClient, AHIntegratie, AHTokenManager
 from boodschappenagent.ah.preferences import MatchVoorkeurenRepository
 from boodschappenagent.boodschappenlijst import (
+    BoodschappenlijstFilter,
     BoodschappenlijstGenerator,
     IngredientNormalizer,
 )
@@ -19,7 +20,6 @@ from boodschappenagent.planner import (
 from boodschappenagent.repository import RecipeRepository
 from boodschappenagent.utils import PortionCalculator
 from boodschappenagent.voorraadbeheer import (
-    BoodschappenlijstFilter,
     VoorraadChecker,
     VoorraadRepository,
 )

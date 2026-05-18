@@ -23,7 +23,8 @@ from boodschappenagent.planner import (
 )
 from boodschappenagent.repository import RecipeRepository
 from boodschappenagent.utils import PortionCalculator
-from boodschappenagent.voorraadbeheer import BoodschappenlijstFilter, VoorraadRepository
+from boodschappenagent.boodschappenlijst import BoodschappenlijstFilter
+from boodschappenagent.voorraadbeheer import VoorraadRepository
 from boodschappenagent.voorraadbeheer.models import VoorraadItem, VoorraadType
 from boodschappenagent.web.app import create_app
 from boodschappenagent.web.dependencies import (

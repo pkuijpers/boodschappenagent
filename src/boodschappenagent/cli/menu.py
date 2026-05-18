@@ -377,7 +377,7 @@ def _genereer_boodschappenlijst(args: argparse.Namespace) -> object | None:
     lijst = generator.genereer(menu)
 
     if getattr(args, "filter_voorraad", False):
-        from boodschappenagent.voorraadbeheer.filter import BoodschappenlijstFilter
+        from boodschappenagent.boodschappenlijst.filter import BoodschappenlijstFilter
         from boodschappenagent.voorraadbeheer.repository import VoorraadRepository
 
         voorraad_repo = VoorraadRepository(Path(args.voorraad))

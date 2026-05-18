@@ -21,8 +21,8 @@ from boodschappenagent.planner import (
     MenuHistory,
     WeekMenu,
 )
+from boodschappenagent.boodschappenlijst import BoodschappenlijstFilter
 from boodschappenagent.voorraadbeheer import (
-    BoodschappenlijstFilter,
     VoorraadChecker,
     VoorraadRepository,
 )

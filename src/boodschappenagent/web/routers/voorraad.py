@@ -15,7 +15,7 @@ from boodschappenagent.boodschappenlijst.models import (
     BoodschappenRegel,
 )
 from boodschappenagent.voorraadbeheer import VoorraadRepository
-from boodschappenagent.voorraadbeheer.filter import BoodschappenlijstFilter
+from boodschappenagent.boodschappenlijst import BoodschappenlijstFilter
 from boodschappenagent.voorraadbeheer.models import VoorraadItem, VoorraadType
 from boodschappenagent.web.dependencies import (
     get_ah_integratie,

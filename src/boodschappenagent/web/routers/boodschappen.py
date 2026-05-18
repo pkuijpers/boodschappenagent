@@ -15,7 +15,7 @@ from boodschappenagent.boodschappenlijst.models import (
     Boodschappenlijst,
     BoodschappenRegel,
 )
-from boodschappenagent.voorraadbeheer import BoodschappenlijstFilter
+from boodschappenagent.boodschappenlijst import BoodschappenlijstFilter
 from boodschappenagent.web.dependencies import (
     get_ah_integratie,
     get_ah_token_manager,
