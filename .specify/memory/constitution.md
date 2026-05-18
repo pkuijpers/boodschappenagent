@@ -1,30 +1,31 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version change: 1.1.1 → 1.2.0
+Version change: 1.2.0 → 1.3.0
 
-Bump rationale: MINOR — materially updated Principle VI to reflect the new
-canonical bestelflow introduced by feature 004-bestel-workflow-aanpassing.
-The fixed 6-step sequence now includes Ingredient-selectie and removes
-Boodschappenlijst as a separate mandatory step in the ordering flow.
+Bump rationale: MINOR — new Principle VII added to encode the modularity
+architecture described in the 2026-05-15 modularity review. The principle
+formalises the four coupling rules identified as violated issues and the
+five structural properties identified as working well.
 
 Modified principles:
-  VI. UI/UX Design Philosophy — updated the fixed flow sequence from
-      "Weekoverzicht → Voorraadcheck → Boodschappenlijst → AH Mandje → Kookmodus"
-      to "Weekoverzicht → Ingredient-selectie → Voorraadcheck → Matching →
-      Match-review → AH Bevestiging → Kookmodus"
+  None — existing principles unchanged.
 
 Added sections:
-  None
+  VII. Module Boundaries and Coupling — four binding rules (façade access,
+       no intrusive coupling, domain logic placement, dependency direction)
+       plus three structural invariants to preserve.
 
 Removed sections:
   None
 
 Templates reviewed:
-  ✅ .specify/templates/plan-template.md — no updates needed
-  ✅ .specify/templates/spec-template.md — no updates needed
-  ✅ .specify/templates/tasks-template.md — no updates needed
-  ℹ  .specify/templates/commands/ — directory does not exist; skipped
+  ✅ .specify/templates/plan-template.md — Constitution Check section picks
+     up new principle via "Gates determined based on constitution file";
+     no template text changes needed.
+  ✅ .specify/templates/spec-template.md — no updates needed.
+  ✅ .specify/templates/tasks-template.md — no updates needed.
+  ℹ  .specify/templates/commands/ — directory does not exist; skipped.
 
 Deferred items:
   None
@@ -98,6 +99,48 @@ Kookmodus is a separate daily flow, independent of the ordering flow.
 No step MAY be skipped by the system; the user MAY choose to proceed past
 any step directly.
 
+### VII. Module Boundaries and Coupling
+
+Code MUST respect the module boundaries defined by the domain map and must
+not introduce unbalanced coupling between modules. Four binding rules apply:
+
+**1. AHIntegratie is the single AH façade.**
+All access to the AH API from the web layer MUST go through `AHIntegratie`.
+Routers MUST NOT import `AHClient` directly. Business rules about AH
+integration (list names, search limits, quantity calculation) MUST live
+inside `AHIntegratie`, not in routers.
+
+**2. No intrusive coupling.**
+Callers MUST NOT access private members (`_attr`) of collaborating objects.
+Integration MUST use the public API of the target module. Reaching past a
+façade into its implementation details is forbidden.
+
+**3. Domain logic belongs in domain modules.**
+Business calculations and rules MUST NOT be placed in the HTTP delivery
+layer. Routers are responsible for HTTP marshalling only: parsing request
+data and serialising response data. Any logic that answers a domain question
+(e.g., "how many units do we need?") MUST live in the relevant domain or
+integration module.
+
+**4. Dependency direction follows the domain pipeline.**
+Module dependencies MUST flow in the direction of the domain pipeline:
+`planner → boodschappenlijst → voorraadbeheer → ah`. A module that
+transforms a type owned by another module belongs in the owning module.
+Reverse dependencies (e.g., `voorraadbeheer` importing `boodschappenlijst`
+models) MUST be eliminated by moving the code to the correct module.
+
+Three structural invariants MUST be preserved:
+
+- **Frozen dataclasses**: All domain models MUST remain frozen (`@dataclass(frozen=True)`).
+  This eliminates mutation-based coupling where callers silently depend on
+  shared mutable state.
+- **Centralised dependency injection**: All object construction MUST remain
+  in `dependencies.py`. The composition root MUST be explicit and
+  test-overridable.
+- **Generic utilities stay generic**: `IngredientNormalizer`, `PortionCalculator`,
+  and similar utilities MUST remain domain-agnostic and injectable. They MUST
+  NOT acquire domain-specific knowledge.
+
 ## Technical Standards
 
 **Language**: Python 3.14+
@@ -160,4 +203,4 @@ principles before merge.
 
 Runtime development guidance: `CLAUDE.md`
 
-**Version**: 1.2.0 | **Ratified**: 2026-05-11 | **Last Amended**: 2026-05-16
+**Version**: 1.3.0 | **Ratified**: 2026-05-11 | **Last Amended**: 2026-05-18
