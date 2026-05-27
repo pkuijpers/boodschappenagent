@@ -495,3 +495,130 @@ class TestVoorraadBevestigMatching:
         assert response.status_code == 200
         s = soup(response)
         assert s.select_one('[data-testid="ah-lege-lijst"]') is not None
+
+
+class TestVoorraadSortering:
+    """T005/T007: Voorraadpagina toont producten gesorteerd op winkellocatie."""
+
+    def test_koelkast_product_voor_diepvries_in_dom(
+        self, client_with_voorraad: TestClient
+    ):
+        """T005: Melk (koelkast) staat vóór Diepvrieserwten (diepvries) in DOM."""
+        set_week_menu(client_with_voorraad, make_full_week_menu())
+        response = client_with_voorraad.get("/voorraad")
+        assert response.status_code == 200
+        s = soup(response)
+        items = s.select('[data-testid="voorraaditem"]')
+        namen = [item.get("data-item", "") for item in items]
+        assert "Melk" in namen
+        assert "Diepvrieserwten" in namen
+        melk_idx = namen.index("Melk")
+        diepvries_idx = namen.index("Diepvrieserwten")
+        assert melk_idx < diepvries_idx, (
+            f"Melk (pos {melk_idx}) moet vóór Diepvrieserwten (pos {diepvries_idx})"
+        )
+
+    def test_voorraadkast_product_voor_diepvries_in_dom(
+        self, client_with_voorraad: TestClient
+    ):
+        """T005: Spaghetti (voorraadkast) staat vóór Diepvrieserwten in DOM."""
+        set_week_menu(client_with_voorraad, make_full_week_menu())
+        response = client_with_voorraad.get("/voorraad")
+        assert response.status_code == 200
+        s = soup(response)
+        items = s.select('[data-testid="voorraaditem"]')
+        namen = [item.get("data-item", "") for item in items]
+        assert "Spaghetti" in namen
+        assert "Diepvrieserwten" in namen
+        pasta_idx = namen.index("Spaghetti")
+        diepvries_idx = namen.index("Diepvrieserwten")
+        assert pasta_idx < diepvries_idx, (
+            f"Spaghetti (pos {pasta_idx}) moet vóór "
+            f"Diepvrieserwten (pos {diepvries_idx})"
+        )
+
+
+class TestVoorraadSectieHeaders:
+    """T008/T009: Sectieheaders tonen per gevulde afdeling."""
+
+    def test_koelkast_sectieheader_aanwezig(self, client_with_voorraad: TestClient):
+        """T008: 'Koelkast' h3-sectieheader aanwezig als er koelkastproducten zijn."""
+        set_week_menu(client_with_voorraad, make_full_week_menu())
+        s = soup(client_with_voorraad.get("/voorraad"))
+        headers = [h.get_text(strip=True) for h in s.select("h3")]
+        assert "Koelkast" in headers
+
+    def test_diepvries_sectieheader_aanwezig(self, client_with_voorraad: TestClient):
+        """T008: 'Diepvries' h3-sectieheader aanwezig als er diepvriesproducten zijn."""
+        set_week_menu(client_with_voorraad, make_full_week_menu())
+        s = soup(client_with_voorraad.get("/voorraad"))
+        headers = [h.get_text(strip=True) for h in s.select("h3")]
+        assert "Diepvries" in headers
+
+    def test_ontbrekende_sectie_geen_header(
+        self,
+        app_with_overrides,
+        voorraad_repository,
+        mock_token_manager_authenticated,
+    ):
+        """T008: Geen 'Diepvries' header als er geen diepvriesproducten zijn."""
+        from unittest.mock import MagicMock
+
+        from boodschappenagent.ah.models import FavoriteList, Product
+
+        # Alleen koelkast- en voorraadkastproducten — geen diepvries
+        producten_zonder_diepvries = [
+            Product(
+                id=2001,
+                title="Melk",
+                brand="Campina",
+                size="1L",
+                price=1.29,
+                category="Zuivel, eieren",
+                is_orderable=True,
+            ),
+            Product(
+                id=2002,
+                title="Pasta",
+                brand="Barilla",
+                size="500g",
+                price=0.99,
+                category="Pasta, rijst, wereldkeuken",
+                is_orderable=True,
+            ),
+        ]
+        lijst = FavoriteList(
+            id="list-test",
+            name="Voorraad",
+            total_items=2,
+            items=[],
+            products=producten_zonder_diepvries,
+        )
+        mock_client = MagicMock()
+        mock_client.find_list_by_name.return_value = lijst
+        mock_client.get_list_with_products.return_value = lijst
+
+        from boodschappenagent.ah import AHIntegratie
+        from boodschappenagent.web.dependencies import (
+            get_ah_integratie,
+            get_ah_token_manager,
+            get_voorraad_repository,
+        )
+
+        app_with_overrides.dependency_overrides[get_voorraad_repository] = (
+            lambda: voorraad_repository
+        )
+        app_with_overrides.dependency_overrides[get_ah_integratie] = (
+            lambda: AHIntegratie(mock_client)
+        )
+        app_with_overrides.dependency_overrides[get_ah_token_manager] = (
+            lambda: mock_token_manager_authenticated
+        )
+        client = TestClient(app_with_overrides)
+        set_week_menu(client, make_full_week_menu())
+        s = soup(client.get("/voorraad"))
+        # Koelkast header WEL aanwezig
+        assert "Koelkast" in s.get_text()
+        # Diepvries header NIET aanwezig (geen diepvriesproducten)
+        headers = [h.get_text(strip=True) for h in s.select("h3")]
+        assert "Diepvries" not in headers

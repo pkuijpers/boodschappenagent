@@ -37,15 +37,15 @@ class TestVoorraadNaarMatchReview:
 
     def test_voorraad_toggle_voor_bevestig(self, voorraad_page: Page):
         """Voorraad toggle werkt nog steeds via HTMX."""
-        optimel_item = voorraad_page.locator(
-            "[data-testid='voorraaditem'][data-item='optimel']"
+        melk_item = voorraad_page.locator(
+            "[data-testid='voorraaditem'][data-item='melk']"
         )
-        expect(optimel_item).to_be_visible()
-        nee_btn = optimel_item.locator("[data-testid='status-nee']")
+        expect(melk_item).to_be_visible()
+        nee_btn = melk_item.locator("[data-testid='status-nee']")
         nee_btn.click()
         voorraad_page.wait_for_timeout(300)
-        optimel_item = voorraad_page.locator(
-            "[data-testid='voorraaditem'][data-item='optimel']"
+        melk_item = voorraad_page.locator(
+            "[data-testid='voorraaditem'][data-item='melk']"
         )
-        nee_btn = optimel_item.locator("[data-testid='status-nee']")
+        nee_btn = melk_item.locator("[data-testid='status-nee']")
         expect(nee_btn).to_have_attribute("data-actief", "true")

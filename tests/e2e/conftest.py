@@ -121,15 +121,37 @@ TEST_WEEK_MENU = WeekMenu(
 # Woensdag (dag=2) is HelloFresh
 TEST_HELLOFRESH_DAGEN: set[int] = {2}
 
-# Voorraad testproducten voor de AH 'Voorraad' favorietenlijst mock
+# Voorraad testproducten voor de AH 'Voorraad' favorietenlijst mock.
+# Bewust gemengde categorieën (diepvries eerst) zodat sorteringstests zinvol zijn.
 TEST_VOORRAAD_PRODUCTEN = [
+    # Diepvries — moet na koelkast komen na sortering
+    Product(
+        id=1006,
+        title="diepvrieserwten",
+        brand="",
+        size="450g",
+        price=1.49,
+        category="Diepvries",
+        is_orderable=True,
+    ),
+    # Voorraadkast
+    Product(
+        id=1003,
+        title="spaghetti",
+        brand="",
+        size="500g",
+        price=0.99,
+        category="Pasta, rijst, wereldkeuken",
+        is_orderable=True,
+    ),
+    # Koelkast — moet als eerste sectie komen na sortering
     Product(
         id=1001,
         title="melk",
         brand="",
         size="1L",
         price=1.09,
-        category="Zuivel",
+        category="Zuivel, eieren",
         is_orderable=True,
     ),
     Product(
@@ -138,16 +160,7 @@ TEST_VOORRAAD_PRODUCTEN = [
         brand="",
         size="6 stuks",
         price=2.49,
-        category="Zuivel",
-        is_orderable=True,
-    ),
-    Product(
-        id=1003,
-        title="boter",
-        brand="",
-        size="250g",
-        price=1.59,
-        category="Zuivel",
+        category="Zuivel, eieren",
         is_orderable=True,
     ),
     Product(
@@ -156,16 +169,7 @@ TEST_VOORRAAD_PRODUCTEN = [
         brand="",
         size="500g",
         price=3.99,
-        category="Zuivel",
-        is_orderable=True,
-    ),
-    Product(
-        id=1005,
-        title="optimel",
-        brand="",
-        size="1.5L",
-        price=2.19,
-        category="Zuivel",
+        category="Kaas",
         is_orderable=True,
     ),
 ]

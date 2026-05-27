@@ -121,7 +121,9 @@ def main() -> None:
     # Auth check
     token_manager = AHTokenManager()
     if not token_manager.is_authenticated():
-        print("Niet ingelogd. Voer eerst `uv run python -m boodschappenagent.ah.client login <code>` uit.")
+        print(
+            "Niet ingelogd. Voer eerst `uv run python -m boodschappenagent.ah.client login <code>` uit."
+        )
         sys.exit(1)
 
     client = AHClient(token_manager)

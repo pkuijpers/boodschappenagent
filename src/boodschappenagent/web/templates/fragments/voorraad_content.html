@@ -12,9 +12,12 @@
             <span class="text-xs font-medium text-gray-400 uppercase tracking-wide pr-1">In huis?</span>
         </div>
         <div class="px-4">
-            {% if voorraad_items %}
-                {% for item in voorraad_items %}
-                    {% include "components/voorraaditem.html" %}
+            {% if voorraad_secties %}
+                {% for sectie in voorraad_secties %}
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide mt-3 mb-1">{{ sectie.afdeling }}</h3>
+                    {% for item in sectie.producten %}
+                        {% include "components/voorraaditem.html" %}
+                    {% endfor %}
                 {% endfor %}
             {% else %}
                 <p class="text-gray-400 text-sm py-4 text-center">
