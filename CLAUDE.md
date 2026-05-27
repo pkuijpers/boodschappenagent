@@ -220,5 +220,5 @@ Always use Context7 (via the `mcp__context7__resolve-library-id` and `mcp__conte
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at `specs/004-bestel-workflow-aanpassing/plan.md`.
+at `specs/005-voorraad-categorie-sortering/plan.md`.
 <!-- SPECKIT END -->
