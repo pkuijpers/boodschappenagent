@@ -19,7 +19,6 @@ from pathlib import Path
 
 from boodschappenagent.boodschappenlijst.normalizer import IngredientNormalizer
 from boodschappenagent.models import Seizoen
-from boodschappenagent.planner.history import MenuHistory
 from boodschappenagent.planner.models import WeekMenu
 from boodschappenagent.repository.recipe_repository import RecipeRepository
 from boodschappenagent.voorraadbeheer.checker import VoorraadChecker
@@ -161,11 +160,10 @@ def cmd_check(args: argparse.Namespace) -> int:
     data = json.loads(menu_path.read_text(encoding="utf-8"))
     menu = WeekMenu.from_dict(data, recipes_by_id)
 
-    history = MenuHistory(Path(args.history))
     seizoen = SEIZOEN_MAANDEN[date.today().month]
 
     checker = VoorraadChecker(repo)
-    suggesties = checker.genereer_suggesties(menu, history, seizoen)
+    suggesties = checker.genereer_suggesties(menu, seizoen)
 
     if not suggesties:
         print("Geen items om te checken.")
@@ -285,11 +283,6 @@ def main() -> int:
         "--recipes-dir",
         default="data/recipes",
         help="Directory met recepten (standaard: data/recipes)",
-    )
-    parser.add_argument(
-        "--history",
-        default="data/history.json",
-        help="Pad naar history bestand (standaard: data/history.json)",
     )
     parser.add_argument(
         "--menu",

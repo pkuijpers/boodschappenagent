@@ -9,13 +9,13 @@ from fastapi.responses import RedirectResponse
 
 from boodschappenagent.ah import AHIntegratie, AHTokenManager
 from boodschappenagent.ah.preferences import MatchReviewItem, MatchVoorkeurenRepository
+from boodschappenagent.boodschappenlijst import BoodschappenlijstFilter
 from boodschappenagent.boodschappenlijst.generator import BoodschappenlijstGenerator
 from boodschappenagent.boodschappenlijst.models import (
     Boodschappenlijst,
     BoodschappenRegel,
 )
 from boodschappenagent.voorraadbeheer import VoorraadRepository
-from boodschappenagent.boodschappenlijst import BoodschappenlijstFilter
 from boodschappenagent.voorraadbeheer.models import VoorraadItem, VoorraadType
 from boodschappenagent.web.dependencies import (
     get_ah_integratie,

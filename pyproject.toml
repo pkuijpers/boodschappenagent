@@ -15,6 +15,11 @@ dependencies = [
     "python-multipart>=0.0.20",
 ]
 
+[project.scripts]
+menu = "boodschappenagent.cli.menu:main"
+voorraad = "boodschappenagent.cli.voorraad:main"
+digitize = "boodschappenagent.cli.digitize:main"
+
 [dependency-groups]
 dev = [
     "pytest>=8.0",

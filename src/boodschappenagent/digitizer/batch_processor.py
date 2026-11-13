@@ -34,14 +34,24 @@ def _format_recipe_json(recipe_data: dict[str, Any]) -> str:
     json_str = json.dumps(recipe_data, indent=2, ensure_ascii=False)
 
     # Compacteer ingredient objecten: {"naam": ..., "hoeveelheid": ...} op één regel
-    ing_pattern = r'\{\s*\n\s*"naam":\s*"([^"]*)",\s*\n\s*"hoeveelheid":\s*(\d+(?:\.\d+)?),\s*\n\s*"eenheid":\s*"([^"]*)",\s*\n\s*"opmerking":\s*(null|"[^"]*")\s*\n\s*\}'
+    ing_pattern = (
+        r"\{\s*\n"
+        r'\s*"naam":\s*"([^"]*)",\s*\n'
+        r'\s*"hoeveelheid":\s*(\d+(?:\.\d+)?),\s*\n'
+        r'\s*"eenheid":\s*"([^"]*)",\s*\n'
+        r'\s*"opmerking":\s*(null|"[^"]*")\s*\n'
+        r"\s*\}"
+    )
 
     def compact_ingredient(match: re.Match) -> str:
         naam = match.group(1)
         hoeveelheid = match.group(2)
         eenheid = match.group(3)
         opmerking = match.group(4)
-        return f'{{"naam": "{naam}", "hoeveelheid": {hoeveelheid}, "eenheid": "{eenheid}", "opmerking": {opmerking}}}'
+        return (
+            f'{{"naam": "{naam}", "hoeveelheid": {hoeveelheid}, '
+            f'"eenheid": "{eenheid}", "opmerking": {opmerking}}}'
+        )
 
     json_str = re.sub(ing_pattern, compact_ingredient, json_str)
 
@@ -130,8 +140,8 @@ class BatchProcessor:
 
         Args:
             pdf_path: Pad naar de PDF met recepten.
-            batch_id: Optionele batch identifier. Als None, wordt afgeleid van PDF naam.
-            on_progress: Optionele callback voor voortgang (current, total, recipe_naam).
+            batch_id: Optionele batch identifier. Als None, afgeleid van PDF naam.
+            on_progress: Callback voor voortgang (current, total, recipe_naam).
 
         Returns:
             BatchResult met verwerking statistieken en geëxtraheerde recepten.

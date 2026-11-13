@@ -15,13 +15,13 @@ from playwright.sync_api import Playwright
 
 from boodschappenagent.ah import ProductMatch
 from boodschappenagent.ah.models import FavoriteList, Product
+from boodschappenagent.boodschappenlijst import BoodschappenlijstFilter
 from boodschappenagent.models import Basis, Categorie, Ingredient, Recipe, Seizoen
 from boodschappenagent.planner import (
     DagPlanning,
     MenuHistory,
     WeekMenu,
 )
-from boodschappenagent.boodschappenlijst import BoodschappenlijstFilter
 from boodschappenagent.voorraadbeheer import (
     VoorraadChecker,
     VoorraadRepository,

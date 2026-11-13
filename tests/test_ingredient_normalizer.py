@@ -124,3 +124,26 @@ class TestIsNietAggregeerbaar:
 
     def test_stuks_wel_aggregeerbaar(self) -> None:
         assert self.normalizer.is_niet_aggregeerbaar("stuks") is False
+
+
+class TestNaarBasiseenheid:
+    """Tests voor omrekenen naar basiseenheid (ml, gram)."""
+
+    def setup_method(self) -> None:
+        self.normalizer = IngredientNormalizer()
+
+    def test_liter_naar_ml(self) -> None:
+        assert self.normalizer.naar_basiseenheid(0.5, "liter") == (500.0, "ml")
+
+    def test_kilogram_naar_gram(self) -> None:
+        assert self.normalizer.naar_basiseenheid(1.2, "kilogram") == (1200.0, "gram")
+
+    def test_kg_wordt_kilogram_via_normaliseer(self) -> None:
+        _, eenheid = self.normalizer.normaliseer("aardappel", "kg")
+        assert eenheid == "kilogram"
+
+    def test_basiseenheid_ongewijzigd(self) -> None:
+        assert self.normalizer.naar_basiseenheid(250, "gram") == (250, "gram")
+
+    def test_onbekende_eenheid_ongewijzigd(self) -> None:
+        assert self.normalizer.naar_basiseenheid(2, "stuks") == (2, "stuks")

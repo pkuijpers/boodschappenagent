@@ -49,9 +49,15 @@ rsync -avz --update \
   "${LOCAL_DIR}/data/" \
   "${PI_USER}@${PI_HOST}:${REMOTE_DIR}/data/"
 
+# Restart de remote app
+ssh "${PI_USER}@${PI_HOST}" "sudo systemctl restart albert"
+
 echo ""
 echo "Klaar. Installeer dependencies op de Pi met:"
 echo "  ssh ${PI_USER}@${PI_HOST} 'cd ${REMOTE_DIR} && uv sync --no-dev'"
 echo ""
 echo "Start de server met:"
 echo "  ssh ${PI_USER}@${PI_HOST} 'cd ${REMOTE_DIR} && uv run uvicorn boodschappenagent.web.app:create_app --factory --host 0.0.0.0 --port 8000'"
+echo ""
+echo "=== Logs van remote server ==="
+ssh "${PI_USER}@${PI_HOST}" "sudo journalctl -u albert -n 50 --no-pager"

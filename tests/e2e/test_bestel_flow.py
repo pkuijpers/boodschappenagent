@@ -35,9 +35,7 @@ class TestBestelFlow:
     def test_ingredient_toggle_deselecteert_item(self, week_page: Page):
         """Toggle-knop deselecteert een ingredient (item krijgt opacity-50 class)."""
         week_page.locator("[data-testid='verder-button']").click()
-        week_page.wait_for_selector(
-            "[data-testid='ingredient-item']", timeout=10000
-        )
+        week_page.wait_for_selector("[data-testid='ingredient-item']", timeout=10000)
         # Klik toggle-knop van eerste item
         week_page.locator("[data-testid='ingredient-item']").first.locator(
             "button"

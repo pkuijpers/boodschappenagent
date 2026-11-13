@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from boodschappenagent.boodschappenlijst.filter import BoodschappenlijstFilter
 from boodschappenagent.boodschappenlijst.models import (
     Boodschappenlijst,
     BoodschappenRegel,
 )
-from boodschappenagent.boodschappenlijst.filter import BoodschappenlijstFilter
 from boodschappenagent.voorraadbeheer.models import VoorraadItem, VoorraadType
 from boodschappenagent.voorraadbeheer.repository import VoorraadRepository
 

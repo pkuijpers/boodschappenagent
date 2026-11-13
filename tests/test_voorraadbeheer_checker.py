@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from boodschappenagent.boodschappenlijst.normalizer import IngredientNormalizer
 from boodschappenagent.models import Basis, Categorie, Ingredient, Recipe, Seizoen
-from boodschappenagent.planner.history import MenuHistory
 from boodschappenagent.planner.models import DagPlanning, WeekMenu
 from boodschappenagent.voorraadbeheer.checker import VoorraadChecker
 from boodschappenagent.voorraadbeheer.models import (
@@ -60,12 +60,11 @@ class TestVoorraadCheckerVerseBasisSuggesties:
                 _make_item("eieren", VoorraadType.VERS_BASIS),
             ]
         )
-        history = MenuHistory(tmp_path / "history.json")
         checker = VoorraadChecker(repo)
 
         recipe = _make_recipe()
         menu = _make_week_menu([recipe])
-        suggesties = checker.genereer_suggesties(menu, history, Seizoen.WINTER)
+        suggesties = checker.genereer_suggesties(menu, Seizoen.WINTER)
 
         vers_suggesties = [
             s for s in suggesties if s.prioriteit is SuggestiePrioriteit.HIGH
@@ -77,11 +76,10 @@ class TestVoorraadCheckerVerseBasisSuggesties:
     def test_verse_basics_have_high_priority(self, tmp_path: Path) -> None:
         repo = VoorraadRepository(tmp_path / "voorraad.json")
         repo.save([_make_item("boter", VoorraadType.VERS_BASIS)])
-        history = MenuHistory(tmp_path / "history.json")
         checker = VoorraadChecker(repo)
 
         menu = _make_week_menu([_make_recipe()])
-        suggesties = checker.genereer_suggesties(menu, history, Seizoen.WINTER)
+        suggesties = checker.genereer_suggesties(menu, Seizoen.WINTER)
 
         boter = next(s for s in suggesties if s.naam == "boter")
         assert boter.prioriteit is SuggestiePrioriteit.HIGH
@@ -96,7 +94,6 @@ class TestVoorraadCheckerRecentGebruikSuggesties:
                 _make_item("olijfolie", VoorraadType.HOUDBAAR),
             ]
         )
-        history = MenuHistory(tmp_path / "history.json")
         checker = VoorraadChecker(repo)
 
         recipe = _make_recipe(
@@ -106,7 +103,7 @@ class TestVoorraadCheckerRecentGebruikSuggesties:
             ]
         )
         menu = _make_week_menu([recipe])
-        suggesties = checker.genereer_suggesties(menu, history, Seizoen.WINTER)
+        suggesties = checker.genereer_suggesties(menu, Seizoen.WINTER)
 
         medium_suggesties = [
             s for s in suggesties if s.prioriteit is SuggestiePrioriteit.MEDIUM
@@ -118,7 +115,6 @@ class TestVoorraadCheckerRecentGebruikSuggesties:
     def test_no_match_no_medium_suggesties(self, tmp_path: Path) -> None:
         repo = VoorraadRepository(tmp_path / "voorraad.json")
         repo.save([_make_item("rijst", VoorraadType.HOUDBAAR)])
-        history = MenuHistory(tmp_path / "history.json")
         checker = VoorraadChecker(repo)
 
         recipe = _make_recipe(
@@ -127,7 +123,7 @@ class TestVoorraadCheckerRecentGebruikSuggesties:
             ]
         )
         menu = _make_week_menu([recipe])
-        suggesties = checker.genereer_suggesties(menu, history, Seizoen.WINTER)
+        suggesties = checker.genereer_suggesties(menu, Seizoen.WINTER)
 
         medium_suggesties = [
             s for s in suggesties if s.prioriteit is SuggestiePrioriteit.MEDIUM
@@ -138,7 +134,6 @@ class TestVoorraadCheckerRecentGebruikSuggesties:
     def test_medium_priority(self, tmp_path: Path) -> None:
         repo = VoorraadRepository(tmp_path / "voorraad.json")
         repo.save([_make_item("pasta", VoorraadType.HOUDBAAR)])
-        history = MenuHistory(tmp_path / "history.json")
         checker = VoorraadChecker(repo)
 
         recipe = _make_recipe(
@@ -147,21 +142,56 @@ class TestVoorraadCheckerRecentGebruikSuggesties:
             ]
         )
         menu = _make_week_menu([recipe])
-        suggesties = checker.genereer_suggesties(menu, history, Seizoen.WINTER)
+        suggesties = checker.genereer_suggesties(menu, Seizoen.WINTER)
 
         pasta = next(s for s in suggesties if s.naam == "pasta")
         assert pasta.prioriteit is SuggestiePrioriteit.MEDIUM
+
+    def test_menu_ingredient_synoniem_matcht_genormaliseerd_item(
+        self, tmp_path: Path
+    ) -> None:
+        repo = VoorraadRepository(tmp_path / "voorraad.json")
+        repo.save([_make_item("passata", VoorraadType.HOUDBAAR)])
+        checker = VoorraadChecker(repo)
+
+        recipe = _make_recipe(
+            ingredienten=[
+                Ingredient(naam="Passata di pomodoro", hoeveelheid=500, eenheid="gram"),
+            ]
+        )
+        menu = _make_week_menu([recipe])
+        suggesties = checker.genereer_suggesties(menu, Seizoen.WINTER)
+
+        medium_namen = {
+            s.naam for s in suggesties if s.prioriteit is SuggestiePrioriteit.MEDIUM
+        }
+        assert "passata" in medium_namen
+
+    def test_extra_synoniemen_via_eigen_normalizer(self, tmp_path: Path) -> None:
+        repo = VoorraadRepository(tmp_path / "voorraad.json")
+        repo.save([_make_item("kokosmelk", VoorraadType.HOUDBAAR)])
+        normalizer = IngredientNormalizer(extra_synoniemen={"kokosroom": "kokosmelk"})
+        checker = VoorraadChecker(repo, normalizer=normalizer)
+
+        recipe = _make_recipe(
+            ingredienten=[
+                Ingredient(naam="kokosroom", hoeveelheid=200, eenheid="ml"),
+            ]
+        )
+        menu = _make_week_menu([recipe])
+        suggesties = checker.genereer_suggesties(menu, Seizoen.WINTER)
+
+        assert "kokosmelk" in {s.naam for s in suggesties}
 
 
 class TestVoorraadCheckerSeizoenSuggesties:
     def test_seizoen_items_suggested(self, tmp_path: Path) -> None:
         repo = VoorraadRepository(tmp_path / "voorraad.json")
         repo.save([_make_item("pompoen", VoorraadType.HOUDBAAR)])
-        history = MenuHistory(tmp_path / "history.json")
         checker = VoorraadChecker(repo)
 
         menu = _make_week_menu([_make_recipe()])
-        suggesties = checker.genereer_suggesties(menu, history, Seizoen.HERFST)
+        suggesties = checker.genereer_suggesties(menu, Seizoen.HERFST)
 
         low_suggesties = [
             s for s in suggesties if s.prioriteit is SuggestiePrioriteit.LOW
@@ -172,11 +202,10 @@ class TestVoorraadCheckerSeizoenSuggesties:
     def test_no_seizoen_match_no_low(self, tmp_path: Path) -> None:
         repo = VoorraadRepository(tmp_path / "voorraad.json")
         repo.save([_make_item("pompoen", VoorraadType.HOUDBAAR)])
-        history = MenuHistory(tmp_path / "history.json")
         checker = VoorraadChecker(repo)
 
         menu = _make_week_menu([_make_recipe()])
-        suggesties = checker.genereer_suggesties(menu, history, Seizoen.ZOMER)
+        suggesties = checker.genereer_suggesties(menu, Seizoen.ZOMER)
 
         low_suggesties = [
             s for s in suggesties if s.prioriteit is SuggestiePrioriteit.LOW
@@ -196,7 +225,6 @@ class TestVoorraadCheckerSortering:
                 _make_item("pompoen", VoorraadType.HOUDBAAR),
             ]
         )
-        history = MenuHistory(tmp_path / "history.json")
         checker = VoorraadChecker(repo)
 
         recipe = _make_recipe(
@@ -205,7 +233,7 @@ class TestVoorraadCheckerSortering:
             ]
         )
         menu = _make_week_menu([recipe])
-        suggesties = checker.genereer_suggesties(menu, history, Seizoen.HERFST)
+        suggesties = checker.genereer_suggesties(menu, Seizoen.HERFST)
 
         # HIGH comes first, then MEDIUM, then LOW
         prioriteiten = [s.prioriteit for s in suggesties]
@@ -233,11 +261,10 @@ class TestVoorraadCheckerSortering:
                 _make_item("eieren", VoorraadType.VERS_BASIS),
             ]
         )
-        history = MenuHistory(tmp_path / "history.json")
         checker = VoorraadChecker(repo)
 
         menu = _make_week_menu([_make_recipe()])
-        suggesties = checker.genereer_suggesties(menu, history, Seizoen.WINTER)
+        suggesties = checker.genereer_suggesties(menu, Seizoen.WINTER)
 
         high = [s for s in suggesties if s.prioriteit is SuggestiePrioriteit.HIGH]
         namen = [s.naam for s in high]
@@ -249,7 +276,6 @@ class TestVoorraadCheckerNoDuplicates:
         """Item matching MEDIUM+LOW appears once (highest prio)."""
         repo = VoorraadRepository(tmp_path / "voorraad.json")
         repo.save([_make_item("pompoen", VoorraadType.HOUDBAAR)])
-        history = MenuHistory(tmp_path / "history.json")
         checker = VoorraadChecker(repo)
 
         recipe = _make_recipe(
@@ -258,7 +284,7 @@ class TestVoorraadCheckerNoDuplicates:
             ]
         )
         menu = _make_week_menu([recipe])
-        suggesties = checker.genereer_suggesties(menu, history, Seizoen.HERFST)
+        suggesties = checker.genereer_suggesties(menu, Seizoen.HERFST)
 
         pompoen_suggesties = [s for s in suggesties if s.naam == "pompoen"]
         assert len(pompoen_suggesties) == 1
@@ -269,10 +295,9 @@ class TestVoorraadCheckerNoDuplicates:
 class TestVoorraadCheckerEmptyVoorraad:
     def test_empty_voorraad_no_suggesties(self, tmp_path: Path) -> None:
         repo = VoorraadRepository(tmp_path / "voorraad.json")
-        history = MenuHistory(tmp_path / "history.json")
         checker = VoorraadChecker(repo)
 
         menu = _make_week_menu([_make_recipe()])
-        suggesties = checker.genereer_suggesties(menu, history, Seizoen.WINTER)
+        suggesties = checker.genereer_suggesties(menu, Seizoen.WINTER)
 
         assert suggesties == []

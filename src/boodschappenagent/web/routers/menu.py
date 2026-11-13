@@ -157,9 +157,10 @@ async def week(
     planner: Annotated[MenuPlanner, Depends(get_menu_planner)],
 ):
     """Weekoverzicht pagina met dagkaarten."""
-    if getattr(request.app.state, "week_menu", None) is None:
-        if not _load_state(request):
-            _generate_week_menu(request, planner)
+    if getattr(request.app.state, "week_menu", None) is None and not _load_state(
+        request
+    ):
+        _generate_week_menu(request, planner)
     context = _build_week_context(request)
     return _render_week(request, context)
 

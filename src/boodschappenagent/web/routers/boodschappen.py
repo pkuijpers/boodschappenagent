@@ -10,12 +10,14 @@ from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from boodschappenagent.ah import AHIntegratie, AHTokenManager
 from boodschappenagent.ah.integration import ProductMatch, SyncResultaat
 from boodschappenagent.ah.preferences import MatchReviewItem, MatchVoorkeurenRepository
-from boodschappenagent.boodschappenlijst import BoodschappenlijstGenerator
+from boodschappenagent.boodschappenlijst import (
+    BoodschappenlijstFilter,
+    BoodschappenlijstGenerator,
+)
 from boodschappenagent.boodschappenlijst.models import (
     Boodschappenlijst,
     BoodschappenRegel,
 )
-from boodschappenagent.boodschappenlijst import BoodschappenlijstFilter
 from boodschappenagent.web.dependencies import (
     get_ah_integratie,
     get_ah_token_manager,

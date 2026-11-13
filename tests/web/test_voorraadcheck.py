@@ -35,8 +35,8 @@ def client_met_melk_op_voorraad(
     app_with_overrides.dependency_overrides[get_voorraad_repository] = (
         lambda: voorraad_met_melk
     )
-    app_with_overrides.dependency_overrides[get_ah_integratie] = (
-        lambda: AHIntegratie(mock_ah_client)
+    app_with_overrides.dependency_overrides[get_ah_integratie] = lambda: AHIntegratie(
+        mock_ah_client
     )
     app_with_overrides.dependency_overrides[get_ah_token_manager] = (
         lambda: mock_token_manager_authenticated

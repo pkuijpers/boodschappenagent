@@ -10,6 +10,8 @@ from boodschappenagent.boodschappenlijst.normalizer import IngredientNormalizer
 from boodschappenagent.planner.models import WeekMenu
 from boodschappenagent.utils import PortionCalculator
 
+THEELEPELS_PER_EETLEPEL = 3
+
 
 class BoodschappenlijstGenerator:
     """Genereert een boodschappenlijst uit een WeekMenu."""
@@ -46,13 +48,16 @@ class BoodschappenlijstGenerator:
                 norm_naam, norm_eenheid = self._normalizer.normaliseer(
                     ing.naam, ing.eenheid
                 )
+                hoeveelheid, norm_eenheid = self._normalizer.naar_basiseenheid(
+                    ing.hoeveelheid, norm_eenheid
+                )
                 key = (norm_naam, norm_eenheid)
 
                 # Hoeveelheid accumuleren
                 if self._normalizer.is_niet_aggregeerbaar(norm_eenheid):
                     hoeveelheden[key] = 1.0
                 else:
-                    hoeveelheden[key] = hoeveelheden.get(key, 0.0) + ing.hoeveelheid
+                    hoeveelheden[key] = hoeveelheden.get(key, 0.0) + hoeveelheid
 
                 # Originele namen bijhouden
                 if key not in originele_namen:
@@ -70,6 +75,21 @@ class BoodschappenlijstGenerator:
                     recepten_per_key[key] = []
                 if recept_naam not in recepten_per_key[key]:
                     recepten_per_key[key].append(recept_naam)
+
+        # Theelepels bij eetlepels voegen als een ingrediënt in beide voorkomt
+        for norm_naam, norm_eenheid in list(hoeveelheden):
+            tl_key = (norm_naam, norm_eenheid)
+            el_key = (norm_naam, "eetlepel")
+            if norm_eenheid != "theelepel" or el_key not in hoeveelheden:
+                continue
+            hoeveelheden[el_key] += hoeveelheden.pop(tl_key) / THEELEPELS_PER_EETLEPEL
+            originele_namen[el_key] |= originele_namen.pop(tl_key)
+            for opmerking in opmerkingen.pop(tl_key):
+                if opmerking not in opmerkingen[el_key]:
+                    opmerkingen[el_key].append(opmerking)
+            for recept in recepten_per_key.pop(tl_key):
+                if recept not in recepten_per_key[el_key]:
+                    recepten_per_key[el_key].append(recept)
 
         # Regels aanmaken met afronding NA aggregatie
         regels = []
