@@ -291,7 +291,7 @@ class TestDagTypeWijzigenUI:
         ).to_have_attribute("data-type", "niet-thuis")
 
     def test_ander_recept_via_sheet(self, week_page: Page):
-        """E6: Tap dagkaart → tap 'Ander recept' → dagkaart bijgewerkt, sheet blijft open."""
+        """E6: Tap dagkaart → 'Ander recept' → dagkaart bijgewerkt, sheet open."""
         # Lees huidige receptnaam van dag 0 (maandag)
         dag_0_naam_voor = week_page.locator(
             "[data-testid='dagkaart'][data-dag='0']"

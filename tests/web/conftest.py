@@ -9,6 +9,7 @@ from fastapi.testclient import TestClient
 
 from boodschappenagent.ah import AHIntegratie, ProductMatch, SyncResultaat
 from boodschappenagent.boodschappenlijst import (
+    BoodschappenlijstFilter,
     BoodschappenlijstGenerator,
     IngredientNormalizer,
 )
@@ -23,7 +24,6 @@ from boodschappenagent.planner import (
 )
 from boodschappenagent.repository import RecipeRepository
 from boodschappenagent.utils import PortionCalculator
-from boodschappenagent.boodschappenlijst import BoodschappenlijstFilter
 from boodschappenagent.voorraadbeheer import VoorraadRepository
 from boodschappenagent.voorraadbeheer.models import VoorraadItem, VoorraadType
 from boodschappenagent.web.app import create_app
@@ -292,8 +292,8 @@ def app_with_voorraad(
     app_with_overrides.dependency_overrides[get_voorraad_repository] = (
         lambda: voorraad_repository
     )
-    app_with_overrides.dependency_overrides[get_ah_integratie] = (
-        lambda: AHIntegratie(mock_ah_client)
+    app_with_overrides.dependency_overrides[get_ah_integratie] = lambda: AHIntegratie(
+        mock_ah_client
     )
     app_with_overrides.dependency_overrides[get_ah_token_manager] = (
         lambda: mock_token_manager_authenticated

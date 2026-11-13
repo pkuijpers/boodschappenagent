@@ -962,8 +962,15 @@ class TestZoekProductenVoorCorrectie:
     def test_beperkt_resultaten_tot_limit(self, mock_client):
         """Resultaten worden beperkt tot het opgegeven limit."""
         producten = [
-            Product(id=i, title=f"Product {i}", brand="AH", size="1x", price=1.0,
-                    category="", is_orderable=True)
+            Product(
+                id=i,
+                title=f"Product {i}",
+                brand="AH",
+                size="1x",
+                price=1.0,
+                category="",
+                is_orderable=True,
+            )
             for i in range(15)
         ]
         mock_client.search_products = Mock(return_value=producten)
@@ -976,8 +983,15 @@ class TestZoekProductenVoorCorrectie:
     def test_standaard_limit_is_10(self, mock_client):
         """Standaard limit is 10."""
         producten = [
-            Product(id=i, title=f"Product {i}", brand="AH", size="1x", price=1.0,
-                    category="", is_orderable=True)
+            Product(
+                id=i,
+                title=f"Product {i}",
+                brand="AH",
+                size="1x",
+                price=1.0,
+                category="",
+                is_orderable=True,
+            )
             for i in range(15)
         ]
         mock_client.search_products = Mock(return_value=producten)

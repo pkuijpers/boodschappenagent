@@ -89,6 +89,4 @@ class TestVoorraadNaarBoodschappenFlow:
         btn = voorraad_page.locator("[data-testid='naar-boodschappen-button']")
         expect(btn).to_be_visible()
         btn.click()
-        voorraad_page.wait_for_selector(
-            "[data-testid='match-review']", timeout=10000
-        )
+        voorraad_page.wait_for_selector("[data-testid='match-review']", timeout=10000)
