@@ -28,9 +28,7 @@
     ]
   },
   "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": [
-    "puppeteer"
-  ],
+  "enabledMcpjsonServers": [],
   "hooks": {
     "PostToolUse": [
       {
@@ -43,5 +41,8 @@
         ]
       }
     ]
-  }
+  },
+  "disabledMcpjsonServers": [
+    "puppeteer"
+  ]
 }
