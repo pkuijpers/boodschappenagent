@@ -20,6 +20,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - When asked to commit, always check for unstaged files before finalizing
 - Support amending commits when user requests it
 - When rebasing, always verify the result compiles/tests pass before reporting success
+- Create a feature branch before any implementation work
+- For web UI changes: start the dev server and verify the golden path in a browser before reporting the task complete
 
 ## Project Overview
 
@@ -181,6 +183,7 @@ tests/                       # 440 unit tests
     web/                     # FastAPI route tests (TestClient)
     e2e/                     # Playwright E2E tests (live server, iPhone 13 emulation)
 docs/                        # Design documentation
+    features/                # Design docs of completed features 001–005 (spec, plan, research, data model)
 ```
 
 ### Key Imports
@@ -204,6 +207,31 @@ from boodschappenagent.web import create_app
 - **Server-side rendering** with FastAPI + Jinja2 + HTMX (no SPA, HTML-over-the-wire)
 - **App factory pattern** in `web/app.py` with `create_app()` for testability
 
+## Design Principles
+
+- **Simplicity (YAGNI)**: write code for the immediate requirement only. No abstractions for hypothetical future needs; three similar lines are fine before extracting a helper. No speculative features, error handling or validation. No half-finished implementations.
+- **Seasons**: seasonal suitability of recipes is derived at runtime from a CO2-based vegetable calendar. Seasonal tags on individual recipes are forbidden.
+- **Data**: JSON files under `data/` — no relational database.
+
+## Module Boundaries
+
+1. **`AHIntegratie` is the single AH façade.** Routers never import `AHClient` directly. AH business rules (list names, search limits, quantity calculation) live in `AHIntegratie`, not in routers.
+2. **No intrusive coupling.** Never access private members (`_attr`) of collaborating objects; use the public API.
+3. **Domain logic belongs in domain modules.** Routers only do HTTP marshalling (parse request, serialise response). Anything answering a domain question ("how many units do we need?") lives in the relevant domain/integration module.
+4. **Dependency direction follows the pipeline:** `planner → boodschappenlijst → voorraadbeheer → ah`. Code that transforms a type belongs in the module that owns that type; eliminate reverse dependencies.
+
+Invariants to preserve:
+- All domain models stay frozen (`@dataclass(frozen=True)`).
+- All object construction stays in `web/dependencies.py` (explicit, test-overridable composition root).
+- Generic utilities (`IngredientNormalizer`, `PortionCalculator`, …) stay domain-agnostic and injectable.
+
+## UI/UX Principles
+
+- **"Systeem stelt voor, jij past aan"**: the app always opens with a fully populated weekly menu proposal — never a blank screen. The user rejects or replaces; they don't build from zero.
+- **Touch-first**: all interactive targets ≥ 44×44 pt. Primary platform iOS/iPadOS (iPhone 13, 390×844).
+- **HTMX out-of-band updates**: when a sheet is open and the user changes something (dagtype, persons, shuffle recipe), the background dagkaart updates in place while the sheet stays open. No full-page reloads for within-session changes. No SPA frameworks; the server returns HTML, not JSON.
+- **Fixed ordering flow**: Weekoverzicht → (optioneel) Recept vervangen / Shuffle → Ingredient-selectie → Voorraadcheck → Matching → Match-review → AH Bevestiging. The system never skips a step; the user may proceed past any step directly. Kookmodus is a separate daily flow.
+
 ## Styling Conventions
 
 All colors and visual tokens are defined **once** in the Tailwind config in `base.html`. Never use inline `style` attributes or hardcoded hex color codes in templates.
@@ -215,10 +243,3 @@ All colors and visual tokens are defined **once** in the Tailwind config in `bas
 ## Documentation Lookup
 
 Always use Context7 (via the `mcp__context7__resolve-library-id` and `mcp__context7__query-docs` tools) to look up documentation for libraries and frameworks. This ensures you get the most up-to-date information.
-
-
-<!-- SPECKIT START -->
-For additional context about technologies to be used, project structure,
-shell commands, and other important information, read the current plan
-at `specs/005-voorraad-categorie-sortering/plan.md`.
-<!-- SPECKIT END -->
