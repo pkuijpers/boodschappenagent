@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
+from boodschappenagent.boodschappenlijst.normalizer import IngredientNormalizer
 from boodschappenagent.models import Seizoen
-from boodschappenagent.planner.history import MenuHistory
 from boodschappenagent.planner.models import WeekMenu
 from boodschappenagent.voorraadbeheer.models import (
     CheckSuggestie,
@@ -23,20 +23,23 @@ class VoorraadChecker:
         LOW: seizoensgebonden items
     """
 
-    def __init__(self, repository: VoorraadRepository) -> None:
+    def __init__(
+        self,
+        repository: VoorraadRepository,
+        normalizer: IngredientNormalizer | None = None,
+    ) -> None:
         self._repository = repository
+        self._normalizer = normalizer or IngredientNormalizer()
 
     def genereer_suggesties(
         self,
         week_menu: WeekMenu,
-        _menu_history: MenuHistory,
         seizoen: Seizoen,
     ) -> list[CheckSuggestie]:
         """Genereer check suggesties voor de weekplanning.
 
         Args:
             week_menu: Het geplande weekmenu.
-            menu_history: Menu-geschiedenis (voor recent gebruik).
             seizoen: Huidig seizoen.
 
         Returns:
@@ -102,10 +105,11 @@ class VoorraadChecker:
         return suggesties
 
     def _ingredienten_uit_menu(self, week_menu: WeekMenu) -> set[str]:
-        """Haal unieke ingredientnamen uit het weekmenu."""
+        """Haal unieke, genormaliseerde ingredientnamen uit het weekmenu."""
         namen: set[str] = set()
         for dag in week_menu.geplande_dagen:
             assert dag.recept is not None
             for ing in dag.recept.ingredienten:
-                namen.add(ing.naam.lower())
+                naam, _ = self._normalizer.normaliseer(ing.naam, ing.eenheid)
+                namen.add(naam)
         return namen
