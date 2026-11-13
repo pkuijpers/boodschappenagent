@@ -498,3 +498,75 @@ class TestRecepten:
         result = gen.genereer(menu)
         ui_regel = next(r for r in result.regels if r.naam == "ui")
         assert ui_regel.recepten == ("Pasta Bolognese",)
+
+
+class TestEenheidsconversie:
+    """Tests voor samenvoegen van omrekenbare eenheden."""
+
+    @staticmethod
+    def _menu(*ingredienten: Ingredient) -> WeekMenu:
+        dagen = [
+            DagPlanning(
+                dag=i,
+                recept=_make_recipe(recipe_id=f"recept-{i}", ingredienten=[ing]),
+                personen=4,
+            )
+            for i, ing in enumerate(ingredienten)
+        ]
+        return WeekMenu(week_start="2026-02-09", dagen=dagen)
+
+    def test_liter_en_ml_samengevoegd(self) -> None:
+        menu = self._menu(
+            Ingredient(naam="melk", hoeveelheid=0.5, eenheid="l"),
+            Ingredient(naam="melk", hoeveelheid=200, eenheid="ml"),
+        )
+        result = _make_generator().genereer(menu)
+        assert len(result.regels) == 1
+        assert result.regels[0].hoeveelheid == 700
+        assert result.regels[0].eenheid == "ml"
+
+    def test_kg_en_gram_samengevoegd(self) -> None:
+        menu = self._menu(
+            Ingredient(naam="aardappel", hoeveelheid=1, eenheid="kg"),
+            Ingredient(naam="aardappel", hoeveelheid=500, eenheid="gram"),
+        )
+        result = _make_generator().genereer(menu)
+        assert len(result.regels) == 1
+        assert result.regels[0].hoeveelheid == 1500
+        assert result.regels[0].eenheid == "gram"
+
+    def test_theelepel_bij_eetlepel_samengevoegd(self) -> None:
+        menu = self._menu(
+            Ingredient(naam="gedroogde tijm", hoeveelheid=1, eenheid="eetlepel"),
+            Ingredient(naam="gedroogde tijm", hoeveelheid=3, eenheid="theelepel"),
+        )
+        result = _make_generator().genereer(menu)
+        assert len(result.regels) == 1
+        assert result.regels[0].hoeveelheid == 2
+        assert result.regels[0].eenheid == "eetlepel"
+
+    def test_alleen_theelepel_blijft_theelepel(self) -> None:
+        menu = self._menu(
+            Ingredient(naam="komijn", hoeveelheid=1, eenheid="theelepel"),
+        )
+        result = _make_generator().genereer(menu)
+        assert result.regels[0].hoeveelheid == 1
+        assert result.regels[0].eenheid == "theelepel"
+
+    def test_originele_namen_behouden_bij_samenvoegen(self) -> None:
+        menu = self._menu(
+            Ingredient(naam="Gedroogde tijm", hoeveelheid=1, eenheid="eetlepel"),
+            Ingredient(naam="gedroogde tijm", hoeveelheid=1, eenheid="theelepel"),
+        )
+        result = _make_generator().genereer(menu)
+        assert result.regels[0].originele_namen == frozenset(
+            {"Gedroogde tijm", "gedroogde tijm"}
+        )
+
+    def test_recepten_behouden_bij_samenvoegen(self) -> None:
+        menu = self._menu(
+            Ingredient(naam="gedroogde tijm", hoeveelheid=1, eenheid="eetlepel"),
+            Ingredient(naam="gedroogde tijm", hoeveelheid=1, eenheid="theelepel"),
+        )
+        result = _make_generator().genereer(menu)
+        assert result.regels[0].recepten == ("Recept 0", "Recept 1")
