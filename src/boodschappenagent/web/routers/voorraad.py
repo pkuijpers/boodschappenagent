@@ -1,13 +1,19 @@
 """Voorraad routes — voorraadcheck pagina."""
 
 from datetime import date
+from itertools import groupby as igroup
 from typing import Annotated
 from uuid import uuid4
 
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from fastapi.responses import RedirectResponse
 
-from boodschappenagent.ah import AHIntegratie, AHTokenManager
+from boodschappenagent.ah import (
+    AFDELING_VOLGORDE,
+    AHIntegratie,
+    AHTokenManager,
+    categorie_naar_afdeling,
+)
 from boodschappenagent.ah.preferences import MatchReviewItem, MatchVoorkeurenRepository
 from boodschappenagent.boodschappenlijst import BoodschappenlijstFilter
 from boodschappenagent.boodschappenlijst.generator import BoodschappenlijstGenerator
@@ -45,7 +51,10 @@ def _haal_voorraad_producten(ah_integratie: AHIntegratie) -> list[dict]:
     """Haal producten op uit de AH 'Voorraad' favorietenlijst."""
     try:
         producten = ah_integratie.haal_voorraad_producten()
-        return [{"naam": p.title, "id": str(p.id)} for p in producten]
+        return [
+            {"naam": p.title, "id": str(p.id), "category": p.category}
+            for p in producten
+        ]
     except Exception:
         return []
 
@@ -55,17 +64,24 @@ def _build_voorraad_context(
 ) -> dict:
     """Bouw template context voor voorraadcheck pagina."""
     op_voorraad_namen = repository.op_voorraad_namen()
-    items = [
+    items: list[dict] = [
         {
             "naam": p["naam"],
             "id": p["id"],
             "context": None,
             "op_voorraad": p["naam"].lower() in op_voorraad_namen,
+            "afdeling": categorie_naar_afdeling(p.get("category", "")),
         }
         for p in producten
     ]
+    items.sort(key=lambda item: AFDELING_VOLGORDE[item["afdeling"]])
+    secties = [
+        {"afdeling": afd.value, "producten": list(groep)}
+        for afd, groep in igroup(items, key=lambda i: i["afdeling"])
+    ]
     return {
         "voorraad_items": items,
+        "voorraad_secties": secties,
         "ah_fout": len(producten) == 0,
     }
 

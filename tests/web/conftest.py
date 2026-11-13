@@ -198,10 +198,47 @@ def htmx_client(app_with_overrides) -> TestClient:
 
 # --- Voorraad fixtures ---
 
+# Bewust in omgekeerde volgorde: diepvries eerst, koelkast laatst.
+# Zo testen de sorteringstests dat de router de volgorde corrigeert.
 TEST_VOORRAAD_PRODUCTEN = [
-    {"id": 1001, "title": "Melk", "brand": "Campina", "size": "1L"},
-    {"id": 1002, "title": "Eieren", "brand": "Rondeel", "size": "12 stuks"},
-    {"id": 1003, "title": "Boter", "brand": "Becel", "size": "500g"},
+    # Diepvries — moet na koelkast/voorraadkast komen na sortering
+    {
+        "id": 1005,
+        "title": "Diepvrieserwten",
+        "brand": "Iglo",
+        "size": "450g",
+        "category": "Diepvries",
+    },
+    # Voorraadkast
+    {
+        "id": 1003,
+        "title": "Spaghetti",
+        "brand": "Barilla",
+        "size": "500g",
+        "category": "Pasta, rijst, wereldkeuken",
+    },
+    {
+        "id": 1004,
+        "title": "Rijst",
+        "brand": "Lassie",
+        "size": "1kg",
+        "category": "Pasta, rijst, wereldkeuken",
+    },
+    # Koelkast — moet als eerste komen na sortering
+    {
+        "id": 1001,
+        "title": "Melk",
+        "brand": "Campina",
+        "size": "1L",
+        "category": "Zuivel, eieren",
+    },
+    {
+        "id": 1002,
+        "title": "Eieren",
+        "brand": "Rondeel",
+        "size": "12 stuks",
+        "category": "Zuivel, eieren",
+    },
 ]
 
 
@@ -217,7 +254,7 @@ def mock_ah_client() -> MagicMock:
             brand=p["brand"],
             size=p["size"],
             price=1.99,
-            category="Zuivel",
+            category=p.get("category", ""),
             is_orderable=True,
         )
         for p in TEST_VOORRAAD_PRODUCTEN

@@ -37,7 +37,8 @@
       "Skill(speckit-implement)",
       "Skill(speckit-implement:*)",
       "Bash(bash .specify/extensions/git/scripts/bash/auto-commit.sh before_implement)",
-      "Bash(.specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks)"
+      "Bash(.specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks)",
+      "Bash(git add *)"
     ]
   },
   "enableAllProjectMcpServers": true,

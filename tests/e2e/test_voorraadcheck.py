@@ -90,3 +90,29 @@ class TestVoorraadNaarBoodschappenFlow:
         expect(btn).to_be_visible()
         btn.click()
         voorraad_page.wait_for_selector("[data-testid='match-review']", timeout=10000)
+
+
+class TestVoorraadSorteringE2E:
+    """T010: Voorraadpagina toont secties in juiste volgorde."""
+
+    def test_koelkast_sectieheader_zichtbaar(self, voorraad_page: Page):
+        """T010: 'Koelkast' sectieheader is zichtbaar op de pagina."""
+        koelkast_header = voorraad_page.locator("h3", has_text="Koelkast")
+        expect(koelkast_header).to_be_visible()
+
+    def test_diepvries_sectieheader_zichtbaar(self, voorraad_page: Page):
+        """T010: 'Diepvries' sectieheader is zichtbaar op de pagina."""
+        diepvries_header = voorraad_page.locator("h3", has_text="Diepvries")
+        expect(diepvries_header).to_be_visible()
+
+    def test_koelkast_sectie_voor_diepvries_sectie(self, voorraad_page: Page):
+        """T010: Koelkast-sectieheader staat in DOM vóór Diepvries-sectieheader."""
+        headers = voorraad_page.locator("h3").all_text_contents()
+        assert "Koelkast" in headers, f"Koelkast ontbreekt; gevonden: {headers}"
+        assert "Diepvries" in headers, f"Diepvries ontbreekt; gevonden: {headers}"
+        koelkast_idx = headers.index("Koelkast")
+        diepvries_idx = headers.index("Diepvries")
+        assert koelkast_idx < diepvries_idx, (
+            f"Koelkast (pos {koelkast_idx}) moet vóór "
+            f"Diepvries (pos {diepvries_idx}) staan"
+        )
