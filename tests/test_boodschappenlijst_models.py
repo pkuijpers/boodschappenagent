@@ -312,7 +312,7 @@ class TestBoodschappenlijst:
         restored = Boodschappenlijst.from_dict(lijst.to_dict())
         assert restored.week_start == lijst.week_start
         assert len(restored.regels) == len(lijst.regels)
-        for orig, rest in zip(lijst.regels, restored.regels):
+        for orig, rest in zip(lijst.regels, restored.regels, strict=True):
             assert rest.naam == orig.naam
             assert rest.hoeveelheid == orig.hoeveelheid
             assert rest.originele_namen == orig.originele_namen

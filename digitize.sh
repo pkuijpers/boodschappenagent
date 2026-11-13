@@ -6,10 +6,13 @@ set -e
 
 # Laad .env als aanwezig
 if [ -f .env ]; then
-    export $(cat .env | grep -v '^#' | xargs)
+    set -a
+    # shellcheck disable=SC1091
+    source .env
+    set +a
 fi
 
-CMD="uv run python -m boodschappenagent.cli.digitize"
+CMD="uv run digitize"
 
 case "$1" in
     process|p)
